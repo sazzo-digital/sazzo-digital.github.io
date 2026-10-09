@@ -19,6 +19,7 @@
 :root {
   --primario-suave: color-mix(in srgb, var(--primario) 12%, transparent);
   --brillo: color-mix(in srgb, var(--primario) 40%, transparent);
+  --primario-tinta: color-mix(in srgb, var(--primario) 68%, var(--texto));
 }
 
 :root:not([data-tema=claro]) {
@@ -32,6 +33,7 @@
   --borde-fuerte: #2b3934;
   --primario: #34d399;
   --primario-texto: #04120c;
+  --primario-tinta: var(--primario);
   --cristal: rgb(10 14 13 / 72%);
   --sombra: none;
   --sombra-alta: 0 18px 40px -18px rgb(0 0 0 / 70%);
@@ -178,7 +180,7 @@ textarea {
 
 .lema {
   font-family: "JetBrains Mono", ui-monospace, monospace;
-  font-size: 0.68rem;
+  font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -276,7 +278,7 @@ textarea {
 }
 .panel__rotulo {
   font-family: "JetBrains Mono", ui-monospace, monospace;
-  font-size: 0.68rem;
+  font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -315,7 +317,7 @@ textarea {
 
 .etiqueta {
   font-family: "JetBrains Mono", ui-monospace, monospace;
-  font-size: 0.68rem;
+  font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -323,7 +325,7 @@ textarea {
   padding: 0.1rem 0.45rem;
   border-radius: 6px;
   background: var(--primario-suave);
-  color: var(--primario);
+  color: var(--primario-tinta);
   vertical-align: middle;
 }
 
@@ -394,7 +396,7 @@ body.guardando .boton:not(.boton--secundario) {
   border-radius: 10px;
   transition: opacity 0.2s;
   padding: 0.4rem 0.5rem;
-  margin: -0.4rem -0.5rem;
+  margin: -0.4rem 0;
 }
 .cabecera__marca:hover {
   opacity: 0.8;
@@ -434,7 +436,7 @@ body.guardando .boton:not(.boton--secundario) {
 }
 .cabecera__marca small {
   font-family: "JetBrains Mono", ui-monospace, monospace;
-  font-size: 0.68rem;
+  font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -473,7 +475,7 @@ body.guardando .boton:not(.boton--secundario) {
 }
 .cabecera__usuario small {
   font-family: "JetBrains Mono", ui-monospace, monospace;
-  font-size: 0.68rem;
+  font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -498,7 +500,7 @@ body.guardando .boton:not(.boton--secundario) {
   border-radius: 50%;
   background: var(--primario-suave);
   box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--primario) 35%, transparent);
-  color: var(--primario);
+  color: var(--primario-tinta);
   font-family: "Space Grotesk", "Inter", system-ui, sans-serif;
   font-size: 0.85rem;
   font-weight: 700;
@@ -533,7 +535,7 @@ body.guardando .boton:not(.boton--secundario) {
   }
 }
 
-@container cabecera (max-width: 21.5rem) {
+@container cabecera (max-width: 20.5rem) {
   .cabecera__marca .logo,
   .cabecera__marca .nombre-demo__marca {
     display: none;
@@ -563,7 +565,7 @@ body.guardando .boton:not(.boton--secundario) {
   border-radius: 0.45em;
   border: 1px solid color-mix(in srgb, var(--primario) 40%, transparent);
   background: var(--primario-suave);
-  color: var(--primario);
+  color: var(--primario-tinta);
 }
 
 .interruptor-tema {
@@ -640,6 +642,7 @@ body.guardando .boton:not(.boton--secundario) {
   color: var(--primario);
 }
 .banda-prueba .boton-link {
+  color: var(--primario-tinta);
   font-size: 0.78rem;
   padding: 0.6rem 0.4rem;
   margin: -0.6rem -0.4rem;
@@ -748,7 +751,7 @@ body.guardando .boton:not(.boton--secundario) {
 }
 .menu__item.activo {
   background: var(--primario-suave);
-  color: var(--primario);
+  color: var(--primario-tinta);
   font-weight: 600;
 }
 .menu__item.activo::before {
@@ -948,7 +951,7 @@ body.guardando .boton:not(.boton--secundario) {
 .chip.activo {
   background: var(--primario-suave);
   border-color: color-mix(in srgb, var(--primario) 45%, transparent);
-  color: var(--primario);
+  color: var(--primario-tinta);
   font-weight: 600;
 }
 
@@ -1007,7 +1010,7 @@ body.guardando .boton:not(.boton--secundario) {
   align-items: center;
   gap: 0.35rem;
   font-family: "JetBrains Mono", ui-monospace, monospace;
-  font-size: 0.68rem;
+  font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -1090,7 +1093,7 @@ body.guardando .boton:not(.boton--secundario) {
 
 .contador {
   font-family: "JetBrains Mono", ui-monospace, monospace;
-  font-size: 0.68rem;
+  font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -1252,7 +1255,7 @@ body.guardando .boton:not(.boton--secundario) {
 }
 .ingreso__tarjeta h2 {
   font-family: "JetBrains Mono", ui-monospace, monospace;
-  font-size: 0.68rem;
+  font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -1308,7 +1311,7 @@ body.guardando .boton:not(.boton--secundario) {
   height: 2.5rem;
   border-radius: 50%;
   background: var(--primario-suave);
-  color: var(--primario);
+  color: var(--primario-tinta);
   border: 1px solid var(--primario);
   font-weight: 700;
   font-size: 0.9rem;
@@ -1329,7 +1332,7 @@ body.guardando .boton:not(.boton--secundario) {
   border-radius: 999px;
   background: var(--primario);
   color: var(--primario-texto);
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   font-weight: 700;
   vertical-align: 1px;
   white-space: nowrap;
@@ -2709,7 +2712,7 @@ details[open] > :not(summary) {
 }
 .datos dt {
   font-family: "JetBrains Mono", ui-monospace, monospace;
-  font-size: 0.68rem;
+  font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;

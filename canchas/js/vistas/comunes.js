@@ -2,10 +2,10 @@
 // Piezas que comparten las pantallas de Sazzo Canchas: el botón del recorrido (del kit), las pastillas de la seña
 // y del estado, y los días en pastillas. Todo dato que entra a HTML pasa por esc().
 // ============================================
-import { esc } from "../../kit/js/ui.js?v=8803abd1ef";
-import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=8803abd1ef";
-import { SENAS } from "../datos.js?v=8803abd1ef";
-import { buscarPersona } from "../marca.js?v=8803abd1ef";
+import { esc } from "../../kit/js/ui.js?v=52613df1ba";
+import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=52613df1ba";
+import { SENAS } from "../datos.js?v=52613df1ba";
+import { buscarPersona } from "../marca.js?v=52613df1ba";
 
 export const guia = (personaId, ruta, texto) => htmlGuia({ persona: buscarPersona(personaId), ruta, texto });
 export { activarGuias };

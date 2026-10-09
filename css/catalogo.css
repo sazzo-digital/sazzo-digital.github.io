@@ -317,7 +317,7 @@ a { color: inherit; }
 /* "Saltar a las demos": escondido arriba hasta que alguien llega con Tab (igual que en las demos) */
 .saltar {
     position: fixed; top: .5rem; left: .5rem; z-index: 60; padding: .55rem .9rem; border-radius: 10px;
-    background: var(--verde); color: #0b1210; font-weight: 600; text-decoration: none; transform: translateY(-160%);
+    background: var(--verde); color: var(--sobre-verde); font-weight: 600; text-decoration: none; transform: translateY(-160%);
 }
 .saltar:focus { transform: none; }
 

@@ -7,12 +7,12 @@
 // trae `wow`, esa línea va arriba de las personas: le dice a quien llega de Instagram qué va a pasar.
 // y qué hacer al elegir una (alElegir(id): guardar la sesión y arrancar la demo).
 // ============================================
-import { $, $$, esc, iniciales, mensajeDe } from "./ui.js?v=2ffaf20289";
-import { logoSazzo, nombreDemo } from "./marca.js?v=2ffaf20289";
-import { pieAcerca } from "./acerca.js?v=2ffaf20289";
-import { linkOtrasDemos, linkQuieroEsto } from "./enlaces.js?v=2ffaf20289";
-import { activarBotonesSazzo } from "./marco.js?v=2ffaf20289";
-import { contar, contarPantalla } from "./visita.js?v=2ffaf20289";
+import { $, $$, esc, iniciales, mensajeDe } from "./ui.js?v=b4e350d86d";
+import { logoSazzo, nombreDemo } from "./marca.js?v=b4e350d86d";
+import { pieAcerca } from "./acerca.js?v=b4e350d86d";
+import { linkOtrasDemos, linkQuieroEsto } from "./enlaces.js?v=b4e350d86d";
+import { activarBotonesSazzo } from "./marco.js?v=b4e350d86d";
+import { contar, contarPantalla } from "./visita.js?v=b4e350d86d";
 
 export function htmlIngreso({ marca, personas }) {
     const quiero = linkQuieroEsto(marca);

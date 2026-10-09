@@ -88,5 +88,15 @@ export const DEMOS = [
         pantalla: ["Mesa 4 · a la cocina", "Cocina · 2 Muzzarella · listo", "Cobrado entre 3"],
         dispositivo: "celu",
         estado: "activa"
+    },
+    {
+        id: "contable",
+        nombre: "Contable",
+        rubro: "Pymes, comercios y profesionales que facturan",
+        pregunta: "¿Te enterás del IVA cuando ya lo tenés que pagar?",
+        acento: "#22D3EE",
+        pantalla: ["Factura A · CAE autorizado", "6 compras traídas de ARCA", "IVA del mes · a pagar"],
+        dispositivo: "compu",
+        estado: "activa"
     }
 ];

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="robots" content="noindex, nofollow">
+    <meta property="og:site_name" content="Sazzo">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="es_AR">
+    <meta property="og:title" content="Sazzo Contable">
+    <meta property="og:description" content="Para pymes y comercios que facturan: facturas A, B y C, compras, libros de IVA, cuentas corrientes y contabilidad, con todo a nombre de tu empresa. Demo en modo prueba: probala en un toque, sin registrarte.">
+    <meta name="description" content="Para pymes y comercios que facturan: facturas A, B y C, compras, libros de IVA, cuentas corrientes y contabilidad, con todo a nombre de tu empresa. Demo en modo prueba: probala en un toque, sin registrarte.">
+    <meta property="og:url" content="https://sazzo-digital.github.io/contable/">
+    <meta property="og:image" content="https://sazzo-digital.github.io/contable/img/vista-previa.png?v=c4d27048e6">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Sazzo Contable">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="apple-touch-icon" href="../img/apple-touch-icon.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ddd1bb" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#0a0e0d" media="(prefers-color-scheme: dark)">
+    <title>Sazzo Contable</title>
+    <!-- Tema elegido a mano, antes de dibujar para que no parpadee (del kit) -->
+    <script src="kit/js/tema.js?v=bd1244e281"></script>
+    <link rel="icon" href="img/isotipo.svg" type="image/svg+xml">
+    <!-- Letras desde el propio sitio (antes Google Fonts); el script de armar las apunta a la copia compartida -->
+    <link rel="stylesheet" href="../letras/letras.css?v=abfcfcdaea">
+    <!-- Íconos (Tabler Icons 3.19.0) desde el propio sitio: el script de armar lo cambia por la copia compartida (../iconos/) -->
+    <link rel="preload" href="../iconos/fonts/tabler-icons.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" href="../iconos/tabler-icons.min.css?v=abfcfcdaea" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="../iconos/tabler-icons.min.css?v=abfcfcdaea"></noscript>
+    <link rel="stylesheet" href="styles/style.css?v=bd1244e281">
+    <link rel="modulepreload" href="js/app.js?v=bd1244e281">
+    <link rel="modulepreload" href="kit/js/ui.js?v=bd1244e281">
+    <link rel="modulepreload" href="kit/js/arranque.js?v=bd1244e281">
+    <link rel="modulepreload" href="kit/js/ingreso.js?v=bd1244e281">
+    <link rel="modulepreload" href="kit/js/marco.js?v=bd1244e281">
+    <link rel="modulepreload" href="kit/js/rutas.js?v=bd1244e281">
+    <link rel="modulepreload" href="kit/js/acerca.js?v=bd1244e281">
+    <link rel="modulepreload" href="js/marca.js?v=bd1244e281">
+    <link rel="modulepreload" href="js/datos.js?v=bd1244e281">
+    <link rel="modulepreload" href="js/vistas/inicio.js?v=bd1244e281">
+    <link rel="modulepreload" href="js/vistas/facturar.js?v=bd1244e281">
+    <link rel="modulepreload" href="js/vistas/compras.js?v=bd1244e281">
+    <link rel="modulepreload" href="js/vistas/iva.js?v=bd1244e281">
+    <link rel="modulepreload" href="js/vistas/cuentas.js?v=bd1244e281">
+    <link rel="modulepreload" href="js/vistas/contabilidad.js?v=bd1244e281">
+    <link rel="modulepreload" href="js/vistas/empresa.js?v=bd1244e281">
+    <link rel="modulepreload" href="js/vistas/mas.js?v=bd1244e281">
+    <link rel="modulepreload" href="kit/js/visita.js?v=bd1244e281">
+    <link rel="modulepreload" href="kit/js/colores.js?v=bd1244e281">
+    <link rel="modulepreload" href="kit/js/navegador.js?v=bd1244e281">
+    <link rel="modulepreload" href="kit/js/marca.js?v=bd1244e281">
+    <link rel="modulepreload" href="kit/js/enlaces.js?v=bd1244e281">
+    <link rel="modulepreload" href="kit/js/apariencia.js?v=bd1244e281">
+    <link rel="modulepreload" href="kit/js/guardado.js?v=bd1244e281">
+    <link rel="modulepreload" href="kit/js/topes.js?v=bd1244e281">
+    <link rel="modulepreload" href="kit/js/fechas.js?v=bd1244e281">
+    <link rel="modulepreload" href="js/semilla.js?v=bd1244e281">
+    <link rel="modulepreload" href="js/contabilidad.js?v=bd1244e281">
+    <link rel="modulepreload" href="js/reglas.js?v=bd1244e281">
+    <link rel="modulepreload" href="kit/js/guia.js?v=bd1244e281">
+    <link rel="modulepreload" href="js/vistas/comunes.js?v=bd1244e281">
+    <link rel="modulepreload" href="js/libro-digital.js?v=bd1244e281">
+    <link rel="modulepreload" href="kit/js/config.js?v=bd1244e281">
+</head>
+
+<body>
+    <div id="app">
+        <!-- Mientras arranca: el "s_" de Sazzo con el cursor titilando (el mismo dibujo que marca.js → logoSazzo) -->
+        <div class="cargando" role="status">
+            <svg class="logo logo--grande" viewBox="12 30 76 40" aria-hidden="true" focusable="false">
+                <path class="logo__s" d="M40.26 38.75 A13 7.5 0 1 0 29 50 A13 7.5 0 1 1 17.74 61.25" />
+                <path class="logo__cursor" d="M58 64 H82" />
+            </svg>
+            <p class="cargando__texto">Cargando…</p>
+        </div>
+    </div>
+    <script type="module" src="js/app.js?v=bd1244e281"></script>
+</body>
+
+</html>

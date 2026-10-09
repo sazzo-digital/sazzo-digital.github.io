@@ -2,9 +2,9 @@
 // Pantallas del chofer (Ramón): su inicio y "Avisar un problema".
 // Pensado para el celular y una sola mano: botones grandes, pocas palabras, se avisa en 15 segundos.
 // ============================================
-import { esc, vacio, aviso } from "../../kit/js/ui.js?v=5ea9a6b532";
-import { TIPOS_PROBLEMA, URGENCIAS, TOPES } from "../datos.js?v=5ea9a6b532";
-import { haceCuanto, pastillaVehiculo, pastillaProblema, guia, activarGuias } from "./comunes.js?v=5ea9a6b532";
+import { esc, vacio, aviso } from "../../kit/js/ui.js?v=5ebf28c8f8";
+import { TIPOS_PROBLEMA, URGENCIAS, TOPES } from "../datos.js?v=5ebf28c8f8";
+import { haceCuanto, pastillaVehiculo, pastillaProblema, guia, activarGuias } from "./comunes.js?v=5ebf28c8f8";
 
 export function vistaInicioChofer(cont, { usuario, datos, irA }) {
     const v = datos.vehiculoDe(usuario.id);

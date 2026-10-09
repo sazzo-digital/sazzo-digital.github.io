@@ -7,7 +7,7 @@
 // Al tocarlo: fundido suave entre las dos pantallas (donde el navegador lo permite) y un cartelito de un segundo,
 // "Ahora estás como Diego · Mecánico", para que se note el cambio. El botón late una vez al aparecer (estilos).
 // ============================================
-import { esc } from "./ui.js?v=2ffaf20289";
+import { esc } from "./ui.js?v=b4e350d86d";
 
 const RUTA_VALIDA = /^\/[\w\-/?=&]*$/;
 
