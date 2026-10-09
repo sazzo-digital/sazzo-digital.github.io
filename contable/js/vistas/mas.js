@@ -1,7 +1,7 @@
 // ============================================
 // Más: todas las pantallas en una lista (en el celular el menú de abajo tiene lugar para 5).
 // ============================================
-import { esc } from "../../kit/js/ui.js?v=c335bb1efa";
+import { esc } from "../../kit/js/ui.js?v=bdb0a941ae";
 
 export function vistaMas(cont, { secciones }) {
     cont.innerHTML = `

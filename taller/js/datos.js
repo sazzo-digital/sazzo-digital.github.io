@@ -7,10 +7,11 @@
 // Reglas del kit: exigir() en lo que modifica, topes en todo lo que se carga y se devuelven copias.
 // Si cambia la forma de los datos, subir VERSION_DATOS (se regeneran solos).
 // ============================================
-import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=3cf400ba43";
-import { enteroHasta, sinPasarse } from "../kit/js/topes.js?v=3cf400ba43";
-import { fechaLocalISO, esFechaISO, diaLocalDe } from "../kit/js/fechas.js?v=3cf400ba43";
-import { MARCA, NEGOCIO } from "./marca.js?v=3cf400ba43";
+import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=913263ebcb";
+import { filtrarPorTexto } from "../kit/js/buscar.js?v=913263ebcb";
+import { enteroHasta, sinPasarse } from "../kit/js/topes.js?v=913263ebcb";
+import { fechaLocalISO, esFechaISO, diaLocalDe } from "../kit/js/fechas.js?v=913263ebcb";
+import { MARCA, NEGOCIO } from "./marca.js?v=913263ebcb";
 
 export const VERSION_DATOS = 3;
 
@@ -427,10 +428,11 @@ export function crearDatos(prefijo = MARCA.prefijo) {
 
     /** Buscar por patente (con o sin espacios) o por nombre del cliente. */
     function listarAutos({ texto = "" } = {}) {
-        const t = String(texto).trim().toLowerCase();
         const p = normalizarPatente(texto);
-        return db().autos.filter((a) => !t || a.patente.includes(p) || cliente(a.clienteId).nombre.toLowerCase().includes(t) || a.modelo.toLowerCase().includes(t))
-            .map(armarAuto).sort((a, b) => (b.ultimaVisita ?? "").localeCompare(a.ultimaVisita ?? ""));
+        const lista = db().autos.map(armarAuto).sort((a, b) => (b.ultimaVisita ?? "").localeCompare(a.ultimaVisita ?? ""));
+        const porPatente = p.length >= 2 ? lista.filter((a) => a.patente.includes(p)) : [];
+        // El cliente y el modelo perdonan errores ("jorje", "corza"): lo más parecido va primero
+        return [...porPatente, ...filtrarPorTexto(lista, texto, (a) => `${a.cliente.nombre} ${a.modelo}`).filter((a) => !porPatente.includes(a))];
     }
 
     function auto(id, usuario) {

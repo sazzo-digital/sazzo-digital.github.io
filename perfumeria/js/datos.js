@@ -6,10 +6,11 @@
 // Reglas del kit: exigir() en lo que modifica, topes en todo lo que se carga, nada se borra (se cancela) y se
 // devuelven copias. Si cambia la forma de los datos, subir VERSION_DATOS (se regeneran solos).
 // ============================================
-import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=c005acf363";
-import { enteroHasta } from "../kit/js/topes.js?v=c005acf363";
-import { fechaLocalISO, diaLocalDe } from "../kit/js/fechas.js?v=c005acf363";
-import { MARCA, NEGOCIO } from "./marca.js?v=c005acf363";
+import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=c76a163ed1";
+import { filtrarPorTexto } from "../kit/js/buscar.js?v=c76a163ed1";
+import { enteroHasta } from "../kit/js/topes.js?v=c76a163ed1";
+import { fechaLocalISO, diaLocalDe } from "../kit/js/fechas.js?v=c76a163ed1";
+import { MARCA, NEGOCIO } from "./marca.js?v=c76a163ed1";
 
 export const VERSION_DATOS = 3;
 
@@ -180,12 +181,10 @@ export function crearDatos(prefijo = MARCA.prefijo) {
 
     // ----- Catálogo -----
 
+    /** Los perfumes (por familia, para quién y texto: nombre o notas, perdonando errores como "bainilla"). */
     function listarPerfumes({ familia = null, para = null, texto = "" } = {}) {
-        const t = String(texto).trim().toLowerCase();
-        return db().perfumes
-            .filter((p) => (!familia || p.familia === familia) && (!para || p.para === para || p.para === "unisex")
-                && (!t || `${p.nombre} ${p.notas.salida} ${p.notas.corazon} ${p.notas.fondo}`.toLowerCase().includes(t)))
-            .map(armarPerfume);
+        const lista = db().perfumes.filter((p) => (!familia || p.familia === familia) && (!para || p.para === para || p.para === "unisex"));
+        return filtrarPorTexto(lista, texto, (p) => `${p.nombre} ${p.notas.salida} ${p.notas.corazon} ${p.notas.fondo}`).map(armarPerfume);
     }
 
     const perfume = (id) => armarPerfume(buscar(db().perfumes, id, "Ese perfume no existe."));

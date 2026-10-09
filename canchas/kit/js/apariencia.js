@@ -6,7 +6,7 @@
 // - La clave ("sazzo-tema") es compartida a propósito: el tema elegido sigue en todas las demos de Sazzo.
 // kit/js/tema.js lo aplica antes de dibujar, para que no parpadee.
 // ============================================
-import { $, $$ } from "./ui.js?v=f44d3e59f3";
+import { $, $$ } from "./ui.js?v=fdfc773190";
 
 export const CLAVE_TEMA = "sazzo-tema";
 
@@ -67,5 +67,37 @@ function pintarInterruptor() {
 /** Conecta el interruptor: cada toque pasa al otro tema (y queda fijo, ya no sigue al celular). */
 export function activarInterruptorTema() {
     aplicarTema(leerTema());
-    $("#tema")?.addEventListener("click", () => aplicarTema(temaVisible() === "oscuro" ? "claro" : "oscuro"));
+    const boton = $("#tema");
+    boton?.addEventListener("click", () => conCirculo(boton, () => aplicarTema(temaVisible() === "oscuro" ? "claro" : "oscuro")));
+}
+
+/**
+ * El tema nuevo se expande en un círculo desde el botón sol/luna (View Transitions + clip-path). Donde el navegador no
+ * puede, o con "menos movimiento", cambia directo.
+ */
+export function conCirculo(boton, cambiar) {
+    const quieto = window.__sazzoQuieto || matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (!document.startViewTransition || quieto || !boton) return cambiar();
+    const caja = boton.getBoundingClientRect();
+    const x = caja.left + caja.width / 2;
+    const y = caja.top + caja.height / 2;
+    const radio = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
+    const raiz = document.documentElement;
+    raiz.classList.add("cambiando-tema");
+    try {
+        const transicion = document.startViewTransition(cambiar);
+        transicion.ready
+            .then(() =>
+                raiz.animate(
+                    { clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${radio}px at ${x}px ${y}px)`] },
+                    { duration: 480, easing: "cubic-bezier(0.22, 0.9, 0.24, 1)", pseudoElement: "::view-transition-new(root)" }
+                )
+            )
+            .catch(() => {});
+        transicion.finished.catch(() => {}).finally(() => raiz.classList.remove("cambiando-tema"));
+        transicion.updateCallbackDone?.catch(() => {});
+    } catch {
+        raiz.classList.remove("cambiando-tema");
+        cambiar();
+    }
 }

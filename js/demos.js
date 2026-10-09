@@ -98,5 +98,15 @@ export const DEMOS = [
         pantalla: ["Factura A · CAE autorizado", "6 compras traídas de ARCA", "IVA del mes · a pagar"],
         dispositivo: "compu",
         estado: "activa"
+    },
+    {
+        id: "libreria",
+        nombre: "Librería",
+        rubro: "Librerías y papelerías",
+        pregunta: "¿Las listas escolares te tapan el mostrador cada marzo?",
+        acento: "#818CF8",
+        pantalla: ["Lista de 1° grado · pedida por Paula", "Separada · se descontó del stock", "Papelera +15 % · tu margen intacto"],
+        dispositivo: "compu",
+        estado: "activa"
     }
 ];

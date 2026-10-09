@@ -3,18 +3,18 @@
 // Las dos personas ven las mismas secciones; lo que cambia (precios, topes, últimos 7 días) lo controlan las
 // funciones de datos y cada pantalla. irA() cambia de persona sin pasar por "Probala como…" (botones del recorrido).
 // ============================================
-import { $ } from "../kit/js/ui.js?v=d78e90c63f";
-import { iniciarDemo } from "../kit/js/arranque.js?v=d78e90c63f";
-import { vistaIngreso } from "../kit/js/ingreso.js?v=d78e90c63f";
-import { pintarMarco } from "../kit/js/marco.js?v=d78e90c63f";
-import { mostrarRuta } from "../kit/js/rutas.js?v=d78e90c63f";
-import { vistaAcerca } from "../kit/js/acerca.js?v=d78e90c63f";
-import { MARCA, PERSONAS, TAMBIEN, buscarPersona } from "./marca.js?v=d78e90c63f";
-import { crearDatos } from "./datos.js?v=d78e90c63f";
-import { vistaInicio } from "./vistas/inicio.js?v=d78e90c63f";
-import { vistaFiados, vistaCliente } from "./vistas/fiados.js?v=d78e90c63f";
-import { vistaStock, vistaAumento } from "./vistas/stock.js?v=d78e90c63f";
-import { vistaCaja } from "./vistas/caja.js?v=d78e90c63f";
+import { $, conFundido } from "../kit/js/ui.js?v=89fe25c9f3";
+import { iniciarDemo } from "../kit/js/arranque.js?v=89fe25c9f3";
+import { vistaIngreso } from "../kit/js/ingreso.js?v=89fe25c9f3";
+import { pintarMarco } from "../kit/js/marco.js?v=89fe25c9f3";
+import { mostrarRuta } from "../kit/js/rutas.js?v=89fe25c9f3";
+import { vistaAcerca } from "../kit/js/acerca.js?v=89fe25c9f3";
+import { MARCA, PERSONAS, TAMBIEN, buscarPersona } from "./marca.js?v=89fe25c9f3";
+import { crearDatos } from "./datos.js?v=89fe25c9f3";
+import { vistaInicio } from "./vistas/inicio.js?v=89fe25c9f3";
+import { vistaFiados, vistaCliente } from "./vistas/fiados.js?v=89fe25c9f3";
+import { vistaStock, vistaAumento, vistaLista } from "./vistas/stock.js?v=89fe25c9f3";
+import { vistaCaja } from "./vistas/caja.js?v=89fe25c9f3";
 
 iniciarDemo(MARCA);
 const datos = crearDatos();
@@ -40,6 +40,7 @@ const RUTAS = [
     { patron: /^\/fiados\/([\w-]+)$/, vista: con(vistaCliente) },
     { patron: /^\/stock$/, vista: con(vistaStock) },
     { patron: /^\/stock\/aumento$/, vista: con(vistaAumento), puede: (u) => u.rol === "dueno" },
+    { patron: /^\/stock\/lista$/, vista: con(vistaLista), puede: (u) => u.rol === "dueno" },
     { patron: /^\/caja$/, vista: con(vistaCaja) },
     { patron: /^\/acerca$/, vista: (cont) => vistaAcerca(cont, { marca: MARCA, tambien: TAMBIEN }) }
 ];
@@ -85,8 +86,9 @@ function irA(personaId, ruta = "/inicio") {
     entrar(persona);
 }
 
+// Cada cambio de pantalla, con un fundido corto donde el navegador lo permite (kit/ui.js → conFundido)
 window.addEventListener("hashchange", () => {
-    if (contenido) mostrar();
+    if (contenido) conFundido(mostrar);
 });
 
 // Si otra pestaña cambió los datos (ej: Sofía vendiendo en una pestaña y Rubén mirando la caja en otra)

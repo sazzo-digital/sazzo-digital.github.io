@@ -2,8 +2,8 @@
 // Catálogo de Sazzo: arma las tarjetas de demos (desde demos.js), las animaciones al bajar, los botones de
 // contacto (desde config.js), guarda de dónde vino la visita (?o=papel / ?o=ig) y avisa a la medición.
 // ============================================
-import { DEMOS } from "./demos.js?v=df658e7c01";
-import { CONTACTO, MEDICION, LINK_DEMOS } from "./config.js?v=df658e7c01";
+import { DEMOS } from "./demos.js?v=4beb724253";
+import { CONTACTO, MEDICION, LINK_DEMOS } from "./config.js?v=4beb724253";
 
 const $ = (selector, raiz = document) => raiz.querySelector(selector);
 const $$ = (selector, raiz = document) => [...raiz.querySelectorAll(selector)];
@@ -237,9 +237,25 @@ function pintarTema(tema) {
     interruptorTema.title = texto;
 }
 pintarTema(document.documentElement.dataset.tema === "claro" ? "claro" : "oscuro");
+/** El tema nuevo se abre en un círculo desde el botón sol/luna (como en las demos); sin eso, cambia directo. */
+function conCirculo(cambiar) {
+    if (!document.startViewTransition || quieto || !interruptorTema) return cambiar();
+    const caja = interruptorTema.getBoundingClientRect();
+    const x = caja.left + caja.width / 2;
+    const y = caja.top + caja.height / 2;
+    const radio = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
+    const raiz = document.documentElement;
+    raiz.classList.add("cambiando-tema");
+    const transicion = document.startViewTransition(cambiar);
+    transicion.ready
+        .then(() => raiz.animate({ clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${radio}px at ${x}px ${y}px)`] }, { duration: 480, easing: "cubic-bezier(.22,.9,.24,1)", pseudoElement: "::view-transition-new(root)" }))
+        .catch(() => {});
+    transicion.finished.catch(() => {}).finally(() => raiz.classList.remove("cambiando-tema"));
+    transicion.updateCallbackDone?.catch(() => {});
+}
 interruptorTema?.addEventListener("click", () => {
     const nuevo = document.documentElement.dataset.tema === "claro" ? "oscuro" : "claro";
-    pintarTema(nuevo);
+    conCirculo(() => pintarTema(nuevo));
     try {
         localStorage.setItem("sazzo-tema", nuevo);
     } catch {

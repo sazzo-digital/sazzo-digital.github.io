@@ -9,7 +9,7 @@
 //     `ancho`: en la PC usa más ancho (en el celular no cambia nada).
 // Cada vista recibe (contenedor, { usuario, params, consulta }) y dibuja adentro.
 // ============================================
-import { $$, esc, vacio, mensajeDe } from "./ui.js?v=d78e90c63f";
+import { $$, esc, vacio, mensajeDe } from "./ui.js?v=89fe25c9f3";
 
 /** Lo que hay después del # → { ruta: "/producto/p-1", consulta: URLSearchParams }. Sin hash: la de inicio. */
 export function leerHash(inicio = "/inicio") {
@@ -35,9 +35,25 @@ export const ESQUELETO = `
  * Devuelve cómo terminó (sirve para las pruebas): "ok", "desconocida" (manda al inicio), "sin-permiso" (también
  * manda al inicio) o "error".
  */
+// Lo que una pantalla deja prendido (la pantalla sin apagarse, la cámara) se suelta al ir a otra (celular.js)
+const alSalir = [];
+export function alSalirDeLaPantalla(soltar) {
+    if (typeof soltar === "function") alSalir.push(soltar);
+}
+export function soltarPantalla() {
+    while (alSalir.length) {
+        try {
+            alSalir.pop()();
+        } catch (e) {
+            console.error(e);
+        }
+    }
+}
+
 let tituloDeLaDemo = null; // el del index.html ("Sazzo Kiosco"): cada pantalla le suma el suyo adelante
 
 export async function mostrarRuta({ rutas, contenido, usuario, inicio = "/inicio" }) {
+    soltarPantalla();
     const { ruta, consulta } = leerHash(inicio);
     const r = buscarRuta(rutas, ruta);
     if (!r) {

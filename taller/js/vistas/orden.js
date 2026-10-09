@@ -1,13 +1,16 @@
 // ============================================
 // La orden de trabajo de un auto: lo que dijo el cliente, lo que encontró el mecánico, el presupuesto (repuestos y
 // mano de obra de una lista), los botones según el estado y la persona, y el historial con horas.
-// El mecánico carga lo que encontró y los repuestos, sin ver precios. Y el presupuesto para imprimir (dueño).
+// El mecánico carga lo que encontró y los repuestos, sin ver precios. Y el presupuesto (dueño): para imprimir, con la
+// firma del cliente en pantalla y en PDF para mandarlo por WhatsApp.
 // ============================================
-import { esc, aviso, fechaCorta, fechaHora } from "../../kit/js/ui.js?v=3cf400ba43";
-import { fechaLocalISO } from "../../kit/js/fechas.js?v=3cf400ba43";
-import { ESTADOS, REPUESTOS, MANO_DE_OBRA, TOPES, pesos } from "../datos.js?v=3cf400ba43";
-import { NEGOCIO } from "../marca.js?v=3cf400ba43";
-import { guia, activarGuias, chapa, pastillaEstado, textoPromesa, mostrarMensaje } from "./comunes.js?v=3cf400ba43";
+import { esc, aviso, fechaCorta, fechaHora } from "../../kit/js/ui.js?v=913263ebcb";
+import { fechaLocalISO } from "../../kit/js/fechas.js?v=913263ebcb";
+import { pedirFirma, esFirma } from "../../kit/js/firma.js?v=913263ebcb";
+import { armarPdf, pdfListo } from "../../kit/js/pdf.js?v=913263ebcb";
+import { ESTADOS, REPUESTOS, MANO_DE_OBRA, TOPES, pesos } from "../datos.js?v=913263ebcb";
+import { NEGOCIO } from "../marca.js?v=913263ebcb";
+import { guia, activarGuias, chapa, pastillaEstado, textoPromesa, mostrarMensaje } from "./comunes.js?v=913263ebcb";
 
 export function vistaOrden(cont, { usuario, datos, irA, params: [id] }) {
     const o = datos.orden(id, usuario);
@@ -94,7 +97,7 @@ export function vistaOrden(cont, { usuario, datos, irA, params: [id] }) {
                 <input name="cantidad" type="number" inputmode="numeric" min="1" max="${TOPES.cantidad}" step="1" value="1" aria-label="Cantidad">
                 <button class="boton boton--chico" type="submit"><i class="ti ti-plus"></i> Agregar</button>
             </form>` : ""}
-            ${dueno && o.renglones.length ? `<a class="boton-link imprimir-link" href="#/orden/${esc(o.id)}/imprimir"><i class="ti ti-printer"></i> Imprimir presupuesto</a>` : ""}
+            ${dueno && o.renglones.length ? `<a class="boton-link imprimir-link" href="#/orden/${esc(o.id)}/imprimir"><i class="ti ti-file-text"></i> Presupuesto: imprimir, firma y PDF</a>` : ""}
         </section>
         ${botones.length ? `<div class="acciones-orden">${botones.join("")}</div>` : ""}
         <section class="bloque">
@@ -144,14 +147,27 @@ export function vistaOrden(cont, { usuario, datos, irA, params: [id] }) {
     cont.querySelectorAll("[data-accion]").forEach((b) => b.addEventListener("click", () => acciones[b.dataset.accion]()));
 }
 
-/** El presupuesto para imprimir: con el nombre del taller, "no válido como factura" y la marca de agua de la demo. */
+// La firma del cliente de cada presupuesto: solo mientras la demo está abierta (no se guarda en el celular)
+const firmas = new Map();
+
+/**
+ * El presupuesto: con el nombre del taller, "no válido como factura" y la marca de agua de la demo. Se imprime, el
+ * cliente lo firma en la pantalla y sale en PDF (con la firma) para mandarlo por WhatsApp.
+ */
 export function vistaImprimir(cont, { usuario, datos, params: [id] }) {
     const o = datos.orden(id, usuario);
+    const firma = esFirma(firmas.get(o.id)) ? firmas.get(o.id) : null;
+    const otraVez = () => vistaImprimir(cont, { usuario, datos, params: [id] });
     cont.innerHTML = `
         <div class="no-imprimir acciones-imprimir">
             <a class="volver" href="#/orden/${esc(o.id)}"><i class="ti ti-arrow-left"></i> Volver a la orden</a>
-            <button class="boton" type="button" data-imprimir><i class="ti ti-printer"></i> Imprimir</button>
+            <div class="acciones-imprimir__botones">
+                <button class="boton boton--secundario" type="button" data-firmar><i class="ti ti-signature"></i> ${firma ? "Firmar de nuevo" : "Firma del cliente"}</button>
+                <button class="boton boton--secundario" type="button" data-pdf><i class="ti ti-file-type-pdf"></i> PDF</button>
+                <button class="boton" type="button" data-imprimir><i class="ti ti-printer"></i> Imprimir</button>
+            </div>
         </div>
+        <p class="nota pista no-imprimir"><i class="ti ti-hand-finger"></i> Probá: que ${esc(o.cliente.nombre.split(" ")[0])} firme con el dedo y mandale el PDF por WhatsApp.</p>
         <article class="hoja">
             <span class="hoja__agua" aria-hidden="true">DEMO · datos inventados</span>
             <header class="hoja__cabeza">
@@ -169,7 +185,41 @@ export function vistaImprimir(cont, { usuario, datos, params: [id] }) {
                 <tbody>${o.renglones.map((r) => `<tr><td>${esc(r.nombre)}<small class="hoja__unitario">${esc(pesos(r.precio))} c/u</small></td><td>${esc(r.cantidad)}</td><td class="hoja__precio">${esc(pesos(r.precio))}</td><td>${esc(pesos(r.precio * r.cantidad))}</td></tr>`).join("")}</tbody>
                 <tfoot><tr><td colspan="2">Total</td><td class="hoja__precio"></td><td>${esc(pesos(o.total))}</td></tr></tfoot>
             </table>
+            ${firma ? `<figure class="hoja__firma"><img src="${esc(firma)}" alt="Firma de ${esc(o.cliente.nombre)}"><figcaption>Firma: ${esc(o.cliente.nombre)} · acepta el presupuesto</figcaption></figure>` : ""}
             <p class="hoja__aviso">Presupuesto · no válido como factura · válido por 7 días</p>
         </article>`;
     cont.querySelector("[data-imprimir]").addEventListener("click", () => window.print());
+    cont.querySelector("[data-firmar]").addEventListener("click", async () => {
+        const nueva = await pedirFirma({ titulo: "Firma del cliente", texto: `${o.cliente.nombre} acepta el presupuesto N° ${o.numero} por ${pesos(o.total)}.` });
+        if (!nueva || !cont.isConnected) return;
+        firmas.set(o.id, nueva);
+        aviso("Firmado: ya está en el presupuesto y en el PDF");
+        otraVez();
+    });
+    const botonPdf = cont.querySelector("[data-pdf]");
+    botonPdf.addEventListener("click", async () => {
+        botonPdf.disabled = true;
+        try {
+            const blob = await armarPdf({
+                negocio: NEGOCIO,
+                pie: "Hecho con Sazzo Taller (demo)",
+                titulo: "Presupuesto",
+                numero: o.numero,
+                fecha: fechaCorta(fechaLocalISO(0)),
+                datos: [["Cliente", o.cliente.nombre], ["Vehículo", `${o.auto.modelo} · ${o.auto.patenteTexto}`], ["Kilómetros", o.km.toLocaleString("es-AR")]],
+                texto: `Motivo: ${o.dijo}${o.encontro ? `\nDiagnóstico: ${o.encontro}` : ""}`,
+                columnas: ["Detalle", "Cant.", "Precio", "Subtotal"],
+                filas: o.renglones.map((r) => [r.nombre, String(r.cantidad), pesos(r.precio), pesos(r.precio * r.cantidad)]),
+                total: pesos(o.total),
+                firma: firma ? { imagen: firma, aclaracion: o.cliente.nombre } : null,
+                aviso: "Presupuesto · no válido como factura · válido por 7 días"
+            });
+            if (cont.isConnected) pdfListo(blob, `Presupuesto ${o.numero} ${NEGOCIO}`);
+        } catch (e) {
+            console.warn(e);
+            aviso("No se pudo armar el PDF. Probá de nuevo con mejor señal.", "error");
+        } finally {
+            botonPdf.disabled = false;
+        }
+    });
 }

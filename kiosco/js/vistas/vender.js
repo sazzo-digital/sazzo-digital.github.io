@@ -1,27 +1,31 @@
 // ============================================
 // Vender (Sofía y Rubén): botones con lo más vendido, buscador por nombre o código (el lector USB escribe el código
-// y aprieta Enter solo) y, donde el navegador lo permite, la cámara del celular. Ticket con +/−, total,
+// y aprieta Enter solo) y la cámara del celular (kit/escaner.js: con el lector del celular o, en iPhone, el de respaldo). Ticket con +/−, total,
 // "Paga con…" → vuelto, y cobrar en efectivo, transferencia o fiado (con aviso de tope).
 // Código que no está → "¿Lo cargás?" y queda listo para vender.
 // En la compu, dos columnas (productos | ticket); en el celular, el ticket abajo con una barrita arriba que lleva a él.
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=d78e90c63f";
-import { TOPES, MEDIOS, pesos } from "../datos.js?v=d78e90c63f";
-import { NEGOCIO } from "../marca.js?v=d78e90c63f";
-import { guia, activarGuias } from "./comunes.js?v=d78e90c63f";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=89fe25c9f3";
+import { puedeEscanear, escanear } from "../../kit/js/escaner.js?v=89fe25c9f3";
+import { mantenerPantallaPrendida, htmlCopiable, activarCopiables, htmlBotonSonido, activarBotonSonido, ding } from "../../kit/js/celular.js?v=89fe25c9f3";
+import { TOPES, MEDIOS, pesos } from "../datos.js?v=89fe25c9f3";
+import { MARCA, NEGOCIO } from "../marca.js?v=89fe25c9f3";
+import { guia, activarGuias } from "./comunes.js?v=89fe25c9f3";
 
 // El ticket en curso queda en memoria mientras se navega (se vacía al cobrar)
 const ticket = new Map(); // productoId → cantidad
 let medio = "efectivo";
 
 const BILLETES = [2_000, 5_000, 10_000, 20_000];
-const puedeEscanear = () => "BarcodeDetector" in window && !!navigator.mediaDevices?.getUserMedia;
+const ALIAS = "la.esquina.kiosco"; // de ejemplo: al cobrar con transferencia se copia con un toque
 
 export function vistaVender(cont, { usuario, datos, irA }) {
+    mantenerPantallaPrendida(); // la caja del mostrador: que la pantalla no se apague entre venta y venta
     cont.innerHTML = `
         <div class="titulo-con-accion">
             <h1 class="titulo">Vender</h1>
             <span class="negocio"><i class="ti ti-building-store" aria-hidden="true"></i>${esc(NEGOCIO)}</span>
+            ${htmlBotonSonido(MARCA.prefijo)}
         </div>
         <button class="ticket-barra" type="button" hidden></button>
         <div class="caja-venta">
@@ -120,6 +124,8 @@ export function vistaVender(cont, { usuario, datos, irA }) {
                     </select>
                 </label>
                 <p class="tope-aviso" aria-live="polite"></p>` : ""}
+                ${medio === "transferencia" ? `
+                <p class="alias">Que te transfiera al alias ${htmlCopiable(ALIAS, "Copiar el alias")}</p>` : ""}
                 <button class="boton boton--ancho boton--grande" type="submit"><i class="ti ti-cash"></i> Cobrar ${esc(pesos(armado.total))}</button>
             </form>
             <button class="boton-link vaciar" type="button"><i class="ti ti-trash"></i> Vaciar ticket</button>`
@@ -127,6 +133,7 @@ export function vistaVender(cont, { usuario, datos, irA }) {
 
         lugarTicket.querySelectorAll("[data-mas]").forEach((b) => b.addEventListener("click", () => agregar(b.dataset.mas, 1)));
         lugarTicket.querySelectorAll("[data-menos]").forEach((b) => b.addEventListener("click", () => agregar(b.dataset.menos, -1)));
+        activarCopiables(lugarTicket, "Alias copiado: pasáselo al cliente.");
         lugarTicket.querySelectorAll("[data-medio]").forEach((b) => b.addEventListener("click", () => {
             medio = b.dataset.medio;
             pintarTicket();
@@ -178,6 +185,7 @@ export function vistaVender(cont, { usuario, datos, irA }) {
 
     /** Después de cobrar: lo que pasó y el paso siguiente del recorrido. */
     function vendido(v) {
+        ding(MARCA.prefijo);
         const recorrido = usuario.rol === "empleada"
             ? v.medio === "fiado"
                 ? guia("u-dueno", "/stock/aumento", "Pasá a Rubén: subí los precios de un proveedor")
@@ -267,6 +275,7 @@ export function vistaVender(cont, { usuario, datos, irA }) {
         pintarProductos();
     });
     cont.querySelector("[data-camara]")?.addEventListener("click", () => escanear(alBuscar));
+    activarBotonSonido(cont, MARCA.prefijo); // "ding" al cobrar, apagado de entrada
 
     pintarProductos();
     pintarTicket();
@@ -276,41 +285,3 @@ export function vistaVender(cont, { usuario, datos, irA }) {
 }
 
 /** La cámara del celular lee el código de barras (solo donde el navegador sabe hacerlo: Chrome en Android). */
-async function escanear(alLeer) {
-    const capa = document.createElement("div");
-    capa.className = "camara";
-    capa.innerHTML = `
-        <div class="camara__caja">
-            <video playsinline muted></video>
-            <p>Apuntá al código de barras</p>
-            <button class="boton boton--secundario" type="button"><i class="ti ti-x"></i> Cerrar</button>
-        </div>`;
-    document.body.append(capa);
-    let flujo = null;
-    let seguir = true;
-    const cerrar = () => {
-        seguir = false;
-        flujo?.getTracks().forEach((t) => t.stop());
-        capa.remove();
-    };
-    capa.querySelector("button").addEventListener("click", cerrar);
-    try {
-        flujo = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
-        const video = capa.querySelector("video");
-        video.srcObject = flujo;
-        await video.play();
-        const lector = new window.BarcodeDetector({ formats: ["ean_13", "ean_8", "upc_a", "upc_e", "code_128"] });
-        while (seguir) {
-            const [codigo] = await lector.detect(video);
-            if (codigo?.rawValue) {
-                cerrar();
-                alLeer(codigo.rawValue);
-                return;
-            }
-            await new Promise((r) => setTimeout(r, 250));
-        }
-    } catch {
-        cerrar();
-        aviso("No se pudo usar la cámara. Escribí el código o usá el lector.", "error");
-    }
-}

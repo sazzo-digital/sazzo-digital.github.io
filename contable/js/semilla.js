@@ -6,11 +6,11 @@
 // Todo cuelga de la empresa (db.empresas[]): la demo muestra una sola, pero la forma ya sirve para varias
 // (estudio contable o grupo de empresas, decidido el 09/10).
 // ============================================
-import { NEGOCIO } from "./marca.js?v=c335bb1efa";
+import { NEGOCIO } from "./marca.js?v=bdb0a941ae";
 import {
     cuitDeEjemplo, tipoFactura, calcularComprobante, repartirNotaCredito, caeSimulado, COMPROBANTES, NC_DE,
     fechaISO, sumarDias, ultimosPeriodos, ALICUOTAS
-} from "./reglas.js?v=c335bb1efa";
+} from "./reglas.js?v=bdb0a941ae";
 
 /** Números "al azar" pero siempre los mismos. */
 function azarFijo(semillaNum) {

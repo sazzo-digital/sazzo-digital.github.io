@@ -7,7 +7,9 @@
 // Al tocarlo: fundido suave entre las dos pantallas (donde el navegador lo permite) y un cartelito de un segundo,
 // "Ahora estás como Diego · Mecánico", para que se note el cambio. El botón late una vez al aparecer (estilos).
 // ============================================
-import { esc } from "./ui.js?v=9398a10f30";
+import { esc, conFundido } from "./ui.js?v=9a59fdd34f";
+
+export { conFundido }; // antes vivía acá
 
 const RUTA_VALIDA = /^\/[\w\-/?=&]*$/;
 
@@ -32,18 +34,6 @@ export function activarGuias(cont, irA) {
             if (quien) cartelPersona(quien);
         })
     );
-}
-
-const sinMovimiento = () => typeof matchMedia === "function" && matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-/** Hace el cambio con un fundido entre lo de antes y lo nuevo (View Transitions); si el navegador no puede, directo. */
-export function conFundido(cambiar) {
-    if (typeof document === "undefined" || !document.startViewTransition || sinMovimiento()) return cambiar();
-    try {
-        document.startViewTransition(cambiar);
-    } catch {
-        cambiar();
-    }
 }
 
 /** "Ahora estás como Diego · Mecánico": un cartelito arriba que se va solo. */

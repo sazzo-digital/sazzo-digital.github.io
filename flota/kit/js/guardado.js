@@ -21,7 +21,7 @@
 //   minutos"). Mientras la usa (cada cambio que guarda), no se renuevan. Se avisa con un cartelito.
 // ============================================
 
-import { aviso } from "./ui.js?v=3536e597cf";
+import { aviso } from "./ui.js?v=9b46aea81a";
 
 /** Nombres compartidos entre el catálogo y todas las demos (no pueden ser el prefijo de una demo). */
 export const COMPARTIDAS = ["sazzo-origen", "sazzo-equipo", "sazzo-tema", "sazzo-yo"];
@@ -141,9 +141,12 @@ export function exigir(condicion, mensaje = "No tenés permiso para hacer esto."
 
 export const copia = (x) => (x == null ? null : structuredClone(x));
 let contadorIds = 0;
-/** Id corto que no se repite: momento + contador (por si se crean varios en el mismo milisegundo) + azar. */
+/**
+ * Id corto que no se repite: momento + contador + azar. El contador no vuelve a cero (antes daba la vuelta cada 1296 y,
+ * creando miles en el mismo milisegundo, dos podían coincidir: lo marcó la prueba de 3.000 ids el 09/10).
+ */
 export const nuevoId = (prefijo) =>
-    `${prefijo}-${Date.now().toString(36)}${(contadorIds++ % 1296).toString(36).padStart(2, "0")}${Math.random().toString(36).slice(2, 5)}`;
+    `${prefijo}-${Date.now().toString(36)}${(contadorIds++).toString(36).padStart(2, "0")}${Math.random().toString(36).slice(2, 5)}`;
 export const ahora = () => new Date().toISOString();
 
 /** Busca por id en una lista; si no está, da el error que se le pase. */

@@ -7,12 +7,13 @@
 // trae `wow`, esa línea va arriba de las personas: le dice a quien llega de Instagram qué va a pasar.
 // y qué hacer al elegir una (alElegir(id): guardar la sesión y arrancar la demo).
 // ============================================
-import { $, $$, esc, iniciales, mensajeDe } from "./ui.js?v=c335bb1efa";
-import { logoSazzo, nombreDemo } from "./marca.js?v=c335bb1efa";
-import { pieAcerca } from "./acerca.js?v=c335bb1efa";
-import { linkOtrasDemos, linkQuieroEsto } from "./enlaces.js?v=c335bb1efa";
-import { activarBotonesSazzo } from "./marco.js?v=c335bb1efa";
-import { contar, contarPantalla } from "./visita.js?v=c335bb1efa";
+import { $, $$, esc, iniciales, mensajeDe } from "./ui.js?v=bdb0a941ae";
+import { logoSazzo, nombreDemo } from "./marca.js?v=bdb0a941ae";
+import { pieAcerca } from "./acerca.js?v=bdb0a941ae";
+import { linkOtrasDemos, linkQuieroEsto } from "./enlaces.js?v=bdb0a941ae";
+import { activarBotonesSazzo } from "./marco.js?v=bdb0a941ae";
+import { contar, contarPantalla } from "./visita.js?v=bdb0a941ae";
+import { soltarPantalla } from "./rutas.js?v=bdb0a941ae";
 
 /** La pantalla entera va en <main>: los lectores de pantalla saltan directo ahí (axe: landmark-one-main). */
 export function htmlIngreso({ marca, personas }) {
@@ -69,6 +70,7 @@ export async function vistaIngreso(cont, { marca, personas, alElegir }) {
 }
 
 function mostrarIngreso(cont, { marca, personas, alElegir }) {
+    soltarPantalla();
     cont.innerHTML = htmlIngreso({ marca, personas });
     cont.classList?.remove("sin-menu");
     // Si el foco quedó en ningún lado (tocó "Cambiar de persona", que ya no está), va a la primera persona

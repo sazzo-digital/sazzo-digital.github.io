@@ -2,7 +2,7 @@
 // Marca, personas y "también puede tener" de Sazzo Flota (diseñada el 08/10/2026).
 // Las personas son los roles reales del rubro (nombres inventados): administradora, mecánico y chofer.
 // ============================================
-import { revisarMarca } from "../kit/js/marca.js?v=3536e597cf";
+import { revisarMarca } from "../kit/js/marca.js?v=9b46aea81a";
 
 export const MARCA = revisarMarca({
     id: "flota",

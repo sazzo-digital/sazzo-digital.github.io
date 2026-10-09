@@ -3,10 +3,11 @@
 // grilla), la comanda de una mesa (al enviar se separa solo lo de la cocina y lo de la barra), el cobro dividiendo la
 // cuenta (todo junto, en partes iguales o por lo que consumió cada uno, cada parte con su medio de pago) y la caja.
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=9398a10f30";
-import { CATEGORIAS, MEDIOS, TOPES, carta, dividir, pesos } from "../datos.js?v=9398a10f30";
-import { NEGOCIO } from "../marca.js?v=9398a10f30";
-import { ticket, guia, activarGuias, haceMin, hora } from "./comunes.js?v=9398a10f30";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=9a59fdd34f";
+import { CATEGORIAS, MEDIOS, TOPES, carta, dividir, pesos } from "../datos.js?v=9a59fdd34f";
+import { MARCA, NEGOCIO } from "../marca.js?v=9a59fdd34f";
+import { htmlBotonSonido, activarBotonSonido, ding } from "../../kit/js/celular.js?v=9a59fdd34f";
+import { ticket, guia, activarGuias, haceMin, hora } from "./comunes.js?v=9a59fdd34f";
 
 const ESTADO_MESA = { libre: "Libre", abierta: "Abierta", cobrando: "Cobrando" };
 
@@ -200,7 +201,7 @@ export function vistaCobro(cont, { usuario, datos, params: [id] }) {
         medios = lista.map((_, i) => medios[i] ?? (i === 0 ? "efectivo" : "qr"));
         cont.innerHTML = `
             <a class="volver" href="#/mesa/${esc(m.id)}"><i class="ti ti-arrow-left"></i> ${esc(m.nombre)}</a>
-            <h1 class="titulo">Cobrar ${esc(m.nombre)}</h1>
+            <div class="titulo-con-accion"><h1 class="titulo">Cobrar ${esc(m.nombre)}</h1>${htmlBotonSonido(MARCA.prefijo)}</div>
             <div class="panel total-cobro"><span class="panel__rotulo">Total</span><span class="panel__numero">${esc(pesos(m.total))}</span><small>${esc(m.abierta.personas)} personas</small></div>
             <div class="chips" role="tablist" aria-label="Cómo se divide">
                 <button class="chip${modo === "junto" ? " activo" : ""}" type="button" data-modo="junto">Todo junto</button>
@@ -242,10 +243,12 @@ export function vistaCobro(cont, { usuario, datos, params: [id] }) {
             medios[Number(b.dataset.parte)] = b.dataset.medio;
             pintar();
         }));
+        activarBotonSonido(cont, MARCA.prefijo); // "ding" al cobrar, apagado de entrada
         cont.querySelector("[data-cobrar]").addEventListener("click", () => {
             const partes = montos().map((monto, i) => ({ monto, medio: medios[i] })).filter((p) => p.monto > 0);
             try {
                 const cobro = datos.cobrar(usuario, m.id, { partes });
+                ding(MARCA.prefijo);
                 cont.innerHTML = `
                     <div class="hecho">
                         <i class="ti ti-circle-check" aria-hidden="true"></i>

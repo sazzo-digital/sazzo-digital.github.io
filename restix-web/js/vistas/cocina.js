@@ -2,18 +2,33 @@
 // La cocina (Beto; la moza también la puede mirar): los pedidos que llegan, lo más viejo primero, con cuánto hace que
 // esperan (en rojo si pasan los 15 minutos). "Listo" lo saca y la mesa ve "comida lista".
 // ============================================
-import { esc, aviso } from "../../kit/js/ui.js?v=9398a10f30";
-import { ticket, guia, activarGuias, haceMin, hora } from "./comunes.js?v=9398a10f30";
+import { esc, aviso } from "../../kit/js/ui.js?v=9a59fdd34f";
+import { mantenerPantallaPrendida, htmlBotonVoz, activarBotonVoz, decir } from "../../kit/js/celular.js?v=9a59fdd34f";
+import { MARCA } from "../marca.js?v=9a59fdd34f";
+import { ticket, guia, activarGuias, haceMin, hora } from "./comunes.js?v=9a59fdd34f";
 
 const DEMORA_MIN = 15;
+const leidas = new Set(); // los pedidos que ya se leyeron en voz alta (una vez cada uno)
+
+/** "Mesa 4: 2 Muzzarella, 1 Fernet" para leer en voz alta. */
+const enVoz = (p) => `${p.mesa}: ${(p.items ?? []).map((i) => `${i.cantidad} ${i.nombre}`).join(", ")}`;
+
+function leerNuevos(pendientes) {
+    for (const p of pendientes.filter((x) => x.nueva && !leidas.has(x.id))) {
+        if (!decir(MARCA.prefijo, enVoz(p))) return;
+        leidas.add(p.id);
+    }
+}
 
 export function vistaCocina(cont, { usuario, datos, irA }, recien = null) {
+    mantenerPantallaPrendida(); // la cocina mira los pedidos de lejos: que la pantalla no se apague
     const c = datos.cocina(usuario);
     const esCocina = usuario.rol === "cocina";
     cont.innerHTML = `
         <div class="titulo-con-accion">
             <h1 class="titulo">Cocina</h1>
             <span class="contador-grande">${c.pendientes.length} <small>${c.pendientes.length === 1 ? "pedido" : "pedidos"}</small></span>
+            ${htmlBotonVoz(MARCA.prefijo, "Leer los pedidos en voz alta")}
         </div>
         ${recien ? `
         <div class="hecho hecho--chico">
@@ -34,6 +49,8 @@ export function vistaCocina(cont, { usuario, datos, irA }, recien = null) {
         <h2 class="subtitulo"><i class="ti ti-history"></i> Lo último que salió</h2>
         <ul class="salieron">${c.listas.map((l) => `<li><b>${esc(l.mesa)}</b> · ${esc(l.items.map((i) => `${i.cantidad} ${i.nombre}`).join(", "))}<small>${esc(hora(l.listaEn))}</small></li>`).join("")}</ul>` : ""}`;
     activarGuias(cont, irA);
+    activarBotonVoz(cont, MARCA.prefijo, { alPrender: () => setTimeout(() => leerNuevos(c.pendientes), 1800) });
+    leerNuevos(c.pendientes);
     cont.querySelectorAll("[data-listo]").forEach((b) => b.addEventListener("click", () => {
         try {
             const hecho = datos.marcarLista(usuario, b.dataset.listo);

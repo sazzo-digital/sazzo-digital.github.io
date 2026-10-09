@@ -15,12 +15,12 @@
 // Festejo: cuando aparece una confirmación (.hecho: turno reservado, venta cobrada, orden creada…), el ✓ entra con un
 // rebote, salen chispitas del color de la demo y el celular vibra cortito (Android). Quieto con "reducir movimiento".
 // ============================================
-import { $, esc, iniciales, nombreCompleto } from "./ui.js?v=9398a10f30";
-import { logoSazzo, nombreDemo } from "./marca.js?v=9398a10f30";
-import { interruptorTema, activarInterruptorTema } from "./apariencia.js?v=9398a10f30";
-import { linkOtrasDemos, linkQuieroEsto } from "./enlaces.js?v=9398a10f30";
-import { abrirColores, mostrarGlobitoColores } from "./colores.js?v=9398a10f30";
-import { contar } from "./visita.js?v=9398a10f30";
+import { $, esc, iniciales, nombreCompleto } from "./ui.js?v=9a59fdd34f";
+import { logoSazzo, nombreDemo } from "./marca.js?v=9a59fdd34f";
+import { interruptorTema, activarInterruptorTema } from "./apariencia.js?v=9a59fdd34f";
+import { linkOtrasDemos, linkQuieroEsto } from "./enlaces.js?v=9a59fdd34f";
+import { abrirColores, mostrarGlobitoColores } from "./colores.js?v=9a59fdd34f";
+import { contar } from "./visita.js?v=9a59fdd34f";
 
 /** La barrita de Sazzo: colores, otras demos y "Quiero esto" (los textos largos solo si hay lugar). */
 export function htmlBarraSazzo(marca, opciones) {
@@ -123,6 +123,41 @@ function esconderBarraAlBajar() {
     }, { passive: true });
 }
 
+// ---------- Listas: lo nuevo o lo que cambió se ilumina un instante (sin tocar las demos) ----------
+// Las pantallas se redibujan enteras; para saber qué es nuevo se compara cada renglón (<li>) por su texto con el de
+// la vez anterior en la MISMA pantalla. Al llegar a otra pantalla no se ilumina nada (ahí entra todo con su animación),
+// y si cambió más de la mitad (un filtro, otro día) tampoco: no tendría sentido.
+const conListas = new WeakSet();
+let renglonesAntes = { ruta: null, textos: new Set() };
+const textoDe = (li) => li.textContent.replace(/\s+/g, " ").trim().slice(0, 160);
+
+function revisarListas(app) {
+    const contenido = $("#contenido", app);
+    if (!contenido || contenido.querySelector(".esqueleto")) return;
+    const ruta = location.hash.split("?")[0];
+    const renglones = [...contenido.querySelectorAll("li")];
+    const textos = new Set(renglones.map(textoDe));
+    if (ruta === renglonesAntes.ruta && renglones.length) {
+        const nuevos = renglones.filter((li) => !renglonesAntes.textos.has(textoDe(li)));
+        if (nuevos.length && nuevos.length <= Math.max(2, renglones.length / 2)) nuevos.slice(0, 6).forEach((li) => li.classList.add("cambio"));
+    }
+    renglonesAntes = { ruta, textos };
+}
+
+export function iluminarCambiosDeListas(app) {
+    if (conListas.has(app) || typeof MutationObserver === "undefined") return;
+    conListas.add(app);
+    let pendiente = false;
+    new MutationObserver(() => {
+        if (pendiente) return;
+        pendiente = true;
+        queueMicrotask(() => {
+            pendiente = false;
+            revisarListas(app);
+        });
+    }).observe(app, { childList: true, subtree: true });
+}
+
 const conFestejo = new WeakSet(); // el marco se vuelve a dibujar en cada cambio de persona: se escucha una sola vez
 
 /** Escucha cuándo aparece una confirmación (.hecho) adentro de `raiz` y la festeja. */
@@ -155,7 +190,7 @@ export function festejar(hecho) {
         setTimeout(() => chispas.remove(), 1300);
     }
     try {
-        navigator.vibrate?.(35);
+        if (navigator.userActivation?.hasBeenActive !== false) navigator.vibrate?.(35);
     } catch {
         // sin vibración: no pasa nada
     }
@@ -175,6 +210,7 @@ export function pintarMarco(app, { marca, usuario, menu = [], alCambiarPersona, 
     esconderBarraAlBajar();
     document.body.classList.remove("barra-escondida");
     festejarConfirmaciones(app);
+    iluminarCambiosDeListas(app);
     // Para quien usa teclado: el primer Tab ofrece saltar la cabecera e ir directo al contenido
     $("#saltar", app).addEventListener("click", () => $("#contenido", app).focus());
     $("#cambiar-persona", app)?.addEventListener("click", () => alCambiarPersona());

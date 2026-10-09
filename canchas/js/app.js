@@ -3,18 +3,18 @@
 // Cada persona tiene su menú: Gustavo (dueño) la grilla y los fijos; Fede (jugador) reservar y sus turnos.
 // irA() cambia de persona sin pasar por "Probala como…" (botón del recorrido: "Mirá cómo lo ve Gustavo →").
 // ============================================
-import { $ } from "../kit/js/ui.js?v=f44d3e59f3";
-import { iniciarDemo } from "../kit/js/arranque.js?v=f44d3e59f3";
-import { vistaIngreso } from "../kit/js/ingreso.js?v=f44d3e59f3";
-import { pintarMarco } from "../kit/js/marco.js?v=f44d3e59f3";
-import { mostrarRuta } from "../kit/js/rutas.js?v=f44d3e59f3";
-import { vistaAcerca } from "../kit/js/acerca.js?v=f44d3e59f3";
-import { MARCA, PERSONAS, TAMBIEN, buscarPersona } from "./marca.js?v=f44d3e59f3";
-import { crearDatos } from "./datos.js?v=f44d3e59f3";
-import { vistaInicio } from "./vistas/inicio.js?v=f44d3e59f3";
-import { vistaMisTurnos } from "./vistas/jugador.js?v=f44d3e59f3";
-import { vistaTurno, vistaAnotar } from "./vistas/grilla.js?v=f44d3e59f3";
-import { vistaFijos } from "./vistas/fijos.js?v=f44d3e59f3";
+import { $, conFundido } from "../kit/js/ui.js?v=fdfc773190";
+import { iniciarDemo } from "../kit/js/arranque.js?v=fdfc773190";
+import { vistaIngreso } from "../kit/js/ingreso.js?v=fdfc773190";
+import { pintarMarco } from "../kit/js/marco.js?v=fdfc773190";
+import { mostrarRuta } from "../kit/js/rutas.js?v=fdfc773190";
+import { vistaAcerca } from "../kit/js/acerca.js?v=fdfc773190";
+import { MARCA, PERSONAS, TAMBIEN, buscarPersona } from "./marca.js?v=fdfc773190";
+import { crearDatos } from "./datos.js?v=fdfc773190";
+import { vistaInicio } from "./vistas/inicio.js?v=fdfc773190";
+import { vistaMisTurnos } from "./vistas/jugador.js?v=fdfc773190";
+import { vistaTurno, vistaAnotar } from "./vistas/grilla.js?v=fdfc773190";
+import { vistaFijos } from "./vistas/fijos.js?v=fdfc773190";
 
 iniciarDemo(MARCA);
 const datos = crearDatos();
@@ -82,8 +82,9 @@ function irA(personaId, ruta = "/inicio") {
     entrar(persona);
 }
 
+// Cada cambio de pantalla, con un fundido corto donde el navegador lo permite (kit/ui.js → conFundido)
 window.addEventListener("hashchange", () => {
-    if (contenido) mostrar();
+    if (contenido) conFundido(mostrar);
 });
 
 // Si otra pestaña cambió los datos (ej: Fede reservando en el celu y Gustavo mirando la grilla en la compu)

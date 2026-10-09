@@ -3,17 +3,17 @@
 // Lara (moza) ve el salón, la cocina (solo mirar) y la caja; Beto, la cocina.
 // irA() cambia de persona sin pasar por "Probala como…" (botón del recorrido: "Mirá lo que le llega a la cocina →").
 // ============================================
-import { $ } from "../kit/js/ui.js?v=9398a10f30";
-import { iniciarDemo } from "../kit/js/arranque.js?v=9398a10f30";
-import { vistaIngreso } from "../kit/js/ingreso.js?v=9398a10f30";
-import { pintarMarco } from "../kit/js/marco.js?v=9398a10f30";
-import { mostrarRuta } from "../kit/js/rutas.js?v=9398a10f30";
-import { vistaAcerca } from "../kit/js/acerca.js?v=9398a10f30";
-import { MARCA, PERSONAS, TAMBIEN, buscarPersona } from "./marca.js?v=9398a10f30";
-import { crearDatos } from "./datos.js?v=9398a10f30";
-import { vistaInicio } from "./vistas/inicio.js?v=9398a10f30";
-import { vistaMesa, vistaCobro, vistaCaja } from "./vistas/moza.js?v=9398a10f30";
-import { vistaCocina } from "./vistas/cocina.js?v=9398a10f30";
+import { $, conFundido } from "../kit/js/ui.js?v=9a59fdd34f";
+import { iniciarDemo } from "../kit/js/arranque.js?v=9a59fdd34f";
+import { vistaIngreso } from "../kit/js/ingreso.js?v=9a59fdd34f";
+import { pintarMarco } from "../kit/js/marco.js?v=9a59fdd34f";
+import { mostrarRuta } from "../kit/js/rutas.js?v=9a59fdd34f";
+import { vistaAcerca } from "../kit/js/acerca.js?v=9a59fdd34f";
+import { MARCA, PERSONAS, TAMBIEN, buscarPersona } from "./marca.js?v=9a59fdd34f";
+import { crearDatos } from "./datos.js?v=9a59fdd34f";
+import { vistaInicio } from "./vistas/inicio.js?v=9a59fdd34f";
+import { vistaMesa, vistaCobro, vistaCaja } from "./vistas/moza.js?v=9a59fdd34f";
+import { vistaCocina } from "./vistas/cocina.js?v=9a59fdd34f";
 
 iniciarDemo(MARCA);
 const datos = crearDatos();
@@ -81,8 +81,9 @@ function irA(personaId, ruta = "/inicio") {
     entrar(persona);
 }
 
+// Cada cambio de pantalla, con un fundido corto donde el navegador lo permite (kit/ui.js → conFundido)
 window.addEventListener("hashchange", () => {
-    if (contenido) mostrar();
+    if (contenido) conFundido(mostrar);
 });
 
 // Si otra pestaña cambió los datos (ej: Lara tomando pedidos en el celu y la cocina con su pantalla en la compu)

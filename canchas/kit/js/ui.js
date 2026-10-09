@@ -3,7 +3,7 @@
 // Solo lo genérico: lo propio de cada rubro (estados, pastillas, unidades…) va en cada demo.
 // Todo dato que entra a HTML pasa por esc().
 // ============================================
-import { esDeProgramacion, contarFalla } from "./visita.js?v=f44d3e59f3";
+import { esDeProgramacion, contarFalla } from "./visita.js?v=fdfc773190";
 
 export const $ = (selector, raiz = document) => raiz.querySelector(selector);
 export const $$ = (selector, raiz = document) => [...raiz.querySelectorAll(selector)];
@@ -25,7 +25,26 @@ export const iniciales = (u) => ((u?.nombre?.[0] || "?") + (u?.apellido?.[0] || 
  */
 export const esNavegadorDeOtraApp = (agente = navigator.userAgent) => /WhatsApp|Instagram|FBAN|FBAV|FB_IAB|; wv\)/.test(agente);
 
-const sinMovimiento = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
+// Quieto si el celular pide menos movimiento (o si una prueba automática lo pide: window.__sazzoQuieto)
+const sinMovimiento = () => (typeof window !== "undefined" && window.__sazzoQuieto) || matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/**
+ * Hace un cambio de pantalla con un fundido corto entre lo de antes y lo nuevo (View Transitions; Chrome, Edge,
+ * Safari 18.2+). Si el navegador no puede, o se pidió menos movimiento, cambia directo. `cambiar` puede ser async.
+ */
+export function conFundido(cambiar) {
+    if (typeof document === "undefined" || !document.startViewTransition || sinMovimiento()) return cambiar();
+    try {
+        const transicion = document.startViewTransition(cambiar);
+        // Si se corta (dos cambios seguidos, pestaña escondida), las promesas fallan: no es un error de la demo
+        const nada = () => {};
+        transicion.ready.catch(nada);
+        transicion.finished.catch(nada);
+        transicion.updateCallbackDone?.catch(nada);
+    } catch {
+        cambiar();
+    }
+}
 
 /**
  * Los números con data-contar="N" suben desde 0 hasta N en menos de un segundo (tablero que "arranca").
@@ -134,6 +153,13 @@ export function mensajeDe(e) {
 /** Cartelito abajo. `mensaje` puede ser un texto o el error atajado (aviso(err, "error")): ver mensajeDe. */
 export function aviso(mensaje, tipo = "ok") {
     if (mensaje !== null && typeof mensaje === "object") mensaje = mensajeDe(mensaje);
+    if (tipo === "ok" && navigator.userActivation?.hasBeenActive !== false) {
+        try {
+            navigator.vibrate?.(20); // "listo": un toquecito en Android, solo si ya tocó la pantalla (si no, el navegador se queja)
+        } catch {
+            // sin vibración
+        }
+    }
     let caja = $(".avisos");
     if (!caja) {
         caja = document.createElement("div");

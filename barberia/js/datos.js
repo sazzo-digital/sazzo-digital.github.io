@@ -6,11 +6,12 @@
 // Reglas del kit: exigir() en lo que modifica, topes en todo lo que se carga, nada se borra (se cancela) y se
 // devuelven copias. Si cambia la forma de los datos, subir VERSION_DATOS (se regeneran solos).
 // ============================================
-import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=a4bc25e3bb";
-import { sinPasarse } from "../kit/js/topes.js?v=a4bc25e3bb";
-import { fechaLocalISO } from "../kit/js/fechas.js?v=a4bc25e3bb";
-import { aMinutos, aHora, diaSemana, proximosDias, ocupados, libres, revisarLibre } from "../kit/js/turnos.js?v=a4bc25e3bb";
-import { MARCA } from "./marca.js?v=a4bc25e3bb";
+import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=1d97a7ae6d";
+import { filtrarPorTexto } from "../kit/js/buscar.js?v=1d97a7ae6d";
+import { sinPasarse } from "../kit/js/topes.js?v=1d97a7ae6d";
+import { fechaLocalISO } from "../kit/js/fechas.js?v=1d97a7ae6d";
+import { aMinutos, aHora, diaSemana, proximosDias, ocupados, libres, revisarLibre } from "../kit/js/turnos.js?v=1d97a7ae6d";
+import { MARCA } from "./marca.js?v=1d97a7ae6d";
 
 export const VERSION_DATOS = 2;
 
@@ -376,14 +377,14 @@ export function crearDatos(prefijo = MARCA.prefijo, { reloj = () => new Date() }
 
     /** Lista de clientes (buscar por nombre); con `noVuelven` (días), solo los que hace más que eso no vienen y no tienen turno. */
     function listarClientes({ texto = "", noVuelven = null } = {}) {
-        const t = String(texto).trim().toLowerCase();
-        let lista = db().clientes.filter((c) => !t || c.nombre.toLowerCase().includes(t)).map(armarCliente);
+        // El nombre perdona errores ("jorje", "matias"): lo más parecido va primero
+        let lista = db().clientes.map(armarCliente);
         if (noVuelven) {
             lista = lista.filter((c) => c.sinVenir !== null && c.sinVenir > noVuelven && !c.proximo).sort((a, b) => b.sinVenir - a.sinVenir);
         } else {
             lista.sort((a, b) => a.nombre.localeCompare(b.nombre, "es"));
         }
-        return lista;
+        return filtrarPorTexto(lista, texto, (c) => c.nombre);
     }
 
     function cliente(id) {

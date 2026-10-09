@@ -5,8 +5,11 @@
 //   en el oscuro se aclara hasta leerse sobre el fondo casi negro. La letra de los botones (blanca u oscura) se
 //   elige por contraste. Así ningún color elegido deja la demo ilegible.
 // - Se guarda por demo ("sazzo-kiosco-colores"); "Volver al color de la demo" lo borra.
+// - "Sacar los colores de tu logo": el dueño elige la imagen de su logo y la demo saca sus colores sola (hasta 3, el
+//   primero se aplica). La imagen se lee EN el celular (se achica a 64 × 64 y se cuentan los colores): no se sube a
+//   ningún lado ni se guarda. Logo en blanco y negro → se avisa y se elige de la lista.
 // ============================================
-import { $, $$, esc } from "./ui.js?v=a4bc25e3bb";
+import { $, $$, esc } from "./ui.js?v=1d97a7ae6d";
 
 // Fondos contra los que tiene que leerse el acento (base/_temas.scss)
 const TARJETA_CLARA = "#e9dfcc";
@@ -118,6 +121,84 @@ export function recuperarColor(prefijo) {
     return normalizarColor(guardado) ? aplicarColor(prefijo, guardado) : null;
 }
 
+// ---------- Los colores de un logo (en el celular, sin subir nada) ----------
+const distancia = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2]);
+
+/**
+ * De los píxeles de una imagen (RGBA, como los da un canvas) saca hasta `cuantos` colores de marca, del más fuerte al
+ * menos: deja afuera lo transparente, el blanco, el negro y los grises, agrupa los parecidos y pesa más lo más vivo.
+ * Devuelve ["#rrggbb", …] (vacío si el logo es blanco y negro).
+ */
+export function coloresDominantes(pixeles, cuantos = 3) {
+    const cubos = new Map();
+    for (let i = 0; i + 3 < pixeles.length; i += 4) {
+        const [r, g, b, a] = [pixeles[i], pixeles[i + 1], pixeles[i + 2], pixeles[i + 3]];
+        if (a < 128) continue;
+        const max = Math.max(r, g, b);
+        const min = Math.min(r, g, b);
+        const saturacion = max ? (max - min) / max : 0;
+        if (saturacion < 0.25 || max < 40) continue; // grises, blanco o negro: no son "el color" del logo
+        const clave = ((r >> 5) << 6) | ((g >> 5) << 3) | (b >> 5);
+        const cubo = cubos.get(clave) ?? { r: 0, g: 0, b: 0, n: 0, peso: 0 };
+        cubo.r += r;
+        cubo.g += g;
+        cubo.b += b;
+        cubo.n++;
+        cubo.peso += 0.5 + saturacion;
+        cubos.set(clave, cubo);
+    }
+    const elegidos = [];
+    for (const c of [...cubos.values()].sort((x, y) => y.peso - x.peso)) {
+        const rgb = [c.r / c.n, c.g / c.n, c.b / c.n];
+        if (elegidos.every((e) => distancia(e, rgb) > 70)) elegidos.push(rgb);
+        if (elegidos.length >= cuantos) break;
+    }
+    return elegidos.map((rgb) => aHex(rgb));
+}
+
+const TOPE_LOGO = 15 * 1024 * 1024; // 15 MB: una foto del logo con el celular entra de sobra
+
+/** Lee el archivo de imagen en el celular y devuelve sus colores (ver coloresDominantes). */
+export async function coloresDeLogo(archivo) {
+    if (!archivo || !/^image\//.test(archivo.type)) throw new Error("Elegí una imagen: el logo de tu negocio.");
+    if (archivo.size > TOPE_LOGO) throw new Error("La imagen es muy pesada (máximo 15 MB).");
+    try {
+        const imagen = await cargarImagen(archivo);
+        const ancho = imagen.width || imagen.naturalWidth || 64;
+        const alto = imagen.height || imagen.naturalHeight || 64;
+        const escala = Math.min(1, 64 / Math.max(ancho, alto));
+        const lienzo = document.createElement("canvas");
+        lienzo.width = Math.max(1, Math.round(ancho * escala));
+        lienzo.height = Math.max(1, Math.round(alto * escala));
+        const pintor = lienzo.getContext("2d", { willReadFrequently: true });
+        pintor.drawImage(imagen, 0, 0, lienzo.width, lienzo.height);
+        imagen.close?.();
+        return coloresDominantes(pintor.getImageData(0, 0, lienzo.width, lienzo.height).data);
+    } catch {
+        throw new Error("No se pudo leer esa imagen. Probá con otra (PNG o JPG).");
+    }
+}
+
+/** La imagen lista para dibujar: createImageBitmap (rápido, anda con la pestaña escondida); si no puede (SVG), <img>. */
+async function cargarImagen(archivo) {
+    try {
+        return await createImageBitmap(archivo);
+    } catch {
+        const url = URL.createObjectURL(archivo);
+        try {
+            const imagen = new Image();
+            await new Promise((listo, mal) => {
+                imagen.onload = listo;
+                imagen.onerror = mal;
+                imagen.src = url;
+            });
+            return imagen;
+        } finally {
+            URL.revokeObjectURL(url);
+        }
+    }
+}
+
 /** La ventanita para elegir: colores listos, uno a elección y "Volver al color de la demo". */
 export function abrirColores(prefijo, { alElegir } = {}) {
     document.querySelector("dialog.colores")?.remove();
@@ -131,6 +212,11 @@ export function abrirColores(prefijo, { alElegir } = {}) {
                 <button class="boton-icono" value="cerrar" aria-label="Cerrar"><i class="ti ti-x"></i></button>
             </div>
             <p class="nota">Elegí el color de tu negocio y mirá cómo queda. Si no se lee bien, lo ajustamos solos.</p>
+            <label class="boton boton--ancho colores__logo">
+                <i class="ti ti-photo" aria-hidden="true"></i> Sacar los colores de tu logo
+                <input type="file" accept="image/*" class="solo-lector">
+            </label>
+            <div class="colores__del-logo" hidden></div>
             <div class="colores__lista">
                 ${COLORES_LISTOS.map(([nombre, hex]) => `
                 <button type="button" class="colores__muestra" data-color="${esc(hex)}" style="--muestra: ${esc(hex)}" title="${esc(nombre)}" aria-label="${esc(nombre)}"></button>`).join("")}
@@ -148,6 +234,33 @@ export function abrirColores(prefijo, { alElegir } = {}) {
     };
     $$("[data-color]", hoja).forEach((b) => b.addEventListener("click", () => elegir(b.dataset.color)));
     $('input[type="color"]', hoja).addEventListener("input", (e) => elegir(e.target.value));
+    // El logo: se lee acá mismo, se aplica el primer color y se muestran los otros para elegir
+    const delLogo = $(".colores__del-logo", hoja);
+    $('input[type="file"]', hoja).addEventListener("change", async (e) => {
+        const archivo = e.target.files?.[0];
+        e.target.value = "";
+        if (!archivo) return;
+        try {
+            const colores = await coloresDeLogo(archivo);
+            if (!colores.length) {
+                delLogo.hidden = false;
+                delLogo.innerHTML = `<p class="nota"><i class="ti ti-info-circle" aria-hidden="true"></i> Tu logo es blanco y negro: elegí un color de la lista.</p>`;
+                return;
+            }
+            delLogo.hidden = false;
+            delLogo.innerHTML = `
+                <p class="nota"><i class="ti ti-sparkles" aria-hidden="true"></i> Los colores de tu logo (la imagen no sale de tu celular):</p>
+                <div class="colores__lista">${colores.map((hex, i) => `
+                    <button type="button" class="colores__muestra" data-color="${esc(hex)}" style="--muestra: ${esc(hex)}" title="Color ${i + 1} de tu logo" aria-label="Color ${i + 1} de tu logo"></button>`).join("")}
+                </div>`;
+            $$("[data-color]", delLogo).forEach((b) => b.addEventListener("click", () => elegir(b.dataset.color)));
+            elegir(colores[0]);
+        } catch (err) {
+            delLogo.hidden = false;
+            delLogo.innerHTML = `<p class="formulario__error" role="alert"></p>`;
+            delLogo.querySelector("p").textContent = err.message;
+        }
+    });
     hoja.addEventListener("close", () => hoja.remove());
     hoja.addEventListener("click", (e) => {
         if (e.target === hoja) hoja.close(); // tocar afuera cierra

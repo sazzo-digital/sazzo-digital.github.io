@@ -6,10 +6,12 @@
 // Las ventas guardan el precio del momento: si después sube un proveedor, lo vendido no cambia.
 // Si cambia la forma de los datos, subir VERSION_DATOS (se regeneran solos).
 // ============================================
-import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=d78e90c63f";
-import { enteroHasta, sinPasarse } from "../kit/js/topes.js?v=d78e90c63f";
-import { diaLocalDe, fechaLocalISO } from "../kit/js/fechas.js?v=d78e90c63f";
-import { MARCA } from "./marca.js?v=d78e90c63f";
+import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=89fe25c9f3";
+import { enteroHasta, sinPasarse } from "../kit/js/topes.js?v=89fe25c9f3";
+import { diaLocalDe, fechaLocalISO } from "../kit/js/fechas.js?v=89fe25c9f3";
+import { columnasDe, numeroDe, textoParaComparar } from "../kit/js/tablas.js?v=89fe25c9f3";
+import { filtrarPorTexto } from "../kit/js/buscar.js?v=89fe25c9f3";
+import { MARCA } from "./marca.js?v=89fe25c9f3";
 
 export const VERSION_DATOS = 2;
 
@@ -31,7 +33,15 @@ export const TOPES = {
     ventas: 2000, // ventas guardadas en total (cada venta vuelve a guardar todo: sin tope, el celu se cuelga)
     aumentos: 300, // veces que se usó "Subió un proveedor"
     cierres: 300, // cierres de caja
-    movimientos: 600 // fiados y pagos de un mismo cliente (cobrar de a $1 sin parar)
+    movimientos: 600, // fiados y pagos de un mismo cliente (cobrar de a $1 sin parar)
+    filasLista: 2000 // renglones de la lista de un proveedor en Excel
+};
+
+// Cómo se pueden llamar las columnas en la lista de un proveedor (se compara sin tildes ni mayúsculas)
+export const COLUMNAS_LISTA = {
+    codigo: ["código", "codigo", "cod", "código de barras", "ean", "barras"],
+    nombre: ["producto", "productos", "descripción", "descripcion", "artículo", "articulo", "nombre", "detalle"],
+    precio: ["precio sugerido", "precio de venta", "precio venta", "p venta", "pvp", "precio final", "precio", "precios"]
 };
 
 export const FONDO_CAJA = 20_000; // el cambio con el que arranca el cajón cada día
@@ -227,13 +237,17 @@ export function crearDatos(prefijo = MARCA.prefijo) {
 
     // ----- Productos -----
 
-    /** Lista de productos (filtro por texto o por proveedor), ordenada por nombre. */
+    /**
+     * Lista de productos (filtro por texto o por proveedor), ordenada por nombre. El texto perdona errores ("koka",
+     * "alfajo"): lo más parecido va primero. Un código se busca tal cual.
+     */
     function listarProductos({ texto = "", proveedorId = null } = {}) {
-        const t = String(texto).trim().toLowerCase();
-        return db().productos
-            .filter((p) => (!proveedorId || p.proveedorId === proveedorId) && (!t || p.nombre.toLowerCase().includes(t) || p.codigo.includes(t)))
-            .sort((a, b) => a.nombre.localeCompare(b.nombre, "es"))
-            .map(armarProducto);
+        const t = String(texto).trim();
+        const lista = db().productos
+            .filter((p) => !proveedorId || p.proveedorId === proveedorId)
+            .sort((a, b) => a.nombre.localeCompare(b.nombre, "es"));
+        const porCodigo = /^\d{3,}$/.test(t) ? lista.filter((p) => p.codigo.includes(t)) : [];
+        return (porCodigo.length ? porCodigo : filtrarPorTexto(lista, t, (p) => p.nombre)).map(armarProducto);
     }
 
     const rapidos = () => db().productos.filter((p) => p.rapido).map(armarProducto);
@@ -326,6 +340,90 @@ export function crearDatos(prefijo = MARCA.prefijo) {
     }
 
     const ultimoAumento = () => copia(db().aumentos.filter((a) => !a.deshecho).at(-1) ?? null);
+
+    // ----- La lista del proveedor en Excel -----
+
+    /**
+     * Lee las filas de un Excel (las de leerExcel del kit, ya con topes) y arma antes → después: cada renglón se cruza
+     * con un producto por el código (o, si no tiene, por el nombre igual) y el precio nuevo va con el redondeo de
+     * kiosco. No cambia nada. Devuelve { cambios, iguales, noEstan (hasta 50 nombres), malos (sin precio válido) }.
+     */
+    function verLista(filas) {
+        exigir(Array.isArray(filas) && filas.length, "El Excel está vacío.");
+        exigir(filas.length <= TOPES.filasLista, `La lista tiene demasiados renglones (máximo ${TOPES.filasLista}).`);
+        const col = columnasDe(filas, COLUMNAS_LISTA);
+        exigir(col.precio >= 0 && (col.codigo >= 0 || col.nombre >= 0),
+            "No encontré las columnas: la lista tiene que tener una columna \"Precio\" y otra \"Código\" o \"Producto\".");
+        const porNombre = new Map(db().productos.map((p) => [textoParaComparar(p.nombre), p]));
+        const cambios = [];
+        const noEstan = [];
+        const vistos = new Set();
+        let iguales = 0;
+        let malos = 0;
+        for (const f of filas.slice(col.titulos + 1)) {
+            if (!Array.isArray(f)) continue;
+            const codigo = col.codigo >= 0 ? String(f[col.codigo] ?? "").trim() : "";
+            const nombre = col.nombre >= 0 ? String(f[col.nombre] ?? "").trim() : "";
+            if (!codigo && !nombre) continue;
+            const precio = numeroDe(f[col.precio]);
+            if (!(precio >= 1 && precio <= TOPES.precio)) {
+                malos++;
+                continue;
+            }
+            const p = (codigo && db().productos.find((x) => x.codigo === codigo)) || (nombre && porNombre.get(textoParaComparar(nombre)));
+            if (!p) {
+                if (noEstan.length < 50) noEstan.push((nombre || codigo).slice(0, TOPES.nombre));
+                continue;
+            }
+            if (vistos.has(p.id)) continue;
+            vistos.add(p.id);
+            const despues = redondear(precio);
+            if (despues === p.precio) iguales++;
+            else cambios.push({ id: p.id, nombre: p.nombre, antes: p.precio, despues });
+        }
+        cambios.sort((a, b) => a.nombre.localeCompare(b.nombre, "es"));
+        return { cambios, iguales, noEstan, malos };
+    }
+
+    /** Aplica la lista (se vuelve a leer acá, no se confía en lo que mostró la pantalla). Se deshace como un aumento. */
+    function aplicarLista(usuario, filas) {
+        exigir(esDueno(usuario), "Solo el dueño cambia los precios.");
+        exigir(db().aumentos.length < TOPES.aumentos, `Ya hay ${TOPES.aumentos} cambios de precios. Es una demo: tocá "Empezar de cero" arriba.`);
+        const { cambios } = verLista(filas);
+        exigir(cambios.length, "Con esta lista no cambia ningún precio.");
+        cambios.forEach((c) => (buscar(db().productos, c.id).precio = c.despues));
+        const a = { id: nuevoId("a"), proveedorId: null, porcentaje: null, origen: "excel", fecha: ahora(), por: usuario.nombre, cambios, deshecho: false };
+        db().aumentos.push(a);
+        guardado.persistir();
+        return copia(a);
+    }
+
+    /**
+     * Una lista de ejemplo de un proveedor, como la mandaría él (para probar sin tener una): el nombre arriba, los
+     * títulos y sus productos con el precio sugerido nuevo (sube un 12 %, sin redondear: lo redondea el kiosco).
+     */
+    function listaDeEjemplo(proveedorId = "pr-norte") {
+        const prov = proveedor(proveedorId);
+        exigir(prov, "Ese proveedor no existe.");
+        const productos = db().productos.filter((p) => p.proveedorId === proveedorId).sort((a, b) => a.nombre.localeCompare(b.nombre, "es"));
+        return [
+            [`${prov.nombre} · Lista de precios (ejemplo)`],
+            [],
+            ["Código", "Producto", "Precio sugerido"],
+            ...productos.map((p) => [p.codigo, p.nombre, Math.round(p.precio * 1.12)])
+        ];
+    }
+
+    /** Las ventas de los últimos 7 días, una por renglón, para pasar a Excel (el dueño). */
+    function ventasDeLaSemana(usuario) {
+        exigir(esDueno(usuario), "Las ventas de la semana las ve el dueño.");
+        const desde = fechaLocalISO(-6);
+        const nombreCliente = (id) => db().clientes.find((c) => c.id === id)?.nombre ?? "";
+        return db().ventas
+            .filter((v) => diaLocalDe(v.fecha) >= desde)
+            .sort((a, b) => a.fecha.localeCompare(b.fecha))
+            .map((v) => ({ ...copia(v), cliente: nombreCliente(v.clienteId) }));
+    }
 
     // ----- Clientes y fiados -----
 
@@ -488,6 +586,7 @@ export function crearDatos(prefijo = MARCA.prefijo) {
         guardado,
         listarProductos, rapidos, porCodigo, hayQuePedir, cargarProducto, corregirProducto,
         verAumento, aplicarAumento, deshacerAumento, ultimoAumento,
+        verLista, aplicarLista, listaDeEjemplo, ventasDeLaSemana,
         listarClientes, cliente, nuevoCliente, cambiarTope, cobrarFiado,
         armarTicket, revisarTope, vender,
         caja, semana, cerrarCaja

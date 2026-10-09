@@ -3,11 +3,11 @@
 // los dos; en la compu, una columna por barbero) y "+ Turno" (cargar a mano el que pidió por mensaje o entró sin
 // turno). El turno que sacó un cliente desde el celular aparece resaltado hasta que Leo hace algo con él.
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=a4bc25e3bb";
-import { aHora } from "../../kit/js/turnos.js?v=a4bc25e3bb";
-import { fechaLocalISO } from "../../kit/js/fechas.js?v=a4bc25e3bb";
-import { SERVICIOS, BARBEROS, TOPES, pesos, nombreFecha } from "../datos.js?v=a4bc25e3bb";
-import { pastillaEstado, chipsDias, mostrarMensaje } from "./comunes.js?v=a4bc25e3bb";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=1d97a7ae6d";
+import { aHora } from "../../kit/js/turnos.js?v=1d97a7ae6d";
+import { fechaLocalISO } from "../../kit/js/fechas.js?v=1d97a7ae6d";
+import { SERVICIOS, BARBEROS, TOPES, pesos, nombreFecha } from "../datos.js?v=1d97a7ae6d";
+import { pastillaEstado, chipsDias, mostrarMensaje } from "./comunes.js?v=1d97a7ae6d";
 
 let ver = "todos"; // "todos" o el id de un barbero
 

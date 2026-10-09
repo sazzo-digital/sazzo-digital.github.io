@@ -3,22 +3,22 @@
 // El menú de abajo tiene lugar para 5: cada persona ve las 4 que más usa + "Más" (todas). Las pantallas que se
 // apagan en "Tu empresa" desaparecen del menú. irA() cambia de persona sin pasar por "Probala como…" (recorrido).
 // ============================================
-import { $, vacio } from "../kit/js/ui.js?v=c335bb1efa";
-import { iniciarDemo } from "../kit/js/arranque.js?v=c335bb1efa";
-import { vistaIngreso } from "../kit/js/ingreso.js?v=c335bb1efa";
-import { pintarMarco } from "../kit/js/marco.js?v=c335bb1efa";
-import { mostrarRuta } from "../kit/js/rutas.js?v=c335bb1efa";
-import { vistaAcerca } from "../kit/js/acerca.js?v=c335bb1efa";
-import { MARCA, PERSONAS, TAMBIEN, buscarPersona } from "./marca.js?v=c335bb1efa";
-import { crearDatos } from "./datos.js?v=c335bb1efa";
-import { vistaInicio } from "./vistas/inicio.js?v=c335bb1efa";
-import { vistaFacturar, vistaNuevaFactura, vistaComprobante } from "./vistas/facturar.js?v=c335bb1efa";
-import { vistaCompras, vistaNuevaCompra } from "./vistas/compras.js?v=c335bb1efa";
-import { vistaIva } from "./vistas/iva.js?v=c335bb1efa";
-import { vistaCuentas, vistaFicha } from "./vistas/cuentas.js?v=c335bb1efa";
-import { vistaContabilidad } from "./vistas/contabilidad.js?v=c335bb1efa";
-import { vistaEmpresa } from "./vistas/empresa.js?v=c335bb1efa";
-import { vistaMas } from "./vistas/mas.js?v=c335bb1efa";
+import { $, vacio, conFundido } from "../kit/js/ui.js?v=bdb0a941ae";
+import { iniciarDemo } from "../kit/js/arranque.js?v=bdb0a941ae";
+import { vistaIngreso } from "../kit/js/ingreso.js?v=bdb0a941ae";
+import { pintarMarco } from "../kit/js/marco.js?v=bdb0a941ae";
+import { mostrarRuta } from "../kit/js/rutas.js?v=bdb0a941ae";
+import { vistaAcerca } from "../kit/js/acerca.js?v=bdb0a941ae";
+import { MARCA, PERSONAS, TAMBIEN, buscarPersona } from "./marca.js?v=bdb0a941ae";
+import { crearDatos } from "./datos.js?v=bdb0a941ae";
+import { vistaInicio } from "./vistas/inicio.js?v=bdb0a941ae";
+import { vistaFacturar, vistaNuevaFactura, vistaComprobante } from "./vistas/facturar.js?v=bdb0a941ae";
+import { vistaCompras, vistaNuevaCompra } from "./vistas/compras.js?v=bdb0a941ae";
+import { vistaIva } from "./vistas/iva.js?v=bdb0a941ae";
+import { vistaCuentas, vistaFicha } from "./vistas/cuentas.js?v=bdb0a941ae";
+import { vistaContabilidad } from "./vistas/contabilidad.js?v=bdb0a941ae";
+import { vistaEmpresa } from "./vistas/empresa.js?v=bdb0a941ae";
+import { vistaMas } from "./vistas/mas.js?v=bdb0a941ae";
 
 iniciarDemo(MARCA);
 const datos = crearDatos();
@@ -119,8 +119,9 @@ function irA(personaId, ruta = "/inicio") {
     entrar(persona);
 }
 
+// Cada cambio de pantalla, con un fundido corto donde el navegador lo permite (kit/ui.js → conFundido)
 window.addEventListener("hashchange", () => {
-    if (contenido) mostrar();
+    if (contenido) conFundido(mostrar);
 });
 
 // Si otra pestaña cambió los datos (ej: Silvina factura en una pestaña y Patricia mira el IVA en otra)

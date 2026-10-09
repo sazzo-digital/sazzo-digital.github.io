@@ -3,10 +3,11 @@
 // "Recomendame uno"), cada perfume con sus notas y presentaciones, "Tu pedido" (el carrito) y "Mis pedidos".
 // El pedido no pide ningún dato: Julieta ya entró como ella. Retiro en el local.
 // ============================================
-import { esc, aviso, vacio, fechaCorta, mensajeDe } from "../../kit/js/ui.js?v=c005acf363";
-import { FAMILIAS, PARA, PRESENTACIONES, TOPES, pesos } from "../datos.js?v=c005acf363";
-import { NEGOCIO } from "../marca.js?v=c005acf363";
-import { frasco, carrito, itemsDelCarrito, unidadesEnCarrito, guia, activarGuias, pastillaPedido } from "./comunes.js?v=c005acf363";
+import { esc, aviso, vacio, fechaCorta, mensajeDe } from "../../kit/js/ui.js?v=c76a163ed1";
+import { verEn3D } from "../../kit/js/modelo3d.js?v=c76a163ed1";
+import { FAMILIAS, PARA, PRESENTACIONES, TOPES, pesos } from "../datos.js?v=c76a163ed1";
+import { NEGOCIO } from "../marca.js?v=c76a163ed1";
+import { frasco, carrito, itemsDelCarrito, unidadesEnCarrito, guia, activarGuias, pastillaPedido } from "./comunes.js?v=c76a163ed1";
 
 let familia = null;
 let para = null;
@@ -103,6 +104,7 @@ export function vistaPerfume(cont, { datos, usuario, params: [id] }) {
             <div>
                 <h1 class="titulo">${esc(p.nombre)}</h1>
                 <p class="nota">${esc(p.familiaInfo.texto)} · ${esc(p.paraTexto)} · ${esc(p.momentoTexto)}</p>
+                <button class="boton boton--secundario boton--chico ver-3d" type="button" data-3d><i class="ti ti-3d-cube-sphere"></i> Verlo en 3D</button>
             </div>
         </div>
         <ol class="piramide">
@@ -121,6 +123,10 @@ export function vistaPerfume(cont, { datos, usuario, params: [id] }) {
             </li>`;
         }).join("")}</ul>
         ${esDuena ? `<p class="nota"><i class="ti ti-info-circle"></i> Botella madre: ${esc(p.ml)} ml · frascos de 50: ${esc(p.stock50)} · de 100: ${esc(p.stock100)}</p>` : ""}`;
+    // El frasco en 3D, con el perfume del color de su familia (y "Verlo en tu mesa" donde el celular puede)
+    cont.querySelector("[data-3d]")?.addEventListener("click", () =>
+        verEn3D({ titulo: p.nombre, src: "img/frasco.glb", colores: { liquido: p.familiaInfo.color } }).catch((err) => aviso(err, "error"))
+    );
     cont.querySelectorAll("[data-agregar]").forEach((b) => b.addEventListener("click", () => {
         const clave = `${p.id}/${b.dataset.agregar}`;
         const antes = carrito.get(clave) ?? 0;

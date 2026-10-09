@@ -3,11 +3,12 @@
 // nombre del grupo y seña simulada) y "Mis turnos" (con Cancelar y la regla de la seña a la vista).
 // Lo ocupado se ve, pero no se puede tocar: nunca se pisan.
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=f44d3e59f3";
-import { TIPOS, TOPES, CANCELAR_HORAS, pesos, nombreFecha } from "../datos.js?v=f44d3e59f3";
-import { NEGOCIO } from "../marca.js?v=f44d3e59f3";
-import { guia, activarGuias, pastillaSena, pastillaEstado, chipsDias } from "./comunes.js?v=f44d3e59f3";
-import { aHora, minutoAhora } from "../../kit/js/turnos.js?v=f44d3e59f3";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=fdfc773190";
+import { TIPOS, TOPES, CANCELAR_HORAS, pesos, nombreFecha } from "../datos.js?v=fdfc773190";
+import { NEGOCIO } from "../marca.js?v=fdfc773190";
+import { guia, activarGuias, pastillaSena, pastillaEstado, chipsDias } from "./comunes.js?v=fdfc773190";
+import { aHora, minutoAhora } from "../../kit/js/turnos.js?v=fdfc773190";
+import { htmlCopiable, activarCopiables } from "../../kit/js/celular.js?v=fdfc773190";
 
 // Lo elegido queda mientras se navega
 let fecha = null;
@@ -67,9 +68,11 @@ export function vistaReservar(cont, { usuario, datos, irA }) {
                     <input name="grupo" maxlength="${TOPES.grupo}" placeholder="Ej: Los del martes" autocomplete="off">
                 </label>
                 <p class="nota"><i class="ti ti-info-circle"></i> Turno ${esc(pesos(t.precio))}. Seña ${esc(pesos(t.sena))}: si cancelás con más de ${CANCELAR_HORAS} h, se devuelve.</p>
+                <p class="alias">La seña va al alias ${htmlCopiable("el.potrero.canchas", "Copiar el alias")}</p>
                 <button class="boton boton--ancho boton--grande" type="submit"><i class="ti ti-credit-card"></i> Pagar seña ${esc(pesos(t.sena))} (simulado)</button>
             </form>`;
         const f = lugar.querySelector("form");
+        activarCopiables(lugar, "Alias copiado");
         f.grupo.focus({ preventScroll: true });
         lugar.scrollIntoView({ block: "nearest", behavior: "smooth" });
         f.addEventListener("submit", (e) => {

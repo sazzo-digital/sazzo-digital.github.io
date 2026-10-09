@@ -122,6 +122,8 @@ a { color: inherit; }
 .interruptor-tema[aria-checked="false"] .icono:first-of-type { color: var(--verde); }
 .interruptor-tema:focus-visible { outline: 2px solid var(--verde); outline-offset: 2px; }
 .interruptor-tema + .boton { margin-left: 0; }
+/* Cambio de tema: el modo nuevo se abre en un círculo desde el botón (catalogo.js → conCirculo) */
+.cambiando-tema::view-transition-old(root), .cambiando-tema::view-transition-new(root) { animation: none; mix-blend-mode: normal; }
 
 /* 5. Portada */
 .portada {

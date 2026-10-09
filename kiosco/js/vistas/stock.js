@@ -1,11 +1,13 @@
 // ============================================
 // Stock y precios: productos por proveedor con "hay que pedir"; el dueño corrige precio y stock ("llegó
 // mercadería") y tiene "Subió un proveedor": elegís el proveedor y el %, ves antes → después con el redondeo de
-// kiosco y aplicás todo de una, con Deshacer. La empleada solo mira.
+// kiosco y aplicás todo de una, con Deshacer. Y "La lista del proveedor en Excel": subís la lista que te mandó y los
+// precios se actualizan solos (también con Deshacer). El stock se baja a Excel. La empleada solo mira (y baja).
 // ============================================
-import { esc, aviso, vacio, mensajeDe } from "../../kit/js/ui.js?v=d78e90c63f";
-import { PROVEEDORES, TOPES, pesos } from "../datos.js?v=d78e90c63f";
-import { pastillaStock } from "./comunes.js?v=d78e90c63f";
+import { esc, aviso, vacio, mensajeDe } from "../../kit/js/ui.js?v=89fe25c9f3";
+import { bajarExcel, leerExcel } from "../../kit/js/archivos.js?v=89fe25c9f3";
+import { PROVEEDORES, TOPES, pesos, estadoStock } from "../datos.js?v=89fe25c9f3";
+import { pastillaStock } from "./comunes.js?v=89fe25c9f3";
 
 const RAPIDOS = [5, 10, 15, 20];
 
@@ -13,10 +15,11 @@ const RAPIDOS = [5, 10, 15, 20];
 function htmlUltimoAumento(a) {
     if (!a) return "";
     const prov = PROVEEDORES.find((p) => p.id === a.proveedorId)?.nombre ?? "";
+    const como = a.origen === "excel" ? "con la lista en Excel" : `${a.porcentaje > 0 ? "+" : ""}${a.porcentaje} % ${prov}`;
     return `
         <div class="alerta alerta--info ultimo-aumento">
-            <i class="ti ti-trending-up"></i>
-            <span><b>${esc(a.cambios.length)} precios actualizados</b> · ${a.porcentaje > 0 ? "+" : ""}${esc(a.porcentaje)} % ${esc(prov)}</span>
+            <i class="ti ${a.origen === "excel" ? "ti-file-spreadsheet" : "ti-trending-up"}"></i>
+            <span><b>${esc(a.cambios.length)} precios actualizados</b> · ${esc(como)}</span>
             <button class="boton boton--chico boton--secundario" type="button" data-deshacer="${esc(a.id)}"><i class="ti ti-arrow-back-up"></i> Deshacer</button>
         </div>`;
 }
@@ -50,6 +53,10 @@ export function vistaStock(cont, { usuario, datos, consulta }) {
             ${dueno ? `<a class="boton boton--chico" href="#/stock/aumento"><i class="ti ti-trending-up"></i> Subió un proveedor</a>` : ""}
         </div>
         ${dueno ? htmlUltimoAumento(datos.ultimoAumento()) : `<p class="nota"><i class="ti ti-info-circle"></i> Los precios y el stock los cambia Rubén.</p>`}
+        <div class="acciones-excel">
+            ${dueno ? `<a class="boton boton--chico boton--secundario" href="#/stock/lista"><i class="ti ti-file-spreadsheet"></i> Lista del proveedor en Excel</a>` : ""}
+            <button class="boton boton--chico boton--secundario" type="button" data-bajar-stock><i class="ti ti-download"></i> Bajar el stock a Excel</button>
+        </div>
         <nav class="chips" aria-label="Filtrar">
             ${chip(null, "Todos")}
             ${chip("pedir", `Hay que pedir (${datos.hayQuePedir().length})`)}
@@ -79,6 +86,14 @@ export function vistaStock(cont, { usuario, datos, consulta }) {
 
     const otraVez = () => vistaStock(cont, { usuario, datos, consulta });
     activarDeshacer(cont, usuario, datos, otraVez);
+    const ESTADOS = { sin: "Sin stock", pedir: "Hay que pedir", hay: "Hay" };
+    cont.querySelector("[data-bajar-stock]").addEventListener("click", (e) => {
+        const nombreProv = (id) => PROVEEDORES.find((p) => p.id === id)?.nombre ?? "Sin proveedor";
+        const filas = datos.listarProductos().map((p) => [p.codigo, p.nombre, nombreProv(p.proveedorId), { valor: p.precio, formato: "pesos" }, p.stock, p.minimo, ESTADOS[estadoStock(p)]]);
+        e.currentTarget.disabled = true;
+        bajarExcel("Stock y precios del kiosco", [["Código", "Producto", "Proveedor", "Precio", "Stock", "Mínimo", "Estado"], ...filas], { hoja: "Stock", anchos: [16, 30, 20, 12, 8, 8, 14] })
+            .finally(() => cont.querySelector("[data-bajar-stock]")?.removeAttribute("disabled"));
+    });
     cont.querySelectorAll("form[data-producto]").forEach((f) => f.addEventListener("submit", (e) => {
         e.preventDefault();
         const num = (v) => (v === "" ? NaN : Number(v));
@@ -176,4 +191,89 @@ export function vistaAumento(cont, { usuario, datos }) {
         }
     });
     pintar();
+}
+
+/**
+ * "La lista del proveedor en Excel": bajás la de ejemplo (o usás la que te mandó), la subís, mirás antes → después
+ * con el redondeo de kiosco y aplicás todo de una (con Deshacer). Todo pasa en el navegador: el archivo no se sube.
+ */
+export function vistaLista(cont, { usuario, datos }) {
+    let filas = null;
+    cont.innerHTML = `
+        <a class="volver" href="#/stock"><i class="ti ti-arrow-left"></i> Stock y precios</a>
+        <h1 class="titulo">La lista del proveedor en Excel</h1>
+        <p class="nota pista"><i class="ti ti-hand-finger"></i> ¿Te mandó la lista nueva en Excel? Subila y los precios se actualizan solos, con tu redondeo. Probá con la de ejemplo.</p>
+        <ol class="pasos-lista">
+            <li>
+                <span>Bajá la lista de ejemplo de Bebidas Norte (sube un 12 %).</span>
+                <button class="boton boton--chico boton--secundario" type="button" data-ejemplo><i class="ti ti-download"></i> Lista de ejemplo</button>
+            </li>
+            <li>
+                <span>Subila (o la que te mandó tu proveedor: con una columna "Precio" y otra "Código" o "Producto").</span>
+                <label class="boton boton--chico subir-excel"><i class="ti ti-upload"></i> Subir el Excel
+                    <input type="file" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" data-archivo>
+                </label>
+            </li>
+        </ol>
+        <div class="resultado-lista" aria-live="polite"></div>`;
+
+    const lugar = cont.querySelector(".resultado-lista");
+    function pintar(nombreArchivo) {
+        let v;
+        try {
+            v = datos.verLista(filas);
+        } catch (e) {
+            lugar.innerHTML = `<p class="alerta alerta--alerta"><i class="ti ti-alert-triangle"></i> ${esc(mensajeDe(e))}</p>`;
+            return;
+        }
+        const extras = [
+            v.iguales ? `${v.iguales} quedan igual` : "",
+            v.noEstan.length ? `${v.noEstan.length}${v.noEstan.length === 50 ? " o más" : ""} no están en tu stock` : "",
+            v.malos ? `${v.malos} sin un precio que se entienda` : ""
+        ].filter(Boolean);
+        lugar.innerHTML = `
+            <p class="resumen-lista"><i class="ti ti-file-spreadsheet"></i> <span><b>${esc(v.cambios.length)} precios cambian</b>${extras.length ? ` · ${esc(extras.join(" · "))}` : ""}<small>${esc(nombreArchivo)}</small></span></p>
+            ${v.cambios.length ? `<ul class="filas-stock">${v.cambios.map((f) => `
+                <li class="fila-stock fila-stock--aumento">
+                    <span class="fila-stock__nombre">${esc(f.nombre)}</span>
+                    <span class="antes">${esc(pesos(f.antes))}</span>
+                    <i class="ti ti-arrow-right" aria-hidden="true"></i>
+                    <b class="despues">${esc(pesos(f.despues))}</b>
+                </li>`).join("")}</ul>
+            <button class="boton boton--ancho boton--grande" type="button" data-aplicar><i class="ti ti-check"></i> Aplicar a ${esc(v.cambios.length)} productos</button>` : `<p class="nota"><i class="ti ti-circle-check"></i> Con esta lista no cambia ningún precio.</p>`}
+            ${v.noEstan.length ? `<details class="no-estan"><summary>No están en tu stock (${esc(v.noEstan.length)})</summary><p class="nota">${esc(v.noEstan.join(" · "))}</p></details>` : ""}`;
+        lugar.querySelector("[data-aplicar]")?.addEventListener("click", () => {
+            try {
+                const a = datos.aplicarLista(usuario, filas);
+                filas = null;
+                lugar.innerHTML = `
+                    ${htmlUltimoAumento(a)}
+                    <p class="nota"><i class="ti ti-shopping-cart"></i> La próxima venta ya sale con el precio nuevo.</p>
+                    <a class="boton boton--secundario boton--ancho" href="#/stock"><i class="ti ti-package"></i> Mirá el stock con los precios nuevos</a>`;
+                activarDeshacer(lugar, usuario, datos, () => (lugar.innerHTML = ""));
+                aviso(`${a.cambios.length} precios actualizados`);
+            } catch (err) {
+                aviso(err, "error");
+            }
+        });
+    }
+
+    cont.querySelector("[data-ejemplo]").addEventListener("click", (e) => {
+        e.currentTarget.disabled = true;
+        bajarExcel("Lista Bebidas Norte (ejemplo)", datos.listaDeEjemplo("pr-norte"), { hoja: "Lista", anchos: [16, 32, 16] })
+            .finally(() => cont.querySelector("[data-ejemplo]")?.removeAttribute("disabled"));
+    });
+    cont.querySelector("[data-archivo]").addEventListener("change", async (e) => {
+        const archivo = e.target.files?.[0];
+        e.target.value = ""; // para poder subir el mismo archivo otra vez
+        if (!archivo) return;
+        lugar.innerHTML = `<p class="nota"><i class="ti ti-loader-2"></i> Leyendo ${esc(archivo.name.slice(0, 80))}…</p>`;
+        try {
+            filas = await leerExcel(archivo);
+            if (cont.isConnected) pintar(archivo.name.slice(0, 80));
+        } catch (err) {
+            filas = null;
+            lugar.innerHTML = `<p class="alerta alerta--alerta"><i class="ti ti-alert-triangle"></i> ${esc(mensajeDe(err))}</p>`;
+        }
+    });
 }

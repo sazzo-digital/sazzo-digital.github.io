@@ -3,18 +3,18 @@
 // Raúl (dueño) ve todo; Seba (mecánico), sus autos y sin precios (lo controlan las funciones de datos).
 // irA() cambia de persona sin pasar por "Probala como…" (botones del recorrido: "Mirá lo que le llega a Seba →").
 // ============================================
-import { $ } from "../kit/js/ui.js?v=3cf400ba43";
-import { iniciarDemo } from "../kit/js/arranque.js?v=3cf400ba43";
-import { vistaIngreso } from "../kit/js/ingreso.js?v=3cf400ba43";
-import { pintarMarco } from "../kit/js/marco.js?v=3cf400ba43";
-import { mostrarRuta } from "../kit/js/rutas.js?v=3cf400ba43";
-import { vistaAcerca } from "../kit/js/acerca.js?v=3cf400ba43";
-import { MARCA, PERSONAS, TAMBIEN, buscarPersona } from "./marca.js?v=3cf400ba43";
-import { crearDatos } from "./datos.js?v=3cf400ba43";
-import { vistaInicio } from "./vistas/inicio.js?v=3cf400ba43";
-import { vistaEntro } from "./vistas/pizarra.js?v=3cf400ba43";
-import { vistaOrden, vistaImprimir } from "./vistas/orden.js?v=3cf400ba43";
-import { vistaAutos, vistaAuto } from "./vistas/autos.js?v=3cf400ba43";
+import { $, conFundido } from "../kit/js/ui.js?v=913263ebcb";
+import { iniciarDemo } from "../kit/js/arranque.js?v=913263ebcb";
+import { vistaIngreso } from "../kit/js/ingreso.js?v=913263ebcb";
+import { pintarMarco } from "../kit/js/marco.js?v=913263ebcb";
+import { mostrarRuta } from "../kit/js/rutas.js?v=913263ebcb";
+import { vistaAcerca } from "../kit/js/acerca.js?v=913263ebcb";
+import { MARCA, PERSONAS, TAMBIEN, buscarPersona } from "./marca.js?v=913263ebcb";
+import { crearDatos } from "./datos.js?v=913263ebcb";
+import { vistaInicio } from "./vistas/inicio.js?v=913263ebcb";
+import { vistaEntro } from "./vistas/pizarra.js?v=913263ebcb";
+import { vistaOrden, vistaImprimir } from "./vistas/orden.js?v=913263ebcb";
+import { vistaAutos, vistaAuto } from "./vistas/autos.js?v=913263ebcb";
 
 iniciarDemo(MARCA);
 const datos = crearDatos();
@@ -84,8 +84,9 @@ function irA(personaId, ruta = "/inicio") {
     entrar(persona);
 }
 
+// Cada cambio de pantalla, con un fundido corto donde el navegador lo permite (kit/ui.js → conFundido)
 window.addEventListener("hashchange", () => {
-    if (contenido) mostrar();
+    if (contenido) conFundido(mostrar);
 });
 
 // Si otra pestaña cambió los datos (ej: Seba cargando repuestos en el celu y Raúl con la pizarra en la compu)

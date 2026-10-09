@@ -3,9 +3,11 @@
 // cuánto tiene que haber en el cajón. "Cerrar caja": contás la plata y te dice si sobra o falta.
 // El dueño ve además los últimos 7 días.
 // ============================================
-import { esc, aviso, fechaCorta } from "../../kit/js/ui.js?v=d78e90c63f";
-import { FONDO_CAJA, MEDIOS, TOPES, pesos } from "../datos.js?v=d78e90c63f";
-import { hora } from "./comunes.js?v=d78e90c63f";
+import { esc, aviso, fechaCorta } from "../../kit/js/ui.js?v=89fe25c9f3";
+import { diaLocalDe } from "../../kit/js/fechas.js?v=89fe25c9f3";
+import { bajarExcel } from "../../kit/js/archivos.js?v=89fe25c9f3";
+import { FONDO_CAJA, MEDIOS, TOPES, pesos } from "../datos.js?v=89fe25c9f3";
+import { hora } from "./comunes.js?v=89fe25c9f3";
 
 const DIAS = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
 const nombreDia = (dia) => {
@@ -71,7 +73,10 @@ export function vistaCaja(cont, { usuario, datos }) {
         </section>
         ${dueno ? `
         <section class="bloque">
-            <h2 class="subtitulo"><i class="ti ti-chart-bar"></i> Últimos 7 días</h2>
+            <div class="titulo-con-accion">
+                <h2 class="subtitulo"><i class="ti ti-chart-bar"></i> Últimos 7 días</h2>
+                <button class="boton boton--chico boton--secundario" type="button" data-bajar-ventas><i class="ti ti-file-spreadsheet"></i> Ventas a Excel</button>
+            </div>
             <ul class="barras">${semana.map((d, i) => `
                 <li class="barras__dia${i === 0 ? " barras__dia--hoy" : ""}">
                     <span class="barras__nombre">${i === 0 ? "Hoy" : esc(nombreDia(d.dia))}<small>${esc(fechaCorta(d.dia).slice(0, 5))}</small></span>
@@ -80,6 +85,15 @@ export function vistaCaja(cont, { usuario, datos }) {
                 </li>`).join("")}</ul>
         </section>` : ""}`;
 
+    cont.querySelector("[data-bajar-ventas]")?.addEventListener("click", (e) => {
+        const boton = e.currentTarget;
+        boton.disabled = true;
+        const filas = datos.ventasDeLaSemana(usuario).map((v) => {
+            return [fechaCorta(diaLocalDe(v.fecha)), hora(v.fecha), v.items.map((i) => `${i.cantidad} ${i.nombre}`).join(", "), MEDIOS[v.medio], v.cliente, { valor: v.total, formato: "pesos" }, v.por];
+        });
+        bajarExcel("Ventas de la semana", [["Día", "Hora", "Productos", "Pago", "Fiado a", "Total", "Atendió"], ...filas], { hoja: "Ventas", anchos: [11, 7, 46, 14, 16, 12, 10] })
+            .finally(() => (boton.disabled = false));
+    });
     cont.querySelector(".cerrar").addEventListener("submit", (e) => {
         e.preventDefault();
         const v = e.target.contado.value;
