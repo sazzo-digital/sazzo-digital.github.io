@@ -22,8 +22,8 @@
     <link rel="icon" href="img/isotipo.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
     <!-- Letras desde el propio sitio (antes Google Fonts); el script de armar las apunta a la copia compartida -->
-    <link rel="stylesheet" href="letras/letras.css?v=a75a139799">
-    <link rel="stylesheet" href="css/catalogo.css?v=4beb724253">
+    <link rel="stylesheet" href="letras/letras.css?v=aa170be358">
+    <link rel="stylesheet" href="css/catalogo.css?v=b9933dadac">
     <!-- Si hay JavaScript, las secciones arrancan ocultas y aparecen al bajar (sin JavaScript se ve todo igual) -->
     <script>
         document.documentElement.classList.add("js");
@@ -218,9 +218,11 @@
             </div>
         </section>
 
-        <!-- 6. Nosotros (sin nombres) -->
+        <!-- 6. Nosotros (sin nombres), con el globo que gira (se baja recién cuando llega a la pantalla) -->
         <section class="seccion nosotros revelar">
+            <div class="globo" aria-hidden="true"><canvas width="600" height="600"></canvas></div>
             <p>Somos un equipo dedicado a ordenar tu mundo digital.</p>
+            <p class="nosotros__bajada">Hecho en Argentina. Tu sistema anda en la web: desde el local, tu casa o donde estés.</p>
         </section>
     </main>
 
@@ -245,6 +247,6 @@
         <p class="pie__chico">© <span data-anio>2026</span> Sazzo</p>
     </footer>
 
-    <script type="module" src="js/catalogo.js?v=4beb724253"></script>
+    <script type="module" src="js/catalogo.js?v=b9933dadac"></script>
 </body>
 </html>

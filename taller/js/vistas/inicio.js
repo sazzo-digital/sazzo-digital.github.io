@@ -1,4 +1,4 @@
 // ============================================
 // Inicio de Sazzo Taller: la pizarra (el dueño ve todos los autos; el mecánico, los suyos).
 // ============================================
-export { vistaPizarra as vistaInicio } from "./pizarra.js?v=913263ebcb";
+export { vistaPizarra as vistaInicio } from "./pizarra.js?v=24c3215859";

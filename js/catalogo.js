@@ -2,8 +2,8 @@
 // Catálogo de Sazzo: arma las tarjetas de demos (desde demos.js), las animaciones al bajar, los botones de
 // contacto (desde config.js), guarda de dónde vino la visita (?o=papel / ?o=ig) y avisa a la medición.
 // ============================================
-import { DEMOS } from "./demos.js?v=4beb724253";
-import { CONTACTO, MEDICION, LINK_DEMOS } from "./config.js?v=4beb724253";
+import { DEMOS } from "./demos.js?v=b9933dadac";
+import { CONTACTO, MEDICION, LINK_DEMOS, RUTA_LIBS } from "./config.js?v=b9933dadac";
 
 const $ = (selector, raiz = document) => raiz.querySelector(selector);
 const $$ = (selector, raiz = document) => [...raiz.querySelectorAll(selector)];
@@ -208,6 +208,45 @@ if ("IntersectionObserver" in window) {
     $$(".demo").forEach((el) => el.classList.add("en-pantalla"));
 }
 setTimeout(() => $$("[data-contar]").forEach(contarHasta), 3100);
+
+// --- El globo de "Somos un equipo…" (cobe 2.0.1, MIT, ~13 KB, en kit\libs\): se baja recién cuando está por llegar a
+// la pantalla y gira despacio solo mientras se ve; con "reducir movimiento", quieto. Un punto en Argentina (Sazzo es
+// de acá). El lugar ya tiene su tamaño desde el principio: no empuja nada al aparecer.
+const lienzoGlobo = $(".globo canvas");
+if (lienzoGlobo && "IntersectionObserver" in window) {
+    let globo = null;
+    let seVe = false;
+    let angulo = 5.75; // Sudamérica de frente (inclinado para que se vea el sur)
+    const colores = () => document.documentElement.dataset.tema === "claro"
+        ? { dark: 0, baseColor: [0.87, 0.82, 0.73], markerColor: [0.02, 0.35, 0.26], glowColor: [0.93, 0.89, 0.81] }
+        : { dark: 1, baseColor: [0.22, 0.28, 0.26], markerColor: [0.2, 0.83, 0.6], glowColor: [0.07, 0.16, 0.13] };
+    const girar = () => {
+        if (!globo || !seVe || quieto) return;
+        angulo += 0.0035;
+        globo.update({ phi: angulo });
+        requestAnimationFrame(girar);
+    };
+    const crear = async () => {
+        try {
+            const { default: crearGlobo } = await import(new URL("cobe.esm.js?v=2.0.1", new URL(RUTA_LIBS, location.href)).href);
+            globo = crearGlobo(lienzoGlobo, {
+                devicePixelRatio: 2, width: 600, height: 600, phi: angulo, theta: -0.35,
+                diffuse: 1.2, mapSamples: 12000, mapBrightness: 5, ...colores(),
+                markers: [{ location: [-38.95, -68.06], size: 0.08 }]
+            });
+            lienzoGlobo.parentElement.classList.add("globo--listo");
+            new MutationObserver(() => globo.update(colores())).observe(document.documentElement, { attributes: true, attributeFilter: ["data-tema"] });
+            girar();
+        } catch {
+            lienzoGlobo.parentElement.hidden = true; // sin WebGL o sin señal: no hace falta, la frase queda igual
+        }
+    };
+    new IntersectionObserver((entradas) => {
+        seVe = entradas.some((e) => e.isIntersecting);
+        if (seVe && !globo) crear();
+        else girar();
+    }, { rootMargin: "300px 0px" }).observe(lienzoGlobo);
+}
 
 // Si llegó desde una demo a una sección ("Otras demos" → #demos, "Quiero esto" → #contacto): el navegador salta antes
 // de que existan las tarjetas, y al aparecer corren todo para abajo. Ya dibujadas, se vuelve a ubicar la sección.

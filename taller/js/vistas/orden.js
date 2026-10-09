@@ -4,13 +4,14 @@
 // El mecánico carga lo que encontró y los repuestos, sin ver precios. Y el presupuesto (dueño): para imprimir, con la
 // firma del cliente en pantalla y en PDF para mandarlo por WhatsApp.
 // ============================================
-import { esc, aviso, fechaCorta, fechaHora } from "../../kit/js/ui.js?v=913263ebcb";
-import { fechaLocalISO } from "../../kit/js/fechas.js?v=913263ebcb";
-import { pedirFirma, esFirma } from "../../kit/js/firma.js?v=913263ebcb";
-import { armarPdf, pdfListo } from "../../kit/js/pdf.js?v=913263ebcb";
-import { ESTADOS, REPUESTOS, MANO_DE_OBRA, TOPES, pesos } from "../datos.js?v=913263ebcb";
-import { NEGOCIO } from "../marca.js?v=913263ebcb";
-import { guia, activarGuias, chapa, pastillaEstado, textoPromesa, mostrarMensaje } from "./comunes.js?v=913263ebcb";
+import { esc, aviso, fechaCorta, fechaHora } from "../../kit/js/ui.js?v=24c3215859";
+import { fechaLocalISO } from "../../kit/js/fechas.js?v=24c3215859";
+import { pedirFirma, esFirma } from "../../kit/js/firma.js?v=24c3215859";
+import { htmlBotonDictar, activarDictado } from "../../kit/js/dictado.js?v=24c3215859";
+import { armarPdf, pdfListo } from "../../kit/js/pdf.js?v=24c3215859";
+import { ESTADOS, REPUESTOS, MANO_DE_OBRA, TOPES, pesos } from "../datos.js?v=24c3215859";
+import { NEGOCIO } from "../marca.js?v=24c3215859";
+import { guia, activarGuias, chapa, pastillaEstado, textoPromesa, mostrarMensaje } from "./comunes.js?v=24c3215859";
 
 export function vistaOrden(cont, { usuario, datos, irA, params: [id] }) {
     const o = datos.orden(id, usuario);
@@ -74,7 +75,7 @@ export function vistaOrden(cont, { usuario, datos, irA, params: [id] }) {
                 <label>Lo que encontró el mecánico
                     <textarea name="encontro" rows="2" maxlength="${TOPES.texto}" placeholder="Ej: pastillas y discos delanteros gastados"${o.editable ? "" : " disabled"}>${esc(o.encontro)}</textarea>
                 </label>
-                ${o.editable ? `<button class="boton boton--chico boton--secundario" type="submit"><i class="ti ti-device-floppy"></i> Guardar</button>` : ""}
+                ${o.editable ? `<div class="encontro__botones">${htmlBotonDictar("encontro")}<button class="boton boton--chico boton--secundario" type="submit"><i class="ti ti-device-floppy"></i> Guardar</button></div>` : ""}
             </form>
         </section>
         <section class="bloque presupuesto">
@@ -108,6 +109,7 @@ export function vistaOrden(cont, { usuario, datos, irA, params: [id] }) {
             ${dueno && o.editable || (dueno && o.estado === "listo") ? `<button class="boton-link anular" type="button" data-accion="anular"><i class="ti ti-ban"></i> Anular la orden</button>` : ""}
         </section>`;
     activarGuias(cont, irA);
+    activarDictado(cont); // el mecánico con las manos sucias dicta lo que encontró
 
     cont.querySelector(".encontro")?.addEventListener("submit", (e) => {
         e.preventDefault();

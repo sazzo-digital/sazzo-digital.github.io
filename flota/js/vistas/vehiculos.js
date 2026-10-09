@@ -2,27 +2,41 @@
 // Vehículos (administradora y mecánico): lista con filtro por estado y la ficha de cada uno
 // (estado, chofer de hoy, km y service, papeles con vencimiento e historia de problemas).
 // ============================================
-import { esc, vacio, aviso, fechaCorta } from "../../kit/js/ui.js?v=9b46aea81a";
-import { ESTADOS_VEHICULO, TOPES } from "../datos.js?v=9b46aea81a";
-import { haceCuanto, pastillaVehiculo, pastillaProblema, historiaProblema, textoRepuestos } from "./comunes.js?v=9b46aea81a";
+import { esc, vacio, aviso, fechaCorta } from "../../kit/js/ui.js?v=b66346cd06";
+import { mostrarMapa } from "../../kit/js/mapa.js?v=b66346cd06";
+import { ESTADOS_VEHICULO, TOPES, UBICACIONES, COLOR_ESTADO } from "../datos.js?v=b66346cd06";
+import { haceCuanto, pastillaVehiculo, pastillaProblema, historiaProblema, textoRepuestos } from "./comunes.js?v=b66346cd06";
 
 const km = (n) => `${n.toLocaleString("es-AR")} km`;
 
 export function vistaVehiculos(cont, { datos, consulta }) {
     const filtro = ESTADOS_VEHICULO[consulta.get("estado")] ? consulta.get("estado") : null;
+    const enMapa = consulta.get("ver") === "mapa";
     const todos = datos.listarVehiculos();
     const lista = todos.filter((v) => !filtro || v.estado === filtro);
     const chip = (estado, texto) => {
         const n = estado ? todos.filter((v) => v.estado === estado).length : todos.length;
-        return `<a class="chip${filtro === estado ? " activo" : ""}" href="#/vehiculos${estado ? `?estado=${estado}` : ""}">${esc(texto)} <b>${n}</b></a>`;
+        const consultaChip = new URLSearchParams({ ...(estado ? { estado } : {}), ...(enMapa ? { ver: "mapa" } : {}) }).toString();
+        return `<a class="chip${filtro === estado ? " activo" : ""}" href="#/vehiculos${consultaChip ? `?${consultaChip}` : ""}">${esc(texto)} <b>${n}</b></a>`;
+    };
+    const vista = (mapa, texto, icono) => {
+        const q = new URLSearchParams({ ...(filtro ? { estado: filtro } : {}), ...(mapa ? { ver: "mapa" } : {}) }).toString();
+        return `<a class="chip${enMapa === mapa ? " activo" : ""}" href="#/vehiculos${q ? `?${q}` : ""}"${enMapa === mapa ? ' aria-current="page"' : ""}><i class="ti ${icono}" aria-hidden="true"></i> ${texto}</a>`;
     };
     cont.innerHTML = `
-        <h1 class="titulo">Vehículos</h1>
+        <div class="titulo-con-accion">
+            <h1 class="titulo">Vehículos</h1>
+            <nav class="chips" aria-label="Cómo verlos">${vista(false, "Lista", "ti-list")}${vista(true, "Mapa", "ti-map")}</nav>
+        </div>
         <nav class="chips" aria-label="Filtrar por estado">
             ${chip(null, "Todos")}
             ${Object.entries(ESTADOS_VEHICULO).map(([id, e]) => chip(id, e.texto)).join("")}
         </nav>
-        ${lista.length ? `<ul class="tarjetas">${lista.map((v) => `
+        ${enMapa && lista.length ? `
+        <div class="mapa" role="region" aria-label="Mapa con dónde se vio por última vez cada vehículo"></div>
+        <p class="nota"><i class="ti ti-map-pin" aria-hidden="true"></i> Dónde se vio por última vez cada uno (de ejemplo). En la versión real lo manda el GPS o el celular del chofer.</p>
+        <ul class="mapa__referencias">${Object.entries(ESTADOS_VEHICULO).map(([id, e]) => `<li><span style="background:${COLOR_ESTADO[id]}"></span>${esc(e.texto)}</li>`).join("")}</ul>`
+        : lista.length ? `<ul class="tarjetas">${lista.map((v) => `
             <li><a class="tarjeta tarjeta--link" href="#/vehiculos/${esc(v.id)}">
                 <div class="tarjeta__fila">
                     <span class="tarjeta__titulo"><i class="ti ${esc(v.tipoInfo.icono)}" aria-hidden="true"></i>${esc(v.nombre)}</span>
@@ -30,6 +44,18 @@ export function vistaVehiculos(cont, { datos, consulta }) {
                 </div>
                 <p class="tarjeta__quien">${v.chofer ? `Hoy: ${esc(v.chofer)}` : "Sin chofer hoy"} · ${esc(km(v.km))}${v.abierto ? ` · ${esc(v.abierto.tipoInfo.texto)}` : ""}</p>
             </a></li>`).join("")}</ul>` : vacio("No hay vehículos en ese estado.", "ti-circle-check")}`;
+    const lugar = cont.querySelector(".mapa");
+    if (lugar) {
+        mostrarMapa(lugar, lista.filter((v) => UBICACIONES[v.id]).map((v) => ({
+            ...UBICACIONES[v.id],
+            titulo: v.nombre,
+            texto: `${ESTADOS_VEHICULO[v.estado]?.texto ?? ""} · ${UBICACIONES[v.id].lugar}${v.chofer ? ` · ${v.chofer}` : ""}`,
+            color: COLOR_ESTADO[v.estado],
+            link: `#/vehiculos/${v.id}`
+        }))).then((m) => {
+            if (!m && lugar.isConnected) lugar.outerHTML = vacio("No se pudo cargar el mapa. Probá de nuevo con mejor señal.", "ti-map-off");
+        });
+    }
 }
 
 export function vistaFicha(cont, { usuario, datos, params: [id] }) {

@@ -2,7 +2,7 @@
 // Marca, personas y "también puede tener" de Sazzo Perfumería (diseñada el 08/10/2026).
 // Las personas son los roles reales del rubro (nombres inventados): la dueña y una clienta.
 // ============================================
-import { revisarMarca } from "../kit/js/marca.js?v=c76a163ed1";
+import { revisarMarca } from "../kit/js/marca.js?v=c135ab59e0";
 
 export const MARCA = revisarMarca({
     id: "perfumeria",

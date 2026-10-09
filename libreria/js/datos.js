@@ -10,11 +10,12 @@
 // Las ventas guardan el precio y el costo del momento: si después sube un proveedor, lo vendido no cambia.
 // Si cambia la forma de los datos, subir VERSION_DATOS (se regeneran solos).
 // ============================================
-import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=d180eb8742";
-import { enteroHasta, sinPasarse } from "../kit/js/topes.js?v=d180eb8742";
-import { diaLocalDe, fechaLocalISO } from "../kit/js/fechas.js?v=d180eb8742";
-import { columnasDe, numeroDe, textoParaComparar } from "../kit/js/tablas.js?v=d180eb8742";
-import { MARCA, NEGOCIO, buscarPersona } from "./marca.js?v=d180eb8742";
+import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=e4d4e57de1";
+import { enteroHasta, sinPasarse } from "../kit/js/topes.js?v=e4d4e57de1";
+import { diaLocalDe, fechaLocalISO } from "../kit/js/fechas.js?v=e4d4e57de1";
+import { columnasDe, numeroDe, textoParaComparar } from "../kit/js/tablas.js?v=e4d4e57de1";
+import { filtrarPorTexto, comoSuena } from "../kit/js/buscar.js?v=e4d4e57de1";
+import { MARCA, NEGOCIO, buscarPersona } from "./marca.js?v=e4d4e57de1";
 
 export const VERSION_DATOS = 2; // 2: los libros con ISBN
 
@@ -134,6 +135,13 @@ export function coincide(p, texto) {
     const esta = (w) => n.includes(w) || (SINONIMOS[w] !== undefined && n.includes(SINONIMOS[w]));
     return esta(t) || t.split(" ").every(esta);
 }
+
+// Los sinónimos por cómo suenan: "virome" o "plastikola" (mal escritos) también se entienden
+const SINONIMOS_POR_SONIDO = Object.fromEntries(Object.entries(SINONIMOS).map(([k, v]) => [comoSuena(k), v]));
+
+/** Lo buscado con cada palabra pasada a como se llama en la librería ("virome azul" → "lapicera azul"). */
+export const conSinonimos = (texto) =>
+    normal(texto).split(" ").map((w) => SINONIMOS[w] ?? SINONIMOS_POR_SONIDO[comoSuena(w)] ?? w).join(" ");
 
 // ---------- Datos de fábrica ----------
 // Por rubro: [nombre, costo, stock, mínimo, { rapido, mayor (desde cuántas), familia (se puede cambiar por otro de la
@@ -404,12 +412,18 @@ export function crearDatos(prefijo = MARCA.prefijo) {
 
     // ----- Artículos -----
 
-    /** Lista de artículos (filtro por texto, rubro o proveedor), ordenada por nombre. */
+    /**
+     * Lista de artículos (filtro por texto, rubro o proveedor), ordenada por nombre. El texto busca primero tal cual
+     * (con los sinónimos y el código); si así no encuentra nada, con la búsqueda que perdona errores del kit
+     * ("kuaderno", "lapisera asul", "virome"), los más parecidos primero.
+     */
     function listarProductos({ texto = "", rubro = null, proveedorId = null } = {}) {
-        return db().productos
-            .filter((p) => (!rubro || p.rubro === rubro) && (!proveedorId || p.proveedorId === proveedorId) && coincide(p, texto))
-            .sort((a, b) => a.nombre.localeCompare(b.nombre, "es"))
-            .map(armarProducto);
+        const base = db().productos
+            .filter((p) => (!rubro || p.rubro === rubro) && (!proveedorId || p.proveedorId === proveedorId))
+            .sort((a, b) => a.nombre.localeCompare(b.nombre, "es"));
+        if (!normal(texto)) return base.map(armarProducto);
+        const tal = base.filter((p) => coincide(p, texto));
+        return (tal.length ? tal : filtrarPorTexto(base, conSinonimos(texto), (p) => p.nombre)).map(armarProducto);
     }
 
     const producto = (id) => armarProducto(buscar(db().productos, id, "Ese artículo no existe."));

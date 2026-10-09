@@ -8,11 +8,11 @@
 //   "Pedidos a proveedores": lo que bajó del mínimo, por proveedor, con el mensaje para copiar y "Llegó".
 //   "Cargar artículo": con costo y margen (el precio sale solo).
 // ============================================
-import { esc, aviso, vacio, mensajeDe } from "../../kit/js/ui.js?v=d180eb8742";
-import { mostrarMensaje } from "../../kit/js/mensaje.js?v=d180eb8742";
-import { bajarExcel, leerExcel } from "../../kit/js/archivos.js?v=d180eb8742";
-import { PROVEEDORES, RUBROS, TOPES, DESCUENTO_MAYOR, nombreRubro, pesos, precioDe } from "../datos.js?v=d180eb8742";
-import { pastillaStock } from "./comunes.js?v=d180eb8742";
+import { esc, aviso, vacio, mensajeDe } from "../../kit/js/ui.js?v=e4d4e57de1";
+import { mostrarMensaje } from "../../kit/js/mensaje.js?v=e4d4e57de1";
+import { bajarExcel, leerExcel } from "../../kit/js/archivos.js?v=e4d4e57de1";
+import { PROVEEDORES, RUBROS, TOPES, DESCUENTO_MAYOR, nombreRubro, pesos, precioDe } from "../datos.js?v=e4d4e57de1";
+import { pastillaStock } from "./comunes.js?v=e4d4e57de1";
 
 const RAPIDOS = [5, 10, 15, 20];
 let textoBuscado = ""; // el buscador de Stock recuerda lo escrito mientras se navega

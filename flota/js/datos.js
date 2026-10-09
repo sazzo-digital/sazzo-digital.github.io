@@ -5,10 +5,10 @@
 // Reglas del kit: exigir() en lo que modifica, topes en todo lo que se carga, nada se borra y se devuelven copias.
 // Si cambia la forma de los datos, subir VERSION_DATOS (se regeneran solos).
 // ============================================
-import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=9b46aea81a";
-import { enteroHasta, sinPasarse } from "../kit/js/topes.js?v=9b46aea81a";
-import { fechaLocalISO, diasHasta } from "../kit/js/fechas.js?v=9b46aea81a";
-import { MARCA, PERSONAS } from "./marca.js?v=9b46aea81a";
+import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=b66346cd06";
+import { enteroHasta, sinPasarse } from "../kit/js/topes.js?v=b66346cd06";
+import { fechaLocalISO, diasHasta } from "../kit/js/fechas.js?v=b66346cd06";
+import { MARCA, PERSONAS } from "./marca.js?v=b66346cd06";
 
 export const VERSION_DATOS = 2;
 
@@ -62,6 +62,21 @@ export const ESTADOS_VEHICULO = {
     taller: { texto: "En el taller", icono: "ti-tool" },
     problema: { texto: "Con problema", icono: "ti-alert-triangle" }
 };
+
+// Dónde se vio por última vez cada vehículo (de ejemplo, alrededor de Neuquén; en la versión real lo manda el GPS o
+// el celular del chofer). Fijo: no se guarda ni cambia.
+export const UBICACIONES = {
+    "v-1": { lat: -38.9349, lng: -68.1062, lugar: "Parque industrial" },
+    "v-2": { lat: -38.9573, lng: -68.0445, lugar: "En el taller" },
+    "v-3": { lat: -38.9516, lng: -68.0591, lugar: "Centro" },
+    "v-4": { lat: -38.9688, lng: -68.0823, lugar: "Base" },
+    "v-5": { lat: -38.9688, lng: -68.0823, lugar: "Base" },
+    "v-6": { lat: -38.9067, lng: -68.0702, lugar: "Ruta, zona norte" },
+    "v-7": { lat: -38.9442, lng: -68.0310, lugar: "Puente, zona este" },
+    "v-8": { lat: -38.9591, lng: -68.0639, lugar: "Repartiendo, centro" }
+};
+// El color de cada estado en el mapa (verde andando, ámbar con problema, rojo en el taller)
+export const COLOR_ESTADO = { andando: "#16a34a", problema: "#d97706", taller: "#dc2626" };
 
 export const ESTADOS_PROBLEMA = {
     avisado: "Avisado · esperando al mecánico",

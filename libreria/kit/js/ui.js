@@ -3,7 +3,7 @@
 // Solo lo genérico: lo propio de cada rubro (estados, pastillas, unidades…) va en cada demo.
 // Todo dato que entra a HTML pasa por esc().
 // ============================================
-import { esDeProgramacion, contarFalla } from "./visita.js?v=d180eb8742";
+import { esDeProgramacion, contarFalla } from "./visita.js?v=e4d4e57de1";
 
 export const $ = (selector, raiz = document) => raiz.querySelector(selector);
 export const $$ = (selector, raiz = document) => [...raiz.querySelectorAll(selector)];
@@ -26,7 +26,7 @@ export const iniciales = (u) => ((u?.nombre?.[0] || "?") + (u?.apellido?.[0] || 
 export const esNavegadorDeOtraApp = (agente = navigator.userAgent) => /WhatsApp|Instagram|FBAN|FBAV|FB_IAB|; wv\)/.test(agente);
 
 // Quieto si el celular pide menos movimiento (o si una prueba automática lo pide: window.__sazzoQuieto)
-const sinMovimiento = () => (typeof window !== "undefined" && window.__sazzoQuieto) || matchMedia("(prefers-reduced-motion: reduce)").matches;
+export const sinMovimiento = () => (typeof window !== "undefined" && window.__sazzoQuieto) || matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 /**
  * Hace un cambio de pantalla con un fundido corto entre lo de antes y lo nuevo (View Transitions; Chrome, Edge,

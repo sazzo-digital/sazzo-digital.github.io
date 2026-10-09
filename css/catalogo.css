@@ -265,6 +265,12 @@ a { color: inherit; }
 .a-medida__botones { display: flex; flex-wrap: wrap; gap: .8rem; justify-content: center; }
 .nosotros { padding-top: 1rem; text-align: center; }
 .nosotros p { font: 500 clamp(1.15rem, 3.5vw, 1.5rem) var(--fuente-titulos); color: var(--texto-suave); }
+.nosotros .nosotros__bajada { margin-top: .5rem; font: 400 .95rem var(--fuente); }
+/* El globo (cobe): su lugar ya tiene tamaño desde el principio y aparece de a poco cuando está listo */
+.globo { width: min(240px, 62vw); aspect-ratio: 1; margin: 0 auto 1rem; opacity: 0; transition: opacity .8s ease; }
+.globo canvas { width: 100%; height: 100%; display: block; }
+.globo--listo { opacity: 1; }
+@media (prefers-reduced-motion: reduce) { .globo { transition: none; } }
 
 /* 10. Pie */
 .pie { border-top: 1px solid var(--borde); padding: 2.6rem 16px 2rem; text-align: center; color: var(--texto-suave); }

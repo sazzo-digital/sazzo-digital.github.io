@@ -5,12 +5,13 @@
 // Código que no está → "¿Lo cargás?" y queda listo para vender.
 // En la compu, dos columnas (productos | ticket); en el celular, el ticket abajo con una barrita arriba que lleva a él.
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=89fe25c9f3";
-import { puedeEscanear, escanear } from "../../kit/js/escaner.js?v=89fe25c9f3";
-import { mantenerPantallaPrendida, htmlCopiable, activarCopiables, htmlBotonSonido, activarBotonSonido, ding } from "../../kit/js/celular.js?v=89fe25c9f3";
-import { TOPES, MEDIOS, pesos } from "../datos.js?v=89fe25c9f3";
-import { MARCA, NEGOCIO } from "../marca.js?v=89fe25c9f3";
-import { guia, activarGuias } from "./comunes.js?v=89fe25c9f3";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=55789f8311";
+import { puedeEscanear, escanear } from "../../kit/js/escaner.js?v=55789f8311";
+import { mantenerPantallaPrendida, htmlCopiable, activarCopiables, htmlBotonSonido, activarBotonSonido, ding } from "../../kit/js/celular.js?v=55789f8311";
+import { girarRuleta } from "../../kit/js/ruleta.js?v=55789f8311";
+import { TOPES, MEDIOS, PREMIOS, PROMO_DESDE, ganaTirada, pesos } from "../datos.js?v=55789f8311";
+import { MARCA, NEGOCIO } from "../marca.js?v=55789f8311";
+import { guia, activarGuias } from "./comunes.js?v=55789f8311";
 
 // El ticket en curso queda en memoria mientras se navega (se vacía al cobrar)
 const ticket = new Map(); // productoId → cantidad
@@ -198,6 +199,8 @@ export function vistaVender(cont, { usuario, datos, irA }) {
                 <p>${esc(pesos(v.total))} · ${esc(MEDIOS[v.medio])}${v.cliente ? ` · ${esc(v.cliente.nombre)}` : ""}</p>
                 ${v.vuelto !== null ? `<p class="vuelto vuelto--grande">Vuelto: <b>${esc(pesos(v.vuelto))}</b></p>` : ""}
                 ${v.cliente ? `<p class="nota"><i class="ti ti-notebook"></i> ${esc(v.cliente.nombre)} debe ahora ${esc(pesos(v.cliente.deuda))}.</p>` : ""}
+                ${ganaTirada(v) ? `<button class="boton" type="button" data-ruleta><i class="ti ti-gift"></i> ¡Ganó una tirada de la ruleta!</button>` : ""}
+                <p class="premio" aria-live="polite"></p>
                 <button class="boton boton--secundario" type="button" data-nueva><i class="ti ti-plus"></i> Nueva venta</button>
             </div>
             ${recorrido}`;
@@ -208,6 +211,14 @@ export function vistaVender(cont, { usuario, datos, irA }) {
             q.focus();
         });
         activarGuias(lugarTicket, irA);
+        // La promo: compras desde $5.000 ganan una tirada (la ruleta se da vuelta para el cliente)
+        lugarTicket.querySelector("[data-ruleta]")?.addEventListener("click", async (e) => {
+            const boton = e.currentTarget;
+            const premio = await girarRuleta({ titulo: "Ruleta de premios", texto: `Promo de ${NEGOCIO}: cada compra desde ${pesos(PROMO_DESDE)} gana una tirada.`, premios: PREMIOS });
+            if (!premio || !boton.isConnected) return;
+            boton.remove();
+            lugarTicket.querySelector(".premio").innerHTML = `<i class="ti ti-gift" aria-hidden="true"></i> Salió: <b>${esc(premio.texto)}</b>`;
+        });
         if (matchMedia("(max-width: 999px)").matches) lugarTicket.scrollIntoView({ block: "start" });
         pintarProductos();
     }

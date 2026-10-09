@@ -6,12 +6,12 @@
 // Las ventas guardan el precio del momento: si después sube un proveedor, lo vendido no cambia.
 // Si cambia la forma de los datos, subir VERSION_DATOS (se regeneran solos).
 // ============================================
-import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=89fe25c9f3";
-import { enteroHasta, sinPasarse } from "../kit/js/topes.js?v=89fe25c9f3";
-import { diaLocalDe, fechaLocalISO } from "../kit/js/fechas.js?v=89fe25c9f3";
-import { columnasDe, numeroDe, textoParaComparar } from "../kit/js/tablas.js?v=89fe25c9f3";
-import { filtrarPorTexto } from "../kit/js/buscar.js?v=89fe25c9f3";
-import { MARCA } from "./marca.js?v=89fe25c9f3";
+import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=55789f8311";
+import { enteroHasta, sinPasarse } from "../kit/js/topes.js?v=55789f8311";
+import { diaLocalDe, fechaLocalISO } from "../kit/js/fechas.js?v=55789f8311";
+import { columnasDe, numeroDe, textoParaComparar } from "../kit/js/tablas.js?v=55789f8311";
+import { filtrarPorTexto } from "../kit/js/buscar.js?v=55789f8311";
+import { MARCA } from "./marca.js?v=55789f8311";
 
 export const VERSION_DATOS = 2;
 
@@ -47,6 +47,19 @@ export const COLUMNAS_LISTA = {
 export const FONDO_CAJA = 20_000; // el cambio con el que arranca el cajón cada día
 export const TOPE_FIADO_NUEVO = 30_000;
 export const MEDIOS = { efectivo: "Efectivo", transferencia: "Transferencia", fiado: "Fiado" };
+
+// Ruleta de premios (promo del kiosco, de ejemplo): una tirada por compra desde PROMO_DESDE, pagada en el momento.
+// El peso dice qué tan seguido sale cada premio (más peso, más seguido). Nada se guarda: el premio se entrega ahí.
+export const PROMO_DESDE = 5_000;
+export const PREMIOS = [
+    { texto: "Alfajor de regalo", peso: 2 },
+    { texto: "Seguí participando", peso: 4 },
+    { texto: "Caramelos de regalo", peso: 3 },
+    { texto: "10 % en la próxima", peso: 2 },
+    { texto: "Seguí participando", peso: 4 },
+    { texto: "Gaseosa chica gratis", peso: 1 }
+];
+export const ganaTirada = (venta) => venta.medio !== "fiado" && venta.total >= PROMO_DESDE;
 
 export const PROVEEDORES = [
     { id: "pr-norte", nombre: "Bebidas Norte" },

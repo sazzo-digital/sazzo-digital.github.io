@@ -3,7 +3,7 @@
 // Las personas son los roles reales del rubro (nombres inventados): la dueña, el empleado del mostrador y una mamá
 // que pide la lista escolar desde el celular.
 // ============================================
-import { revisarMarca } from "../kit/js/marca.js?v=d180eb8742";
+import { revisarMarca } from "../kit/js/marca.js?v=e4d4e57de1";
 
 export const MARCA = revisarMarca({
     id: "libreria",

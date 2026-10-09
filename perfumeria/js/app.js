@@ -3,17 +3,17 @@
 // Cada persona tiene su menú: Carolina (dueña) pedidos, stock y clientas; Julieta (clienta) el catálogo y su pedido.
 // irA() cambia de persona sin pasar por "Probala como…" (botón del recorrido: "Mirá lo que le llega a Carolina →").
 // ============================================
-import { $, conFundido } from "../kit/js/ui.js?v=c76a163ed1";
-import { iniciarDemo } from "../kit/js/arranque.js?v=c76a163ed1";
-import { vistaIngreso } from "../kit/js/ingreso.js?v=c76a163ed1";
-import { pintarMarco } from "../kit/js/marco.js?v=c76a163ed1";
-import { mostrarRuta } from "../kit/js/rutas.js?v=c76a163ed1";
-import { vistaAcerca } from "../kit/js/acerca.js?v=c76a163ed1";
-import { MARCA, PERSONAS, TAMBIEN, buscarPersona } from "./marca.js?v=c76a163ed1";
-import { crearDatos } from "./datos.js?v=c76a163ed1";
-import { vistaInicio } from "./vistas/inicio.js?v=c76a163ed1";
-import { vistaPerfume, vistaPedido, vistaMisPedidos } from "./vistas/clienta.js?v=c76a163ed1";
-import { vistaStock, vistaClientas } from "./vistas/duena.js?v=c76a163ed1";
+import { $, conFundido } from "../kit/js/ui.js?v=c135ab59e0";
+import { iniciarDemo } from "../kit/js/arranque.js?v=c135ab59e0";
+import { vistaIngreso } from "../kit/js/ingreso.js?v=c135ab59e0";
+import { pintarMarco } from "../kit/js/marco.js?v=c135ab59e0";
+import { mostrarRuta } from "../kit/js/rutas.js?v=c135ab59e0";
+import { vistaAcerca } from "../kit/js/acerca.js?v=c135ab59e0";
+import { MARCA, PERSONAS, TAMBIEN, buscarPersona } from "./marca.js?v=c135ab59e0";
+import { crearDatos } from "./datos.js?v=c135ab59e0";
+import { vistaInicio } from "./vistas/inicio.js?v=c135ab59e0";
+import { vistaPerfume, vistaPedido, vistaMisPedidos } from "./vistas/clienta.js?v=c135ab59e0";
+import { vistaStock, vistaClientas } from "./vistas/duena.js?v=c135ab59e0";
 
 iniciarDemo(MARCA);
 const datos = crearDatos();

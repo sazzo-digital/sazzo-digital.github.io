@@ -15,12 +15,12 @@
 // Festejo: cuando aparece una confirmación (.hecho: turno reservado, venta cobrada, orden creada…), el ✓ entra con un
 // rebote, salen chispitas del color de la demo y el celular vibra cortito (Android). Quieto con "reducir movimiento".
 // ============================================
-import { $, esc, iniciales, nombreCompleto } from "./ui.js?v=bdb0a941ae";
-import { logoSazzo, nombreDemo } from "./marca.js?v=bdb0a941ae";
-import { interruptorTema, activarInterruptorTema } from "./apariencia.js?v=bdb0a941ae";
-import { linkOtrasDemos, linkQuieroEsto } from "./enlaces.js?v=bdb0a941ae";
-import { abrirColores, mostrarGlobitoColores } from "./colores.js?v=bdb0a941ae";
-import { contar } from "./visita.js?v=bdb0a941ae";
+import { $, esc, iniciales, nombreCompleto } from "./ui.js?v=be942dc467";
+import { logoSazzo, nombreDemo } from "./marca.js?v=be942dc467";
+import { interruptorTema, activarInterruptorTema } from "./apariencia.js?v=be942dc467";
+import { linkOtrasDemos, linkQuieroEsto } from "./enlaces.js?v=be942dc467";
+import { abrirColores, mostrarGlobitoColores } from "./colores.js?v=be942dc467";
+import { contar } from "./visita.js?v=be942dc467";
 
 /** La barrita de Sazzo: colores, otras demos y "Quiero esto" (los textos largos solo si hay lugar). */
 export function htmlBarraSazzo(marca, opciones) {

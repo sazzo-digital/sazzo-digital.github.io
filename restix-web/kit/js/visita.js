@@ -12,10 +12,10 @@
 // La dirección de la planilla la pone el script de armar el sitio (medicion\direccion.txt). En la PC (localhost)
 // nunca se manda nada.
 // ============================================
-import { MEDICION } from "./config.js?v=9a59fdd34f";
+import { MEDICION } from "./config.js?v=342460e565";
 
 const ORIGEN_VALIDO = /^[a-z0-9-]{1,30}$/; // igual que el catálogo
-export const EVENTOS = ["abrio-demo", "entro", "pantalla", "quiero-esto", "otras-demos", "colores", "error"];
+export const EVENTOS = ["abrio-demo", "entro", "pantalla", "quiero-esto", "otras-demos", "colores", "error", "velocidad"];
 export const DURA_ORIGEN = 12 * 60 * 60 * 1000; // igual que el catálogo
 
 const leer = (clave) => {
@@ -175,6 +175,53 @@ export function vigilarErrores(demo) {
     antes.forEach(contarSiDice);
     addEventListener("error", (e) => contarSiDice(e.message));
     addEventListener("unhandledrejection", (e) => contarSiDice(e.reason?.message ?? String(e.reason ?? "")));
+}
+
+// ---------- Velocidad en los celulares de verdad (09/10) ----------
+// Lo que mide Google (Core Web Vitals), con lo que ya trae el navegador (sin la librería web-vitals): cuánto tardó en
+// verse lo principal (LCP), cuánto saltó la pantalla mientras cargaba (CLS) y cuánto tardó en responder el toque más
+// lento (INP, aproximado). Se manda UNA vez por página abierta, al irse o pasar a otra app, como "velocidad".
+
+/** { lcp: 1840, cls: 0.003, inp: 120 } → "lcp-1840-cls-3-inp-120" (el CLS por mil; todo entero y con tope). */
+export function textoVelocidad({ lcp = 0, cls = 0, inp = 0 } = {}) {
+    const entero = (n, tope) => Math.min(Math.max(Math.round(Number(n) || 0), 0), tope);
+    return `lcp-${entero(lcp, 60000)}-cls-${entero(cls * 1000, 9999)}-inp-${entero(inp, 60000)}`;
+}
+
+let midiendo = false;
+
+/** Empieza a medir la página (una sola vez) y la manda al irse. En los navegadores que no saben medir, no hace nada. */
+export function medirVelocidad(demo, opciones) {
+    const tipos = typeof PerformanceObserver !== "undefined" ? PerformanceObserver.supportedEntryTypes ?? [] : [];
+    if (midiendo || !tipos.includes("largest-contentful-paint")) return false;
+    midiendo = true;
+    const v = { lcp: 0, cls: 0, inp: 0 };
+    const mirar = (type, alVer, extra = {}) => {
+        if (!tipos.includes(type)) return;
+        try {
+            new PerformanceObserver((lista) => lista.getEntries().forEach(alVer)).observe({ type, buffered: true, ...extra });
+        } catch {
+            // un navegador que dice que sabe y no sabe: se mide lo demás
+        }
+    };
+    mirar("largest-contentful-paint", (e) => (v.lcp = e.startTime));
+    mirar("layout-shift", (e) => {
+        if (!e.hadRecentInput) v.cls += e.value;
+    });
+    mirar("event", (e) => {
+        if (e.interactionId) v.inp = Math.max(v.inp, e.duration);
+    }, { durationThreshold: 40 });
+    let mandado = false;
+    const mandar = () => {
+        if (mandado || !v.lcp) return;
+        mandado = true;
+        contar("velocidad", demo, { ...opciones, pantalla: textoVelocidad(v) });
+    };
+    addEventListener("visibilitychange", () => {
+        if (document.visibilityState === "hidden") mandar();
+    });
+    addEventListener("pagehide", mandar);
+    return true;
 }
 
 /** ¿Es un error de programación? Los nuestros (exigir, buscar, topes) son Error comunes con el mensaje en castellano. */

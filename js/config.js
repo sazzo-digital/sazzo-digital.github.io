@@ -14,6 +14,10 @@ export const CONTACTO = {
 // catálogo (…github.io/flota/). El script de armar el sitio del catálogo cambia esta línea por "./{id}/".
 export const LINK_DEMOS = "./{id}/";
 
+// Librerías que se bajan solo cuando se usan (el globo de "Somos un equipo…"). En la PC, las del kit; publicado, la
+// copia única de la raíz del sitio (el script de armar el catálogo cambia esta línea por "./libs/").
+export const RUTA_LIBS = "./libs/";
+
 // Registro de visitas (medicion\LEEME.md): la planilla de Google de Sazzo. El script de armar el sitio cambia
 // __MEDICION__ por la dirección de medicion\direccion.txt (vacía = no se manda nada). En la PC nunca se manda.
 export const MEDICION = {

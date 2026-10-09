@@ -3,22 +3,22 @@
 // El menú de abajo tiene lugar para 5: cada persona ve las 4 que más usa + "Más" (todas). Las pantallas que se
 // apagan en "Tu empresa" desaparecen del menú. irA() cambia de persona sin pasar por "Probala como…" (recorrido).
 // ============================================
-import { $, vacio, conFundido } from "../kit/js/ui.js?v=bdb0a941ae";
-import { iniciarDemo } from "../kit/js/arranque.js?v=bdb0a941ae";
-import { vistaIngreso } from "../kit/js/ingreso.js?v=bdb0a941ae";
-import { pintarMarco } from "../kit/js/marco.js?v=bdb0a941ae";
-import { mostrarRuta } from "../kit/js/rutas.js?v=bdb0a941ae";
-import { vistaAcerca } from "../kit/js/acerca.js?v=bdb0a941ae";
-import { MARCA, PERSONAS, TAMBIEN, buscarPersona } from "./marca.js?v=bdb0a941ae";
-import { crearDatos } from "./datos.js?v=bdb0a941ae";
-import { vistaInicio } from "./vistas/inicio.js?v=bdb0a941ae";
-import { vistaFacturar, vistaNuevaFactura, vistaComprobante } from "./vistas/facturar.js?v=bdb0a941ae";
-import { vistaCompras, vistaNuevaCompra } from "./vistas/compras.js?v=bdb0a941ae";
-import { vistaIva } from "./vistas/iva.js?v=bdb0a941ae";
-import { vistaCuentas, vistaFicha } from "./vistas/cuentas.js?v=bdb0a941ae";
-import { vistaContabilidad } from "./vistas/contabilidad.js?v=bdb0a941ae";
-import { vistaEmpresa } from "./vistas/empresa.js?v=bdb0a941ae";
-import { vistaMas } from "./vistas/mas.js?v=bdb0a941ae";
+import { $, vacio, conFundido } from "../kit/js/ui.js?v=be942dc467";
+import { iniciarDemo } from "../kit/js/arranque.js?v=be942dc467";
+import { vistaIngreso } from "../kit/js/ingreso.js?v=be942dc467";
+import { pintarMarco } from "../kit/js/marco.js?v=be942dc467";
+import { mostrarRuta } from "../kit/js/rutas.js?v=be942dc467";
+import { vistaAcerca } from "../kit/js/acerca.js?v=be942dc467";
+import { MARCA, PERSONAS, TAMBIEN, buscarPersona } from "./marca.js?v=be942dc467";
+import { crearDatos } from "./datos.js?v=be942dc467";
+import { vistaInicio } from "./vistas/inicio.js?v=be942dc467";
+import { vistaFacturar, vistaNuevaFactura, vistaComprobante } from "./vistas/facturar.js?v=be942dc467";
+import { vistaCompras, vistaNuevaCompra } from "./vistas/compras.js?v=be942dc467";
+import { vistaIva } from "./vistas/iva.js?v=be942dc467";
+import { vistaCuentas, vistaFicha } from "./vistas/cuentas.js?v=be942dc467";
+import { vistaContabilidad } from "./vistas/contabilidad.js?v=be942dc467";
+import { vistaEmpresa } from "./vistas/empresa.js?v=be942dc467";
+import { vistaMas } from "./vistas/mas.js?v=be942dc467";
 
 iniciarDemo(MARCA);
 const datos = crearDatos();

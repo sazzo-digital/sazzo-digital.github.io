@@ -2,10 +2,10 @@
 // Contabilidad: libro diario (los asientos salen solos de cada factura, compra, cobro y pago), mayor de cada cuenta
 // y balance de sumas y saldos. Solo para mirar: en la demo no hay asientos manuales.
 // ============================================
-import { esc } from "../../kit/js/ui.js?v=bdb0a941ae";
-import { pesos, nombrePeriodo, periodoActual, correrPeriodo } from "../reglas.js?v=bdb0a941ae";
-import { nombreCuenta } from "../contabilidad.js?v=bdb0a941ae";
-import { periodoPedido, htmlSelectorMes, activarSelectorMes, htmlTabla, fechaCorta, diaMes } from "./comunes.js?v=bdb0a941ae";
+import { esc } from "../../kit/js/ui.js?v=be942dc467";
+import { pesos, nombrePeriodo, periodoActual, correrPeriodo } from "../reglas.js?v=be942dc467";
+import { nombreCuenta } from "../contabilidad.js?v=be942dc467";
+import { periodoPedido, htmlSelectorMes, activarSelectorMes, htmlTabla, fechaCorta, diaMes } from "./comunes.js?v=be942dc467";
 
 const VISTAS = { diario: "Libro diario", mayor: "Mayor", balance: "Balance" };
 const MAX_ASIENTOS = 60; // en pantalla (el resto, cambiando de mes)
