@@ -31,7 +31,7 @@ export function vistaClientes(cont, { usuario, datos }) {
     function pintar() {
         const clientes = datos.listarClientes({ texto, noVuelven });
         lista.innerHTML = clientes.length ? clientes.map((c) => `
-            <li class="tarjeta${noVuelven ? " tarjeta--alerta" : ""}">
+            <li class="tarjeta tarjeta--abre${noVuelven ? " tarjeta--alerta" : ""}">
                 <div class="tarjeta__fila">
                     <a class="tarjeta__titulo" href="#/clientes/${esc(c.id)}"><i class="ti ti-user" aria-hidden="true"></i>${esc(c.nombre)}</a>
                     ${c.proximo ? `<span class="pastilla pastilla--bien">Turno ${esc(nombreFecha(c.proximo.fecha))} ${esc(c.proximo.hora)}</span>` : ""}

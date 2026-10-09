@@ -85,10 +85,15 @@ export function vistaAuto(cont, { usuario, datos, params: [id] }) {
         </dl>
         ${dueno && !a.abierta ? `<a class="boton" href="#/entro?patente=${esc(a.patente)}"><i class="ti ti-car"></i> Entró este auto</a>` : ""}
         <h2 class="subtitulo"><i class="ti ti-history"></i> Visitas</h2>
-        <ul class="tarjetas">${a.historial.map((o) => `
-            <li><a class="tarjeta tarjeta--link" href="#/orden/${esc(o.id)}">
+        <ul class="tarjetas">${a.historial.map((o) => {
+            const adentro = `
                 <div class="tarjeta__fila"><b>${esc(fechaCorta(o.recibidaEn.slice(0, 10)))} · N° ${esc(o.numero)}</b>${pastillaEstado(o)}</div>
                 <p class="tarjeta__quien">“${esc(o.dijo)}”${o.renglones.length ? ` · ${esc(o.renglones.map((r) => r.nombre).join(", "))}` : ""}</p>
                 ${dueno && o.renglones.length ? `<p class="tarjeta__quien"><b>${esc(pesos(o.total))}</b> · ${esc(o.km.toLocaleString("es-AR"))} km</p>` : ""}
-            </a></li>`).join("")}</ul>`;
+                ${o.puedeAbrir ? "" : `<p class="nota">La hizo ${esc(o.mecanico)}.</p>`}`;
+            // Las de otro mecánico se ven, pero no se abren (no tiene permiso)
+            return o.puedeAbrir
+                ? `<li><a class="tarjeta tarjeta--link" href="#/orden/${esc(o.id)}">${adentro}</a></li>`
+                : `<li class="tarjeta">${adentro}</li>`;
+        }).join("")}</ul>`;
 }

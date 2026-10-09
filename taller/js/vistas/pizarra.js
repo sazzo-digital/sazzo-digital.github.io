@@ -29,7 +29,7 @@ export function vistaPizarra(cont, { usuario, datos }) {
             <h1 class="titulo">${dueno ? "Taller" : "Mis autos"}</h1>
             ${dueno ? `<a class="boton" href="#/entro"><i class="ti ti-car"></i> Entró un auto</a>` : `<span class="negocio"><i class="ti ti-tool"></i>${esc(NEGOCIO)}</span>`}
         </div>
-        ${dueno ? `<p class="nota pista"><i class="ti ti-hand-finger"></i> Probá: tocá "Entró un auto" y escribí la patente AB 123 CD.</p>` : ""}
+        ${dueno ? `<p class="nota pista"><i class="ti ti-hand-finger"></i> <span>Probá: tocá "Entró un auto" y escribí la patente AB&nbsp;123&nbsp;CD.</span></p>` : ""}
         <div class="tira">
             <span><b>${esc(p.contadores.adentro)}</b> adentro</span>
             <span><b>${esc(p.contadores.reparacion)}</b> en reparación</span>

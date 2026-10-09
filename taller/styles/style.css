@@ -207,6 +207,12 @@ textarea {
   font-size: 1.8rem;
 }
 
+.vacio__salida {
+  display: flex;
+  justify-content: center;
+  margin-top: -0.5rem;
+}
+
 .nota {
   display: flex;
   align-items: center;
@@ -261,7 +267,8 @@ textarea {
   align-items: center;
   gap: 0.3rem;
   display: inline-flex;
-  margin-bottom: 0.9rem;
+  padding: 0.7rem 0.7rem 0.7rem 0;
+  margin: -0.7rem 0 0.2rem;
   font-size: 0.88rem;
   font-weight: 500;
   color: var(--texto-suave);
@@ -269,6 +276,20 @@ textarea {
 }
 .volver:hover {
   color: var(--primario);
+}
+
+.tarjeta--abre {
+  position: relative;
+}
+.tarjeta--abre .tarjeta__titulo::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+.tarjeta--abre :is(button, details, form, input, select, textarea, label) {
+  position: relative;
+  z-index: 1;
 }
 
 .etiqueta {
@@ -341,6 +362,8 @@ body.guardando .boton:not(.boton--secundario) {
   text-decoration: none;
   border-radius: 10px;
   transition: opacity 0.2s;
+  padding: 0.4rem 0.5rem;
+  margin: -0.4rem -0.5rem;
 }
 .cabecera__marca:hover {
   opacity: 0.8;
@@ -565,6 +588,8 @@ body.guardando .boton:not(.boton--secundario) {
 }
 .banda-prueba .boton-link {
   font-size: 0.78rem;
+  padding: 0.6rem 0.4rem;
+  margin: -0.6rem -0.4rem;
 }
 .banda-prueba__mas {
   display: none;
@@ -2335,7 +2360,7 @@ details[open] > :not(summary) {
   margin-bottom: 1rem;
 }
 .acciones-imprimir .volver {
-  margin: 0;
+  margin: -0.7rem 0;
 }
 
 .hoja {
@@ -2424,6 +2449,22 @@ details[open] > :not(summary) {
   font-weight: 700;
   font-size: 1.05rem;
   border-bottom: 0;
+}
+.hoja__unitario {
+  display: none;
+  font-size: 0.75rem;
+  color: #555;
+}
+@media (max-width: 479px) {
+  .hoja {
+    padding: 1.4rem 1rem;
+  }
+  .hoja__precio {
+    display: none;
+  }
+  .hoja__unitario {
+    display: block;
+  }
 }
 .hoja__aviso {
   margin-top: 1.2rem;

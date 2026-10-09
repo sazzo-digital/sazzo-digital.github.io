@@ -30,7 +30,7 @@ export function vistaPlano(cont, { usuario, datos }) {
             <h1 class="titulo">Salón</h1>
             <span class="negocio"><i class="ti ti-building-store" aria-hidden="true"></i>${esc(NEGOCIO)}</span>
         </div>
-        <p class="nota pista"><i class="ti ti-hand-finger"></i> Probá: tocá la <b>Mesa 4</b>, abrila y pedí dos muzzarellas, un fernet y dos Coca.</p>
+        <p class="nota pista"><i class="ti ti-hand-finger"></i> <span>Probá: tocá la <b>Mesa 4</b>, abrila y pedí dos muzzarellas, un fernet y dos Coca.</span></p>
         <div class="tira">
             <span><b>${esc(p.resumen.ocupadas)}</b> de ${esc(p.resumen.total)} ocupadas</span>
             <span><b>${esc(p.resumen.personas)}</b> personas</span>

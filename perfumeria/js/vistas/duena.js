@@ -84,7 +84,7 @@ export function vistaStock(cont, { usuario, datos }) {
         <ul class="tarjetas">${lista.map((p) => {
             const pct = Math.min(100, Math.round((p.ml / 250) * 100));
             return `
-            <li class="tarjeta${p.pedir.length ? " tarjeta--pedir" : ""}">
+            <li class="tarjeta tarjeta--abre${p.pedir.length ? " tarjeta--pedir" : ""}">
                 <div class="tarjeta__fila">
                     <a class="tarjeta__titulo" href="#/perfume/${esc(p.id)}">${frasco(p.familia)}${esc(p.nombre)}</a>
                     ${p.pedir.length ? `<span class="pastilla pastilla--ojo">Pedir: ${esc(p.pedir.join(", "))}</span>` : ""}

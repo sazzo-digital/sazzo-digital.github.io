@@ -5,6 +5,7 @@
 // ============================================
 import { esc, aviso, vacio } from "kit/ui.js";
 import { aHora } from "kit/turnos.js";
+import { fechaLocalISO } from "kit/fechas.js";
 import { SERVICIOS, BARBEROS, TOPES, pesos, nombreFecha } from "../datos.js";
 import { pastillaEstado, chipsDias, mostrarMensaje } from "./comunes.js";
 
@@ -13,7 +14,11 @@ let ver = "todos"; // "todos" o el id de un barbero
 export function vistaAgenda(cont, { usuario, datos, consulta }) {
     const dias = datos.dias();
     const pedida = dias.find((d) => d.fecha === consulta.get("fecha"));
-    const fecha = pedida?.fecha ?? (dias.find((d) => !d.cerrado) ?? dias[0]).fecha;
+    // Sin día elegido: el primero abierto que todavía tenga algo (de noche, hoy ya no queda nada: se abre mañana)
+    const quedaAlgo = (f) => datos.agenda(f).columnas.some((c) => c.huecos.length || c.turnos.some((t) => t.estado === "reservado"));
+    const abiertos = dias.filter((d) => !d.cerrado);
+    const fecha = pedida?.fecha ?? (abiertos.find((d) => quedaAlgo(d.fecha)) ?? abiertos[0] ?? dias[0]).fecha;
+    const salteoHoy = !pedida && fecha !== fechaLocalISO(0) && abiertos[0]?.fecha === fechaLocalISO(0);
     const a = datos.agenda(fecha);
     const nuevos = datos.nuevos();
     const columnas = a.columnas.filter((c) => ver === "todos" || c.id === ver);
@@ -51,6 +56,7 @@ export function vistaAgenda(cont, { usuario, datos, consulta }) {
                 <a class="boton boton--chico boton--secundario" href="#/inicio?fecha=${esc(t.fecha)}" data-ir-nuevo="${esc(t.id)}">Ver</a>
             </li>`).join("")}</ul>` : ""}
         ${chipsDias(dias, fecha)}
+        ${salteoHoy ? `<p class="nota"><i class="ti ti-moon" aria-hidden="true"></i> <span>Hoy ya no queda nada: te mostramos ${esc(nombreFecha(fecha))}.</span></p>` : ""}
         <div class="tira">
             <span><b>${esc(a.resumen.turnos)}</b> turnos</span>
             <span><b>${esc(a.resumen.atendidos)}</b> atendidos</span>
@@ -76,7 +82,7 @@ export function vistaAgenda(cont, { usuario, datos, consulta }) {
                     <summary>Ya atendidos (${hechos.length})</summary>
                     <ul class="renglones">${hechos.map(renglonTurno).join("")}</ul>
                 </details>` : ""}
-                ${filas.length ? `<ul class="renglones">${filas.sort((x, y) => x.m - y.m).map((f) => f.html).join("")}</ul>` : `<p class="nota">No queda nada por hoy.</p>`}
+                ${filas.length ? `<ul class="renglones">${filas.sort((x, y) => x.m - y.m).map((f) => f.html).join("")}</ul>` : `<p class="nota">${fecha === fechaLocalISO(0) ? "No queda nada por hoy." : "No queda nada para ese día."}</p>`}
             </section>`;
         }).join("")}</div>`}`;
 

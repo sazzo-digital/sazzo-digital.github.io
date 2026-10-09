@@ -165,9 +165,9 @@ export function vistaImprimir(cont, { usuario, datos, params: [id] }) {
             </dl>
             <p class="hoja__dijo"><b>Motivo:</b> ${esc(o.dijo)}${o.encontro ? ` · <b>Diagnóstico:</b> ${esc(o.encontro)}` : ""}</p>
             <table class="hoja__tabla">
-                <thead><tr><th>Detalle</th><th>Cant.</th><th>Precio</th><th>Subtotal</th></tr></thead>
-                <tbody>${o.renglones.map((r) => `<tr><td>${esc(r.nombre)}</td><td>${esc(r.cantidad)}</td><td>${esc(pesos(r.precio))}</td><td>${esc(pesos(r.precio * r.cantidad))}</td></tr>`).join("")}</tbody>
-                <tfoot><tr><td colspan="3">Total</td><td>${esc(pesos(o.total))}</td></tr></tfoot>
+                <thead><tr><th>Detalle</th><th>Cant.</th><th class="hoja__precio">Precio</th><th>Subtotal</th></tr></thead>
+                <tbody>${o.renglones.map((r) => `<tr><td>${esc(r.nombre)}<small class="hoja__unitario">${esc(pesos(r.precio))} c/u</small></td><td>${esc(r.cantidad)}</td><td class="hoja__precio">${esc(pesos(r.precio))}</td><td>${esc(pesos(r.precio * r.cantidad))}</td></tr>`).join("")}</tbody>
+                <tfoot><tr><td colspan="2">Total</td><td class="hoja__precio"></td><td>${esc(pesos(o.total))}</td></tr></tfoot>
             </table>
             <p class="hoja__aviso">Presupuesto · no válido como factura · válido por 7 días</p>
         </article>`;

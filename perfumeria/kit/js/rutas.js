@@ -9,7 +9,7 @@
 //     `ancho`: en la PC usa más ancho (en el celular no cambia nada).
 // Cada vista recibe (contenedor, { usuario, params, consulta }) y dibuja adentro.
 // ============================================
-import { $$, vacio } from "./ui.js";
+import { $$, esc, vacio } from "./ui.js";
 
 /** Lo que hay después del # → { ruta: "/producto/p-1", consulta: URLSearchParams }. Sin hash: la de inicio. */
 export function leerHash(inicio = "/inicio") {
@@ -52,8 +52,11 @@ export async function mostrarRuta({ rutas, contenido, usuario, inicio = "/inicio
     });
 
     contenido.classList.toggle("contenido--ancho", !!r.ancho);
+    // Sin permiso o con error: el mensaje y una salida (si no, la pantalla queda sin botones)
+    const sinSalida = (mensaje, icono) =>
+        `${vacio(mensaje, icono)}<p class="vacio__salida"><a class="boton boton--secundario" href="#${esc(inicio)}"><i class="ti ti-arrow-left" aria-hidden="true"></i> Volver al inicio</a></p>`;
     if (r.puede && !r.puede(usuario)) {
-        contenido.innerHTML = vacio("No tenés acceso a esta pantalla.", "ti-lock");
+        contenido.innerHTML = sinSalida("No tenés acceso a esta pantalla.", "ti-lock");
         return "sin-permiso";
     }
 
@@ -63,7 +66,7 @@ export async function mostrarRuta({ rutas, contenido, usuario, inicio = "/inicio
         await r.vista(contenido, { usuario, params: ruta.match(r.patron).slice(1), consulta });
     } catch (e) {
         console.error(e);
-        contenido.innerHTML = vacio(e.message);
+        contenido.innerHTML = sinSalida(e.message);
         estado = "error";
     }
     window.scrollTo(0, 0);

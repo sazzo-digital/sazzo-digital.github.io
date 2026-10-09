@@ -438,7 +438,9 @@ export function crearDatos(prefijo = MARCA.prefijo) {
         const a = buscar(db().autos, id, "Ese auto no existe.");
         return {
             ...armarAuto(a),
-            historial: db().ordenes.filter((o) => o.autoId === id).sort((x, y) => y.recibidaEn.localeCompare(x.recibidaEn)).map((o) => armar(o, usuario))
+            // puedeAbrir: el mecánico ve las órdenes de otro en el historial, pero no las abre (no tiene permiso)
+            historial: db().ordenes.filter((o) => o.autoId === id).sort((x, y) => y.recibidaEn.localeCompare(x.recibidaEn))
+                .map((o) => ({ ...armar(o, usuario), puedeAbrir: esDueno(usuario) || o.mecanicoId === mecanicoDe(usuario)?.id }))
         };
     }
 

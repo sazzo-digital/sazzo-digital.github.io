@@ -207,6 +207,12 @@ textarea {
   font-size: 1.8rem;
 }
 
+.vacio__salida {
+  display: flex;
+  justify-content: center;
+  margin-top: -0.5rem;
+}
+
 .nota {
   display: flex;
   align-items: center;
@@ -261,7 +267,8 @@ textarea {
   align-items: center;
   gap: 0.3rem;
   display: inline-flex;
-  margin-bottom: 0.9rem;
+  padding: 0.7rem 0.7rem 0.7rem 0;
+  margin: -0.7rem 0 0.2rem;
   font-size: 0.88rem;
   font-weight: 500;
   color: var(--texto-suave);
@@ -269,6 +276,20 @@ textarea {
 }
 .volver:hover {
   color: var(--primario);
+}
+
+.tarjeta--abre {
+  position: relative;
+}
+.tarjeta--abre .tarjeta__titulo::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+.tarjeta--abre :is(button, details, form, input, select, textarea, label) {
+  position: relative;
+  z-index: 1;
 }
 
 .etiqueta {
@@ -341,6 +362,8 @@ body.guardando .boton:not(.boton--secundario) {
   text-decoration: none;
   border-radius: 10px;
   transition: opacity 0.2s;
+  padding: 0.4rem 0.5rem;
+  margin: -0.4rem -0.5rem;
 }
 .cabecera__marca:hover {
   opacity: 0.8;
@@ -565,6 +588,8 @@ body.guardando .boton:not(.boton--secundario) {
 }
 .banda-prueba .boton-link {
   font-size: 0.78rem;
+  padding: 0.6rem 0.4rem;
+  margin: -0.6rem -0.4rem;
 }
 .banda-prueba__mas {
   display: none;
@@ -2109,6 +2134,10 @@ details[open] > :not(summary) {
 .grilla__esquina {
   grid-row: 1;
   grid-column: 1;
+  position: sticky;
+  left: -0.5rem;
+  z-index: 2;
+  background: var(--superficie);
 }
 .grilla__cancha {
   display: grid;
@@ -2128,7 +2157,12 @@ details[open] > :not(summary) {
   font-variant-numeric: tabular-nums;
   letter-spacing: -0.02em;
   grid-column: 1;
-  align-self: start;
+  align-self: stretch;
+  position: sticky;
+  left: -0.5rem;
+  z-index: 2;
+  background: var(--superficie);
+  box-shadow: 4px 0 0 var(--superficie), 4px 2px 0 var(--superficie);
   font-size: 0.72rem;
   color: var(--texto-suave);
   border-top: 1px solid var(--borde);
@@ -2136,7 +2170,7 @@ details[open] > :not(summary) {
 }
 .grilla__hora--media {
   border-top-style: dashed;
-  opacity: 0.6;
+  border-top-color: color-mix(in srgb, var(--borde) 60%, transparent);
 }
 
 .turno,
