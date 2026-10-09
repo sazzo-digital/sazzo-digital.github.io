@@ -3,11 +3,11 @@
 // mano de obra de una lista), los botones según el estado y la persona, y el historial con horas.
 // El mecánico carga lo que encontró y los repuestos, sin ver precios. Y el presupuesto para imprimir (dueño).
 // ============================================
-import { esc, aviso, fechaCorta, fechaHora } from "../../kit/js/ui.js?v=6003507ce0";
-import { fechaLocalISO } from "../../kit/js/fechas.js?v=6003507ce0";
-import { ESTADOS, REPUESTOS, MANO_DE_OBRA, TOPES, pesos } from "../datos.js?v=6003507ce0";
-import { NEGOCIO } from "../marca.js?v=6003507ce0";
-import { guia, activarGuias, chapa, pastillaEstado, textoPromesa, mostrarMensaje } from "./comunes.js?v=6003507ce0";
+import { esc, aviso, fechaCorta, fechaHora } from "../../kit/js/ui.js?v=3cf400ba43";
+import { fechaLocalISO } from "../../kit/js/fechas.js?v=3cf400ba43";
+import { ESTADOS, REPUESTOS, MANO_DE_OBRA, TOPES, pesos } from "../datos.js?v=3cf400ba43";
+import { NEGOCIO } from "../marca.js?v=3cf400ba43";
+import { guia, activarGuias, chapa, pastillaEstado, textoPromesa, mostrarMensaje } from "./comunes.js?v=3cf400ba43";
 
 export function vistaOrden(cont, { usuario, datos, irA, params: [id] }) {
     const o = datos.orden(id, usuario);

@@ -3,9 +3,9 @@
 // mercadería") y tiene "Subió un proveedor": elegís el proveedor y el %, ves antes → después con el redondeo de
 // kiosco y aplicás todo de una, con Deshacer. La empleada solo mira.
 // ============================================
-import { esc, aviso, vacio, mensajeDe } from "../../kit/js/ui.js?v=b4e350d86d";
-import { PROVEEDORES, TOPES, pesos } from "../datos.js?v=b4e350d86d";
-import { pastillaStock } from "./comunes.js?v=b4e350d86d";
+import { esc, aviso, vacio, mensajeDe } from "../../kit/js/ui.js?v=d78e90c63f";
+import { PROVEEDORES, TOPES, pesos } from "../datos.js?v=d78e90c63f";
+import { pastillaStock } from "./comunes.js?v=d78e90c63f";
 
 const RAPIDOS = [5, 10, 15, 20];
 

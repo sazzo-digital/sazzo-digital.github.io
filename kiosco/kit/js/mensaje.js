@@ -4,7 +4,7 @@
 //   mostrarMensaje("Avisar que está listo", "Hola Silvia! Tu auto ya está listo…");
 // Todo pasa por esc(). Si el navegador no deja usar el portapapeles, deja el texto seleccionado para copiarlo a mano.
 // ============================================
-import { esc, aviso } from "./ui.js?v=b4e350d86d";
+import { esc, aviso } from "./ui.js?v=d78e90c63f";
 
 export const NOTA_MENSAJE = "En la versión real, este botón abre WhatsApp con el mensaje escrito. En la demo, lo copiás.";
 export const TOPE_MENSAJE = 2000; // letras

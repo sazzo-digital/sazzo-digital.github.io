@@ -3,12 +3,12 @@
 // (se achica en el navegador antes de guardarlo), colores (la ventanita del kit) y qué pantallas se usan.
 // Lo cambian Silvina y Hernán; Patricia lo ve. Nada de esto viene del link: se escribe acá.
 // ============================================
-import { esc, aviso } from "../../kit/js/ui.js?v=bd1244e281";
-import { abrirColores } from "../../kit/js/colores.js?v=bd1244e281";
-import { TOPES, MODULOS } from "../datos.js?v=bd1244e281";
-import { MARCA } from "../marca.js?v=bd1244e281";
-import { formatoCuit, CONDICIONES, fechaISO } from "../reglas.js?v=bd1244e281";
-import { logoEmpresa, condicionTexto } from "./comunes.js?v=bd1244e281";
+import { esc, aviso } from "../../kit/js/ui.js?v=c335bb1efa";
+import { abrirColores } from "../../kit/js/colores.js?v=c335bb1efa";
+import { TOPES, MODULOS } from "../datos.js?v=c335bb1efa";
+import { MARCA } from "../marca.js?v=c335bb1efa";
+import { formatoCuit, CONDICIONES, fechaISO } from "../reglas.js?v=c335bb1efa";
+import { logoEmpresa, condicionTexto } from "./comunes.js?v=c335bb1efa";
 
 const puedeCambiar = (u) => u.rol === "admin" || u.rol === "dueno";
 const LADO_LOGO = 240; // px: el logo se guarda chico (pesa poco y se ve bien en la factura)

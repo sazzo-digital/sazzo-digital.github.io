@@ -3,10 +3,10 @@
 // "Recomendame uno"), cada perfume con sus notas y presentaciones, "Tu pedido" (el carrito) y "Mis pedidos".
 // El pedido no pide ningún dato: Julieta ya entró como ella. Retiro en el local.
 // ============================================
-import { esc, aviso, vacio, fechaCorta, mensajeDe } from "../../kit/js/ui.js?v=a917437b5e";
-import { FAMILIAS, PARA, PRESENTACIONES, TOPES, pesos } from "../datos.js?v=a917437b5e";
-import { NEGOCIO } from "../marca.js?v=a917437b5e";
-import { frasco, carrito, itemsDelCarrito, unidadesEnCarrito, guia, activarGuias, pastillaPedido } from "./comunes.js?v=a917437b5e";
+import { esc, aviso, vacio, fechaCorta, mensajeDe } from "../../kit/js/ui.js?v=c005acf363";
+import { FAMILIAS, PARA, PRESENTACIONES, TOPES, pesos } from "../datos.js?v=c005acf363";
+import { NEGOCIO } from "../marca.js?v=c005acf363";
+import { frasco, carrito, itemsDelCarrito, unidadesEnCarrito, guia, activarGuias, pastillaPedido } from "./comunes.js?v=c005acf363";
 
 let familia = null;
 let para = null;

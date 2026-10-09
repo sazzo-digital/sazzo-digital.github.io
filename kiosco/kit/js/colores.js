@@ -6,7 +6,7 @@
 //   elige por contraste. Así ningún color elegido deja la demo ilegible.
 // - Se guarda por demo ("sazzo-kiosco-colores"); "Volver al color de la demo" lo borra.
 // ============================================
-import { $, $$, esc } from "./ui.js?v=b4e350d86d";
+import { $, $$, esc } from "./ui.js?v=d78e90c63f";
 
 // Fondos contra los que tiene que leerse el acento (base/_temas.scss)
 const TARJETA_CLARA = "#e9dfcc";

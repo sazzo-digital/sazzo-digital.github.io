@@ -3,11 +3,11 @@
 // nombre del grupo y seña simulada) y "Mis turnos" (con Cancelar y la regla de la seña a la vista).
 // Lo ocupado se ve, pero no se puede tocar: nunca se pisan.
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=52613df1ba";
-import { TIPOS, TOPES, CANCELAR_HORAS, pesos, nombreFecha } from "../datos.js?v=52613df1ba";
-import { NEGOCIO } from "../marca.js?v=52613df1ba";
-import { guia, activarGuias, pastillaSena, pastillaEstado, chipsDias } from "./comunes.js?v=52613df1ba";
-import { aHora, minutoAhora } from "../../kit/js/turnos.js?v=52613df1ba";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=f44d3e59f3";
+import { TIPOS, TOPES, CANCELAR_HORAS, pesos, nombreFecha } from "../datos.js?v=f44d3e59f3";
+import { NEGOCIO } from "../marca.js?v=f44d3e59f3";
+import { guia, activarGuias, pastillaSena, pastillaEstado, chipsDias } from "./comunes.js?v=f44d3e59f3";
+import { aHora, minutoAhora } from "../../kit/js/turnos.js?v=f44d3e59f3";
 
 // Lo elegido queda mientras se navega
 let fecha = null;

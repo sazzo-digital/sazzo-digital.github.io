@@ -7,20 +7,21 @@
 // trae `wow`, esa línea va arriba de las personas: le dice a quien llega de Instagram qué va a pasar.
 // y qué hacer al elegir una (alElegir(id): guardar la sesión y arrancar la demo).
 // ============================================
-import { $, $$, esc, iniciales, mensajeDe } from "./ui.js?v=6003507ce0";
-import { logoSazzo, nombreDemo } from "./marca.js?v=6003507ce0";
-import { pieAcerca } from "./acerca.js?v=6003507ce0";
-import { linkOtrasDemos, linkQuieroEsto } from "./enlaces.js?v=6003507ce0";
-import { activarBotonesSazzo } from "./marco.js?v=6003507ce0";
-import { contar, contarPantalla } from "./visita.js?v=6003507ce0";
+import { $, $$, esc, iniciales, mensajeDe } from "./ui.js?v=3cf400ba43";
+import { logoSazzo, nombreDemo } from "./marca.js?v=3cf400ba43";
+import { pieAcerca } from "./acerca.js?v=3cf400ba43";
+import { linkOtrasDemos, linkQuieroEsto } from "./enlaces.js?v=3cf400ba43";
+import { activarBotonesSazzo } from "./marco.js?v=3cf400ba43";
+import { contar, contarPantalla } from "./visita.js?v=3cf400ba43";
 
+/** La pantalla entera va en <main>: los lectores de pantalla saltan directo ahí (axe: landmark-one-main). */
 export function htmlIngreso({ marca, personas }) {
     const quiero = linkQuieroEsto(marca);
     // La de "Empezá por acá" primero (si hay varias marcadas, cuenta la primera)
     const recomendada = personas.find((p) => p.empezar);
     const enOrden = recomendada ? [recomendada, ...personas.filter((p) => p !== recomendada)] : personas;
     return `
-        <section class="ingreso">
+        <main class="ingreso">
             <div class="ingreso__marca">
                 ${logoSazzo("logo logo--grande")}
                 <h1>${nombreDemo(marca)}</h1>
@@ -46,7 +47,7 @@ export function htmlIngreso({ marca, personas }) {
                 <a class="boton boton--secundario" href="${esc(quiero.href)}" data-quiero-esto${quiero.externo ? ' target="_blank" rel="noopener"' : ""}><i class="ti ti-brand-whatsapp"></i> Quiero esto para mi negocio</a>
             </div>
             ${pieAcerca(marca)}
-        </section>`;
+        </main>`;
 }
 
 /** Una sola persona (comercio de una persona): entra directo, sin pantalla de elegir. Si falla, muestra la pantalla con el error. */

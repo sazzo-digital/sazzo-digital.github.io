@@ -3,17 +3,17 @@
 // Lara (moza) ve el salón, la cocina (solo mirar) y la caja; Beto, la cocina.
 // irA() cambia de persona sin pasar por "Probala como…" (botón del recorrido: "Mirá lo que le llega a la cocina →").
 // ============================================
-import { $ } from "../kit/js/ui.js?v=5c4d7ffd80";
-import { iniciarDemo } from "../kit/js/arranque.js?v=5c4d7ffd80";
-import { vistaIngreso } from "../kit/js/ingreso.js?v=5c4d7ffd80";
-import { pintarMarco } from "../kit/js/marco.js?v=5c4d7ffd80";
-import { mostrarRuta } from "../kit/js/rutas.js?v=5c4d7ffd80";
-import { vistaAcerca } from "../kit/js/acerca.js?v=5c4d7ffd80";
-import { MARCA, PERSONAS, TAMBIEN, buscarPersona } from "./marca.js?v=5c4d7ffd80";
-import { crearDatos } from "./datos.js?v=5c4d7ffd80";
-import { vistaInicio } from "./vistas/inicio.js?v=5c4d7ffd80";
-import { vistaMesa, vistaCobro, vistaCaja } from "./vistas/moza.js?v=5c4d7ffd80";
-import { vistaCocina } from "./vistas/cocina.js?v=5c4d7ffd80";
+import { $ } from "../kit/js/ui.js?v=9398a10f30";
+import { iniciarDemo } from "../kit/js/arranque.js?v=9398a10f30";
+import { vistaIngreso } from "../kit/js/ingreso.js?v=9398a10f30";
+import { pintarMarco } from "../kit/js/marco.js?v=9398a10f30";
+import { mostrarRuta } from "../kit/js/rutas.js?v=9398a10f30";
+import { vistaAcerca } from "../kit/js/acerca.js?v=9398a10f30";
+import { MARCA, PERSONAS, TAMBIEN, buscarPersona } from "./marca.js?v=9398a10f30";
+import { crearDatos } from "./datos.js?v=9398a10f30";
+import { vistaInicio } from "./vistas/inicio.js?v=9398a10f30";
+import { vistaMesa, vistaCobro, vistaCaja } from "./vistas/moza.js?v=9398a10f30";
+import { vistaCocina } from "./vistas/cocina.js?v=9398a10f30";
 
 iniciarDemo(MARCA);
 const datos = crearDatos();

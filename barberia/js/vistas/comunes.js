@@ -2,9 +2,9 @@
 // Piezas que comparten las pantallas de Sazzo Barbería: el botón del recorrido (del kit), pastillas, los días en
 // pastillas y la ventanita del mensaje para copiar (del kit). Todo dato que entra a HTML pasa por esc().
 // ============================================
-import { esc } from "../../kit/js/ui.js?v=c8544b412e";
-import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=c8544b412e";
-import { buscarPersona } from "../marca.js?v=c8544b412e";
+import { esc } from "../../kit/js/ui.js?v=a4bc25e3bb";
+import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=a4bc25e3bb";
+import { buscarPersona } from "../marca.js?v=a4bc25e3bb";
 
 export const guia = (personaId, ruta, texto) => htmlGuia({ persona: buscarPersona(personaId), ruta, texto });
 export { activarGuias };
@@ -31,4 +31,4 @@ export function chipsDias(dias, actual) {
 }
 
 // La ventanita del mensaje para copiar es del kit (kit/mensaje.js)
-export { mostrarMensaje } from "../../kit/js/mensaje.js?v=c8544b412e";
+export { mostrarMensaje } from "../../kit/js/mensaje.js?v=a4bc25e3bb";

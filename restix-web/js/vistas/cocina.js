@@ -2,8 +2,8 @@
 // La cocina (Beto; la moza también la puede mirar): los pedidos que llegan, lo más viejo primero, con cuánto hace que
 // esperan (en rojo si pasan los 15 minutos). "Listo" lo saca y la mesa ve "comida lista".
 // ============================================
-import { esc, aviso } from "../../kit/js/ui.js?v=5c4d7ffd80";
-import { ticket, guia, activarGuias, haceMin, hora } from "./comunes.js?v=5c4d7ffd80";
+import { esc, aviso } from "../../kit/js/ui.js?v=9398a10f30";
+import { ticket, guia, activarGuias, haceMin, hora } from "./comunes.js?v=9398a10f30";
 
 const DEMORA_MIN = 15;
 

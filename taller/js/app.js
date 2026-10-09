@@ -3,18 +3,18 @@
 // Raúl (dueño) ve todo; Seba (mecánico), sus autos y sin precios (lo controlan las funciones de datos).
 // irA() cambia de persona sin pasar por "Probala como…" (botones del recorrido: "Mirá lo que le llega a Seba →").
 // ============================================
-import { $ } from "../kit/js/ui.js?v=6003507ce0";
-import { iniciarDemo } from "../kit/js/arranque.js?v=6003507ce0";
-import { vistaIngreso } from "../kit/js/ingreso.js?v=6003507ce0";
-import { pintarMarco } from "../kit/js/marco.js?v=6003507ce0";
-import { mostrarRuta } from "../kit/js/rutas.js?v=6003507ce0";
-import { vistaAcerca } from "../kit/js/acerca.js?v=6003507ce0";
-import { MARCA, PERSONAS, TAMBIEN, buscarPersona } from "./marca.js?v=6003507ce0";
-import { crearDatos } from "./datos.js?v=6003507ce0";
-import { vistaInicio } from "./vistas/inicio.js?v=6003507ce0";
-import { vistaEntro } from "./vistas/pizarra.js?v=6003507ce0";
-import { vistaOrden, vistaImprimir } from "./vistas/orden.js?v=6003507ce0";
-import { vistaAutos, vistaAuto } from "./vistas/autos.js?v=6003507ce0";
+import { $ } from "../kit/js/ui.js?v=3cf400ba43";
+import { iniciarDemo } from "../kit/js/arranque.js?v=3cf400ba43";
+import { vistaIngreso } from "../kit/js/ingreso.js?v=3cf400ba43";
+import { pintarMarco } from "../kit/js/marco.js?v=3cf400ba43";
+import { mostrarRuta } from "../kit/js/rutas.js?v=3cf400ba43";
+import { vistaAcerca } from "../kit/js/acerca.js?v=3cf400ba43";
+import { MARCA, PERSONAS, TAMBIEN, buscarPersona } from "./marca.js?v=3cf400ba43";
+import { crearDatos } from "./datos.js?v=3cf400ba43";
+import { vistaInicio } from "./vistas/inicio.js?v=3cf400ba43";
+import { vistaEntro } from "./vistas/pizarra.js?v=3cf400ba43";
+import { vistaOrden, vistaImprimir } from "./vistas/orden.js?v=3cf400ba43";
+import { vistaAutos, vistaAuto } from "./vistas/autos.js?v=3cf400ba43";
 
 iniciarDemo(MARCA);
 const datos = crearDatos();
