@@ -289,6 +289,12 @@ a { color: inherit; }
     .cabecera__menu { display: flex; }
     .cabecera > .boton, .interruptor-tema { margin-left: 0; }
 }
+/* Celulares angostos (320 px): el celu dibujado más chico y la columna del texto puede achicarse (si no, el botón
+   "Probala ahora" empujaba la tarjeta 21 px fuera de la pantalla) */
+@media (max-width: 359px) {
+    .demo { grid-template-columns: 84px minmax(0, 1fr); gap: .8rem; padding: 1rem; }
+    .demo .celu { width: 84px; }
+}
 @media (min-width: 1040px) {
     .demos { grid-template-columns: repeat(3, 1fr); }
     .adapta { grid-template-columns: repeat(4, 1fr); }

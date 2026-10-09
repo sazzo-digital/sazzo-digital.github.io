@@ -7,11 +7,12 @@
   --texto-suave: #4f4637;
   --borde: #ccbda1;
   --borde-fuerte: #b9a887;
-  --primario: #b91c1c;
+  --primario: #991b1b;
   --primario-texto: #ffffff;
   --cristal: rgb(221 209 187 / 84%);
   --sombra: 0 1px 2px rgb(60 44 18 / 6%), 0 8px 22px -12px rgb(60 44 18 / 18%);
   --sombra-alta: 0 2px 4px rgb(60 44 18 / 7%), 0 18px 40px -18px rgb(60 44 18 / 32%);
+  --tinta-mezcla: 40%;
   color-scheme: light;
 }
 
@@ -34,6 +35,7 @@
   --cristal: rgb(10 14 13 / 72%);
   --sombra: none;
   --sombra-alta: 0 18px 40px -18px rgb(0 0 0 / 70%);
+  --tinta-mezcla: 70%;
   color-scheme: dark;
 }
 
@@ -763,7 +765,7 @@ body.guardando .boton:not(.boton--secundario) {
 .boton--peligro {
   background: color-mix(in srgb, #ef4444 14%, var(--superficie));
   border-color: color-mix(in srgb, #ef4444 45%, transparent);
-  color: color-mix(in srgb, #ef4444 75%, var(--texto));
+  color: color-mix(in srgb, #ef4444 var(--tinta-mezcla, 75%), var(--texto));
 }
 .boton--peligro:hover:not(:disabled) {
   box-shadow: none;
@@ -929,7 +931,7 @@ body.guardando .boton:not(.boton--secundario) {
   border-radius: 10px;
   border: 1px solid rgba(239, 68, 68, 0.3);
   background: rgba(239, 68, 68, 0.1);
-  color: color-mix(in srgb, #ef4444 75%, var(--texto));
+  color: color-mix(in srgb, #ef4444 var(--tinta-mezcla, 75%), var(--texto));
   font-weight: 500;
   font-size: 0.86rem;
 }
@@ -1294,7 +1296,7 @@ body.guardando .boton:not(.boton--secundario) {
   text-align: center;
 }
 .acerca-pagina__marca h1 {
-  font-size: 2.4rem;
+  font-size: clamp(1.7rem, 9vw, 2.4rem);
   color: var(--texto);
   overflow-wrap: normal;
 }
@@ -1895,12 +1897,12 @@ details[open] > :not(summary) {
 .pastilla--bien {
   background: color-mix(in srgb, #10b981 14%, transparent);
   border-color: color-mix(in srgb, #10b981 35%, transparent);
-  color: color-mix(in srgb, #10b981 70%, var(--texto));
+  color: color-mix(in srgb, #10b981 var(--tinta-mezcla, 70%), var(--texto));
 }
 .pastilla--mal {
   background: color-mix(in srgb, #ef4444 13%, transparent);
   border-color: color-mix(in srgb, #ef4444 40%, transparent);
-  color: color-mix(in srgb, #ef4444 70%, var(--texto));
+  color: color-mix(in srgb, #ef4444 var(--tinta-mezcla, 70%), var(--texto));
 }
 .pastilla--alerta {
   background: #f59e0b;
@@ -1965,7 +1967,7 @@ details[open] > :not(summary) {
 }
 .hecho > .ti {
   font-size: 3rem;
-  color: color-mix(in srgb, #10b981 70%, var(--texto));
+  color: color-mix(in srgb, #10b981 var(--tinta-mezcla, 70%), var(--texto));
 }
 .hecho .titulo {
   margin: 0;
@@ -2055,10 +2057,10 @@ details[open] > :not(summary) {
   color: #f59e0b;
 }
 .mesa__marcas .ti-circle-check {
-  color: color-mix(in srgb, #10b981 70%, var(--texto));
+  color: color-mix(in srgb, #10b981 var(--tinta-mezcla, 70%), var(--texto));
 }
 .mesa__marcas .ti-cash {
-  color: color-mix(in srgb, #ef4444 70%, var(--texto));
+  color: color-mix(in srgb, #ef4444 var(--tinta-mezcla, 70%), var(--texto));
 }
 .mesa__marcas .ti-send {
   color: var(--primario);
@@ -2113,10 +2115,10 @@ details[open] > :not(summary) {
 .estado-ok.alerta {
   border-color: color-mix(in srgb, #10b981 40%, transparent);
   background: color-mix(in srgb, #10b981 12%, transparent);
-  color: color-mix(in srgb, #10b981 70%, var(--texto));
+  color: color-mix(in srgb, #10b981 var(--tinta-mezcla, 70%), var(--texto));
 }
 .estado-ok.alerta .ti {
-  color: color-mix(in srgb, #10b981 70%, var(--texto));
+  color: color-mix(in srgb, #10b981 var(--tinta-mezcla, 70%), var(--texto));
 }
 
 .comanda {
@@ -2227,7 +2229,7 @@ details[open] > :not(summary) {
   font-size: 0.88rem;
 }
 .renglon__ok {
-  color: color-mix(in srgb, #10b981 70%, var(--texto));
+  color: color-mix(in srgb, #10b981 var(--tinta-mezcla, 70%), var(--texto));
 }
 .renglon--nuevo {
   background: var(--primario-suave);
@@ -2543,7 +2545,7 @@ details[open] > :not(summary) {
   animation: llega 1s ease-in-out 4;
 }
 .pendiente--demora .pendiente__pie > span {
-  color: color-mix(in srgb, #ef4444 70%, var(--texto));
+  color: color-mix(in srgb, #ef4444 var(--tinta-mezcla, 70%), var(--texto));
   font-weight: 700;
 }
 

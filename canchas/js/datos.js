@@ -257,7 +257,8 @@ export function crearDatos(prefijo = MARCA.prefijo, { reloj = () => new Date() }
             return {
                 ...c, tipoInfo: TIPOS[c.tipo], horario,
                 turnos: ocupados({ turnos: db().turnos, fijos: db().fijos, lugarId: c.id, fecha }).map(armar),
-                libres: libres({ lugarId: c.id, fecha, horario, turnos: db().turnos, fijos: db().fijos }),
+                // Hoy, sin los horarios que ya pasaron (si no, de noche se ofrecían "libres" que daban "Ese horario ya pasó")
+                libres: libres({ lugarId: c.id, fecha, horario, turnos: db().turnos, fijos: db().fijos, desdeMinuto: desdeMinuto(fecha) }),
                 total: franjas(horario).length
             };
         });
