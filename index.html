@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Sazzo · Tu mundo digital, en orden</title>
+    <meta name="description" content="Sistemas, páginas web y automatizaciones para negocios. Probá nuestras demos en un toque, sin registrarte.">
+    <meta name="theme-color" content="#0B1210">
+    <meta property="og:title" content="Sazzo · Tu mundo digital, en orden">
+    <meta property="og:description" content="Probá nuestras demos para kioscos, canchas, barberías, talleres, perfumerías, restaurantes y flotas.">
+    <!-- Vista previa del link (WhatsApp, Instagram, Facebook). https://sazzo-digital.github.io lo completa armar-catalogo.ps1 con la
+         dirección publicada (kit\herramientas\sitio-publicado.txt): estas redes necesitan la dirección completa. -->
+    <meta property="og:site_name" content="Sazzo">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="es_AR">
+    <meta property="og:url" content="https://sazzo-digital.github.io/">
+    <meta property="og:image" content="https://sazzo-digital.github.io/img/vista-previa.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Sazzo · Tu mundo digital, en orden.">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" href="img/isotipo.svg" type="image/svg+xml">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/catalogo.css?v=202610082111">
+    <!-- Si hay JavaScript, las secciones arrancan ocultas y aparecen al bajar (sin JavaScript se ve todo igual) -->
+    <script>
+        document.documentElement.classList.add("js");
+        // Oscuro siempre por defecto; claro solo si la persona lo eligió (clave compartida con las demos)
+        try {
+            if (localStorage.getItem("sazzo-tema") === "claro") {
+                document.documentElement.dataset.tema = "claro";
+                document.querySelector('meta[name="theme-color"]').content = "#DDD1BB";
+            }
+        } catch (e) { /* sin almacenamiento: queda oscuro */ }
+    </script>
+</head>
+<body>
+    <!-- ============================================
+         Catálogo de demos de Sazzo (boceto del 08/10/2026). Estructura y cómo mantenerlo: LEEME.md.
+         Las tarjetas de demos se arman desde js/demos.js; el contacto, desde js/config.js.
+         ============================================ -->
+
+    <!-- Dibujos que se reusan (el logo es el de 01-proyectos\sazzo\logo; si cambia allá, cambiarlo acá) -->
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+        <defs>
+            <g id="iso">
+                <rect width="100" height="100" rx="22" fill="#0B1210"/>
+                <path fill="none" stroke-width="10" stroke-linecap="round" stroke="#E6EFEB" d="M40.26 38.75 A13 7.5 0 1 0 29 50 A13 7.5 0 1 1 17.74 61.25"/>
+                <path fill="none" stroke="#34D399" stroke-width="9" stroke-linecap="round" d="M58 64 H82"/>
+            </g>
+            <symbol id="i-sistema" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8M12 17v4M7 9h6M7 12h10"/></symbol>
+            <symbol id="i-web" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3z"/></symbol>
+            <symbol id="i-rayo" viewBox="0 0 24 24"><path d="M13 3 5 13.5h6L10 21l8-10.5h-6z"/></symbol>
+            <symbol id="i-celu" viewBox="0 0 24 24"><rect x="7" y="3" width="10" height="18" rx="2"/><path d="M11 18h2"/></symbol>
+            <symbol id="i-compu" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="11" rx="1.5"/><path d="M2 19h20"/></symbol>
+            <symbol id="i-whatsapp" viewBox="0 0 24 24"><path d="M4 20l1.2-3.6A8 8 0 1 1 8 19z"/><path d="M9.5 9.5c.3 1.8 2.2 3.7 4 4l1.2-1 1.8.8-.4 1.4c-3 .5-7-3.5-6.5-6.5l1.4-.4.8 1.8z"/></symbol>
+            <symbol id="i-instagram" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="4.5"/><circle cx="12" cy="12" r="3.5"/><path d="M16.5 7.5v.01"/></symbol>
+            <symbol id="i-flecha" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+            <symbol id="i-marca" viewBox="0 0 24 24"><path d="M5 4h14v16l-7-4-7 4z"/><path d="M9 9h6"/></symbol>
+            <symbol id="i-estilo" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 3v18"/><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor"/></symbol>
+            <symbol id="i-pantallas" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M9 9v11"/></symbol>
+            <symbol id="i-imagen" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="m4 18 5-5 3.5 3.5L16 13l4 4"/></symbol>
+            <symbol id="i-funciones" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="6"/><circle cx="15" cy="12" r="3"/></symbol>
+            <symbol id="i-palabras" viewBox="0 0 24 24"><path d="M5 5h14a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1h-8l-4 3v-3H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1z"/><path d="M8 9h8M8 12h5"/></symbol>
+            <symbol id="i-personas" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3.5 19a5.5 5.5 0 0 1 11 0"/><circle cx="17" cy="9" r="2.4"/><path d="M15.5 14.3A4.5 4.5 0 0 1 21 19"/></symbol>
+            <symbol id="i-equipos" viewBox="0 0 24 24"><rect x="2" y="5" width="14" height="10" rx="1.5"/><path d="M5 19h8"/><rect x="16" y="9" width="6" height="11" rx="1.5"/></symbol>
+            <symbol id="i-sol" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M4.6 4.6 6 6M18 18l1.4 1.4M2.5 12h2M19.5 12h2M4.6 19.4 6 18M18 6l1.4-1.4"/></symbol>
+            <symbol id="i-luna" viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z"/></symbol>
+            <symbol id="i-paleta" viewBox="0 0 24 24"><path d="M12 21a9 9 0 0 1 0-18c5 0 9 3.6 9 8 0 1.1-.5 2.1-1.3 2.8-.8.8-2 1.2-3.2 1.2h-2.5a2 2 0 0 0-1 3.8 1.3 1.3 0 0 1-1 2.2"/><circle cx="8.5" cy="10.5" r="1"/><circle cx="12.5" cy="7.5" r="1"/><circle cx="16.5" cy="10.5" r="1"/></symbol>
+        </defs>
+    </svg>
+
+    <header class="cabecera">
+        <a class="cabecera__marca" href="#inicio" aria-label="Sazzo, ir al inicio">
+            <svg viewBox="0 0 100 100" width="34" height="34" aria-hidden="true"><use href="#iso"/></svg>
+            <span>sazzo</span>
+        </a>
+        <nav class="cabecera__menu" aria-label="Secciones">
+            <a href="#demos">Demos</a>
+            <a href="#como-funciona">Cómo funciona</a>
+            <a href="#contacto">Contacto</a>
+        </nav>
+        <button class="interruptor-tema" id="tema" type="button" role="switch" aria-checked="true" aria-label="Modo oscuro. Tocá para pasar a claro." title="Modo oscuro. Tocá para pasar a claro.">
+            <svg class="icono" aria-hidden="true"><use href="#i-sol"/></svg>
+            <svg class="icono" aria-hidden="true"><use href="#i-luna"/></svg>
+            <span class="interruptor-tema__perilla" aria-hidden="true"></span>
+        </button>
+        <a class="boton boton--chico" href="#contacto" data-whatsapp>Escribinos</a>
+    </header>
+
+    <main>
+        <!-- 1. Portada: el logo se escribe solo -->
+        <section class="portada" id="inicio">
+            <div class="portada__brillo" aria-hidden="true"></div>
+            <h1 class="portada__logo">
+                <span class="oculto">sazzo</span>
+                <svg class="escribe" viewBox="0 12 240 56" aria-hidden="true">
+                    <g fill="none" stroke-width="10" stroke-linecap="round" stroke-linejoin="round">
+                        <path class="letra l1" stroke="var(--letras)" d="M34.26 28.75 A13 7.5 0 1 0 23 40 A13 7.5 0 1 1 11.74 51.25"/>
+                        <g class="letra l2"><circle stroke="var(--letras)" cx="67" cy="40" r="15.4"/><path stroke="var(--letras)" d="M82.4 25 V55"/></g>
+                        <path class="letra l3" stroke="var(--verde)" d="M98 25 H124 L98 55 H124"/>
+                        <path class="letra l4" stroke="var(--verde)" d="M140 25 H166 L140 55 H166"/>
+                        <circle class="letra l5" stroke="var(--letras)" cx="197" cy="40" r="15.4"/>
+                    </g>
+                    <circle class="punto" fill="var(--verde)" cx="197" cy="40" r="5"/>
+                    <path class="cursor" fill="none" stroke="var(--verde)" stroke-width="7" stroke-linecap="round" d="M231 24 V56"/>
+                </svg>
+            </h1>
+            <p class="portada__frase">Tu mundo digital, en orden.</p>
+            <p class="portada__texto">Sistemas, páginas web y automatizaciones para negocios. Probá nuestras demos en un toque, sin registrarte.</p>
+            <div class="portada__botones">
+                <a class="boton" href="#demos">Probá las demos <svg class="icono" aria-hidden="true"><use href="#i-flecha"/></svg></a>
+                <a class="boton boton--borde" href="#contacto" data-whatsapp>Escribinos</a>
+            </div>
+            <ul class="portada__datos">
+                <li><strong data-contar="7">7</strong> rubros para probar</li>
+                <li><strong>0</strong> registros ni datos tuyos</li>
+                <li><strong>1</strong> toque y estás adentro</li>
+            </ul>
+        </section>
+
+        <!-- 2. Qué hacemos -->
+        <section class="seccion" id="que-hacemos">
+            <h2 class="seccion__titulo revelar">Qué hacemos</h2>
+            <div class="servicios">
+                <article class="servicio revelar">
+                    <svg class="icono icono--grande" aria-hidden="true"><use href="#i-sistema"/></svg>
+                    <h3>Sistemas para tu negocio</h3>
+                    <p>Stock, turnos, ventas, pedidos y equipo, en el celu o en la compu. Hechos a la medida de cómo trabajás.</p>
+                </article>
+                <article class="servicio revelar">
+                    <svg class="icono icono--grande" aria-hidden="true"><use href="#i-web"/></svg>
+                    <h3>Páginas web</h3>
+                    <p>Que te encuentren en Google, con tus productos, tu horario y un botón para escribirte.</p>
+                </article>
+                <article class="servicio revelar">
+                    <svg class="icono icono--grande" aria-hidden="true"><use href="#i-rayo"/></svg>
+                    <h3>Automatizaciones</h3>
+                    <p>Avisos a tu WhatsApp o tu mail, planillas que se llenan solas y mensajes que la IA te deja listos: vos revisás y los mandás.</p>
+                </article>
+            </div>
+        </section>
+
+        <!-- 3. Las demos (las tarjetas las arma js/catalogo.js desde js/demos.js) -->
+        <section class="seccion" id="demos">
+            <h2 class="seccion__titulo revelar">Probá una demo</h2>
+            <p class="seccion__bajada revelar">Elegí tu rubro. Son datos de ejemplo: tocá todo lo que quieras, no se rompe nada. Adentro podés probarla con tus colores y en modo claro u oscuro.</p>
+            <div class="demos" id="lista-demos"></div>
+        </section>
+
+        <!-- 4. Cómo funciona -->
+        <section class="seccion" id="como-funciona">
+            <h2 class="seccion__titulo revelar">Cómo funciona</h2>
+            <ol class="pasos">
+                <li class="paso revelar"><span class="paso__numero">1</span><h3>Elegís tu rubro</h3><p>Abrís la demo desde el celu o la compu. Sin cuentas ni contraseñas.</p></li>
+                <li class="paso revelar"><span class="paso__numero">2</span><h3>La probás</h3><p>Con datos de ejemplo, como si fuera tu negocio. Lo que cargues queda solo en tu equipo.</p></li>
+                <li class="paso revelar"><span class="paso__numero">3</span><h3>La adaptamos</h3><p>Si te gusta, la armamos a tu medida: tus colores, tu logo, tus pantallas y tu forma de trabajar.</p><a class="paso__link" href="#lo-que-adaptamos">Mirá todo lo que adaptamos <svg class="icono" aria-hidden="true"><use href="#i-flecha"/></svg></a></li>
+            </ol>
+        </section>
+
+        <!-- 4b. Lo que se adapta (el detalle del paso 3) -->
+        <section class="seccion" id="lo-que-adaptamos">
+            <h2 class="seccion__titulo revelar">Todo se adapta a tu negocio</h2>
+            <p class="seccion__bajada revelar">La demo es el punto de partida. Tu versión se arma con tu marca, tus cosas y tu forma de trabajar.</p>
+            <div class="adapta">
+                <article class="adapta__item revelar">
+                    <svg class="icono icono--grande" aria-hidden="true"><use href="#i-marca"/></svg>
+                    <div><h3>Tu marca</h3><p>Tu nombre, tu logo, tus colores y tus letras.</p></div>
+                </article>
+                <article class="adapta__item revelar">
+                    <svg class="icono icono--grande" aria-hidden="true"><use href="#i-estilo"/></svg>
+                    <div><h3>El estilo</h3><p>Claro u oscuro, sobrio o llamativo: bordes, sombras y animaciones.</p></div>
+                </article>
+                <article class="adapta__item revelar">
+                    <svg class="icono icono--grande" aria-hidden="true"><use href="#i-pantallas"/></svg>
+                    <div><h3>Las pantallas</h3><p>Sumamos, sacamos o cambiamos pantallas, el menú y el orden en que aparecen las cosas.</p></div>
+                </article>
+                <article class="adapta__item revelar">
+                    <svg class="icono icono--grande" aria-hidden="true"><use href="#i-imagen"/></svg>
+                    <div><h3>Tus imágenes</h3><p>Fotos de tus productos, de tu local o de tus trabajos, en vez de las de ejemplo.</p></div>
+                </article>
+                <article class="adapta__item revelar">
+                    <svg class="icono icono--grande" aria-hidden="true"><use href="#i-funciones"/></svg>
+                    <div><h3>Las funciones</h3><p>Prendemos las que usás, apagamos las que no y sumamos las que te falten.</p></div>
+                </article>
+                <article class="adapta__item revelar">
+                    <svg class="icono icono--grande" aria-hidden="true"><use href="#i-palabras"/></svg>
+                    <div><h3>Tus palabras</h3><p>Tus productos, servicios y categorías, y cómo le decís a las cosas: turno, reserva, orden o pedido.</p></div>
+                </article>
+                <article class="adapta__item revelar">
+                    <svg class="icono icono--grande" aria-hidden="true"><use href="#i-personas"/></svg>
+                    <div><h3>Quién ve qué</h3><p>El dueño, el empleado y el cliente, cada uno con lo suyo.</p></div>
+                </article>
+                <article class="adapta__item revelar">
+                    <svg class="icono icono--grande" aria-hidden="true"><use href="#i-equipos"/></svg>
+                    <div><h3>En el celu y en la compu</h3><p>Que se vea bien donde la uses.</p></div>
+                </article>
+            </div>
+            <p class="adapta__nota revelar"><svg class="icono" aria-hidden="true"><use href="#i-paleta"/></svg> Adentro de cada demo ya podés probarla con tus colores y en claro u oscuro.</p>
+        </section>
+
+        <!-- 5. A medida -->
+        <section class="seccion" id="contacto">
+            <div class="a-medida revelar">
+                <h2>¿Tu rubro no está?</h2>
+                <p>Lo hacemos a medida. Contanos cómo trabajás y te decimos cómo te podemos ayudar.</p>
+                <div class="a-medida__botones">
+                    <a class="boton" href="#contacto" data-whatsapp data-solo-con-numero><svg class="icono" aria-hidden="true"><use href="#i-whatsapp"/></svg> Escribinos por WhatsApp</a>
+                    <a class="boton" href="#contacto" data-instagram><svg class="icono" aria-hidden="true"><use href="#i-instagram"/></svg> Escribinos por Instagram</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- 6. Nosotros (sin nombres) -->
+        <section class="seccion nosotros revelar">
+            <p>Somos un equipo dedicado a ordenar tu mundo digital.</p>
+        </section>
+    </main>
+
+    <footer class="pie">
+        <svg class="pie__logo" viewBox="0 12 240 56" aria-label="sazzo" role="img">
+            <g fill="none" stroke-width="10" stroke-linecap="round" stroke-linejoin="round">
+                <path stroke="var(--letras)" d="M34.26 28.75 A13 7.5 0 1 0 23 40 A13 7.5 0 1 1 11.74 51.25"/>
+                <circle stroke="var(--letras)" cx="67" cy="40" r="15.4"/>
+                <path stroke="var(--letras)" d="M82.4 25 V55"/>
+                <path stroke="var(--verde)" d="M98 25 H124 L98 55 H124"/>
+                <path stroke="var(--verde)" d="M140 25 H166 L140 55 H166"/>
+                <circle stroke="var(--letras)" cx="197" cy="40" r="15.4"/>
+            </g>
+            <circle fill="var(--verde)" cx="197" cy="40" r="5"/>
+            <path class="cursor" fill="none" stroke="var(--verde)" stroke-width="7" stroke-linecap="round" d="M231 24 V56"/>
+        </svg>
+        <p>Tu mundo digital, en orden.</p>
+        <p class="pie__links">
+            <a href="#contacto" data-whatsapp data-solo-con-numero>WhatsApp</a>
+            <a href="#contacto" data-instagram>Instagram</a>
+        </p>
+        <p class="pie__chico">© <span data-anio>2026</span> Sazzo</p>
+    </footer>
+
+    <script type="module" src="js/catalogo.js?v=202610082111"></script>
+</body>
+</html>
