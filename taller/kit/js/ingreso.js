@@ -5,12 +5,12 @@
 //   [{ id: "u-laura", etiqueta: "Laura · Dueña", detalle: "Ve la caja, el stock y los fiados" }, …]
 // y qué hacer al elegir una (alElegir(id): guardar la sesión y arrancar la demo).
 // ============================================
-import { $, $$, esc } from "./ui.js";
-import { logoSazzo, nombreDemo } from "./marca.js";
-import { pieAcerca } from "./acerca.js";
-import { linkOtrasDemos, linkQuieroEsto } from "./enlaces.js";
-import { activarBotonesSazzo } from "./marco.js";
-import { contar, contarPantalla } from "./visita.js";
+import { $, $$, esc } from "./ui.js?v=a3a89a6efc";
+import { logoSazzo, nombreDemo } from "./marca.js?v=a3a89a6efc";
+import { pieAcerca } from "./acerca.js?v=a3a89a6efc";
+import { linkOtrasDemos, linkQuieroEsto } from "./enlaces.js?v=a3a89a6efc";
+import { activarBotonesSazzo } from "./marco.js?v=a3a89a6efc";
+import { contar, contarPantalla } from "./visita.js?v=a3a89a6efc";
 
 export function htmlIngreso({ marca, personas }) {
     const quiero = linkQuieroEsto(marca);

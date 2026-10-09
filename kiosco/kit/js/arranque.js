@@ -5,9 +5,9 @@
 // 3. Si se abrió adentro de Instagram, WhatsApp o Facebook, avisa que conviene abrirla en el navegador.
 // 4. Avisa al registro de visitas que se abrió, y después cada pantalla que mira (medicion\LEEME.md).
 // ============================================
-import { leerLink, contar, contarPantalla } from "./visita.js";
-import { recuperarColor } from "./colores.js";
-import { avisarSiEsNavegadorDeOtraApp } from "./navegador.js";
+import { leerLink, contar, contarPantalla } from "./visita.js?v=e34da8ad04";
+import { recuperarColor } from "./colores.js?v=e34da8ad04";
+import { avisarSiEsNavegadorDeOtraApp } from "./navegador.js?v=e34da8ad04";
 
 export function iniciarDemo(marca) {
     leerLink();

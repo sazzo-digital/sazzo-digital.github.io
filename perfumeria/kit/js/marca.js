@@ -10,8 +10,8 @@
 //       nombre: "Restix Sazzo"                            → opcional (si no, "Sazzo " + rubro)
 //   });
 // ============================================
-import { esc } from "./ui.js";
-import { sinPasarse } from "./topes.js";
+import { esc } from "./ui.js?v=b8dd88b783";
+import { sinPasarse } from "./topes.js?v=b8dd88b783";
 
 /** Controla la marca de una demo (que no falte nada ni sea larguísima) y completa el nombre. */
 export function revisarMarca({ id, rubro, lema = "", descripcion = "", nombre } = {}) {

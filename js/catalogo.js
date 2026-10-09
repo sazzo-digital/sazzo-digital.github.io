@@ -2,8 +2,8 @@
 // Catálogo de Sazzo: arma las tarjetas de demos (desde demos.js), las animaciones al bajar, los botones de
 // contacto (desde config.js), guarda de dónde vino la visita (?o=papel / ?o=ig) y avisa a la medición.
 // ============================================
-import { DEMOS } from "./demos.js";
-import { CONTACTO, MEDICION, LINK_DEMOS } from "./config.js";
+import { DEMOS } from "./demos.js?v=4d29ab6988";
+import { CONTACTO, MEDICION, LINK_DEMOS } from "./config.js?v=4d29ab6988";
 
 const $ = (selector, raiz = document) => raiz.querySelector(selector);
 const $$ = (selector, raiz = document) => [...raiz.querySelectorAll(selector)];

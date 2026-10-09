@@ -6,10 +6,10 @@
 // Reglas del kit: exigir() en lo que modifica, topes en todo lo que se carga, nada se borra (se cancela) y se
 // devuelven copias. Si cambia la forma de los datos, subir VERSION_DATOS (se regeneran solos).
 // ============================================
-import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "kit/guardado.js";
-import { enteroHasta } from "kit/topes.js";
-import { fechaLocalISO, diaLocalDe } from "kit/fechas.js";
-import { MARCA, NEGOCIO } from "./marca.js";
+import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=b8dd88b783";
+import { enteroHasta } from "../kit/js/topes.js?v=b8dd88b783";
+import { fechaLocalISO, diaLocalDe } from "../kit/js/fechas.js?v=b8dd88b783";
+import { MARCA, NEGOCIO } from "./marca.js?v=b8dd88b783";
 
 export const VERSION_DATOS = 3;
 
@@ -115,6 +115,9 @@ const momento = (dias, hora = 17) => {
     const d = new Date();
     d.setDate(d.getDate() - dias);
     d.setHours(hora, 0, 0, 0);
+    // Nunca en el futuro: de madrugada, "hoy a las 11" todavía no pasó (el pedido de ejemplo quedaba más nuevo que uno
+    // recién mandado). Se corre a unos minutos atrás, en el mismo orden (11 antes que 13, 13 antes que 18).
+    if (d.getTime() > Date.now()) return new Date(Date.now() - (24 - hora) * 60000).toISOString();
     return d.toISOString();
 };
 

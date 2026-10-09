@@ -18,7 +18,7 @@
 // - Si cambia la forma de los datos de prueba, subir `version` (se regeneran solos).
 // ============================================
 
-import { aviso } from "./ui.js";
+import { aviso } from "./ui.js?v=4875a95876";
 
 /** Nombres compartidos entre el catálogo y todas las demos (no pueden ser el prefijo de una demo). */
 export const COMPARTIDAS = ["sazzo-origen", "sazzo-equipo", "sazzo-tema", "sazzo-yo"];

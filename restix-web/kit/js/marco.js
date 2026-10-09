@@ -11,12 +11,12 @@
 // Botones fijos (barrita sobre el menú): "Probala con tus colores", "Ver otras demos" y "Quiero esto para mi negocio".
 // La primera vez que se abre cada demo, un globito señala la paleta (colores.js → mostrarGlobitoColores).
 // ============================================
-import { $, esc, iniciales, nombreCompleto } from "./ui.js";
-import { logoSazzo, nombreDemo } from "./marca.js";
-import { interruptorTema, activarInterruptorTema } from "./apariencia.js";
-import { linkOtrasDemos, linkQuieroEsto } from "./enlaces.js";
-import { abrirColores, mostrarGlobitoColores } from "./colores.js";
-import { contar } from "./visita.js";
+import { $, esc, iniciales, nombreCompleto } from "./ui.js?v=afb4bcf68b";
+import { logoSazzo, nombreDemo } from "./marca.js?v=afb4bcf68b";
+import { interruptorTema, activarInterruptorTema } from "./apariencia.js?v=afb4bcf68b";
+import { linkOtrasDemos, linkQuieroEsto } from "./enlaces.js?v=afb4bcf68b";
+import { abrirColores, mostrarGlobitoColores } from "./colores.js?v=afb4bcf68b";
+import { contar } from "./visita.js?v=afb4bcf68b";
 
 /** La barrita de Sazzo: colores, otras demos y "Quiero esto" (los textos largos solo si hay lugar). */
 export function htmlBarraSazzo(marca, opciones) {

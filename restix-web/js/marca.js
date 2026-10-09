@@ -2,7 +2,7 @@
 // Marca, personas y "también puede tener" de Restix Sazzo (diseñada el 08/10/2026, opción B: el recorrido de Restix
 // rehecho con el kit). Las personas son los roles reales del rubro (nombres inventados): la moza y el de la cocina.
 // ============================================
-import { revisarMarca } from "kit/marca.js";
+import { revisarMarca } from "../kit/js/marca.js?v=afb4bcf68b";
 
 export const MARCA = revisarMarca({
     id: "restix-web",

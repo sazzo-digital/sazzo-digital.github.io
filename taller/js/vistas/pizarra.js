@@ -3,11 +3,11 @@
 // una columna por estado; en el celu, uno abajo del otro con pastillas para filtrar. El mecánico ve solo sus autos.
 // "+ Entró un auto": se escribe la patente y, si ya vino, completa solo el auto, el cliente y la última vez.
 // ============================================
-import { esc, aviso } from "kit/ui.js";
-import { fechaLocalISO } from "kit/fechas.js";
-import { TOPES, NAFTA, MECANICOS, esPatente, formatoPatente } from "../datos.js";
-import { NEGOCIO } from "../marca.js";
-import { guia, activarGuias, chapa, pastillaEstado, textoPromesa } from "./comunes.js";
+import { esc, aviso } from "../../kit/js/ui.js?v=a3a89a6efc";
+import { fechaLocalISO } from "../../kit/js/fechas.js?v=a3a89a6efc";
+import { TOPES, NAFTA, MECANICOS, esPatente, formatoPatente } from "../datos.js?v=a3a89a6efc";
+import { NEGOCIO } from "../marca.js?v=a3a89a6efc";
+import { guia, activarGuias, chapa, pastillaEstado, textoPromesa } from "./comunes.js?v=a3a89a6efc";
 
 let filtro = "todos";
 

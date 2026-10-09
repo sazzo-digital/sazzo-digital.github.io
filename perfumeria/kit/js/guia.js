@@ -5,7 +5,7 @@
 //   activarGuias(cont, irA);        → irA(personaId, ruta) lo define la demo en su app.js
 // persona: { id, nombre, etiqueta } (la de PERSONAS de la demo). Todo pasa por esc().
 // ============================================
-import { esc } from "./ui.js";
+import { esc } from "./ui.js?v=b8dd88b783";
 
 const RUTA_VALIDA = /^\/[\w\-/?=&]*$/;
 
