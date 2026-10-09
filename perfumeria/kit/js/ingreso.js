@@ -2,18 +2,23 @@
 // Pantalla de ingreso: "Probala como…" con un botón por persona (los roles reales del rubro).
 // Sin mail ni contraseña: las demos no tienen cuentas (modo prueba).
 // La demo pasa su lista de personas:
-//   [{ id: "u-laura", etiqueta: "Laura · Dueña", detalle: "Ve la caja, el stock y los fiados" }, …]
+//   [{ id: "u-laura", nombre: "Laura", apellido: "Paz", etiqueta: "Laura · Dueña", detalle: "Ve la caja…", empezar: true }, …]
+// `empezar: true` marca la persona por la que conviene arrancar (va primera, con "Empezá por acá"), y si la marca
+// trae `wow`, esa línea va arriba de las personas: le dice a quien llega de Instagram qué va a pasar.
 // y qué hacer al elegir una (alElegir(id): guardar la sesión y arrancar la demo).
 // ============================================
-import { $, $$, esc } from "./ui.js?v=b8dd88b783";
-import { logoSazzo, nombreDemo } from "./marca.js?v=b8dd88b783";
-import { pieAcerca } from "./acerca.js?v=b8dd88b783";
-import { linkOtrasDemos, linkQuieroEsto } from "./enlaces.js?v=b8dd88b783";
-import { activarBotonesSazzo } from "./marco.js?v=b8dd88b783";
-import { contar, contarPantalla } from "./visita.js?v=b8dd88b783";
+import { $, $$, esc, iniciales } from "./ui.js?v=68b63d810e";
+import { logoSazzo, nombreDemo } from "./marca.js?v=68b63d810e";
+import { pieAcerca } from "./acerca.js?v=68b63d810e";
+import { linkOtrasDemos, linkQuieroEsto } from "./enlaces.js?v=68b63d810e";
+import { activarBotonesSazzo } from "./marco.js?v=68b63d810e";
+import { contar, contarPantalla } from "./visita.js?v=68b63d810e";
 
 export function htmlIngreso({ marca, personas }) {
     const quiero = linkQuieroEsto(marca);
+    // La de "Empezá por acá" primero (si hay varias marcadas, cuenta la primera)
+    const recomendada = personas.find((p) => p.empezar);
+    const enOrden = recomendada ? [recomendada, ...personas.filter((p) => p !== recomendada)] : personas;
     return `
         <section class="ingreso">
             <div class="ingreso__marca">
@@ -23,10 +28,12 @@ export function htmlIngreso({ marca, personas }) {
             </div>
             <div class="ingreso__tarjeta">
                 <h2>Probala como…</h2>
+                ${marca.wow ? `<p class="ingreso__wow"><i class="ti ti-sparkles" aria-hidden="true"></i><span>${esc(marca.wow)}</span></p>` : ""}
                 <div class="ingreso__personas">
-                    ${personas.map((p) => `
-                    <button class="persona" type="button" data-persona="${esc(p.id)}">
-                        <span class="persona__nombre">${esc(p.etiqueta)}</span>
+                    ${enOrden.map((p) => `
+                    <button class="persona${p === recomendada ? " persona--empezar" : ""}" type="button" data-persona="${esc(p.id)}">
+                        <span class="persona__avatar" aria-hidden="true">${esc(iniciales(p))}</span>
+                        <span class="persona__nombre">${esc(p.etiqueta)}${p === recomendada ? ' <span class="persona__empezar">Empezá por acá</span>' : ""}</span>
                         ${p.detalle ? `<span class="persona__detalle">${esc(p.detalle)}</span>` : ""}
                         <i class="ti ti-arrow-right" aria-hidden="true"></i>
                     </button>`).join("")}

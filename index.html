@@ -23,7 +23,7 @@
     <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
     <!-- Letras desde el propio sitio (antes Google Fonts); el script de armar las apunta a la copia compartida -->
     <link rel="stylesheet" href="letras/letras.css?v=22ecd6cbb4">
-    <link rel="stylesheet" href="css/catalogo.css?v=4d29ab6988">
+    <link rel="stylesheet" href="css/catalogo.css?v=c2f2ab51f7">
     <!-- Si hay JavaScript, las secciones arrancan ocultas y aparecen al bajar (sin JavaScript se ve todo igual) -->
     <script>
         document.documentElement.classList.add("js");
@@ -150,6 +150,8 @@
         <section class="seccion" id="demos">
             <h2 class="seccion__titulo revelar">Probá una demo</h2>
             <p class="seccion__bajada revelar">Elegí tu rubro. Son datos de ejemplo: tocá todo lo que quieras, no se rompe nada. Adentro podés probarla con tus colores y en modo claro u oscuro.</p>
+            <!-- Atajos a cada rubro (los arma js/catalogo.js): un toque y baja directo a su tarjeta -->
+            <nav class="atajos revelar" id="atajos" aria-label="Ir directo a un rubro"></nav>
             <div class="demos" id="lista-demos"></div>
         </section>
 
@@ -243,6 +245,6 @@
         <p class="pie__chico">© <span data-anio>2026</span> Sazzo</p>
     </footer>
 
-    <script type="module" src="js/catalogo.js?v=4d29ab6988"></script>
+    <script type="module" src="js/catalogo.js?v=c2f2ab51f7"></script>
 </body>
 </html>

@@ -5,10 +5,10 @@
 // Código que no está → "¿Lo cargás?" y queda listo para vender.
 // En la compu, dos columnas (productos | ticket); en el celular, el ticket abajo con una barrita arriba que lleva a él.
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=e34da8ad04";
-import { TOPES, MEDIOS, pesos } from "../datos.js?v=e34da8ad04";
-import { NEGOCIO } from "../marca.js?v=e34da8ad04";
-import { guia, activarGuias } from "./comunes.js?v=e34da8ad04";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=04c5d739b2";
+import { TOPES, MEDIOS, pesos } from "../datos.js?v=04c5d739b2";
+import { NEGOCIO } from "../marca.js?v=04c5d739b2";
+import { guia, activarGuias } from "./comunes.js?v=04c5d739b2";
 
 // El ticket en curso queda en memoria mientras se navega (se vacía al cobrar)
 const ticket = new Map(); // productoId → cantidad

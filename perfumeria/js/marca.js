@@ -2,13 +2,14 @@
 // Marca, personas y "también puede tener" de Sazzo Perfumería (diseñada el 08/10/2026).
 // Las personas son los roles reales del rubro (nombres inventados): la dueña y una clienta.
 // ============================================
-import { revisarMarca } from "../kit/js/marca.js?v=b8dd88b783";
+import { revisarMarca } from "../kit/js/marca.js?v=68b63d810e";
 
 export const MARCA = revisarMarca({
     id: "perfumeria",
     rubro: "Perfumería",
     lema: "Catálogo · Pedidos · Stock",
-    descripcion: "Para perfumerías: un catálogo donde la clienta arma su pedido (y le recomendamos un perfume), el stock de frascos y decants, y los cumpleaños de las clientas."
+    descripcion: "Para perfumerías: un catálogo donde la clienta arma su pedido (y le recomendamos un perfume), el stock de frascos y decants, y los cumpleaños de las clientas.",
+    wow: "Armá un pedido como Julieta y mirá cómo le llega a Carolina, la dueña."
 });
 
 export const PERSONAS = [
@@ -28,7 +29,8 @@ export const PERSONAS = [
         rol: "cliente",
         rolTexto: "Clienta",
         etiqueta: "Julieta · Clienta",
-        detalle: "Mira el catálogo, pide que le recomienden y arma su pedido"
+        detalle: "Mira el catálogo, pide que le recomienden y arma su pedido",
+        empezar: true // "Empezá por acá" en "Probala como…"
     }
 ];
 

@@ -22,7 +22,8 @@ if (document.documentElement.dataset.tema !== "claro") {
     var sinColores = !(window.CSS && CSS.supports && CSS.supports("color", "color-mix(in srgb, red 50%, blue)"));
     var VIEJO = "Este navegador es muy viejo para la demo. Abrila en Chrome o Safari actualizados (o actualizá el celular).";
     function avisar(texto) {
-        var cargando = document.querySelector("#app .cargando");
+        // El texto debajo del logo (o la pantalla de carga entera, si es la de antes)
+        var cargando = document.querySelector("#app .cargando__texto") || document.querySelector("#app .cargando");
         if (cargando) cargando.textContent = texto;
     }
     document.addEventListener("DOMContentLoaded", function () {

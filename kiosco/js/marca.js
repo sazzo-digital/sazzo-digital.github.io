@@ -2,13 +2,14 @@
 // Marca, personas y "también puede tener" de Sazzo Kiosco (diseñada el 08/10/2026).
 // Las personas son los roles reales del rubro (nombres inventados): el dueño y la empleada.
 // ============================================
-import { revisarMarca } from "../kit/js/marca.js?v=e34da8ad04";
+import { revisarMarca } from "../kit/js/marca.js?v=04c5d739b2";
 
 export const MARCA = revisarMarca({
     id: "kiosco",
     rubro: "Kiosco",
     lema: "Ventas · Stock · Fiados",
-    descripcion: "Para kioscos y almacenes: vender rápido, saber qué queda, anotar los fiados y subir los precios de un proveedor en un toque."
+    descripcion: "Para kioscos y almacenes: vender rápido, saber qué queda, anotar los fiados y subir los precios de un proveedor en un toque.",
+    wow: "Vendé y anotá un fiado como Sofía; después Rubén sube los precios de un proveedor de un toque."
 });
 
 export const PERSONAS = [
@@ -28,7 +29,8 @@ export const PERSONAS = [
         rol: "empleada",
         rolTexto: "Empleada",
         etiqueta: "Sofía · Empleada",
-        detalle: "Vende y anota los fiados"
+        detalle: "Vende y anota los fiados",
+        empezar: true // "Empezá por acá" en "Probala como…"
     }
 ];
 

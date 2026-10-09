@@ -4,13 +4,15 @@
 // 2. Vuelve a poner el color que eligió la última vez en "Probala con tus colores".
 // 3. Si se abrió adentro de Instagram, WhatsApp o Facebook, avisa que conviene abrirla en el navegador.
 // 4. Avisa al registro de visitas que se abrió, y después cada pantalla que mira (medicion\LEEME.md).
+// 5. Si algo se rompe (un error que nadie atajó), lo avisa al registro de visitas (sin nada personal).
 // ============================================
-import { leerLink, contar, contarPantalla } from "./visita.js?v=b8dd88b783";
-import { recuperarColor } from "./colores.js?v=b8dd88b783";
-import { avisarSiEsNavegadorDeOtraApp } from "./navegador.js?v=b8dd88b783";
+import { leerLink, contar, contarPantalla, vigilarErrores } from "./visita.js?v=68b63d810e";
+import { recuperarColor } from "./colores.js?v=68b63d810e";
+import { avisarSiEsNavegadorDeOtraApp } from "./navegador.js?v=68b63d810e";
 
 export function iniciarDemo(marca) {
     leerLink();
+    vigilarErrores(marca.id);
     recuperarColor(marca.prefijo);
     avisarSiEsNavegadorDeOtraApp();
     contar("abrio-demo", marca.id);

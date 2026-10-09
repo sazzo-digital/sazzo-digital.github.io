@@ -2,14 +2,15 @@
 // Marca, personas y "también puede tener" de Restix Sazzo (diseñada el 08/10/2026, opción B: el recorrido de Restix
 // rehecho con el kit). Las personas son los roles reales del rubro (nombres inventados): la moza y el de la cocina.
 // ============================================
-import { revisarMarca } from "../kit/js/marca.js?v=afb4bcf68b";
+import { revisarMarca } from "../kit/js/marca.js?v=940a8526b8";
 
 export const MARCA = revisarMarca({
     id: "restix-web",
     rubro: "Restix",
     nombre: "Restix Sazzo",
     lema: "Salón · Cocina · Caja",
-    descripcion: "Para bares y restaurantes: el plano de mesas, la comanda que llega sola a la cocina y a la barra, y el cobro dividiendo la cuenta."
+    descripcion: "Para bares y restaurantes: el plano de mesas, la comanda que llega sola a la cocina y a la barra, y el cobro dividiendo la cuenta.",
+    wow: "Tomá un pedido como Lara y mirá cómo llega solo a la cocina de Beto."
 });
 
 export const PERSONAS = [
@@ -20,7 +21,8 @@ export const PERSONAS = [
         rol: "moza",
         rolTexto: "Moza",
         etiqueta: "Lara · Moza",
-        detalle: "Abre las mesas, toma los pedidos, cobra y ve la caja"
+        detalle: "Abre las mesas, toma los pedidos, cobra y ve la caja",
+        empezar: true // "Empezá por acá" en "Probala como…"
     },
     {
         id: "u-cocina",

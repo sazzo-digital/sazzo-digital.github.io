@@ -2,13 +2,14 @@
 // Marca, personas y "también puede tener" de Sazzo Barbería (diseñada el 08/10/2026).
 // Las personas son los roles reales del rubro (nombres inventados): el barbero (y dueño) y un cliente.
 // ============================================
-import { revisarMarca } from "../kit/js/marca.js?v=4875a95876";
+import { revisarMarca } from "../kit/js/marca.js?v=32a11802b0";
 
 export const MARCA = revisarMarca({
     id: "barberia",
     rubro: "Barbería",
     lema: "Turnos · Agenda · Clientes",
-    descripcion: "Para barberías y peluquerías: la agenda de turnos, los clientes y quiénes hace rato que no vienen."
+    descripcion: "Para barberías y peluquerías: la agenda de turnos, los clientes y quiénes hace rato que no vienen.",
+    wow: "Sacá un turno como Matías y miralo aparecer en la agenda de Leo."
 });
 
 export const PERSONAS = [
@@ -28,7 +29,8 @@ export const PERSONAS = [
         rol: "cliente",
         rolTexto: "Cliente",
         etiqueta: "Matías · Cliente",
-        detalle: "Saca turno desde el celular"
+        detalle: "Saca turno desde el celular",
+        empezar: true // "Empezá por acá" en "Probala como…"
     }
 ];
 

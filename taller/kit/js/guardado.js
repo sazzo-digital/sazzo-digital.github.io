@@ -8,7 +8,7 @@
 //
 // Uso en la demo (una sola vez, en su archivo de datos):
 //   const guardado = crearGuardado({ prefijo: "sazzo-kiosco", version: 1, semilla: crearSemilla });
-//   guardado.db()  → los datos (si no hay, o están rotos, o son de otra versión: los de fábrica)
+//   guardado.db()  → los datos (si no hay, o están rotos, o son de otra versión, o de otro día: los de fábrica)
 //   …se modifica db()… y después guardado.persistir()
 //
 // Reglas para las funciones de datos de cada demo:
@@ -16,12 +16,22 @@
 // - Nada se borra: se da de baja o se anula, y queda quién y cuándo.
 // - Las funciones devuelven copias: modificar lo que devuelven no cambia los datos guardados.
 // - Si cambia la forma de los datos de prueba, subir `version` (se regeneran solos).
+// - Los datos de ejemplo se arman con las fechas de hoy: si alguien vuelve otro día, se arman de nuevo para ese día
+//   (si no, vería la agenda de hoy vacía o mesas "abiertas hace 2 días"). Se avisa con un cartelito.
 // ============================================
 
-import { aviso } from "./ui.js?v=a3a89a6efc";
+import { aviso } from "./ui.js?v=a1bc4c3709";
 
 /** Nombres compartidos entre el catálogo y todas las demos (no pueden ser el prefijo de una demo). */
 export const COMPARTIDAS = ["sazzo-origen", "sazzo-equipo", "sazzo-tema", "sazzo-yo"];
+
+/** El día de hoy en este equipo ("2026-10-09"): el día para el que se armaron los datos de ejemplo. */
+export function hoyLocal(fecha = new Date()) {
+    const dos = (n) => String(n).padStart(2, "0");
+    return `${fecha.getFullYear()}-${dos(fecha.getMonth() + 1)}-${dos(fecha.getDate())}`;
+}
+
+export const MENSAJE_RENOVADOS = "Los datos de ejemplo se renovaron para hoy.";
 
 export function crearGuardado({ prefijo, version, semilla } = {}) {
     if (!/^sazzo-[a-z0-9]+(-[a-z0-9]+)*$/.test(prefijo ?? "")) {
@@ -52,14 +62,19 @@ export function crearGuardado({ prefijo, version, semilla } = {}) {
 
     function db() {
         if (cache) return cache;
+        let deOtroDia = false;
         try {
             const guardados = JSON.parse(localStorage.getItem(claves.datos));
-            if (guardados?.version === version) return (cache = guardados);
+            if (guardados?.version === version) {
+                if (guardados.armadoEl === hoyLocal()) return (cache = guardados);
+                deOtroDia = true;
+            }
         } catch {
             // datos rotos o sin acceso: se regeneran
         }
-        cache = { ...semilla(), version };
+        cache = { ...semilla(), version, armadoEl: hoyLocal() };
         persistir();
+        if (deOtroDia && typeof document !== "undefined" && document.body) aviso(MENSAJE_RENOVADOS, "info");
         return cache;
     }
 

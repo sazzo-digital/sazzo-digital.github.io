@@ -3,9 +3,9 @@
 // entregado), el stock (frascos y botellas madre en ml, lo que hay que pedir primero) y las clientas (lo que compra
 // cada una y "Cumplen este mes" con el saludo para copiar).
 // ============================================
-import { esc, aviso, vacio, fechaCorta, fechaHora } from "../../kit/js/ui.js?v=b8dd88b783";
-import { TOPES, MADRE_POCO_ML, pesos } from "../datos.js?v=b8dd88b783";
-import { frasco, pastillaPedido, mostrarMensaje } from "./comunes.js?v=b8dd88b783";
+import { esc, aviso, vacio, fechaCorta, fechaHora } from "../../kit/js/ui.js?v=68b63d810e";
+import { TOPES, MADRE_POCO_ML, pesos } from "../datos.js?v=68b63d810e";
+import { frasco, pastillaPedido, mostrarMensaje } from "./comunes.js?v=68b63d810e";
 
 const MESES = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
 

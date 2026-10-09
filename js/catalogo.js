@@ -2,8 +2,8 @@
 // Catálogo de Sazzo: arma las tarjetas de demos (desde demos.js), las animaciones al bajar, los botones de
 // contacto (desde config.js), guarda de dónde vino la visita (?o=papel / ?o=ig) y avisa a la medición.
 // ============================================
-import { DEMOS } from "./demos.js?v=4d29ab6988";
-import { CONTACTO, MEDICION, LINK_DEMOS } from "./config.js?v=4d29ab6988";
+import { DEMOS } from "./demos.js?v=c2f2ab51f7";
+import { CONTACTO, MEDICION, LINK_DEMOS } from "./config.js?v=c2f2ab51f7";
 
 const $ = (selector, raiz = document) => raiz.querySelector(selector);
 const $$ = (selector, raiz = document) => [...raiz.querySelectorAll(selector)];
@@ -26,7 +26,15 @@ const guardado = {
 const ORIGENES_VALIDOS = /^[a-z0-9-]{1,30}$/;
 const parametros = new URLSearchParams(location.search);
 const origenDelLink = parametros.get("o");
-if (origenDelLink && ORIGENES_VALIDOS.test(origenDelLink)) guardado.escribir("sazzo-origen", origenDelLink);
+// Vale para esa visita: 12 horas desde que llegó con el link (si vuelve otro día sin link, cuenta como "directo")
+const DURA_ORIGEN = 12 * 60 * 60 * 1000;
+if (origenDelLink && ORIGENES_VALIDOS.test(origenDelLink)) guardado.escribir("sazzo-origen", `${origenDelLink}|${Date.now()}`);
+function origen() {
+    const m = /^([a-z0-9-]{1,30})\|(\d{1,15})$/.exec(guardado.leer("sazzo-origen") ?? "");
+    if (!m) return "directo";
+    const edad = Date.now() - Number(m[2]);
+    return edad > -60000 && edad < DURA_ORIGEN ? m[1] : "directo";
+}
 if (parametros.get("yo") === "1") guardado.escribir("sazzo-yo", "1"); // los celulares del equipo no cuentan
 if (parametros.get("yo") === "0") guardado.borrar("sazzo-yo");
 
@@ -70,7 +78,7 @@ function contar(que, demo = "") {
         demo: String(demo).slice(0, 30),
         persona: "",
         pantalla: "",
-        origen: (guardado.leer("sazzo-origen") || "directo").slice(0, 30),
+        origen: origen().slice(0, 30),
         equipo: equipo(),
         sesion,
         dispositivo: dispositivo().slice(0, 60),
@@ -107,7 +115,7 @@ function tarjeta(demo) {
         ? `<a class="boton boton--chico" href="${esc(link)}" data-demo="${esc(demo.id)}">Probala ahora <svg class="icono" aria-hidden="true"><use href="#i-flecha"/></svg></a>`
         : `<span class="boton boton--chico boton--apagado" aria-disabled="true">Muy pronto</span>`;
     return `
-        <article class="demo revelar" style="--acento:${esc(demo.acento)}">
+        <article class="demo revelar" id="demo-${esc(demo.id)}" style="--acento:${esc(demo.acento)}">
             <div class="celu" aria-hidden="true">
                 <div class="celu__pantalla">
                     <div class="celu__barra"><span>${esc(demo.nombre)}</span></div>
@@ -129,6 +137,12 @@ function tarjeta(demo) {
 
 const visibles = DEMOS.filter((d) => d.estado !== "retirada");
 $("#lista-demos").innerHTML = visibles.map(tarjeta).join("");
+// Atajos arriba de las tarjetas: cada tarjeta mide casi media pantalla y Restix queda muy abajo. Para el dueño que
+// escaneó el papel en su local: toca su rubro y baja directo (solo ids de letras, números y guiones).
+$("#atajos").innerHTML = visibles
+    .filter((d) => /^[a-z0-9]+(-[a-z0-9]+)*$/.test(d.id))
+    .map((d) => `<a class="atajo" href="#demo-${esc(d.id)}" style="--acento:${esc(d.acento)}">${esc(d.nombre)}</a>`)
+    .join("");
 $$("[data-demo]").forEach((a) => a.addEventListener("click", () => contar("probar", a.dataset.demo)));
 
 // Cantidad de rubros en la portada (sale de la lista)

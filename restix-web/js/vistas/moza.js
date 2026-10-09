@@ -3,10 +3,10 @@
 // grilla), la comanda de una mesa (al enviar se separa solo lo de la cocina y lo de la barra), el cobro dividiendo la
 // cuenta (todo junto, en partes iguales o por lo que consumió cada uno, cada parte con su medio de pago) y la caja.
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=afb4bcf68b";
-import { CATEGORIAS, MEDIOS, TOPES, carta, dividir, pesos } from "../datos.js?v=afb4bcf68b";
-import { NEGOCIO } from "../marca.js?v=afb4bcf68b";
-import { ticket, guia, activarGuias, haceMin, hora } from "./comunes.js?v=afb4bcf68b";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=940a8526b8";
+import { CATEGORIAS, MEDIOS, TOPES, carta, dividir, pesos } from "../datos.js?v=940a8526b8";
+import { NEGOCIO } from "../marca.js?v=940a8526b8";
+import { ticket, guia, activarGuias, haceMin, hora } from "./comunes.js?v=940a8526b8";
 
 const ESTADO_MESA = { libre: "Libre", abierta: "Abierta", cobrando: "Cobrando" };
 

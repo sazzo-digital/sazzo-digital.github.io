@@ -2,13 +2,14 @@
 // Marca, personas y "también puede tener" de Sazzo Canchas (diseñada el 08/10/2026).
 // Las personas son los roles reales del rubro (nombres inventados): el dueño del complejo y un jugador.
 // ============================================
-import { revisarMarca } from "../kit/js/marca.js?v=cd7ff210c4";
+import { revisarMarca } from "../kit/js/marca.js?v=bcbc78c5d8";
 
 export const MARCA = revisarMarca({
     id: "canchas",
     rubro: "Canchas",
     lema: "Turnos · Fútbol · Pádel",
-    descripcion: "Para canchas de fútbol y pádel: los turnos ordenados en una grilla, turnos fijos y señas, sin que se pisen por WhatsApp."
+    descripcion: "Para canchas de fútbol y pádel: los turnos ordenados en una grilla, turnos fijos y señas, sin que se pisen por WhatsApp.",
+    wow: "Reservá una cancha como Fede y mirá cómo le aparece a Gustavo en la grilla."
 });
 
 export const PERSONAS = [
@@ -28,7 +29,8 @@ export const PERSONAS = [
         rol: "cliente",
         rolTexto: "Jugador",
         etiqueta: "Fede · Jugador",
-        detalle: "Reserva una cancha desde el celular"
+        detalle: "Reserva una cancha desde el celular",
+        empezar: true // "Empezá por acá" en "Probala como…"
     }
 ];
 

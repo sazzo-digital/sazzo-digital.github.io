@@ -2,13 +2,14 @@
 // Marca, personas y "también puede tener" de Sazzo Flota (diseñada el 08/10/2026).
 // Las personas son los roles reales del rubro (nombres inventados): administradora, mecánico y chofer.
 // ============================================
-import { revisarMarca } from "../kit/js/marca.js?v=8b20c8d426";
+import { revisarMarca } from "../kit/js/marca.js?v=e7f855679d";
 
 export const MARCA = revisarMarca({
     id: "flota",
     rubro: "Flota",
     lema: "Vehículos · Taller · Repuestos",
-    descripcion: "Para empresas con vehículos: qué vehículo anda y cuál está en el taller, los problemas que avisan los choferes y los repuestos."
+    descripcion: "Para empresas con vehículos: qué vehículo anda y cuál está en el taller, los problemas que avisan los choferes y los repuestos.",
+    wow: "Avisá un problema como Ramón, el chofer, y mirá cómo le llega a Diego en el taller."
 });
 
 export const PERSONAS = [
@@ -37,7 +38,8 @@ export const PERSONAS = [
         rol: "chofer",
         rolTexto: "Chofer",
         etiqueta: "Ramón · Chofer",
-        detalle: "Maneja su vehículo y avisa si algo anda mal"
+        detalle: "Maneja su vehículo y avisa si algo anda mal",
+        empezar: true // "Empezá por acá" en "Probala como…"
     }
 ];
 

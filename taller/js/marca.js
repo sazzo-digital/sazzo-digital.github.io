@@ -2,13 +2,14 @@
 // Marca, personas y "también puede tener" de Sazzo Taller (diseñada el 08/10/2026).
 // Las personas son los roles reales del rubro (nombres inventados): el dueño y un mecánico.
 // ============================================
-import { revisarMarca } from "../kit/js/marca.js?v=a3a89a6efc";
+import { revisarMarca } from "../kit/js/marca.js?v=a1bc4c3709";
 
 export const MARCA = revisarMarca({
     id: "taller",
     rubro: "Taller",
     lema: "Órdenes · Presupuestos · Avisos",
-    descripcion: "Para talleres mecánicos: la orden de trabajo de cada auto, el presupuesto para imprimir, el aviso de que ya está listo y los que tienen el service vencido."
+    descripcion: "Para talleres mecánicos: la orden de trabajo de cada auto, el presupuesto para imprimir, el aviso de que ya está listo y los que tienen el service vencido.",
+    wow: "Recibí un auto como Raúl y mirá cómo le llega la orden a Seba, el mecánico."
 });
 
 export const PERSONAS = [
@@ -19,7 +20,8 @@ export const PERSONAS = [
         rol: "dueno",
         rolTexto: "Dueño",
         etiqueta: "Raúl · Dueño",
-        detalle: "Recibe los autos, arma los presupuestos y avisa al cliente"
+        detalle: "Recibe los autos, arma los presupuestos y avisa al cliente",
+        empezar: true // "Empezá por acá" en "Probala como…"
     },
     {
         id: "u-mecanico",

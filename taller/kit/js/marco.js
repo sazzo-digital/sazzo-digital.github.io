@@ -10,13 +10,17 @@
 // Después la demo muestra cada pantalla adentro de `contenido` con rutas.js → mostrarRuta.
 // Botones fijos (barrita sobre el menú): "Probala con tus colores", "Ver otras demos" y "Quiero esto para mi negocio".
 // La primera vez que se abre cada demo, un globito señala la paleta (colores.js → mostrarGlobitoColores).
+// En la compu (desde 1000 px) el menú va al costado y la barrita de Sazzo sube a la cabecera; en celulares chicos la
+// barrita se esconde al bajar la pantalla y vuelve al subir (así queda más lugar para la demo).
+// Festejo: cuando aparece una confirmación (.hecho: turno reservado, venta cobrada, orden creada…), el ✓ entra con un
+// rebote, salen chispitas del color de la demo y el celular vibra cortito (Android). Quieto con "reducir movimiento".
 // ============================================
-import { $, esc, iniciales, nombreCompleto } from "./ui.js?v=a3a89a6efc";
-import { logoSazzo, nombreDemo } from "./marca.js?v=a3a89a6efc";
-import { interruptorTema, activarInterruptorTema } from "./apariencia.js?v=a3a89a6efc";
-import { linkOtrasDemos, linkQuieroEsto } from "./enlaces.js?v=a3a89a6efc";
-import { abrirColores, mostrarGlobitoColores } from "./colores.js?v=a3a89a6efc";
-import { contar } from "./visita.js?v=a3a89a6efc";
+import { $, esc, iniciales, nombreCompleto } from "./ui.js?v=a1bc4c3709";
+import { logoSazzo, nombreDemo } from "./marca.js?v=a1bc4c3709";
+import { interruptorTema, activarInterruptorTema } from "./apariencia.js?v=a1bc4c3709";
+import { linkOtrasDemos, linkQuieroEsto } from "./enlaces.js?v=a1bc4c3709";
+import { abrirColores, mostrarGlobitoColores } from "./colores.js?v=a1bc4c3709";
+import { contar } from "./visita.js?v=a1bc4c3709";
 
 /** La barrita de Sazzo: colores, otras demos y "Quiero esto" (los textos largos solo si hay lugar). */
 export function htmlBarraSazzo(marca, opciones) {
@@ -77,6 +81,82 @@ export function activarBotonesSazzo(raiz, marca) {
     $("[data-quiero-esto]", raiz)?.addEventListener("click", () => contar("quiero-esto", marca.id));
 }
 
+const ESCRITORIO = "(min-width: 1000px)"; // igual que $escritorio en los estilos
+const ubicados = new WeakSet();
+
+/** La barrita de Sazzo (y su globito): en la compu, en la cabecera al lado del tema; en el celular, abajo. */
+export function ubicarBarraSazzo(app) {
+    const barra = $(".barra-sazzo", app);
+    const cabecera = $(".cabecera__lado", app);
+    if (!barra || !cabecera) return;
+    const globito = $(".globito-colores", app);
+    if (matchMedia(ESCRITORIO).matches) {
+        cabecera.append(...[globito, barra].filter(Boolean));
+    } else if (barra.parentElement === cabecera) {
+        const pie = $(".pie-app", app);
+        pie.after(...[globito, barra].filter(Boolean));
+    }
+}
+
+function seguirElAncho(app) {
+    if (ubicados.has(app)) return;
+    ubicados.add(app);
+    matchMedia(ESCRITORIO).addEventListener?.("change", () => ubicarBarraSazzo(app));
+}
+
+// En celulares chicos: al bajar la pantalla se esconde la barrita; al subir (o arriba de todo) vuelve
+let escuchandoScroll = false;
+function esconderBarraAlBajar() {
+    if (escuchandoScroll) return;
+    escuchandoScroll = true;
+    let antes = scrollY;
+    addEventListener("scroll", () => {
+        const ahora = scrollY;
+        if (Math.abs(ahora - antes) < 8) return;
+        document.body.classList.toggle("barra-escondida", ahora > antes && ahora > 80);
+        antes = ahora;
+    }, { passive: true });
+}
+
+const conFestejo = new WeakSet(); // el marco se vuelve a dibujar en cada cambio de persona: se escucha una sola vez
+
+/** Escucha cuándo aparece una confirmación (.hecho) adentro de `raiz` y la festeja. */
+export function festejarConfirmaciones(raiz) {
+    if (conFestejo.has(raiz) || typeof MutationObserver === "undefined") return;
+    conFestejo.add(raiz);
+    new MutationObserver((cambios) => {
+        for (const cambio of cambios) {
+            for (const n of cambio.addedNodes) {
+                if (n.nodeType !== 1) continue;
+                const hecho = n.matches(".hecho:not(.hecho--chico)") ? n : n.querySelector(".hecho:not(.hecho--chico)");
+                if (hecho) festejar(hecho);
+            }
+        }
+    }).observe(raiz, { childList: true, subtree: true });
+}
+
+/** Chispitas del acento alrededor del ✓ y una vibración cortita. Una vez por confirmación. */
+export function festejar(hecho) {
+    if (hecho.dataset.festejado) return false;
+    hecho.dataset.festejado = "1";
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return true;
+    const icono = hecho.querySelector(":scope > .ti");
+    if (icono) {
+        const chispas = document.createElement("span");
+        chispas.className = "festejo";
+        chispas.setAttribute("aria-hidden", "true");
+        chispas.innerHTML = Array.from({ length: 10 }, (_, i) => `<span style="--i:${i}"></span>`).join("");
+        icono.append(chispas);
+        setTimeout(() => chispas.remove(), 1300);
+    }
+    try {
+        navigator.vibrate?.(35);
+    } catch {
+        // sin vibración: no pasa nada
+    }
+    return true;
+}
+
 /** Dibuja el marco adentro de `app`, conecta sus botones y devuelve el lugar donde van las pantallas. */
 export function pintarMarco(app, { marca, usuario, menu = [], alCambiarPersona, alReiniciar }) {
     // Sin a quién cambiar (comercio de una sola persona), no hay botón de cambiar de persona
@@ -85,6 +165,11 @@ export function pintarMarco(app, { marca, usuario, menu = [], alCambiarPersona, 
     activarInterruptorTema();
     activarBotonesSazzo(app, marca);
     mostrarGlobitoColores(app, marca.prefijo);
+    ubicarBarraSazzo(app);
+    seguirElAncho(app);
+    esconderBarraAlBajar();
+    document.body.classList.remove("barra-escondida");
+    festejarConfirmaciones(app);
     // Para quien usa teclado: el primer Tab ofrece saltar la cabecera e ir directo al contenido
     $("#saltar", app).addEventListener("click", () => $("#contenido", app).focus());
     $("#cambiar-persona", app)?.addEventListener("click", () => alCambiarPersona());

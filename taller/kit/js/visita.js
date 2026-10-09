@@ -1,19 +1,22 @@
 // ============================================
 // La visita: de dónde vino, el número al azar de este equipo y el registro de visitas (la planilla de Sazzo).
 // Usa los mismos nombres que el catálogo (compartidos a propósito entre todos los sitios de Sazzo):
-//   sazzo-origen  ?o=papel, ?o=ig, ?o=wa o ?o=ig-kiosco (lo guarda el catálogo o la demo, si el link trae ?o=)
+//   sazzo-origen  ?o=papel, ?o=ig, ?o=wa o ?o=ig-kiosco (lo guarda el catálogo o la demo, si el link trae ?o=).
+//                 Vale para esa visita: 12 horas desde que llegó con el link (si vuelve otro día sin link, es "directo").
 //   sazzo-equipo  número al azar de este navegador (distingue "volvió" de "otra persona"; no identifica a nadie)
 //   sazzo-yo      ?yo=1 marca los equipos de Sazzo para que no cuenten (?yo=0 lo desmarca)
 // Nada de esto cambia lo que se ve en pantalla. Nunca se manda nombre, teléfono, mail, ubicación ni lo que se carga
 // en la demo: solo qué pasó (de una lista fija), en qué demo, la persona de ejemplo, la pantalla, el origen, el
-// tipo de equipo y el navegador.
+// tipo de equipo y el navegador. Si algo se rompe en el celular de alguien, se manda "error" con la pantalla y el
+// mensaje del error hecho palabras sueltas (sin comillas ni números: nunca lleva lo que cargó la persona).
 // La dirección de la planilla la pone el script de armar el sitio (medicion\direccion.txt). En la PC (localhost)
 // nunca se manda nada.
 // ============================================
-import { MEDICION } from "./config.js?v=a3a89a6efc";
+import { MEDICION } from "./config.js?v=a1bc4c3709";
 
 const ORIGEN_VALIDO = /^[a-z0-9-]{1,30}$/; // igual que el catálogo
-export const EVENTOS = ["abrio-demo", "entro", "pantalla", "quiero-esto", "otras-demos", "colores"];
+export const EVENTOS = ["abrio-demo", "entro", "pantalla", "quiero-esto", "otras-demos", "colores", "error"];
+export const DURA_ORIGEN = 12 * 60 * 60 * 1000; // igual que el catálogo
 
 const leer = (clave) => {
     try {
@@ -32,15 +35,21 @@ const escribir = (clave, valor) => {
 };
 
 /** Lee ?o=, ?yo=1 y ?yo=0 del link (si vienen) y los guarda. Lo que no cumple la regla se ignora. */
-export function leerLink(busqueda = location.search) {
+export function leerLink(busqueda = location.search, ahora = Date.now()) {
     const p = new URLSearchParams(busqueda);
     const origen = p.get("o");
-    if (origen && ORIGEN_VALIDO.test(origen)) escribir("sazzo-origen", origen);
+    if (origen && ORIGEN_VALIDO.test(origen)) escribir("sazzo-origen", `${origen}|${ahora}`); // "papel|1760000000000"
     if (p.get("yo") === "1") escribir("sazzo-yo", "1");
     if (p.get("yo") === "0") escribir("sazzo-yo", null);
 }
 
-export const origen = () => leer("sazzo-origen") || "directo";
+/** De dónde vino esta visita: lo del último link con ?o=, si fue hace menos de 12 horas. Si no, "directo". */
+export function origen(ahora = Date.now()) {
+    const m = /^([a-z0-9-]{1,30})\|(\d{1,15})$/.exec(leer("sazzo-origen") ?? "");
+    if (!m) return "directo";
+    const edad = ahora - Number(m[2]);
+    return edad > -60000 && edad < DURA_ORIGEN ? m[1] : "directo";
+}
 
 export function equipo() {
     let id = leer("sazzo-equipo");
@@ -123,4 +132,37 @@ export function contarPantalla(demo, opciones) {
     if (pantalla === ultimaPantalla) return null;
     ultimaPantalla = pantalla;
     return contar("pantalla", demo, { pantalla, ...opciones });
+}
+
+// ---------- Errores en el celular de alguien (para enterarse si algo se rompe en la calle) ----------
+
+/** "Cannot read properties of undefined (reading 'x')" → "cannot-read-properties-of-undefined-reading". */
+export function resumenDeError(mensaje) {
+    return String(mensaje ?? "")
+        .replace(/(["'`]).*?\1|[«“].*?[»”]/g, " ") // lo que va entre comillas puede ser algo que cargó la persona
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase()
+        .replace(/[^a-z]+/g, "-")
+        .replace(/^-+|-+$/g, "") || "sin-mensaje";
+}
+
+const TOPE_ERRORES = 3; // por página abierta (un error que se repite en cada toque no inunda la planilla)
+const erroresContados = new Set();
+
+/** Manda "error" con "pantalla--mensaje" (40 letras como mucho). Cada mensaje una vez, y hasta 3 por página. */
+export function contarError(demo, mensaje, opciones) {
+    const resumen = resumenDeError(mensaje);
+    if (erroresContados.size >= TOPE_ERRORES || erroresContados.has(resumen)) return null;
+    erroresContados.add(resumen);
+    const pantalla = `${pantallaDe()}--${resumen}`.slice(0, 40).replace(/-+$/, "");
+    return contar("error", demo, { ...opciones, pantalla });
+}
+
+/** Escucha los errores que nadie atajó (los que rompen algo) y los cuenta. */
+export function vigilarErrores(demo) {
+    addEventListener("error", (e) => {
+        if (e.message) contarError(demo, e.message);
+    });
+    addEventListener("unhandledrejection", (e) => contarError(demo, e.reason?.message ?? e.reason));
 }

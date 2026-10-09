@@ -2,10 +2,10 @@
 // Fiados: la libreta. Quién debe, cuánto y desde cuándo; anotar un cliente nuevo; en la ficha, cobrar (todo o una
 // parte) y ver qué se llevó en cada fiado. El tope de cada cliente lo cambia el dueño.
 // ============================================
-import { esc, aviso, vacio, fechaCorta } from "../../kit/js/ui.js?v=e34da8ad04";
-import { diaLocalDe, fechaLocalISO } from "../../kit/js/fechas.js?v=e34da8ad04";
-import { TOPES, pesos } from "../datos.js?v=e34da8ad04";
-import { haceDias, hora } from "./comunes.js?v=e34da8ad04";
+import { esc, aviso, vacio, fechaCorta } from "../../kit/js/ui.js?v=04c5d739b2";
+import { diaLocalDe, fechaLocalISO } from "../../kit/js/fechas.js?v=04c5d739b2";
+import { TOPES, pesos } from "../datos.js?v=04c5d739b2";
+import { haceDias, hora } from "./comunes.js?v=04c5d739b2";
 
 const barraTope = (c) => {
     const pct = c.tope ? Math.min(100, Math.round((c.deuda / c.tope) * 100)) : 100;

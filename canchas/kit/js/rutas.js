@@ -9,7 +9,7 @@
 //     `ancho`: en la PC usa más ancho (en el celular no cambia nada).
 // Cada vista recibe (contenedor, { usuario, params, consulta }) y dibuja adentro.
 // ============================================
-import { $$, esc, vacio } from "./ui.js?v=cd7ff210c4";
+import { $$, esc, vacio } from "./ui.js?v=bcbc78c5d8";
 
 /** Lo que hay después del # → { ruta: "/producto/p-1", consulta: URLSearchParams }. Sin hash: la de inicio. */
 export function leerHash(inicio = "/inicio") {
@@ -32,7 +32,8 @@ export const ESQUELETO = `
 
 /**
  * Muestra la pantalla de la ruta actual adentro de `contenido`.
- * Devuelve cómo terminó (sirve para las pruebas): "ok", "desconocida" (manda al inicio), "sin-permiso" o "error".
+ * Devuelve cómo terminó (sirve para las pruebas): "ok", "desconocida" (manda al inicio), "sin-permiso" (también
+ * manda al inicio) o "error".
  */
 export async function mostrarRuta({ rutas, contenido, usuario, inicio = "/inicio" }) {
     const { ruta, consulta } = leerHash(inicio);
@@ -56,7 +57,14 @@ export async function mostrarRuta({ rutas, contenido, usuario, inicio = "/inicio
     const sinSalida = (mensaje, icono) =>
         `${vacio(mensaje, icono)}<p class="vacio__salida"><a class="boton boton--secundario" href="#${esc(inicio)}"><i class="ti ti-arrow-left" aria-hidden="true"></i> Volver al inicio</a></p>`;
     if (r.puede && !r.puede(usuario)) {
-        contenido.innerHTML = sinSalida("No tenés acceso a esta pantalla.", "ti-lock");
+        // Pasa al cambiar de persona y tocar "Atrás" (la pantalla era de la otra): directo a su inicio.
+        // Solo si el inicio tampoco es suyo (no debería pasar), el cartel con la salida.
+        if (ruta !== inicio) {
+            history.replaceState(null, "", `#${inicio}`);
+            await mostrarRuta({ rutas, contenido, usuario, inicio });
+        } else {
+            contenido.innerHTML = sinSalida("No tenés acceso a esta pantalla.", "ti-lock");
+        }
         return "sin-permiso";
     }
 
