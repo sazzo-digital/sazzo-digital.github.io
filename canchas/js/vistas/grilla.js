@@ -4,11 +4,11 @@
 // "Anotar turno" en un casillero libre (para cuando llaman por teléfono).
 // Los turnos que reservó un jugador y Gustavo todavía no miró aparecen arriba y marcados "Nuevo".
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=bcbc78c5d8";
-import { aHora } from "../../kit/js/turnos.js?v=bcbc78c5d8";
-import { TOPES, CANCHAS, TIPOS, pesos, nombreFecha, horarioDe } from "../datos.js?v=bcbc78c5d8";
-import { pastillaSena, pastillaEstado, chipsDias } from "./comunes.js?v=bcbc78c5d8";
-import { buscarPersona } from "../marca.js?v=bcbc78c5d8";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=8803abd1ef";
+import { aHora } from "../../kit/js/turnos.js?v=8803abd1ef";
+import { TOPES, CANCHAS, TIPOS, pesos, nombreFecha, horarioDe } from "../datos.js?v=8803abd1ef";
+import { pastillaSena, pastillaEstado, chipsDias } from "./comunes.js?v=8803abd1ef";
+import { buscarPersona } from "../marca.js?v=8803abd1ef";
 
 const PASO = 30; // la grilla va de media hora en media hora (entran los turnos de 60 y los de 90 min)
 
@@ -105,7 +105,7 @@ export function vistaTurno(cont, { usuario, datos, params: [id] }) {
             aviso(mensaje);
             location.hash = volver;
         } catch (err) {
-            aviso(err.message, "error");
+            aviso(err, "error");
         }
     };
     cont.querySelectorAll("[data-marcar]").forEach((b) => b.addEventListener("click", () =>
@@ -148,7 +148,7 @@ export function vistaAnotar(cont, { usuario, datos, consulta }) {
             aviso("Turno anotado");
             location.hash = `#/inicio?fecha=${fecha}`;
         } catch (err) {
-            aviso(err.message, "error");
+            aviso(err, "error");
         }
     });
 }

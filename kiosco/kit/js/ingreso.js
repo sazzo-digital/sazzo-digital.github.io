@@ -7,12 +7,12 @@
 // trae `wow`, esa línea va arriba de las personas: le dice a quien llega de Instagram qué va a pasar.
 // y qué hacer al elegir una (alElegir(id): guardar la sesión y arrancar la demo).
 // ============================================
-import { $, $$, esc, iniciales } from "./ui.js?v=04c5d739b2";
-import { logoSazzo, nombreDemo } from "./marca.js?v=04c5d739b2";
-import { pieAcerca } from "./acerca.js?v=04c5d739b2";
-import { linkOtrasDemos, linkQuieroEsto } from "./enlaces.js?v=04c5d739b2";
-import { activarBotonesSazzo } from "./marco.js?v=04c5d739b2";
-import { contar, contarPantalla } from "./visita.js?v=04c5d739b2";
+import { $, $$, esc, iniciales, mensajeDe } from "./ui.js?v=2ffaf20289";
+import { logoSazzo, nombreDemo } from "./marca.js?v=2ffaf20289";
+import { pieAcerca } from "./acerca.js?v=2ffaf20289";
+import { linkOtrasDemos, linkQuieroEsto } from "./enlaces.js?v=2ffaf20289";
+import { activarBotonesSazzo } from "./marco.js?v=2ffaf20289";
+import { contar, contarPantalla } from "./visita.js?v=2ffaf20289";
 
 export function htmlIngreso({ marca, personas }) {
     const quiero = linkQuieroEsto(marca);
@@ -59,7 +59,7 @@ export async function vistaIngreso(cont, { marca, personas, alElegir }) {
         } catch (e) {
             mostrarIngreso(cont, { marca, personas, alElegir });
             const error = $(".formulario__error", cont);
-            error.textContent = e.message;
+            error.textContent = mensajeDe(e);
             error.hidden = false;
             return;
         }
@@ -70,6 +70,9 @@ export async function vistaIngreso(cont, { marca, personas, alElegir }) {
 function mostrarIngreso(cont, { marca, personas, alElegir }) {
     cont.innerHTML = htmlIngreso({ marca, personas });
     cont.classList?.remove("sin-menu");
+    // Si el foco quedó en ningún lado (tocó "Cambiar de persona", que ya no está), va a la primera persona
+    const foco = document.activeElement;
+    if (!foco || foco === document.body || !foco.isConnected) $("[data-persona]", cont)?.focus({ preventScroll: true });
     activarBotonesSazzo(cont, marca);
     const error = $(".formulario__error", cont);
     $$("[data-persona]", cont).forEach((b) =>
@@ -80,7 +83,7 @@ function mostrarIngreso(cont, { marca, personas, alElegir }) {
                 await alElegir(b.dataset.persona);
                 contarEntrada(marca, personas.find((p) => p.id === b.dataset.persona));
             } catch (e) {
-                error.textContent = e.message;
+                error.textContent = mensajeDe(e);
                 error.hidden = false;
                 b.disabled = false;
             }

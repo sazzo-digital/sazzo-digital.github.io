@@ -3,10 +3,10 @@
 // "Recomendame uno"), cada perfume con sus notas y presentaciones, "Tu pedido" (el carrito) y "Mis pedidos".
 // El pedido no pide ningún dato: Julieta ya entró como ella. Retiro en el local.
 // ============================================
-import { esc, aviso, vacio, fechaCorta } from "../../kit/js/ui.js?v=68b63d810e";
-import { FAMILIAS, PARA, PRESENTACIONES, TOPES, pesos } from "../datos.js?v=68b63d810e";
-import { NEGOCIO } from "../marca.js?v=68b63d810e";
-import { frasco, carrito, itemsDelCarrito, unidadesEnCarrito, guia, activarGuias, pastillaPedido } from "./comunes.js?v=68b63d810e";
+import { esc, aviso, vacio, fechaCorta, mensajeDe } from "../../kit/js/ui.js?v=b42f3ed3fa";
+import { FAMILIAS, PARA, PRESENTACIONES, TOPES, pesos } from "../datos.js?v=b42f3ed3fa";
+import { NEGOCIO } from "../marca.js?v=b42f3ed3fa";
+import { frasco, carrito, itemsDelCarrito, unidadesEnCarrito, guia, activarGuias, pastillaPedido } from "./comunes.js?v=b42f3ed3fa";
 
 let familia = null;
 let para = null;
@@ -87,7 +87,7 @@ export function vistaCatalogo(cont, { datos }) {
             lugar.innerHTML = recos.map(tarjetaPerfume).join("");
             lugar.scrollIntoView({ block: "nearest", behavior: "smooth" });
         } catch (err) {
-            aviso(err.message, "error");
+            aviso(err, "error");
         }
     });
 }
@@ -131,7 +131,7 @@ export function vistaPerfume(cont, { datos, usuario, params: [id] }) {
         } catch (err) {
             if (antes) carrito.set(clave, antes);
             else carrito.delete(clave);
-            aviso(err.message, "error");
+            aviso(err, "error");
         }
         vistaPerfume(cont, { datos, usuario, params: [id] });
     }));
@@ -144,7 +144,7 @@ export function vistaPedido(cont, { usuario, datos, irA }) {
     try {
         if (items.length) armado = datos.armarCarrito(items);
     } catch (err) {
-        error = err.message;
+        error = mensajeDe(err);
     }
     cont.innerHTML = `
         <h1 class="titulo">Tu pedido</h1>
@@ -193,7 +193,7 @@ export function vistaPedido(cont, { usuario, datos, irA }) {
             activarGuias(cont, irA);
             window.scrollTo(0, 0);
         } catch (err) {
-            aviso(err.message, "error");
+            aviso(err, "error");
         }
     });
 }

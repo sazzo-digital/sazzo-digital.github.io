@@ -2,9 +2,9 @@
 // Clientes (barbero): buscador, "no vuelven hace más de 30 / 45 / 60 días" con "Invitarlo" (mensaje para copiar y
 // la fecha en que se lo invitó), y la ficha de cada uno: qué se hace siempre, notas, historial y "Sacarle turno".
 // ============================================
-import { esc, aviso, vacio, fechaCorta } from "../../kit/js/ui.js?v=32a11802b0";
-import { NO_VUELVEN, TOPES, nombreFecha } from "../datos.js?v=32a11802b0";
-import { mostrarMensaje } from "./comunes.js?v=32a11802b0";
+import { esc, aviso, vacio, fechaCorta } from "../../kit/js/ui.js?v=c9becd260b";
+import { NO_VUELVEN, TOPES, nombreFecha } from "../datos.js?v=c9becd260b";
+import { mostrarMensaje } from "./comunes.js?v=c9becd260b";
 
 let noVuelven = null; // null = todos; si no, los días
 let texto = "";
@@ -49,7 +49,7 @@ export function vistaClientes(cont, { usuario, datos }) {
                 mostrarMensaje(`Invitar a ${r.cliente.nombre}`, r.mensaje);
                 pintar();
             } catch (err) {
-                aviso(err.message, "error");
+                aviso(err, "error");
             }
         }));
     }
@@ -101,7 +101,7 @@ export function vistaFicha(cont, { usuario, datos, params: [id] }) {
             datos.guardarFicha(usuario, c.id, { siempre: e.target.siempre.value, notas: e.target.notas.value });
             aviso("Ficha guardada");
         } catch (err) {
-            aviso(err.message, "error");
+            aviso(err, "error");
         }
     });
 }

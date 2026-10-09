@@ -94,6 +94,15 @@ a { color: inherit; }
 .cabecera__menu a { text-decoration: none; color: var(--texto-suave); font-weight: 500; transition: color .2s; }
 .cabecera__menu a:hover { color: var(--texto); }
 .cabecera > .boton { margin-left: auto; }
+/* Con la letra del celular agrandada no entran logo, "sazzo", tema y "Escribinos": se va la palabra "sazzo" (el logo
+   queda) y se juntan un poco. La medida está en rem: crece con la letra. */
+.cabecera { container: cabecera / inline-size; }
+@container cabecera (max-width: 17rem) {
+    .cabecera { gap: .6rem; }
+    .cabecera__marca span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+}
+/* Los botones grandes de contacto se parten en dos renglones si no entran (letra agrandada) */
+.a-medida__botones .boton { max-width: 100%; white-space: normal; text-align: center; }
 
 /* Interruptor claro / oscuro (sol a la izquierda, luna a la derecha; la perilla marca el que se ve) */
 .interruptor-tema {
@@ -174,17 +183,23 @@ a { color: inherit; }
 }
 .atajo::before { content: ""; width: .55rem; height: .55rem; border-radius: 50%; background: var(--acento); box-shadow: 0 0 8px var(--acento); }
 .atajo:hover { border-color: var(--verde); background: var(--verde-suave); transform: translateY(-1px); }
+/* El celular dibujado y el texto lado a lado; si el texto no tiene al menos 9.5rem (letra del celular agrandada), pasa
+   abajo del celular en vez de salirse de la pantalla */
 .demo {
-    display: grid; grid-template-columns: 112px 1fr; gap: 1.1rem; align-items: center;
+    display: flex; flex-wrap: wrap; gap: 1.1rem; align-items: center;
     padding: 1.2rem; border-radius: var(--radio);
     background: var(--superficie); border: 1px solid var(--borde);
     transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease;
 }
 .demo:hover { transform: translateY(-4px); border-color: var(--acento); box-shadow: var(--sombra); }
+.demo > .celu { flex: none; }
+.demo > div:last-child { flex: 1 1 9.5rem; min-width: 0; }
 .demo__nombre { font-size: 1.3rem; }
 .demo__rubro { color: var(--texto-suave); font-size: .88rem; margin-top: .1rem; }
 .demo__pregunta { margin-top: .6rem; font-weight: 500; }
 .demo__pie { margin-top: .9rem; display: flex; flex-wrap: wrap; align-items: center; gap: .6rem .9rem; }
+/* Con la letra del celular agrandada, "Probala ahora" puede no entrar en un renglón: se parte en vez de salirse */
+.demo__pie .boton { max-width: 100%; white-space: normal; text-align: center; }
 .demo__etiqueta { display: inline-flex; align-items: center; gap: .35rem; color: var(--texto-suave); font-size: .82rem; }
 
 /* El celular dibujado: una pantallita con renglones que entran en loop */
@@ -309,15 +324,16 @@ a { color: inherit; }
 /* Celulares angostos (320 px): el celu dibujado más chico y la columna del texto puede achicarse (si no, el botón
    "Probala ahora" empujaba la tarjeta 21 px fuera de la pantalla) */
 @media (max-width: 359px) {
-    .demo { grid-template-columns: 84px minmax(0, 1fr); gap: .8rem; padding: 1rem; }
+    .demo { gap: .8rem; padding: 1rem; }
     .demo .celu { width: 84px; }
 }
 @media (min-width: 1040px) {
     .demos { grid-template-columns: repeat(3, 1fr); }
     .adapta { grid-template-columns: repeat(4, 1fr); }
     .adapta__item { flex-direction: column; gap: .8rem; }
-    .demo { grid-template-columns: 1fr; justify-items: start; }
-    .demo .celu { width: 132px; justify-self: center; }
+    .demo { flex-direction: column; align-items: stretch; }
+    .demo .celu { width: 132px; align-self: center; }
+    .demo > div:last-child { flex: 0 0 auto; }
 }
 
 /* 13. "Reducir movimiento": todo quieto y visible */

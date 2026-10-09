@@ -2,11 +2,11 @@
 // Pantallas del cliente (Matías), pensadas para el celular: "Sacá tu turno" (servicio, barbero o "el que esté
 // libre", día y hora libre: sin cargar ningún dato) y "Mis turnos" (con Cancelar).
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=32a11802b0";
-import { aHora } from "../../kit/js/turnos.js?v=32a11802b0";
-import { SERVICIOS, BARBEROS, pesos, nombreFecha } from "../datos.js?v=32a11802b0";
-import { NEGOCIO } from "../marca.js?v=32a11802b0";
-import { guia, activarGuias, pastillaEstado, chipsDias } from "./comunes.js?v=32a11802b0";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=c9becd260b";
+import { aHora } from "../../kit/js/turnos.js?v=c9becd260b";
+import { SERVICIOS, BARBEROS, pesos, nombreFecha } from "../datos.js?v=c9becd260b";
+import { NEGOCIO } from "../marca.js?v=c9becd260b";
+import { guia, activarGuias, pastillaEstado, chipsDias } from "./comunes.js?v=c9becd260b";
 
 // Lo elegido queda mientras se navega
 let servicioId = "corte";
@@ -48,7 +48,7 @@ export function vistaSacarTurno(cont, { usuario, datos, irA }) {
             try {
                 listo(datos.sacarTurno(usuario, { servicioId, barberoId, fecha, inicio: elegido }));
             } catch (err) {
-                aviso(err.message, "error");
+                aviso(err, "error");
             }
         });
         confirmar.scrollIntoView({ block: "nearest", behavior: "smooth" });
@@ -127,7 +127,7 @@ export function vistaMisTurnos(cont, { usuario, datos }) {
             aviso("Turno cancelado");
             vistaMisTurnos(cont, { usuario, datos });
         } catch (err) {
-            aviso(err.message, "error");
+            aviso(err, "error");
         }
     }));
 }

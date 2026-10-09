@@ -12,7 +12,7 @@
 // La dirección de la planilla la pone el script de armar el sitio (medicion\direccion.txt). En la PC (localhost)
 // nunca se manda nada.
 // ============================================
-import { MEDICION } from "./config.js?v=32a11802b0";
+import { MEDICION } from "./config.js?v=c9becd260b";
 
 const ORIGEN_VALIDO = /^[a-z0-9-]{1,30}$/; // igual que el catálogo
 export const EVENTOS = ["abrio-demo", "entro", "pantalla", "quiero-esto", "otras-demos", "colores", "error"];
@@ -149,6 +149,7 @@ export function resumenDeError(mensaje) {
 
 const TOPE_ERRORES = 3; // por página abierta (un error que se repite en cada toque no inunda la planilla)
 const erroresContados = new Set();
+let demoActual = ""; // la que llamó a vigilarErrores (las pantallas avisan sus errores sin saber de qué demo son)
 
 /** Manda "error" con "pantalla--mensaje" (40 letras como mucho). Cada mensaje una vez, y hasta 3 por página. */
 export function contarError(demo, mensaje, opciones) {
@@ -159,10 +160,28 @@ export function contarError(demo, mensaje, opciones) {
     return contar("error", demo, { ...opciones, pantalla });
 }
 
-/** Escucha los errores que nadie atajó (los que rompen algo) y los cuenta. */
+/**
+ * Escucha los errores que nadie atajó (los que rompen algo) y los cuenta. También los que pasaron antes de que la demo
+ * arrancara (tema.js los guarda en window.__sazzoErrores). "Script error." no se cuenta: es de otro sitio (por ejemplo
+ * lo que mete el navegador de Instagram) y no dice nada.
+ */
 export function vigilarErrores(demo) {
-    addEventListener("error", (e) => {
-        if (e.message) contarError(demo, e.message);
-    });
-    addEventListener("unhandledrejection", (e) => contarError(demo, e.reason?.message ?? e.reason));
+    demoActual = demo;
+    const contarSiDice = (mensaje) => {
+        if (mensaje && mensaje !== "Script error.") contarError(demo, mensaje);
+    };
+    const antes = typeof window !== "undefined" && Array.isArray(window.__sazzoErrores) ? window.__sazzoErrores : [];
+    if (typeof window !== "undefined") window.__sazzoErrores = null; // desde acá avisa esta función
+    antes.forEach(contarSiDice);
+    addEventListener("error", (e) => contarSiDice(e.message));
+    addEventListener("unhandledrejection", (e) => contarSiDice(e.reason?.message ?? String(e.reason ?? "")));
+}
+
+/** ¿Es un error de programación? Los nuestros (exigir, buscar, topes) son Error comunes con el mensaje en castellano. */
+export const esDeProgramacion = (e) =>
+    !(e instanceof Error) || e instanceof TypeError || e instanceof ReferenceError || e instanceof RangeError || e instanceof SyntaxError;
+
+/** Un error de programación que se atajó para que la pantalla no se rompa: igual se avisa (si no, nunca nos enteramos). */
+export function contarFalla(e) {
+    if (demoActual) contarError(demoActual, e?.message ?? String(e ?? ""));
 }

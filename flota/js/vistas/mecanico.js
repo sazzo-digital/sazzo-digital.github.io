@@ -2,9 +2,9 @@
 // Pantallas del mecánico (Diego): los problemas abiertos (los que tienen que parar y los nuevos primero),
 // "Me hago cargo" y "Listo, arreglado" con los repuestos que usó (se descuentan solos).
 // ============================================
-import { esc, vacio, aviso } from "../../kit/js/ui.js?v=e7f855679d";
-import { TOPES, cantidadCon } from "../datos.js?v=e7f855679d";
-import { haceCuanto, pastillaVehiculo, pastillaUrgencia, pastillaProblema, guia, activarGuias, textoRepuestos } from "./comunes.js?v=e7f855679d";
+import { esc, vacio, aviso } from "../../kit/js/ui.js?v=5ea9a6b532";
+import { TOPES, cantidadCon } from "../datos.js?v=5ea9a6b532";
+import { haceCuanto, pastillaVehiculo, pastillaUrgencia, pastillaProblema, guia, activarGuias, textoRepuestos } from "./comunes.js?v=5ea9a6b532";
 
 export function vistaInicioMecanico(cont, { usuario, datos, irA }) {
     const abiertos = datos.problemasAbiertos();
@@ -36,7 +36,7 @@ export function vistaInicioMecanico(cont, { usuario, datos, irA }) {
             aviso(`${p.vehiculo} pasó a "En el taller"`);
             vistaInicioMecanico(cont, { usuario, datos, irA });
         } catch (err) {
-            aviso(err.message, "error");
+            aviso(err, "error");
         }
     }));
     activarGuias(cont, irA);
@@ -97,7 +97,7 @@ export function vistaArreglar(cont, { usuario, datos, irA, params: [id] }) {
             const hecho = datos.cerrarProblema(usuario, p.id, { repuestos: lista, nota: e.target.nota.value });
             arreglado(cont, hecho, datos, irA);
         } catch (err) {
-            aviso(err.message, "error");
+            aviso(err, "error");
         }
     });
 }

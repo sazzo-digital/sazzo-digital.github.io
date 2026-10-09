@@ -2,10 +2,10 @@
 // Fiados: la libreta. Quién debe, cuánto y desde cuándo; anotar un cliente nuevo; en la ficha, cobrar (todo o una
 // parte) y ver qué se llevó en cada fiado. El tope de cada cliente lo cambia el dueño.
 // ============================================
-import { esc, aviso, vacio, fechaCorta } from "../../kit/js/ui.js?v=04c5d739b2";
-import { diaLocalDe, fechaLocalISO } from "../../kit/js/fechas.js?v=04c5d739b2";
-import { TOPES, pesos } from "../datos.js?v=04c5d739b2";
-import { haceDias, hora } from "./comunes.js?v=04c5d739b2";
+import { esc, aviso, vacio, fechaCorta } from "../../kit/js/ui.js?v=2ffaf20289";
+import { diaLocalDe, fechaLocalISO } from "../../kit/js/fechas.js?v=2ffaf20289";
+import { TOPES, pesos } from "../datos.js?v=2ffaf20289";
+import { haceDias, hora } from "./comunes.js?v=2ffaf20289";
 
 const barraTope = (c) => {
     const pct = c.tope ? Math.min(100, Math.round((c.deuda / c.tope) * 100)) : 100;
@@ -50,7 +50,7 @@ export function vistaFiados(cont, { usuario, datos }) {
             aviso(`${c.nombre} anotado en la libreta`);
             location.hash = `#/fiados/${c.id}`;
         } catch (err) {
-            aviso(err.message, "error");
+            aviso(err, "error");
         }
     });
 }
@@ -108,7 +108,7 @@ export function vistaCliente(cont, { usuario, datos, params: [id] }) {
             aviso(r.deuda ? `Cobrado. ${r.nombre} debe ahora ${pesos(r.deuda)}` : `Cobrado. ${r.nombre} no debe nada`);
             vistaCliente(cont, { usuario, datos, params: [id] });
         } catch (err) {
-            aviso(err.message, "error");
+            aviso(err, "error");
         }
     });
     cont.querySelector(".cambiar-tope")?.addEventListener("submit", (e) => {
@@ -118,7 +118,7 @@ export function vistaCliente(cont, { usuario, datos, params: [id] }) {
             aviso("Tope guardado");
             vistaCliente(cont, { usuario, datos, params: [id] });
         } catch (err) {
-            aviso(err.message, "error");
+            aviso(err, "error");
         }
     });
 }

@@ -15,12 +15,12 @@
 // Festejo: cuando aparece una confirmación (.hecho: turno reservado, venta cobrada, orden creada…), el ✓ entra con un
 // rebote, salen chispitas del color de la demo y el celular vibra cortito (Android). Quieto con "reducir movimiento".
 // ============================================
-import { $, esc, iniciales, nombreCompleto } from "./ui.js?v=a1bc4c3709";
-import { logoSazzo, nombreDemo } from "./marca.js?v=a1bc4c3709";
-import { interruptorTema, activarInterruptorTema } from "./apariencia.js?v=a1bc4c3709";
-import { linkOtrasDemos, linkQuieroEsto } from "./enlaces.js?v=a1bc4c3709";
-import { abrirColores, mostrarGlobitoColores } from "./colores.js?v=a1bc4c3709";
-import { contar } from "./visita.js?v=a1bc4c3709";
+import { $, esc, iniciales, nombreCompleto } from "./ui.js?v=85837e87e2";
+import { logoSazzo, nombreDemo } from "./marca.js?v=85837e87e2";
+import { interruptorTema, activarInterruptorTema } from "./apariencia.js?v=85837e87e2";
+import { linkOtrasDemos, linkQuieroEsto } from "./enlaces.js?v=85837e87e2";
+import { abrirColores, mostrarGlobitoColores } from "./colores.js?v=85837e87e2";
+import { contar } from "./visita.js?v=85837e87e2";
 
 /** La barrita de Sazzo: colores, otras demos y "Quiero esto" (los textos largos solo si hay lugar). */
 export function htmlBarraSazzo(marca, opciones) {
@@ -83,6 +83,7 @@ export function activarBotonesSazzo(raiz, marca) {
 
 const ESCRITORIO = "(min-width: 1000px)"; // igual que $escritorio en los estilos
 const ubicados = new WeakSet();
+const escuchasDelAncho = []; // guardadas: algún navegador podría soltar una escucha que nadie retiene
 
 /** La barrita de Sazzo (y su globito): en la compu, en la cabecera al lado del tema; en el celular, abajo. */
 export function ubicarBarraSazzo(app) {
@@ -101,10 +102,13 @@ export function ubicarBarraSazzo(app) {
 function seguirElAncho(app) {
     if (ubicados.has(app)) return;
     ubicados.add(app);
-    matchMedia(ESCRITORIO).addEventListener?.("change", () => ubicarBarraSazzo(app));
+    const ancho = matchMedia(ESCRITORIO);
+    ancho.addEventListener?.("change", () => ubicarBarraSazzo(app));
+    escuchasDelAncho.push(ancho);
 }
 
-// En celulares chicos: al bajar la pantalla se esconde la barrita; al subir (o arriba de todo) vuelve
+// En celulares chicos: al bajar la pantalla se esconde la barrita; al subir, arriba de todo o al llegar al final (donde
+// conviene "Quiero esto") vuelve
 let escuchandoScroll = false;
 function esconderBarraAlBajar() {
     if (escuchandoScroll) return;
@@ -112,8 +116,9 @@ function esconderBarraAlBajar() {
     let antes = scrollY;
     addEventListener("scroll", () => {
         const ahora = scrollY;
-        if (Math.abs(ahora - antes) < 8) return;
-        document.body.classList.toggle("barra-escondida", ahora > antes && ahora > 80);
+        const alFinal = innerHeight + ahora >= document.documentElement.scrollHeight - 60;
+        if (Math.abs(ahora - antes) < 8 && !alFinal) return;
+        document.body.classList.toggle("barra-escondida", ahora > antes && ahora > 80 && !alFinal);
         antes = ahora;
     }, { passive: true });
 }

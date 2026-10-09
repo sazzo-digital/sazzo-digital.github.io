@@ -5,10 +5,10 @@
 // Código que no está → "¿Lo cargás?" y queda listo para vender.
 // En la compu, dos columnas (productos | ticket); en el celular, el ticket abajo con una barrita arriba que lleva a él.
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=04c5d739b2";
-import { TOPES, MEDIOS, pesos } from "../datos.js?v=04c5d739b2";
-import { NEGOCIO } from "../marca.js?v=04c5d739b2";
-import { guia, activarGuias } from "./comunes.js?v=04c5d739b2";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=2ffaf20289";
+import { TOPES, MEDIOS, pesos } from "../datos.js?v=2ffaf20289";
+import { NEGOCIO } from "../marca.js?v=2ffaf20289";
+import { guia, activarGuias } from "./comunes.js?v=2ffaf20289";
 
 // El ticket en curso queda en memoria mientras se navega (se vacía al cobrar)
 const ticket = new Map(); // productoId → cantidad
@@ -82,7 +82,7 @@ export function vistaVender(cont, { usuario, datos, irA }) {
         try {
             if (items.length) armado = datos.armarTicket(items);
         } catch (e) {
-            aviso(e.message, "error");
+            aviso(e, "error");
         }
         barra.hidden = !items.length;
         barra.innerHTML = `<i class="ti ti-receipt" aria-hidden="true"></i> ${unidades} ${unidades === 1 ? "producto" : "productos"} · <b>${esc(pesos(armado.total))}</b> <span>Cobrar ↓</span>`;
@@ -171,7 +171,7 @@ export function vistaVender(cont, { usuario, datos, irA }) {
                 ticket.clear();
                 vendido(v);
             } catch (err) {
-                aviso(err.message, "error");
+                aviso(err, "error");
             }
         });
     }
@@ -233,7 +233,7 @@ export function vistaVender(cont, { usuario, datos, irA }) {
                 pintarProductos();
                 agregar(p.id);
             } catch (err) {
-                aviso(err.message, "error");
+                aviso(err, "error");
             }
         });
     }

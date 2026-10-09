@@ -3,9 +3,9 @@
 // entregado), el stock (frascos y botellas madre en ml, lo que hay que pedir primero) y las clientas (lo que compra
 // cada una y "Cumplen este mes" con el saludo para copiar).
 // ============================================
-import { esc, aviso, vacio, fechaCorta, fechaHora } from "../../kit/js/ui.js?v=68b63d810e";
-import { TOPES, MADRE_POCO_ML, pesos } from "../datos.js?v=68b63d810e";
-import { frasco, pastillaPedido, mostrarMensaje } from "./comunes.js?v=68b63d810e";
+import { esc, aviso, vacio, fechaCorta, fechaHora } from "../../kit/js/ui.js?v=b42f3ed3fa";
+import { TOPES, MADRE_POCO_ML, pesos } from "../datos.js?v=b42f3ed3fa";
+import { frasco, pastillaPedido, mostrarMensaje } from "./comunes.js?v=b42f3ed3fa";
 
 const MESES = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
 
@@ -70,7 +70,7 @@ export function vistaPedidos(cont, { usuario, datos }) {
             acciones[b.dataset.accion](b.dataset.id);
             otraVez();
         } catch (err) {
-            if (err) aviso(err.message, "error");
+            if (err) aviso(err, "error");
         }
     }));
 }
@@ -115,7 +115,7 @@ export function vistaStock(cont, { usuario, datos }) {
             aviso(`${p.nombre}: stock guardado`);
             vistaStock(cont, { usuario, datos });
         } catch (err) {
-            aviso(err.message, "error");
+            aviso(err, "error");
         }
     }));
 }
@@ -156,7 +156,7 @@ export function vistaClientas(cont, { usuario, datos }) {
             mostrarMensaje(`Saludar a ${r.clienta.nombre}`, r.mensaje);
             vistaClientas(cont, { usuario, datos });
         } catch (err) {
-            aviso(err.message, "error");
+            aviso(err, "error");
         }
     }));
 }

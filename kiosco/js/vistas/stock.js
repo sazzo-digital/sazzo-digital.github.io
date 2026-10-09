@@ -3,9 +3,9 @@
 // mercadería") y tiene "Subió un proveedor": elegís el proveedor y el %, ves antes → después con el redondeo de
 // kiosco y aplicás todo de una, con Deshacer. La empleada solo mira.
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=04c5d739b2";
-import { PROVEEDORES, TOPES, pesos } from "../datos.js?v=04c5d739b2";
-import { pastillaStock } from "./comunes.js?v=04c5d739b2";
+import { esc, aviso, vacio, mensajeDe } from "../../kit/js/ui.js?v=2ffaf20289";
+import { PROVEEDORES, TOPES, pesos } from "../datos.js?v=2ffaf20289";
+import { pastillaStock } from "./comunes.js?v=2ffaf20289";
 
 const RAPIDOS = [5, 10, 15, 20];
 
@@ -28,7 +28,7 @@ function activarDeshacer(cont, usuario, datos, alTerminar) {
             aviso(`Listo: ${a.cambios.length} precios volvieron a como estaban`);
             alTerminar();
         } catch (err) {
-            aviso(err.message, "error");
+            aviso(err, "error");
         }
     });
 }
@@ -87,7 +87,7 @@ export function vistaStock(cont, { usuario, datos, consulta }) {
             aviso(`${p.nombre} guardado`);
             otraVez();
         } catch (err) {
-            aviso(err.message, "error");
+            aviso(err, "error");
         }
     }));
 }
@@ -103,7 +103,7 @@ export function vistaAumento(cont, { usuario, datos }) {
         try {
             filas = datos.verAumento(proveedorId, porcentaje);
         } catch (e) {
-            error = e.message;
+            error = mensajeDe(e);
         }
         const tabla = cont.querySelector(".antes-despues");
         tabla.innerHTML = error
@@ -172,7 +172,7 @@ export function vistaAumento(cont, { usuario, datos }) {
             pintar();
             lugar.scrollIntoView({ block: "center" });
         } catch (err) {
-            aviso(err.message, "error");
+            aviso(err, "error");
         }
     });
     pintar();

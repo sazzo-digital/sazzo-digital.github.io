@@ -3,11 +3,11 @@
 // mano de obra de una lista), los botones según el estado y la persona, y el historial con horas.
 // El mecánico carga lo que encontró y los repuestos, sin ver precios. Y el presupuesto para imprimir (dueño).
 // ============================================
-import { esc, aviso, fechaCorta, fechaHora } from "../../kit/js/ui.js?v=a1bc4c3709";
-import { fechaLocalISO } from "../../kit/js/fechas.js?v=a1bc4c3709";
-import { ESTADOS, REPUESTOS, MANO_DE_OBRA, TOPES, pesos } from "../datos.js?v=a1bc4c3709";
-import { NEGOCIO } from "../marca.js?v=a1bc4c3709";
-import { guia, activarGuias, chapa, pastillaEstado, textoPromesa, mostrarMensaje } from "./comunes.js?v=a1bc4c3709";
+import { esc, aviso, fechaCorta, fechaHora } from "../../kit/js/ui.js?v=85837e87e2";
+import { fechaLocalISO } from "../../kit/js/fechas.js?v=85837e87e2";
+import { ESTADOS, REPUESTOS, MANO_DE_OBRA, TOPES, pesos } from "../datos.js?v=85837e87e2";
+import { NEGOCIO } from "../marca.js?v=85837e87e2";
+import { guia, activarGuias, chapa, pastillaEstado, textoPromesa, mostrarMensaje } from "./comunes.js?v=85837e87e2";
 
 export function vistaOrden(cont, { usuario, datos, irA, params: [id] }) {
     const o = datos.orden(id, usuario);
@@ -21,7 +21,7 @@ export function vistaOrden(cont, { usuario, datos, irA, params: [id] }) {
             otraVez();
             return r;
         } catch (err) {
-            aviso(err.message, "error");
+            aviso(err, "error");
             return null;
         }
     };

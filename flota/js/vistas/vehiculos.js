@@ -2,9 +2,9 @@
 // Vehículos (administradora y mecánico): lista con filtro por estado y la ficha de cada uno
 // (estado, chofer de hoy, km y service, papeles con vencimiento e historia de problemas).
 // ============================================
-import { esc, vacio, aviso, fechaCorta } from "../../kit/js/ui.js?v=e7f855679d";
-import { ESTADOS_VEHICULO, TOPES } from "../datos.js?v=e7f855679d";
-import { haceCuanto, pastillaVehiculo, pastillaProblema, historiaProblema, textoRepuestos } from "./comunes.js?v=e7f855679d";
+import { esc, vacio, aviso, fechaCorta } from "../../kit/js/ui.js?v=5ea9a6b532";
+import { ESTADOS_VEHICULO, TOPES } from "../datos.js?v=5ea9a6b532";
+import { haceCuanto, pastillaVehiculo, pastillaProblema, historiaProblema, textoRepuestos } from "./comunes.js?v=5ea9a6b532";
 
 const km = (n) => `${n.toLocaleString("es-AR")} km`;
 
@@ -80,7 +80,7 @@ export function vistaFicha(cont, { usuario, datos, params: [id] }) {
             aviso("Kilómetros guardados");
             vistaFicha(cont, { usuario, datos, params: [id] });
         } catch (err) {
-            aviso(err.message, "error");
+            aviso(err, "error");
         }
     });
 }

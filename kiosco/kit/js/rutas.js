@@ -9,7 +9,7 @@
 //     `ancho`: en la PC usa más ancho (en el celular no cambia nada).
 // Cada vista recibe (contenedor, { usuario, params, consulta }) y dibuja adentro.
 // ============================================
-import { $$, esc, vacio } from "./ui.js?v=04c5d739b2";
+import { $$, esc, vacio, mensajeDe } from "./ui.js?v=2ffaf20289";
 
 /** Lo que hay después del # → { ruta: "/producto/p-1", consulta: URLSearchParams }. Sin hash: la de inicio. */
 export function leerHash(inicio = "/inicio") {
@@ -35,6 +35,8 @@ export const ESQUELETO = `
  * Devuelve cómo terminó (sirve para las pruebas): "ok", "desconocida" (manda al inicio), "sin-permiso" (también
  * manda al inicio) o "error".
  */
+let tituloDeLaDemo = null; // el del index.html ("Sazzo Kiosco"): cada pantalla le suma el suyo adelante
+
 export async function mostrarRuta({ rutas, contenido, usuario, inicio = "/inicio" }) {
     const { ruta, consulta } = leerHash(inicio);
     const r = buscarRuta(rutas, ruta);
@@ -73,11 +75,19 @@ export async function mostrarRuta({ rutas, contenido, usuario, inicio = "/inicio
     try {
         await r.vista(contenido, { usuario, params: ruta.match(r.patron).slice(1), consulta });
     } catch (e) {
-        console.error(e);
-        contenido.innerHTML = sinSalida(e.message);
+        // Nuestro mensaje ("Ese cliente no existe") o, si es un error de programación, "Algo falló" (y se avisa)
+        contenido.innerHTML = sinSalida(mensajeDe(e));
         estado = "error";
     }
     window.scrollTo(0, 0);
+    // La pestaña (y el historial del celular) dice qué pantalla es: "Fiados · Sazzo Kiosco"
+    tituloDeLaDemo ??= document.title;
+    const tituloPantalla = contenido.querySelector("h1")?.textContent.trim().replace(/\s+/g, " ").slice(0, 40);
+    document.title = tituloPantalla && estado === "ok" ? `${tituloPantalla} · ${tituloDeLaDemo}` : tituloDeLaDemo;
+    // Si el foco quedó en ningún lado (cambió de persona, el botón que tocó ya no está), va al contenido: así quien usa
+    // teclado o lector de pantalla sigue desde acá y no desde el principio de la página
+    const foco = document.activeElement;
+    if (!foco || foco === document.body || !foco.isConnected) contenido.focus?.({ preventScroll: true });
     // Al llegar a otra pantalla, el contenido entra de abajo con un fundido
     contenido.classList.remove("entrando");
     void contenido.offsetWidth; // reinicia la animación

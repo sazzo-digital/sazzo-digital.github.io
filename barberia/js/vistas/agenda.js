@@ -3,11 +3,11 @@
 // los dos; en la compu, una columna por barbero) y "+ Turno" (cargar a mano el que pidió por mensaje o entró sin
 // turno). El turno que sacó un cliente desde el celular aparece resaltado hasta que Leo hace algo con él.
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=32a11802b0";
-import { aHora } from "../../kit/js/turnos.js?v=32a11802b0";
-import { fechaLocalISO } from "../../kit/js/fechas.js?v=32a11802b0";
-import { SERVICIOS, BARBEROS, TOPES, pesos, nombreFecha } from "../datos.js?v=32a11802b0";
-import { pastillaEstado, chipsDias, mostrarMensaje } from "./comunes.js?v=32a11802b0";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=c9becd260b";
+import { aHora } from "../../kit/js/turnos.js?v=c9becd260b";
+import { fechaLocalISO } from "../../kit/js/fechas.js?v=c9becd260b";
+import { SERVICIOS, BARBEROS, TOPES, pesos, nombreFecha } from "../datos.js?v=c9becd260b";
+import { pastillaEstado, chipsDias, mostrarMensaje } from "./comunes.js?v=c9becd260b";
 
 let ver = "todos"; // "todos" o el id de un barbero
 
@@ -93,7 +93,7 @@ export function vistaAgenda(cont, { usuario, datos, consulta }) {
             if (mensaje) aviso(mensaje);
             otraVez();
         } catch (err) {
-            aviso(err.message, "error");
+            aviso(err, "error");
         }
     };
     cont.querySelectorAll("[data-dia]").forEach((b) => b.addEventListener("click", () => (location.hash = `#/inicio?fecha=${b.dataset.dia}`)));
@@ -180,7 +180,7 @@ export function vistaNuevoTurno(cont, { usuario, datos, consulta }) {
             aviso(`Turno anotado: ${t.cliente}, ${t.hora}`);
             location.hash = `#/inicio?fecha=${t.fecha}`;
         } catch (err) {
-            aviso(err.message, "error");
+            aviso(err, "error");
         }
     });
 }

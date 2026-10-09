@@ -3,10 +3,10 @@
 // grilla), la comanda de una mesa (al enviar se separa solo lo de la cocina y lo de la barra), el cobro dividiendo la
 // cuenta (todo junto, en partes iguales o por lo que consumió cada uno, cada parte con su medio de pago) y la caja.
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=940a8526b8";
-import { CATEGORIAS, MEDIOS, TOPES, carta, dividir, pesos } from "../datos.js?v=940a8526b8";
-import { NEGOCIO } from "../marca.js?v=940a8526b8";
-import { ticket, guia, activarGuias, haceMin, hora } from "./comunes.js?v=940a8526b8";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=0840e8f49d";
+import { CATEGORIAS, MEDIOS, TOPES, carta, dividir, pesos } from "../datos.js?v=0840e8f49d";
+import { NEGOCIO } from "../marca.js?v=0840e8f49d";
+import { ticket, guia, activarGuias, haceMin, hora } from "./comunes.js?v=0840e8f49d";
 
 const ESTADO_MESA = { libre: "Libre", abierta: "Abierta", cobrando: "Cobrando" };
 
@@ -66,7 +66,7 @@ export function vistaPlano(cont, { usuario, datos }) {
             aviso(msj);
             vistaPlano(cont, { usuario, datos });
         } catch (err) {
-            aviso(err.message, "error");
+            aviso(err, "error");
         }
     };
     cont.querySelectorAll("[data-aceptar]").forEach((b) => b.addEventListener("click", () => hacer(() => datos.aceptarPY(usuario, b.dataset.aceptar), "Aceptado: la comida va a la cocina")));
@@ -130,7 +130,7 @@ export function vistaMesa(cont, { usuario, datos, irA, params: [id] }, enviado =
             datos.agregar(usuario, id, b.dataset.agregar);
             otraVez();
         } catch (err) {
-            aviso(err.message, "error");
+            aviso(err, "error");
         }
     }));
     cont.querySelectorAll("[data-sacar]").forEach((b) => b.addEventListener("click", () => {
@@ -138,7 +138,7 @@ export function vistaMesa(cont, { usuario, datos, irA, params: [id] }, enviado =
             datos.sacar(usuario, id, b.dataset.sacar);
             otraVez();
         } catch (err) {
-            aviso(err.message, "error");
+            aviso(err, "error");
         }
     }));
     cont.querySelector("[data-enviar]")?.addEventListener("click", () => {
@@ -146,7 +146,7 @@ export function vistaMesa(cont, { usuario, datos, irA, params: [id] }, enviado =
             otraVez(datos.enviar(usuario, id));
             window.scrollTo(0, 0);
         } catch (err) {
-            aviso(err.message, "error");
+            aviso(err, "error");
         }
     });
 }
@@ -168,7 +168,7 @@ function abrir(cont, { usuario, datos, irA, id, m }) {
             categoria = "pizzas";
             vistaMesa(cont, { usuario, datos, irA, params: [id] });
         } catch (err) {
-            aviso(err.message, "error");
+            aviso(err, "error");
         }
     });
 }
@@ -258,7 +258,7 @@ export function vistaCobro(cont, { usuario, datos, params: [id] }) {
                     <a class="boton boton--secundario boton--ancho" href="#/inicio"><i class="ti ti-layout-grid"></i> Volver al salón</a>`;
                 window.scrollTo(0, 0);
             } catch (err) {
-                aviso(err.message, "error");
+                aviso(err, "error");
             }
         });
     }
@@ -299,7 +299,7 @@ export function vistaCaja(cont, { usuario, datos }) {
             aviso("Caja cerrada");
             vistaCaja(cont, { usuario, datos });
         } catch (err) {
-            aviso(err.message, "error");
+            aviso(err, "error");
         }
     });
 }

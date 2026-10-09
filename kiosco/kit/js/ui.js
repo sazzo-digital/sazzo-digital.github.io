@@ -3,6 +3,7 @@
 // Solo lo genérico: lo propio de cada rubro (estados, pastillas, unidades…) va en cada demo.
 // Todo dato que entra a HTML pasa por esc().
 // ============================================
+import { esDeProgramacion, contarFalla } from "./visita.js?v=2ffaf20289";
 
 export const $ = (selector, raiz = document) => raiz.querySelector(selector);
 export const $$ = (selector, raiz = document) => [...raiz.querySelectorAll(selector)];
@@ -117,7 +118,22 @@ export const vacio = (mensaje, icono = "ti-alert-triangle") =>
  * Cartelito que aparece abajo unos segundos. tipo: "ok", "info" o "error".
  * Los errores duran más (hay que llegar a leerlos) y cualquiera se cierra tocándolo.
  */
+export const MENSAJE_FALLA = "Algo falló. Probá de nuevo o volvé al inicio.";
+
+/**
+ * Lo que se le muestra a la persona cuando algo sale mal: el mensaje si es uno de los nuestros ("No hay stock…"), o
+ * MENSAJE_FALLA si es un error de programación (en inglés, no le sirve a nadie), que además se avisa al registro.
+ */
+export function mensajeDe(e) {
+    if (!esDeProgramacion(e)) return e.message;
+    console.error(e);
+    contarFalla(e);
+    return MENSAJE_FALLA;
+}
+
+/** Cartelito abajo. `mensaje` puede ser un texto o el error atajado (aviso(err, "error")): ver mensajeDe. */
 export function aviso(mensaje, tipo = "ok") {
+    if (mensaje !== null && typeof mensaje === "object") mensaje = mensajeDe(mensaje);
     let caja = $(".avisos");
     if (!caja) {
         caja = document.createElement("div");

@@ -16,11 +16,12 @@
 // - Nada se borra: se da de baja o se anula, y queda quién y cuándo.
 // - Las funciones devuelven copias: modificar lo que devuelven no cambia los datos guardados.
 // - Si cambia la forma de los datos de prueba, subir `version` (se regeneran solos).
-// - Los datos de ejemplo se arman con las fechas de hoy: si alguien vuelve otro día, se arman de nuevo para ese día
-//   (si no, vería la agenda de hoy vacía o mesas "abiertas hace 2 días"). Se avisa con un cartelito.
+// - Los datos de ejemplo se arman con las fechas y horas de ahora: si alguien vuelve otro día, o el mismo día pero
+//   después de 3 horas sin usarla, se arman de nuevo (si no, vería la agenda de hoy vacía o mesas "abiertas hace 650
+//   minutos"). Mientras la usa (cada cambio que guarda), no se renuevan. Se avisa con un cartelito.
 // ============================================
 
-import { aviso } from "./ui.js?v=04c5d739b2";
+import { aviso } from "./ui.js?v=2ffaf20289";
 
 /** Nombres compartidos entre el catálogo y todas las demos (no pueden ser el prefijo de una demo). */
 export const COMPARTIDAS = ["sazzo-origen", "sazzo-equipo", "sazzo-tema", "sazzo-yo"];
@@ -31,7 +32,8 @@ export function hoyLocal(fecha = new Date()) {
     return `${fecha.getFullYear()}-${dos(fecha.getMonth() + 1)}-${dos(fecha.getDate())}`;
 }
 
-export const MENSAJE_RENOVADOS = "Los datos de ejemplo se renovaron para hoy.";
+export const MENSAJE_RENOVADOS = "Los datos de ejemplo se renovaron para que estén al día.";
+export const SIN_USO_RENUEVA = 3 * 60 * 60 * 1000; // 3 horas sin guardar nada: al volver, datos nuevos
 
 export function crearGuardado({ prefijo, version, semilla } = {}) {
     if (!/^sazzo-[a-z0-9]+(-[a-z0-9]+)*$/.test(prefijo ?? "")) {
@@ -47,6 +49,7 @@ export function crearGuardado({ prefijo, version, semilla } = {}) {
     let yaAviso = false; // el aviso de "no se pudo guardar" sale una sola vez (hasta "Empezar de cero")
 
     function persistir() {
+        if (cache) cache.usadoEl = Date.now(); // la última vez que se usó (ver SIN_USO_RENUEVA)
         try {
             localStorage.setItem(claves.datos, JSON.stringify(cache));
             return true;
@@ -66,13 +69,14 @@ export function crearGuardado({ prefijo, version, semilla } = {}) {
         try {
             const guardados = JSON.parse(localStorage.getItem(claves.datos));
             if (guardados?.version === version) {
-                if (guardados.armadoEl === hoyLocal()) return (cache = guardados);
+                const sinUso = Date.now() - Number(guardados.usadoEl || 0);
+                if (guardados.armadoEl === hoyLocal() && sinUso >= 0 && sinUso < SIN_USO_RENUEVA) return (cache = guardados);
                 deOtroDia = true;
             }
         } catch {
             // datos rotos o sin acceso: se regeneran
         }
-        cache = { ...semilla(), version, armadoEl: hoyLocal() };
+        cache = { ...semilla(), version, armadoEl: hoyLocal(), usadoEl: Date.now() };
         persistir();
         if (deOtroDia && typeof document !== "undefined" && document.body) aviso(MENSAJE_RENOVADOS, "info");
         return cache;

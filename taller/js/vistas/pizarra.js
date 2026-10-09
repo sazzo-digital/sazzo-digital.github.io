@@ -3,11 +3,11 @@
 // una columna por estado; en el celu, uno abajo del otro con pastillas para filtrar. El mecánico ve solo sus autos.
 // "+ Entró un auto": se escribe la patente y, si ya vino, completa solo el auto, el cliente y la última vez.
 // ============================================
-import { esc, aviso } from "../../kit/js/ui.js?v=a1bc4c3709";
-import { fechaLocalISO } from "../../kit/js/fechas.js?v=a1bc4c3709";
-import { TOPES, NAFTA, MECANICOS, esPatente, formatoPatente } from "../datos.js?v=a1bc4c3709";
-import { NEGOCIO } from "../marca.js?v=a1bc4c3709";
-import { guia, activarGuias, chapa, pastillaEstado, textoPromesa } from "./comunes.js?v=a1bc4c3709";
+import { esc, aviso } from "../../kit/js/ui.js?v=85837e87e2";
+import { fechaLocalISO } from "../../kit/js/fechas.js?v=85837e87e2";
+import { TOPES, NAFTA, MECANICOS, esPatente, formatoPatente } from "../datos.js?v=85837e87e2";
+import { NEGOCIO } from "../marca.js?v=85837e87e2";
+import { guia, activarGuias, chapa, pastillaEstado, textoPromesa } from "./comunes.js?v=85837e87e2";
 
 let filtro = "todos";
 
@@ -132,7 +132,7 @@ export function vistaEntro(cont, { usuario, datos, irA, consulta }) {
             activarGuias(cont, irA);
             aviso("Orden guardada");
         } catch (err) {
-            aviso(err.message, "error");
+            aviso(err, "error");
         }
     });
     f.patente.focus();
