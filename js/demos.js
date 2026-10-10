@@ -127,7 +127,7 @@ export const DEMOS = [
         acento: "#F472B6",
         pantalla: ["Pedido de Claudia · pesó 1,62 kg", "Media res · merma 24,1 %", "Precios nuevos · pizarra al día"],
         dispositivo: "compu",
-        estado: "retirada"
+        estado: "activa"
     },
     {
         id: "gimnasio",
@@ -137,7 +137,7 @@ export const DEMOS = [
         acento: "#A3E635",
         pantalla: ["Hoy te toca: Día B · Piernas", "Sentadilla 60 kg · ¡nuevo récord!", "Franco · la cuota vence en 3 días"],
         dispositivo: "celu",
-        estado: "retirada"
+        estado: "activa"
     },
     {
         id: "inmobiliaria",
@@ -147,6 +147,6 @@ export const DEMOS = [
         acento: "#A78BFA",
         pantalla: ["Depto 2 amb · Valeria pidió visita", "Sábado 11:00 · ficha enviada", "3 alquileres aumentan · aviso listo"],
         dispositivo: "celu",
-        estado: "retirada"
+        estado: "activa"
     }
 ];
