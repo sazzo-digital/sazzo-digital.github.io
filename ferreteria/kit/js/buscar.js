@@ -6,7 +6,7 @@
 //   filtrarPorTexto(productos, "koka", (p) => p.nombre)   → los que coinciden, los más parecidos primero
 // Sin librería (Fuse.js pesa 25 KB y para listas de cientos de cosas alcanza con esto). No toca la pantalla.
 // ============================================
-import { textoParaComparar } from "./tablas.js?v=0f2d2843ae";
+import { textoParaComparar } from "./tablas.js?v=d783fb01c6";
 
 const TOPE_BUSQUEDA = 60; // letras de lo que se busca
 const TOPE_PALABRAS = 6;

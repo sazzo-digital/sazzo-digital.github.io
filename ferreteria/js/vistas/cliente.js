@@ -1,16 +1,16 @@
 // ============================================
-// Lo de Marcos (plomero, cliente con cuenta corriente), desde el celular:
+// Lo de Marcos (cliente con cuenta corriente), desde el celular:
 //   "Pedir presupuesto": escribe lo que necesita como habla, un artículo por renglón ("cano de 1/2 x 3", "teflon"),
 //   y mientras escribe ve qué entendió la ferretería y el total aproximado; puede sumar "lo de la foto".
 //   "Mis presupuestos": cómo va cada uno (pedido → te lo mandaron → aceptado → retirado), el PDF, "Aceptar" y su
 //   cuenta corriente (lo que debe y los últimos movimientos).
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=0f2d2843ae";
-import { armarPdf, pdfListo } from "../../kit/js/pdf.js?v=0f2d2843ae";
-import { TOPES, pesos, cantidadTexto } from "../datos.js?v=0f2d2843ae";
-import { NEGOCIO } from "../marca.js?v=0f2d2843ae";
-import { guia, activarGuias, pasos, pastillaEstado, cuando, validez, barraTope, haceDias, htmlFoto } from "./comunes.js?v=0f2d2843ae";
-import { datosPdf } from "./presupuestos.js?v=0f2d2843ae";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=d783fb01c6";
+import { armarPdf, pdfListo } from "../../kit/js/pdf.js?v=d783fb01c6";
+import { TOPES, pesos, cantidadTexto } from "../datos.js?v=d783fb01c6";
+import { NEGOCIO } from "../marca.js?v=d783fb01c6";
+import { guia, activarGuias, pasos, pastillaEstado, cuando, validez, barraTope, haceDias, htmlFoto } from "./comunes.js?v=d783fb01c6";
+import { datosPdf } from "./presupuestos.js?v=d783fb01c6";
 
 // Lo que va escribiendo queda en memoria mientras se navega
 const EJEMPLO = ["cano de 1/2 x 3", "4 codos de 1/2", "2 llaves de paso 1/2", "teflon"];
@@ -133,6 +133,7 @@ const QUE_PASA = {
 
 export function vistaMisPresupuestos(cont, { usuario, datos, irA }, recien = null) {
     const lista = datos.misPresupuestos(usuario);
+    lista.forEach((pr) => datos.marcarVisto(usuario, pr.id)); // los está mirando: "Te mandaron…" no vuelve a saltar
     const c = datos.miCuenta(usuario);
     const otraVez = (r = null) => vistaMisPresupuestos(cont, { usuario, datos, irA }, r);
     cont.innerHTML = `

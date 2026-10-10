@@ -2,7 +2,8 @@
 // Marca, personas y "también puede tener" de Sazzo Gimnasio (propuesta aprobada el 10/10/2026).
 // Las personas son los roles reales del rubro (nombres inventados): la dueña, el profe de musculación y un socio.
 // ============================================
-import { revisarMarca } from "../kit/js/marca.js?v=665396befd";
+import { revisarMarca } from "../kit/js/marca.js?v=9c146b12b6";
+import { negocioDe } from "../kit/js/colores.js?v=9c146b12b6";
 
 export const MARCA = revisarMarca({
     id: "gimnasio",
@@ -45,7 +46,8 @@ export const PERSONAS = [
 
 export const buscarPersona = (id) => PERSONAS.find((p) => p.id === id) ?? null;
 
-export const NEGOCIO = "Gimnasio Núcleo"; // nombre de ejemplo (arriba sigue diciendo Sazzo Gimnasio)
+export const NEGOCIO = negocioDe(MARCA.prefijo, "Gimnasio Núcleo"); // nombre de ejemplo (arriba sigue diciendo Sazzo Gimnasio)
+// (si el dueño escribió el nombre de su negocio en "Probala con tus colores", va ese: kit/colores.js)
 
 // "Acerca de": lo que la versión real puede sumar y la demo deja afuera para que se recorra en 2 minutos
 export const TAMBIEN = [

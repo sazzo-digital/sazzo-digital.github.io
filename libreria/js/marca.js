@@ -3,7 +3,8 @@
 // Las personas son los roles reales del rubro (nombres inventados): la dueña, el empleado del mostrador y una mamá
 // que pide la lista escolar desde el celular.
 // ============================================
-import { revisarMarca } from "../kit/js/marca.js?v=ebb3923e44";
+import { revisarMarca } from "../kit/js/marca.js?v=114958267d";
+import { negocioDe } from "../kit/js/colores.js?v=114958267d";
 
 export const MARCA = revisarMarca({
     id: "libreria",
@@ -46,7 +47,8 @@ export const PERSONAS = [
 
 export const buscarPersona = (id) => PERSONAS.find((p) => p.id === id) ?? null;
 
-export const NEGOCIO = "Librería Punto y Coma"; // nombre de ejemplo (arriba sigue diciendo Sazzo Librería)
+export const NEGOCIO = negocioDe(MARCA.prefijo, "Librería Punto y Coma"); // nombre de ejemplo (arriba sigue diciendo Sazzo Librería)
+// (si el dueño escribió el nombre de su negocio en "Probala con tus colores", va ese: kit/colores.js)
 
 // "Acerca de": lo que la versión real puede sumar y la demo deja afuera para que se recorra en 2 minutos
 export const TAMBIEN = [

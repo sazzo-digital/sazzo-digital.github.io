@@ -9,7 +9,7 @@
 //   primero se aplica). La imagen se lee EN el celular (se achica a 64 × 64 y se cuentan los colores): no se sube a
 //   ningún lado ni se guarda. Logo en blanco y negro → se avisa y se elige de la lista.
 // ============================================
-import { $, $$, esc } from "./ui.js?v=ece442dfab";
+import { $, $$, esc } from "./ui.js?v=5c760847bf";
 
 // Fondos contra los que tiene que leerse el acento (base/_temas.scss)
 const TARJETA_CLARA = "#e9dfcc";
@@ -200,6 +200,52 @@ async function cargarImagen(archivo) {
 }
 
 /** La ventanita para elegir: colores listos, uno a elección y "Volver al color de la demo". */
+// ---------- "Probala con tu nombre" (10/10) ----------
+// El dueño escribe el nombre de su negocio adentro de la demo y aparece arriba, debajo del nombre de la demo. Lo escribe
+// él (nunca viene del link), queda solo en ese navegador ("sazzo-kiosco-nombre") y NO se manda al registro de visitas.
+export const TOPE_NOMBRE = 40;
+const EJEMPLO_NOMBRE = "Lo de Tano";
+export const claveNombre = (prefijo) => `${prefijo}-nombre`;
+const nombresEnMemoria = new Map(); // sin localStorage (ventana privada estricta): hasta recargar
+
+/** Sin caracteres de control ni < >, espacios de a uno y con tope. */
+export const limpiarNombre = (texto) => String(texto ?? "").replace(/[\u0000-\u001f\u007f<>]/g, "").replace(/\s+/g, " ").trim().slice(0, TOPE_NOMBRE);
+
+export function leerNombre(prefijo) {
+    try {
+        return limpiarNombre(localStorage.getItem(claveNombre(prefijo)));
+    } catch {
+        return nombresEnMemoria.get(prefijo) ?? "";
+    }
+}
+
+export function guardarNombre(prefijo, nombre) {
+    const limpio = limpiarNombre(nombre);
+    nombresEnMemoria.set(prefijo, limpio);
+    try {
+        if (limpio) localStorage.setItem(claveNombre(prefijo), limpio);
+        else localStorage.removeItem(claveNombre(prefijo));
+    } catch {
+        // queda en memoria
+    }
+    return limpio;
+}
+
+/**
+ * El nombre del negocio de la demo: el que escribió el dueño o, si no, el de ejemplo. Cada demo lo usa en su marca.js
+ * (NEGOCIO), así sale en las pantallas, los tickets, los PDF y los mensajes. Se lee al abrir la demo: al cambiarlo,
+ * la hoja recarga la pantalla cuando se cierra.
+ */
+export const negocioDe = (prefijo, ejemplo) => leerNombre(prefijo) || ejemplo;
+
+/** Lo muestra en la cabecera (o vuelve al lema de la demo si lo borró). Con textContent: nunca como HTML. */
+export function mostrarNombre(nombre, raiz = document) {
+    const lugar = raiz.querySelector("[data-nombre-negocio]");
+    if (!lugar) return;
+    lugar.textContent = nombre || lugar.dataset.lema || "";
+    lugar.hidden = !lugar.textContent;
+}
+
 export function abrirColores(prefijo, { alElegir } = {}) {
     document.querySelector("dialog.colores")?.remove();
     const hoja = document.createElement("dialog");
@@ -212,6 +258,11 @@ export function abrirColores(prefijo, { alElegir } = {}) {
                 <button class="boton-icono" value="cerrar" aria-label="Cerrar"><i class="ti ti-x"></i></button>
             </div>
             <p class="nota">Elegí el color de tu negocio y mirá cómo queda. Si no se lee bien, lo ajustamos solos.</p>
+            <label class="colores__nombre">
+                <span><i class="ti ti-building-store" aria-hidden="true"></i> El nombre de tu negocio</span>
+                <input type="text" maxlength="${TOPE_NOMBRE}" placeholder="Ej: ${esc(EJEMPLO_NOMBRE)}" value="${esc(leerNombre(prefijo))}" autocomplete="off" enterkeyhint="done">
+                <small>Sale en toda la demo en vez del de ejemplo. Queda solo en este celular.</small>
+            </label>
             <label class="boton boton--ancho colores__logo">
                 <i class="ti ti-photo" aria-hidden="true"></i> Sacar los colores de tu logo
                 <input type="file" accept="image/*" class="solo-lector">
@@ -234,6 +285,8 @@ export function abrirColores(prefijo, { alElegir } = {}) {
     };
     $$("[data-color]", hoja).forEach((b) => b.addEventListener("click", () => elegir(b.dataset.color)));
     $('input[type="color"]', hoja).addEventListener("input", (e) => elegir(e.target.value));
+    const nombreAntes = leerNombre(prefijo);
+    $(".colores__nombre input", hoja).addEventListener("input", (e) => mostrarNombre(guardarNombre(prefijo, e.target.value)));
     // El logo: se lee acá mismo, se aplica el primer color y se muestran los otros para elegir
     const delLogo = $(".colores__del-logo", hoja);
     $('input[type="file"]', hoja).addEventListener("change", async (e) => {
@@ -261,7 +314,11 @@ export function abrirColores(prefijo, { alElegir } = {}) {
             delLogo.querySelector("p").textContent = err.message;
         }
     });
-    hoja.addEventListener("close", () => hoja.remove());
+    hoja.addEventListener("close", () => {
+        hoja.remove();
+        // Cambió el nombre: se recarga (queda en la misma pantalla y con la misma persona) para que salga en todos lados
+        if (leerNombre(prefijo) !== nombreAntes) location.reload();
+    });
     hoja.addEventListener("click", (e) => {
         if (e.target === hoja) hoja.close(); // tocar afuera cierra
     });

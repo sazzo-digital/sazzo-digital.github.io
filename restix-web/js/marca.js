@@ -3,7 +3,8 @@
 // rehecho con el kit). Las personas son los roles reales del rubro (nombres inventados): la moza, el de la cocina y
 // (desde el 10/10) una clienta que abre la carta con el QR de la mesa.
 // ============================================
-import { revisarMarca } from "../kit/js/marca.js?v=edf52e7135";
+import { revisarMarca } from "../kit/js/marca.js?v=949a9fe1e6";
+import { negocioDe } from "../kit/js/colores.js?v=949a9fe1e6";
 
 export const MARCA = revisarMarca({
     id: "restix-web",
@@ -49,7 +50,8 @@ export const buscarPersona = (id) => PERSONAS.find((p) => p.id === id) ?? null;
 
 export const MESA_CLIENTE = "Mesa 4"; // donde se sentó Flor (la misma de la pista del salón)
 
-export const NEGOCIO = "Bar El Farol"; // nombre de ejemplo (arriba sigue diciendo Restix Sazzo)
+export const NEGOCIO = negocioDe(MARCA.prefijo, "Bar El Farol"); // nombre de ejemplo (arriba sigue diciendo Restix Sazzo)
+// (si el dueño escribió el nombre de su negocio en "Probala con tus colores", va ese: kit/colores.js)
 
 // "Acerca de": lo que la versión real (Restix) tiene y la demo deja afuera para que se recorra en 2 minutos
 export const TAMBIEN = [

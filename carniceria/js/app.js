@@ -6,24 +6,24 @@
 // Precios y de la Caja.
 // irA() cambia de persona sin pasar por "Probala como…" (botones del recorrido: "Mirá lo que le llega a Darío →").
 // ============================================
-import { $, conFundido } from "../kit/js/ui.js?v=ece442dfab";
-import { iniciarDemo } from "../kit/js/arranque.js?v=ece442dfab";
-import { vistaIngreso } from "../kit/js/ingreso.js?v=ece442dfab";
-import { pintarMarco } from "../kit/js/marco.js?v=ece442dfab";
-import { mostrarRuta } from "../kit/js/rutas.js?v=ece442dfab";
-import { vistaAcerca } from "../kit/js/acerca.js?v=ece442dfab";
-import { MARCA, PERSONAS, TAMBIEN, buscarPersona } from "./marca.js?v=ece442dfab";
-import { crearDatos } from "./datos.js?v=ece442dfab";
-import { vistaInicio } from "./vistas/inicio.js?v=ece442dfab";
-import { vistaMisPedidos } from "./vistas/clienta.js?v=ece442dfab";
-import { vistaPedidos, vistaNuevoPedido, vistaPedido } from "./vistas/pedidos.js?v=ece442dfab";
-import { vistaDespostes, vistaIngreso as vistaEntro, vistaDesposte } from "./vistas/desposte.js?v=ece442dfab";
-import { vistaStock, vistaAumento, vistaNuevoArticulo, vistaEtiquetas } from "./vistas/stock.js?v=ece442dfab";
-import { vistaPizarra } from "./vistas/pizarra.js?v=ece442dfab";
-import { vistaCaja } from "./vistas/caja.js?v=ece442dfab";
+import { $, conFundido } from "../kit/js/ui.js?v=5c760847bf";
+import { iniciarDemo } from "../kit/js/arranque.js?v=5c760847bf";
+import { vistaIngreso } from "../kit/js/ingreso.js?v=5c760847bf";
+import { pintarMarco } from "../kit/js/marco.js?v=5c760847bf";
+import { mostrarRuta } from "../kit/js/rutas.js?v=5c760847bf";
+import { vistaAcerca } from "../kit/js/acerca.js?v=5c760847bf";
+import { MARCA, PERSONAS, TAMBIEN, buscarPersona } from "./marca.js?v=5c760847bf";
+import { aparte } from "../kit/js/aparte.js?v=5c760847bf";
+import { leerSesionGuardada } from "../kit/js/guardado.js?v=5c760847bf";
+
+// Los datos de ejemplo y las pantallas se bajan aparte (al terminar de cargar): "Probala como…" aparece sin esperarlos
+const pantallas = aparte(() => import("./pantallas.js?v=5c760847bf"));
+const { vistaInicio, vistaMisPedidos, vistaPedidos, vistaNuevoPedido, vistaPedido, vistaDespostes, vistaEntro, vistaDesposte, vistaStock, vistaAumento, vistaNuevoArticulo, vistaEtiquetas, vistaPizarra, vistaCaja, avisosDe } = pantallas.funciones;
 
 iniciarDemo(MARCA);
-const datos = crearDatos();
+let datos = null; // se arma cuando bajan las pantallas
+const listos = pantallas.listo.then((m) => (datos = m.crearDatos()));
+const guardarSesion = (id) => listos.then(() => datos.guardado.guardarSesion(id));
 const app = $("#app");
 let usuario = null;
 let contenido = null;
@@ -73,21 +73,24 @@ const mostrar = () => mostrarRuta({ rutas: RUTAS, contenido, usuario });
 function ingresar() {
     usuario = null;
     contenido = null;
-    datos.guardado.guardarSesion(null);
+    guardarSesion(null);
     vistaIngreso(app, {
         marca: MARCA,
         personas: PERSONAS,
         alElegir: (id) => {
-            datos.guardado.guardarSesion(id);
+            guardarSesion(id);
             history.replaceState(null, "", "#/inicio");
             entrar(buscarPersona(id));
         }
     });
 }
 
-function entrar(persona) {
+async function entrar(persona) {
+    pantallas.ya(); // al elegir persona (o si ya había alguien adentro) se piden en el momento
+    await listos;
     usuario = persona;
     contenido = pintarMarco(app, {
+        avisos: () => avisosDe(datos), // avisos entre roles (vistas/avisos.js, kit/avisos.js)
         marca: MARCA,
         usuario,
         menu: MENU[usuario.rol],
@@ -104,7 +107,7 @@ function entrar(persona) {
 function irA(personaId, ruta = "/inicio") {
     const persona = buscarPersona(personaId);
     if (!persona) return;
-    datos.guardado.guardarSesion(persona.id);
+    guardarSesion(persona.id);
     history.replaceState(null, "", `#${ruta}`);
     entrar(persona);
 }
@@ -117,13 +120,13 @@ window.addEventListener("hashchange", () => {
 // Si otra pestaña cambió los datos (ej: Claudia pidiendo en una pestaña y Darío mirando los pedidos en otra, o la
 // pizarra en la tele mientras Ricardo cambia los precios)
 window.addEventListener("storage", (e) => {
-    if (e.key === datos.guardado.claves.datos && contenido) {
+    if (datos && e.key === datos.guardado.claves.datos && contenido) {
         datos.guardado.olvidarCache();
         mostrar();
     }
 });
 
 // Si ya había elegido a alguien (volvió a abrir la demo), sigue con esa persona
-const yaAdentro = buscarPersona(datos.guardado.leerSesion());
+const yaAdentro = buscarPersona(leerSesionGuardada(MARCA.prefijo));
 if (yaAdentro) entrar(yaAdentro);
 else ingresar();

@@ -3,11 +3,11 @@
 // de estado de un presupuesto, los pasos (pedido → enviado → aceptado → vendido), la tarjeta de un presupuesto, el
 // formulario de cobro (Vender y "Pasar a venta") y "hace cuánto". Todo dato que entra a HTML pasa por esc().
 // ============================================
-import { esc } from "../../kit/js/ui.js?v=0f2d2843ae";
-import { diaLocalDe, fechaLocalISO } from "../../kit/js/fechas.js?v=0f2d2843ae";
-import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=0f2d2843ae";
-import { ESTADOS_PRESUPUESTO, MEDIOS, TOPES, UNIDADES, pesos, cantidadTexto, diaMes } from "../datos.js?v=0f2d2843ae";
-import { buscarPersona } from "../marca.js?v=0f2d2843ae";
+import { esc } from "../../kit/js/ui.js?v=d783fb01c6";
+import { diaLocalDe, fechaLocalISO } from "../../kit/js/fechas.js?v=d783fb01c6";
+import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=d783fb01c6";
+import { ESTADOS_PRESUPUESTO, MEDIOS, TOPES, UNIDADES, pesos, cantidadTexto, diaMes } from "../datos.js?v=d783fb01c6";
+import { buscarPersona } from "../marca.js?v=d783fb01c6";
 
 /** Botón del recorrido con la persona de la ferretería: guia("u-empleado", "/presupuestos", "Mirá lo que le llega a Nahuel"). */
 export const guia = (personaId, ruta, texto) => htmlGuia({ persona: buscarPersona(personaId), ruta, texto });
@@ -136,7 +136,7 @@ export function pintarCobro(lugar, { usuario, datos, total, medio = "efectivo", 
             <label>¿A qué cuenta?
                 <select name="cuenta">
                     <option value="">Elegí la cuenta</option>
-                    ${cuentas.map((c) => `<option value="${esc(c.id)}">${esc(c.nombre)}${c.oficio ? ` (${esc(c.oficio)})` : ""} · debe ${esc(pesos(c.deuda))}</option>`).join("")}
+                    ${cuentas.map((c) => `<option value="${esc(c.id)}">${esc(c.nombre)} · debe ${esc(pesos(c.deuda))}</option>`).join("")}
                 </select>
             </label>`) + `<p class="tope-aviso" aria-live="polite"></p>` : ""}
             <button class="boton boton--ancho boton--grande" type="submit"><i class="ti ${medio === "cuenta" ? "ti-user-dollar" : "ti-cash"}"></i> ${esc(textoBoton)} ${esc(pesos(total))}${medio === "cuenta" ? " a cuenta" : ""}</button>

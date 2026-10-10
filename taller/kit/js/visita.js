@@ -12,7 +12,7 @@
 // La dirección de la planilla la pone el script de armar el sitio (medicion\direccion.txt). En la PC (localhost)
 // nunca se manda nada.
 // ============================================
-import { MEDICION } from "./config.js?v=dbd4cbbcac";
+import { MEDICION } from "./config.js?v=9aeacc21d1";
 
 const ORIGEN_VALIDO = /^[a-z0-9-]{1,30}$/; // igual que el catálogo
 export const EVENTOS = ["abrio-demo", "entro", "pantalla", "quiero-esto", "otras-demos", "colores", "error", "velocidad"];
@@ -87,6 +87,16 @@ export function pantallaDe(hash = location.hash) {
     return /^[a-z0-9-]{1,30}$/i.test(nombre) ? nombre.toLowerCase() : "otra";
 }
 
+/**
+ * Si el navegador está preparando la página antes de que la abran (el catálogo pide que prepare la demo cuando el
+ * dedo o el mouse se acerca al botón: así abre al instante), espera a que se muestre de verdad. Si nunca la abren, no
+ * corre: el registro no cuenta visitas que no pasaron.
+ */
+export function cuandoSeMuestre(hacer, doc = typeof document !== "undefined" ? document : null) {
+    if (doc?.prerendering) doc.addEventListener("prerenderingchange", () => hacer(), { once: true });
+    else hacer();
+}
+
 const esLaPC = () => /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname) || location.protocol === "file:";
 
 /** Manda el evento a la planilla (Apps Script). text/plain y no-cors: el navegador lo manda directo, sin preguntar antes. */
@@ -121,7 +131,12 @@ export function contar(que, demo, { persona, pantalla = "", medicion = MEDICION,
     };
     const direccion = String(medicion?.direccion ?? "");
     const activa = direccion.startsWith("https://script.google.com/macros/") && !enLaPC && leer("sazzo-yo") !== "1";
-    if (activa) mandar(direccion, evento);
+    if (activa) {
+        cuandoSeMuestre(() => {
+            evento.cuando = Date.now();
+            mandar(direccion, evento);
+        });
+    }
     else console.debug("[visitas: no se manda]", evento);
     return evento;
 }
@@ -175,6 +190,20 @@ export function vigilarErrores(demo) {
     antes.forEach(contarSiDice);
     addEventListener("error", (e) => contarSiDice(e.message));
     addEventListener("unhandledrejection", (e) => contarSiDice(e.reason?.message ?? String(e.reason ?? "")));
+    // Si la Content-Security-Policy frenó algo (comun.ps1 → Get-MetaCSP), es que falta permitirlo: se avisa qué regla
+    // y de qué sitio (solo el nombre del sitio, nunca la dirección entera)
+    if (typeof document !== "undefined") document.addEventListener("securitypolicyviolation", (e) => contarSiDice(textoCSP(e)));
+}
+
+/** "CSP img-src tile.openstreetmap.org" (o "inline", "eval", "data"…): qué se frenó, sin la dirección entera. */
+export function textoCSP({ effectiveDirective = "", violatedDirective = "", blockedURI = "" } = {}) {
+    let sitio = String(blockedURI);
+    try {
+        sitio = new URL(sitio).hostname || sitio;
+    } catch {
+        // "inline", "eval", "data", "blob": quedan así
+    }
+    return `CSP ${String(effectiveDirective || violatedDirective).slice(0, 30)} ${sitio.slice(0, 60)}`.trim();
 }
 
 // ---------- Velocidad en los celulares de verdad (09/10) ----------
@@ -204,7 +233,9 @@ export function medirVelocidad(demo, opciones) {
             // un navegador que dice que sabe y no sabe: se mide lo demás
         }
     };
-    mirar("largest-contentful-paint", (e) => (v.lcp = e.startTime));
+    // Si la página se preparó antes (cuandoSeMuestre), el tiempo cuenta desde que se mostró
+    const mostradaEn = performance.getEntriesByType?.("navigation")?.[0]?.activationStart || 0;
+    mirar("largest-contentful-paint", (e) => (v.lcp = mostradaEn ? Math.max(1, e.startTime - mostradaEn) : e.startTime));
     mirar("layout-shift", (e) => {
         if (!e.hadRecentInput) v.cls += e.value;
     });

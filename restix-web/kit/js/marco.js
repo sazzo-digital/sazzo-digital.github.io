@@ -15,12 +15,13 @@
 // Festejo: cuando aparece una confirmación (.hecho: turno reservado, venta cobrada, orden creada…), el ✓ entra con un
 // rebote, salen chispitas del color de la demo y el celular vibra cortito (Android). Quieto con "reducir movimiento".
 // ============================================
-import { $, esc, iniciales, nombreCompleto } from "./ui.js?v=edf52e7135";
-import { logoSazzo, nombreDemo } from "./marca.js?v=edf52e7135";
-import { interruptorTema, activarInterruptorTema } from "./apariencia.js?v=edf52e7135";
-import { linkOtrasDemos, linkQuieroEsto } from "./enlaces.js?v=edf52e7135";
-import { abrirColores, mostrarGlobitoColores } from "./colores.js?v=edf52e7135";
-import { contar } from "./visita.js?v=edf52e7135";
+import { $, esc, iniciales, nombreCompleto } from "./ui.js?v=949a9fe1e6";
+import { logoSazzo, nombreDemo } from "./marca.js?v=949a9fe1e6";
+import { interruptorTema, activarInterruptorTema } from "./apariencia.js?v=949a9fe1e6";
+import { linkOtrasDemos, linkQuieroEsto } from "./enlaces.js?v=949a9fe1e6";
+import { abrirColores, mostrarGlobitoColores, leerNombre } from "./colores.js?v=949a9fe1e6";
+import { contar } from "./visita.js?v=949a9fe1e6";
+import { pintarAvisos } from "./avisos.js?v=949a9fe1e6";
 
 /** La barrita de Sazzo: colores, otras demos y "Quiero esto" (los textos largos solo si hay lugar). */
 export function htmlBarraSazzo(marca, opciones) {
@@ -39,6 +40,12 @@ export function htmlBarraSazzo(marca, opciones) {
         </div>`;
 }
 
+/** Debajo del nombre de la demo: el nombre que escribió el dueño ("Probala con tu nombre") o, si no, el lema. */
+function htmlNombreNegocio(marca) {
+    const texto = leerNombre(marca.prefijo) || marca.lema || "";
+    return `<small data-nombre-negocio data-lema="${esc(marca.lema ?? "")}"${texto ? "" : " hidden"}>${esc(texto)}</small>`;
+}
+
 export function htmlMarco({ marca, usuario, menu = [], cambiarPersona = true }) {
     return `
         <button class="saltar" id="saltar" type="button">Saltar al contenido</button>
@@ -46,7 +53,7 @@ export function htmlMarco({ marca, usuario, menu = [], cambiarPersona = true }) 
             <div class="cabecera__lado">
                 ${interruptorTema()}
             </div>
-            <a class="cabecera__marca" href="#/inicio" title="Ir al inicio">${logoSazzo()}<span>${nombreDemo(marca)}${marca.lema ? `<small>${esc(marca.lema)}</small>` : ""}</span></a>
+            <a class="cabecera__marca" href="#/inicio" title="Ir al inicio">${logoSazzo()}<span>${nombreDemo(marca)}${htmlNombreNegocio(marca)}</span></a>
             <div class="cabecera__usuario">
                 <span class="cabecera__cuenta">
                     <span class="cabecera__avatar" aria-hidden="true">${esc(iniciales(usuario))}</span>
@@ -197,8 +204,20 @@ export function festejar(hecho) {
     return true;
 }
 
-/** Dibuja el marco adentro de `app`, conecta sus botones y devuelve el lugar donde van las pantallas. */
-export function pintarMarco(app, { marca, usuario, menu = [], alCambiarPersona, alReiniciar }) {
+// Avisos entre roles (kit/avisos.js): los del marco que está a la vista; se vuelven a mirar después de cada pantalla
+let avisosDelMarco = null;
+if (typeof document !== "undefined") {
+    document.addEventListener("sazzo:pantalla", () => {
+        if (avisosDelMarco?.app.isConnected) pintarAvisos(avisosDelMarco.app, avisosDelMarco);
+    });
+}
+
+/**
+ * Dibuja el marco adentro de `app`, conecta sus botones y devuelve el lugar donde van las pantallas.
+ * `avisos` (opcional): () => los hechos de la demo para los avisos entre roles (kit/avisos.js).
+ */
+export function pintarMarco(app, { marca, usuario, menu = [], alCambiarPersona, alReiniciar, avisos }) {
+    avisosDelMarco = typeof avisos === "function" ? { app, prefijo: marca.prefijo, usuario, avisos } : null;
     // Sin a quién cambiar (comercio de una sola persona), no hay botón de cambiar de persona
     app.innerHTML = htmlMarco({ marca, usuario, menu, cambiarPersona: !!alCambiarPersona });
     app.classList.toggle("sin-menu", !menu.length);

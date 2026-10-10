@@ -5,7 +5,7 @@
 //   htmlMediaRes({ estados: { asado: "hecho" }, activa: "asado", titulo: "Tocá un corte" })
 //   activarMediaRes(raiz, (zona) => …)   // zona = { id, nombre, cortes: ["Asado", "Entraña"] }
 // ============================================
-import { esc } from "../kit/js/ui.js?v=ece442dfab";
+import { esc } from "../kit/js/ui.js?v=5c760847bf";
 
 // Silueta (mirando a la izquierda): lomo, anca, pierna, panza, mano, pecho, cogote y cabeza
 const SILUETA = "M96 52 C150 40 260 40 330 44 C360 46 380 54 384 70 C390 100 388 130 380 150 L372 222 L348 222 L340 172 C300 182 240 186 200 184 C180 184 168 180 162 176 L158 222 L134 222 L128 172 C110 166 96 158 88 146 C78 132 66 122 52 118 C40 116 26 112 18 102 C12 94 14 84 22 78 C32 66 44 60 56 58 C70 54 84 54 96 52 Z";

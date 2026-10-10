@@ -6,12 +6,12 @@
 // peso. Ticket con vuelto, alias para la transferencia, "ding" al cobrar y la vista previa del ticket.
 // En la compu, dos columnas (cortes | ticket); en el celular, el ticket abajo con una barrita arriba que lleva a él.
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=ece442dfab";
-import { puedeEscanear, escanear } from "../../kit/js/escaner.js?v=ece442dfab";
-import { mantenerPantallaPrendida, htmlCopiable, activarCopiables, htmlBotonSonido, activarBotonSonido, ding } from "../../kit/js/celular.js?v=ece442dfab";
-import { TOPES, MEDIOS, ALIAS, ANIMALES, ETIQUETA, pesos, kilos, aGramos, precioPorPeso, gramosPara, leerEtiqueta } from "../datos.js?v=ece442dfab";
-import { MARCA, NEGOCIO } from "../marca.js?v=ece442dfab";
-import { campoKg, kgEnCampo, precioDe, hora } from "./comunes.js?v=ece442dfab";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=5c760847bf";
+import { puedeEscanear, escanear } from "../../kit/js/escaner.js?v=5c760847bf";
+import { mantenerPantallaPrendida, htmlCopiable, activarCopiables, htmlBotonSonido, activarBotonSonido, ding } from "../../kit/js/celular.js?v=5c760847bf";
+import { TOPES, MEDIOS, ALIAS, ANIMALES, ETIQUETA, pesos, kilos, aGramos, precioPorPeso, gramosPara, leerEtiqueta } from "../datos.js?v=5c760847bf";
+import { MARCA, NEGOCIO } from "../marca.js?v=5c760847bf";
+import { campoKg, kgEnCampo, precioDe, hora } from "./comunes.js?v=5c760847bf";
 
 // El ticket en curso queda en memoria mientras se navega (se vacía al cobrar)
 const ticket = new Map(); // articuloId → { gramos } o { unidades }
@@ -148,7 +148,7 @@ export function vistaVender(cont, { usuario, datos }) {
                 <label>¿Cuánta plata? ($)
                     <input name="plata" type="number" inputmode="numeric" min="${TOPES.plataMin}" max="${TOPES.plata}" step="1" placeholder="Ej: 8000" required>
                 </label>` : `
-                <label>Peso de la balanza (kg)
+                <label>Peso de la balanza
                     ${campoKg({ nombre: "kg", valor: kgEnCampo(enTicket), requerido: true })}
                 </label>
                 <div class="chips rapidos-kg">${RAPIDOS_KG.map((k) => `<button class="chip" type="button" data-kg="${k}">${esc(kilos(k * 1000, k % 1 ? 1 : 0))}</button>`).join("")}</div>`}

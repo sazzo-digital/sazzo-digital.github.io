@@ -3,6 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval' 'unsafe-hashes' 'sha256-MhtPZXr7+LpJUY5qtMutB+qWfQtMaPccfe7QXtCcEYc='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://tile.openstreetmap.org; font-src 'self'; connect-src 'self' https://script.google.com https://script.googleusercontent.com; worker-src 'self' blob:; media-src 'self' data: blob:; object-src 'none'; base-uri 'self'; form-action 'self'">
     <meta name="robots" content="noindex, nofollow">
     <meta property="og:site_name" content="Sazzo">
     <meta property="og:type" content="website">
@@ -22,49 +23,37 @@
     <meta name="theme-color" content="#0a0e0d" media="(prefers-color-scheme: dark)">
     <title>Sazzo Taller</title>
     <!-- Tema elegido a mano, antes de dibujar para que no parpadee (del kit) -->
-    <script src="kit/js/tema.js?v=dbd4cbbcac"></script>
+    <script src="kit/js/tema.js?v=9aeacc21d1"></script>
     <link rel="icon" href="img/isotipo.svg" type="image/svg+xml">
     <!-- Letras desde el propio sitio (antes Google Fonts); el script de armar las apunta a la copia compartida -->
-    <link rel="stylesheet" href="../letras/letras.css?v=6ecee73a77">
+    <link rel="stylesheet" href="../letras/letras.css?v=1ce210640e">
     <link rel="preload" href="../letras/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="../letras/space-grotesk-latin.woff2" as="font" type="font/woff2" crossorigin>
     <!-- Íconos (Tabler Icons 3.19.0) desde el propio sitio: el script de armar lo cambia por la copia compartida (../iconos/) -->
     <link rel="preload" href="../iconos/fonts/tabler-icons.woff2" as="font" type="font/woff2" crossorigin>
-    <link rel="stylesheet" href="../iconos/tabler-icons.min.css?v=6ecee73a77" media="print" onload="this.media='all'">
-    <noscript><link rel="stylesheet" href="../iconos/tabler-icons.min.css?v=6ecee73a77"></noscript>
-    <link rel="stylesheet" href="styles/style.css?v=dbd4cbbcac">
-    <link rel="modulepreload" href="js/app.js?v=dbd4cbbcac">
-    <link rel="modulepreload" href="kit/js/ui.js?v=dbd4cbbcac">
-    <link rel="modulepreload" href="kit/js/arranque.js?v=dbd4cbbcac">
-    <link rel="modulepreload" href="kit/js/ingreso.js?v=dbd4cbbcac">
-    <link rel="modulepreload" href="kit/js/marco.js?v=dbd4cbbcac">
-    <link rel="modulepreload" href="kit/js/rutas.js?v=dbd4cbbcac">
-    <link rel="modulepreload" href="kit/js/acerca.js?v=dbd4cbbcac">
-    <link rel="modulepreload" href="js/marca.js?v=dbd4cbbcac">
-    <link rel="modulepreload" href="js/datos.js?v=dbd4cbbcac">
-    <link rel="modulepreload" href="js/vistas/inicio.js?v=dbd4cbbcac">
-    <link rel="modulepreload" href="js/vistas/pizarra.js?v=dbd4cbbcac">
-    <link rel="modulepreload" href="js/vistas/orden.js?v=dbd4cbbcac">
-    <link rel="modulepreload" href="js/vistas/autos.js?v=dbd4cbbcac">
-    <link rel="modulepreload" href="kit/js/visita.js?v=dbd4cbbcac">
-    <link rel="modulepreload" href="kit/js/colores.js?v=dbd4cbbcac">
-    <link rel="modulepreload" href="kit/js/navegador.js?v=dbd4cbbcac">
-    <link rel="modulepreload" href="kit/js/marca.js?v=dbd4cbbcac">
-    <link rel="modulepreload" href="kit/js/enlaces.js?v=dbd4cbbcac">
-    <link rel="modulepreload" href="kit/js/apariencia.js?v=dbd4cbbcac">
-    <link rel="modulepreload" href="kit/js/guardado.js?v=dbd4cbbcac">
-    <link rel="modulepreload" href="kit/js/buscar.js?v=dbd4cbbcac">
-    <link rel="modulepreload" href="kit/js/topes.js?v=dbd4cbbcac">
-    <link rel="modulepreload" href="kit/js/fechas.js?v=dbd4cbbcac">
-    <link rel="modulepreload" href="js/vistas/comunes.js?v=dbd4cbbcac">
-    <link rel="modulepreload" href="kit/js/firma.js?v=dbd4cbbcac">
-    <link rel="modulepreload" href="kit/js/dictado.js?v=dbd4cbbcac">
-    <link rel="modulepreload" href="kit/js/pdf.js?v=dbd4cbbcac">
-    <link rel="modulepreload" href="kit/js/config.js?v=dbd4cbbcac">
-    <link rel="modulepreload" href="kit/js/tablas.js?v=dbd4cbbcac">
-    <link rel="modulepreload" href="kit/js/guia.js?v=dbd4cbbcac">
-    <link rel="modulepreload" href="kit/js/mensaje.js?v=dbd4cbbcac">
-    <link rel="modulepreload" href="kit/js/archivos.js?v=dbd4cbbcac">
-    <link rel="modulepreload" href="kit/js/celular.js?v=dbd4cbbcac">
+    <link rel="stylesheet" href="../iconos/tabler-icons.min.css?v=1ce210640e" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="../iconos/tabler-icons.min.css?v=1ce210640e"></noscript>
+    <link rel="stylesheet" href="styles/style.css?v=9aeacc21d1">
+    <link rel="modulepreload" href="js/app.js?v=9aeacc21d1">
+    <link rel="modulepreload" href="kit/js/ui.js?v=9aeacc21d1">
+    <link rel="modulepreload" href="kit/js/arranque.js?v=9aeacc21d1">
+    <link rel="modulepreload" href="kit/js/ingreso.js?v=9aeacc21d1">
+    <link rel="modulepreload" href="kit/js/marco.js?v=9aeacc21d1">
+    <link rel="modulepreload" href="kit/js/rutas.js?v=9aeacc21d1">
+    <link rel="modulepreload" href="kit/js/acerca.js?v=9aeacc21d1">
+    <link rel="modulepreload" href="js/marca.js?v=9aeacc21d1">
+    <link rel="modulepreload" href="kit/js/aparte.js?v=9aeacc21d1">
+    <link rel="modulepreload" href="kit/js/guardado.js?v=9aeacc21d1">
+    <link rel="modulepreload" href="kit/js/visita.js?v=9aeacc21d1">
+    <link rel="modulepreload" href="kit/js/colores.js?v=9aeacc21d1">
+    <link rel="modulepreload" href="kit/js/navegador.js?v=9aeacc21d1">
+    <link rel="modulepreload" href="kit/js/teclado.js?v=9aeacc21d1">
+    <link rel="modulepreload" href="kit/js/marca.js?v=9aeacc21d1">
+    <link rel="modulepreload" href="kit/js/enlaces.js?v=9aeacc21d1">
+    <link rel="modulepreload" href="kit/js/apariencia.js?v=9aeacc21d1">
+    <link rel="modulepreload" href="kit/js/avisos.js?v=9aeacc21d1">
+    <link rel="modulepreload" href="kit/js/config.js?v=9aeacc21d1">
+    <link rel="modulepreload" href="kit/js/topes.js?v=9aeacc21d1">
 </head>
 
 <body>
@@ -78,7 +67,7 @@
             <p class="cargando__texto">Cargando…</p>
         </div>
     </div>
-    <script type="module" src="js/app.js?v=dbd4cbbcac"></script>
+    <script type="module" src="js/app.js?v=9aeacc21d1"></script>
 </body>
 
 </html>

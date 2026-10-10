@@ -4,7 +4,7 @@
 // - "Quiero esto para mi negocio": WhatsApp de Sazzo con el mensaje ya escrito (dice qué demo vio). Mientras no
 //   haya número cargado (config.js), al contacto del catálogo.
 // ============================================
-import { CONTACTO, LINK_CATALOGO } from "./config.js?v=edf52e7135";
+import { CONTACTO, LINK_CATALOGO } from "./config.js?v=949a9fe1e6";
 
 export const linkOtrasDemos = ({ catalogo = LINK_CATALOGO } = {}) => `${catalogo}#demos`;
 

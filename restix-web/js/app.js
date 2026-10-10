@@ -3,20 +3,24 @@
 // Lara (moza) ve el salón, la cocina (solo mirar) y la caja; Beto, la cocina; Flor (cliente), la carta del QR.
 // irA() cambia de persona sin pasar por "Probala como…" (botón del recorrido: "Mirá lo que le llega a la cocina →").
 // ============================================
-import { $, conFundido } from "../kit/js/ui.js?v=edf52e7135";
-import { iniciarDemo } from "../kit/js/arranque.js?v=edf52e7135";
-import { vistaIngreso } from "../kit/js/ingreso.js?v=edf52e7135";
-import { pintarMarco } from "../kit/js/marco.js?v=edf52e7135";
-import { mostrarRuta } from "../kit/js/rutas.js?v=edf52e7135";
-import { vistaAcerca } from "../kit/js/acerca.js?v=edf52e7135";
-import { MARCA, PERSONAS, TAMBIEN, buscarPersona } from "./marca.js?v=edf52e7135";
-import { crearDatos } from "./datos.js?v=edf52e7135";
-import { vistaInicio } from "./vistas/inicio.js?v=edf52e7135";
-import { vistaMesa, vistaCobro, vistaCaja } from "./vistas/moza.js?v=edf52e7135";
-import { vistaCocina } from "./vistas/cocina.js?v=edf52e7135";
+import { $, conFundido } from "../kit/js/ui.js?v=949a9fe1e6";
+import { iniciarDemo } from "../kit/js/arranque.js?v=949a9fe1e6";
+import { vistaIngreso } from "../kit/js/ingreso.js?v=949a9fe1e6";
+import { pintarMarco } from "../kit/js/marco.js?v=949a9fe1e6";
+import { mostrarRuta } from "../kit/js/rutas.js?v=949a9fe1e6";
+import { vistaAcerca } from "../kit/js/acerca.js?v=949a9fe1e6";
+import { MARCA, PERSONAS, TAMBIEN, buscarPersona } from "./marca.js?v=949a9fe1e6";
+import { aparte } from "../kit/js/aparte.js?v=949a9fe1e6";
+import { leerSesionGuardada } from "../kit/js/guardado.js?v=949a9fe1e6";
+
+// Los datos de ejemplo y las pantallas se bajan aparte (al terminar de cargar): "Probala como…" aparece sin esperarlos
+const pantallas = aparte(() => import("./pantallas.js?v=949a9fe1e6"));
+const { vistaInicio, vistaMesa, vistaCobro, vistaCaja, vistaCocina, avisosDe } = pantallas.funciones;
 
 iniciarDemo(MARCA);
-const datos = crearDatos();
+let datos = null; // se arma cuando bajan las pantallas
+const listos = pantallas.listo.then((m) => (datos = m.crearDatos()));
+const guardarSesion = (id) => listos.then(() => datos.guardado.guardarSesion(id));
 const app = $("#app");
 let usuario = null;
 let contenido = null;
@@ -46,21 +50,24 @@ const mostrar = () => mostrarRuta({ rutas: RUTAS, contenido, usuario });
 function ingresar() {
     usuario = null;
     contenido = null;
-    datos.guardado.guardarSesion(null);
+    guardarSesion(null);
     vistaIngreso(app, {
         marca: MARCA,
         personas: PERSONAS,
         alElegir: (id) => {
-            datos.guardado.guardarSesion(id);
+            guardarSesion(id);
             history.replaceState(null, "", "#/inicio");
             entrar(buscarPersona(id));
         }
     });
 }
 
-function entrar(persona) {
+async function entrar(persona) {
+    pantallas.ya(); // al elegir persona (o si ya había alguien adentro) se piden en el momento
+    await listos;
     usuario = persona;
     contenido = pintarMarco(app, {
+        avisos: () => avisosDe(datos), // avisos entre roles (vistas/avisos.js, kit/avisos.js)
         marca: MARCA,
         usuario,
         menu: MENU[usuario.rol],
@@ -77,7 +84,7 @@ function entrar(persona) {
 function irA(personaId, ruta = "/inicio") {
     const persona = buscarPersona(personaId);
     if (!persona) return;
-    datos.guardado.guardarSesion(persona.id);
+    guardarSesion(persona.id);
     history.replaceState(null, "", `#${ruta}`);
     entrar(persona);
 }
@@ -89,12 +96,12 @@ window.addEventListener("hashchange", () => {
 
 // Si otra pestaña cambió los datos (ej: Lara tomando pedidos en el celu y la cocina con su pantalla en la compu)
 window.addEventListener("storage", (e) => {
-    if (e.key === datos.guardado.claves.datos && contenido) {
+    if (datos && e.key === datos.guardado.claves.datos && contenido) {
         datos.guardado.olvidarCache();
         mostrar();
     }
 });
 
-const yaAdentro = buscarPersona(datos.guardado.leerSesion());
+const yaAdentro = buscarPersona(leerSesionGuardada(MARCA.prefijo));
 if (yaAdentro) entrar(yaAdentro);
 else ingresar();

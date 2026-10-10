@@ -3,11 +3,11 @@
 // de estado de un pedido, los pasos de un pedido (pedido → listo → retirado), "hace cuánto" y el campo de kilos.
 // Todo dato que entra a HTML pasa por esc().
 // ============================================
-import { esc } from "../../kit/js/ui.js?v=ece442dfab";
-import { diaLocalDe, fechaLocalISO } from "../../kit/js/fechas.js?v=ece442dfab";
-import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=ece442dfab";
-import { ESTADOS_PEDIDO, TOPES, kilos, pesos } from "../datos.js?v=ece442dfab";
-import { buscarPersona } from "../marca.js?v=ece442dfab";
+import { esc } from "../../kit/js/ui.js?v=5c760847bf";
+import { diaLocalDe, fechaLocalISO } from "../../kit/js/fechas.js?v=5c760847bf";
+import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=5c760847bf";
+import { ESTADOS_PEDIDO, TOPES, kilos, pesos } from "../datos.js?v=5c760847bf";
+import { buscarPersona } from "../marca.js?v=5c760847bf";
 
 /** Botón del recorrido con la persona de la carnicería: guia("u-empleado", "/pedidos", "Mirá lo que le llega a Darío"). */
 export const guia = (personaId, ruta, texto) => htmlGuia({ persona: buscarPersona(personaId), ruta, texto });
@@ -93,12 +93,13 @@ export function cuando(iso) {
 }
 
 /** Un campo para escribir kilos (teclado con coma en el celular). */
-export const campoKg = ({ nombre = "kg", valor = "", placeholder = "Ej: 1,625", etiqueta = "", requerido = false } = {}) => `
-    <input name="${esc(nombre)}" type="text" inputmode="decimal" autocomplete="off" maxlength="9" pattern="[0-9]{1,5}([.,][0-9]{1,3})?"
+export const campoKg = ({ nombre = "kg", valor = "", placeholder = "Ej: 1kg 625g o 1,625", etiqueta = "", requerido = false } = {}) => `
+    <input name="${esc(nombre)}" type="text" inputmode="text" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="done" maxlength="24"
         value="${esc(valor)}" placeholder="${esc(placeholder)}"${etiqueta ? ` aria-label="${esc(etiqueta)}"` : ""}${requerido ? " required" : ""}>`;
 
 /** Los kilos para mostrar en un campo ("1,625"). */
-export const kgEnCampo = (gramos) => (gramos === null || gramos === undefined ? "" : (gramos / 1000).toLocaleString("es-AR", { maximumFractionDigits: 3, useGrouping: false }));
+/** Un peso puesto en un campo, igual que como se muestra ("10 kg 400 g"): aGramos lo vuelve a leer. */
+export const kgEnCampo = (gramos) => (gramos === null || gramos === undefined ? "" : kilos(gramos));
 
 /** "+3,4 %" / "−12,0 %" (diferencia contra lo esperado). */
 export const porcentaje = (dif) => `${dif > 0 ? "+" : dif < 0 ? "−" : ""}${Math.abs(dif * 100).toLocaleString("es-AR", { minimumFractionDigits: 1, maximumFractionDigits: 1 })} %`;

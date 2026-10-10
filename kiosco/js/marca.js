@@ -2,7 +2,8 @@
 // Marca, personas y "también puede tener" de Sazzo Kiosco (diseñada el 08/10/2026).
 // Las personas son los roles reales del rubro (nombres inventados): el dueño y la empleada.
 // ============================================
-import { revisarMarca } from "../kit/js/marca.js?v=66194d9fee";
+import { revisarMarca } from "../kit/js/marca.js?v=c830d16e78";
+import { negocioDe } from "../kit/js/colores.js?v=c830d16e78";
 
 export const MARCA = revisarMarca({
     id: "kiosco",
@@ -36,7 +37,8 @@ export const PERSONAS = [
 
 export const buscarPersona = (id) => PERSONAS.find((p) => p.id === id) ?? null;
 
-export const NEGOCIO = "Kiosco La Esquina"; // nombre de ejemplo (arriba sigue diciendo Sazzo Kiosco)
+export const NEGOCIO = negocioDe(MARCA.prefijo, "Kiosco La Esquina"); // nombre de ejemplo (arriba sigue diciendo Sazzo Kiosco)
+// (si el dueño escribió el nombre de su negocio en "Probala con tus colores", va ese: kit/colores.js)
 
 // "Acerca de": lo que la versión real puede sumar y la demo deja afuera para que se recorra en 2 minutos
 export const TAMBIEN = [

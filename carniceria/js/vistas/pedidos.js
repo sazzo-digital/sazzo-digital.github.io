@@ -4,12 +4,12 @@
 // diferencia. "Listo: avisarle" lo separa (se descuenta del stock) y arma el mensaje para WhatsApp; "Cobrar y
 // entregar" lo pasa a la caja; o se anula (lo separado vuelve al stock).
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=ece442dfab";
-import { mostrarMensaje } from "../../kit/js/mensaje.js?v=ece442dfab";
-import { htmlCopiable, activarCopiables, ding } from "../../kit/js/celular.js?v=ece442dfab";
-import { ESTADOS_PEDIDO, MEDIOS, RETIROS, TOPES, ALIAS, pesos, kilos, aGramos, precioPorPeso } from "../datos.js?v=ece442dfab";
-import { MARCA } from "../marca.js?v=ece442dfab";
-import { guia, activarGuias, pasos, pastillaEstado, tarjetaPedido, cuando, campoKg, kgEnCampo, loPedido } from "./comunes.js?v=ece442dfab";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=5c760847bf";
+import { mostrarMensaje } from "../../kit/js/mensaje.js?v=5c760847bf";
+import { htmlCopiable, activarCopiables, ding } from "../../kit/js/celular.js?v=5c760847bf";
+import { ESTADOS_PEDIDO, MEDIOS, RETIROS, TOPES, ALIAS, pesos, kilos, aGramos, precioPorPeso } from "../datos.js?v=5c760847bf";
+import { MARCA } from "../marca.js?v=5c760847bf";
+import { guia, activarGuias, pasos, pastillaEstado, tarjetaPedido, cuando, campoKg, kgEnCampo, loPedido } from "./comunes.js?v=5c760847bf";
 
 /** Billetes "redondos" para cobrar un pedido: el próximo múltiplo de $10.000, de $20.000 y $50.000. */
 const billetesPara = (total) => [...new Set([10_000, 20_000, 50_000].map((b) => Math.ceil(Math.max(1, total) / b) * b))].slice(0, 3);
@@ -144,7 +144,7 @@ export function vistaPedido(cont, opciones, recien = null) {
                 </span>
                 ${pe.estado === "nuevo" && i.venta === "kg" ? `
                 <label class="pesaje">
-                    <span>Pesó (kg)</span>
+                    <span>Pesó</span>
                     ${campoKg({ nombre: "kg", valor: kgEnCampo(i.gramos), etiqueta: `Lo que pesó ${i.nombre}`, placeholder: kgEnCampo(i.pedidoGCalculado) })}
                     <input type="hidden" name="articulo" value="${esc(i.articuloId)}">
                 </label>` : `<span class="pesaje pesaje--hecho">${i.venta === "kg" ? `${esc(kilos(i.gramos))}${dif !== null && dif !== 0 ? `<small>${dif > 0 ? "+" : "−"}${esc(kilos(Math.abs(dif)))}</small>` : ""}` : `${esc(i.unidades)} u.`}</span>`}
@@ -175,7 +175,7 @@ export function vistaPedido(cont, opciones, recien = null) {
             <h2 class="titulo">Entregado y cobrado</h2>
             <p>${esc(pesos(pe.total))}${opciones.vuelto != null ? ` · vuelto <b>${esc(pesos(opciones.vuelto))}</b>` : ""}</p>
         </div>` : ""}
-        ${pe.estado === "nuevo" && empleado ? `<p class="nota pista"><i class="ti ti-hand-finger"></i> Cortá y pesá cada cosa, y escribí lo que marcó la balanza (probá: asado 1,620, picada 0,980, milanesas 1,050). El total se ajusta solo.</p>` : ""}
+        ${pe.estado === "nuevo" && empleado ? `<p class="nota pista"><i class="ti ti-hand-finger"></i> Cortá y pesá cada cosa, y escribí lo que marcó la balanza (probá: asado 1kg 620g, picada 980g, milanesas 1kg 50g; también vale 1,620). El total se ajusta solo.</p>` : ""}
         <ul class="filas-stock items-pedido">${pe.items.map(filaItem).join("")}</ul>
         <div class="total total--pedido">
             <span>${pe.real === null ? "Total aproximado" : "Total"}${pe.sinPesar ? ` <small>falta pesar ${esc(pe.sinPesar)}</small>` : ""}</span>

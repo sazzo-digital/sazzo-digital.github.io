@@ -1,9 +1,10 @@
 // ============================================
 // Marca, personas y "también puede tener" de Sazzo Ferretería (armada el 10/10/2026, sobre la base de Librería).
-// Las personas son los roles reales del rubro (nombres inventados): el dueño, el empleado del mostrador y un plomero
+// Las personas son los roles reales del rubro (nombres inventados): el dueño, el empleado del mostrador y un cliente
 // con cuenta corriente que pide presupuestos desde el celular.
 // ============================================
-import { revisarMarca } from "../kit/js/marca.js?v=0f2d2843ae";
+import { revisarMarca } from "../kit/js/marca.js?v=d783fb01c6";
+import { negocioDe } from "../kit/js/colores.js?v=d783fb01c6";
 
 export const MARCA = revisarMarca({
     id: "ferreteria",
@@ -37,8 +38,8 @@ export const PERSONAS = [
         nombre: "Marcos",
         apellido: "Villalba",
         rol: "cliente",
-        rolTexto: "Plomero",
-        etiqueta: "Marcos · Plomero",
+        rolTexto: "Cliente",
+        etiqueta: "Marcos · Cliente",
         detalle: "Pide presupuestos desde el celular",
         cuentaId: "c-marcos", // su cuenta corriente en la ferretería
         empezar: true // "Empezá por acá" en "Probala como…"
@@ -47,7 +48,8 @@ export const PERSONAS = [
 
 export const buscarPersona = (id) => PERSONAS.find((p) => p.id === id) ?? null;
 
-export const NEGOCIO = "Ferretería La Escuadra"; // nombre de ejemplo (arriba sigue diciendo Sazzo Ferretería)
+export const NEGOCIO = negocioDe(MARCA.prefijo, "Ferretería La Escuadra"); // nombre de ejemplo (arriba sigue diciendo Sazzo Ferretería)
+// (si el dueño escribió el nombre de su negocio en "Probala con tus colores", va ese: kit/colores.js)
 
 // "Acerca de": lo que la versión real puede sumar y la demo deja afuera para que se recorra en 2 minutos
 export const TAMBIEN = [

@@ -3,10 +3,10 @@
 // no paga y cuánto del tope usó. En la ficha: el recordatorio armado para mandarle, anotar un pago (todo o una parte),
 // el tope (lo cambia el dueño) y qué se llevó en cada compra. El dueño abre cuentas nuevas.
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=0f2d2843ae";
-import { mostrarMensaje } from "../../kit/js/mensaje.js?v=0f2d2843ae";
-import { TOPES, TOPE_CUENTA_NUEVA, pesos } from "../datos.js?v=0f2d2843ae";
-import { barraTope, haceDias, diasDesde, cuando } from "./comunes.js?v=0f2d2843ae";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=d783fb01c6";
+import { mostrarMensaje } from "../../kit/js/mensaje.js?v=d783fb01c6";
+import { TOPES, TOPE_CUENTA_NUEVA, pesos } from "../datos.js?v=d783fb01c6";
+import { barraTope, haceDias, diasDesde, cuando } from "./comunes.js?v=d783fb01c6";
 
 const DIAS_ATRASADO = 30; // desde cuántos días sin pagar se marca
 
@@ -28,7 +28,7 @@ export function vistaCuentas(cont, { usuario, datos }) {
             return `
             <li><a class="tarjeta tarjeta--link" href="#/cuentas/${esc(c.id)}">
                 <div class="tarjeta__fila">
-                    <span class="tarjeta__titulo"><i class="ti ti-user" aria-hidden="true"></i>${esc(c.nombre)}${c.oficio ? ` <small>(${esc(c.oficio)})</small>` : ""}</span>
+                    <span class="tarjeta__titulo"><i class="ti ti-user" aria-hidden="true"></i>${esc(c.nombre)}</span>
                     <b class="monto${c.deuda > 0 ? "" : " monto--cero"}">${esc(pesos(c.deuda))}</b>
                 </div>
                 ${barraTope(c)}
@@ -40,7 +40,6 @@ export function vistaCuentas(cont, { usuario, datos }) {
             <summary><i class="ti ti-user-plus"></i> Abrir una cuenta</summary>
             <form class="formulario" novalidate>
                 <label>Nombre<input name="nombre" maxlength="${TOPES.nombre}" required placeholder="Ej: Hugo Medina"></label>
-                <label>Oficio (si querés)<input name="oficio" maxlength="30" placeholder="Ej: Gasista"></label>
                 <label>Tope<input name="tope" type="number" inputmode="numeric" min="0" max="${TOPES.tope}" step="1" value="${TOPE_CUENTA_NUEVA}"></label>
                 <button class="boton" type="submit"><i class="ti ti-plus"></i> Abrir la cuenta</button>
             </form>
@@ -50,7 +49,7 @@ export function vistaCuentas(cont, { usuario, datos }) {
         e.preventDefault();
         const f = e.target;
         try {
-            const c = datos.nuevaCuenta(usuario, { nombre: f.nombre.value, oficio: f.oficio.value, tope: f.tope.value === "" ? NaN : Number(f.tope.value) });
+            const c = datos.nuevaCuenta(usuario, { nombre: f.nombre.value, tope: f.tope.value === "" ? NaN : Number(f.tope.value) });
             aviso(`Cuenta de ${c.nombre} abierta`);
             location.hash = `#/cuentas/${c.id}`;
         } catch (err) {
@@ -66,7 +65,7 @@ export function vistaCuenta(cont, { usuario, datos, params: [id] }) {
     const dias = diasDesde(c.desde);
     cont.innerHTML = `
         <a class="volver" href="#/cuentas"><i class="ti ti-arrow-left"></i> Cuentas corrientes</a>
-        <h1 class="titulo">${esc(c.nombre)}${c.oficio ? ` <small class="titulo__extra">${esc(c.oficio)}</small>` : ""}</h1>
+        <h1 class="titulo">${esc(c.nombre)}</h1>
         <div class="panel resumen-cuentas">
             <span class="panel__rotulo">Debe</span>
             <span class="panel__numero">${esc(pesos(c.deuda))}</span>

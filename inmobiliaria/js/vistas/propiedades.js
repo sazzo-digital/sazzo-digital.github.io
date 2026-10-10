@@ -3,18 +3,18 @@
 // el mapa, nunca la dirección; Valeria pide la visita, la inmobiliaria ve quiénes buscan algo así y baja el PDF) y
 // "Cargar propiedad" (con fotos sacadas con el celu, que no se suben a ningún lado).
 // ============================================
-import { esc, aviso, vacio, mensajeDe, fechaCorta } from "../../kit/js/ui.js?v=5e0516f6ed";
-import { fechaLocalISO, diaLocalDe } from "../../kit/js/fechas.js?v=5e0516f6ed";
-import { mostrarMapa } from "../../kit/js/mapa.js?v=5e0516f6ed";
-import { armarPdf, pdfListo } from "../../kit/js/pdf.js?v=5e0516f6ed";
-import { TOPES, TIPOS, ZONAS, OPERACIONES, CARACTERISTICAS, RADIO_ZONA, pesos, dolares } from "../datos.js?v=5e0516f6ed";
-import { NEGOCIO } from "../marca.js?v=5e0516f6ed";
-import { fotosDe, urlRecorrido, achicarFoto, guardarFotosEnMemoria, revisarArchivoFoto } from "../fotos.js?v=5e0516f6ed";
-import { abrirRecorrido } from "../visor360.js?v=5e0516f6ed";
+import { esc, aviso, vacio, mensajeDe, fechaCorta } from "../../kit/js/ui.js?v=bc8d90946e";
+import { fechaLocalISO, diaLocalDe } from "../../kit/js/fechas.js?v=bc8d90946e";
+import { mostrarMapa } from "../../kit/js/mapa.js?v=bc8d90946e";
+import { armarPdf, pdfListo, fotoParaPdf } from "../../kit/js/pdf.js?v=bc8d90946e";
+import { TOPES, TIPOS, ZONAS, OPERACIONES, CARACTERISTICAS, RADIO_ZONA, pesos, dolares } from "../datos.js?v=bc8d90946e";
+import { NEGOCIO } from "../marca.js?v=bc8d90946e";
+import { fotosDe, urlRecorrido, achicarFoto, guardarFotosEnMemoria, revisarArchivoFoto } from "../fotos.js?v=bc8d90946e";
+import { abrirRecorrido } from "../visor360.js?v=bc8d90946e";
 import {
     guia, activarGuias, tarjetaPropiedad, htmlFoto, medidas, hrefPropiedad, pastillaPropiedad, pastillaVisita,
     pastillaConsulta, mostrarMensaje, mayuscula
-} from "./comunes.js?v=5e0516f6ed";
+} from "./comunes.js?v=bc8d90946e";
 
 // Lo elegido en los filtros queda mientras se navega
 const filtro = { operacion: null, ambientes: null, hasta: null, mapa: false };
@@ -127,7 +127,11 @@ export async function pdfFicha(p) {
     if (p.dormitorios) datosPdf.push(["Dormitorios", String(p.dormitorios)]);
     if (p.banos) datosPdf.push(["Baños", String(p.banos)]);
     datosPdf.push(["Expensas", p.expensas ? pesos(p.expensas) : "Sin expensas"]);
+    // La foto principal arriba (si tiene: las de ejemplo o las sacadas con el celu)
+    const principal = fotosDe(p)[0];
+    const imagen = principal ? await fotoParaPdf(principal.grande) : null;
     const blob = await armarPdf({
+        foto: imagen ? { imagen, alto: 70 } : null,
         negocio: NEGOCIO,
         pie: "Hecho con Sazzo Inmobiliaria (demo)",
         titulo: "Ficha",
@@ -179,7 +183,8 @@ function activarGaleria(cont) {
 
 /** El mapa de la zona se baja recién cuando está por verse (así la ficha abre rápido). */
 function mapaCuandoSeVea(lugar, p) {
-    const cargar = () => mostrarMapa(lugar, [{ ...puntoDe(p), titulo: `Zona: ${p.zonaNombre}`, texto: `Aproximada (unos ${RADIO_ZONA} m)`, color: "#7c3aed" }], { zoomMaximo: 14 })
+    // La zona como círculo de RADIO_ZONA metros, centrado en la zona (se lee "es por acá", no "es acá")
+    const cargar = () => mostrarMapa(lugar, [{ lat: ZONAS[p.zona].lat, lng: ZONAS[p.zona].lng, radio: RADIO_ZONA, titulo: `Zona: ${p.zonaNombre}`, texto: `Aproximada (unos ${RADIO_ZONA} m)`, color: "#7c3aed" }], { zoomMaximo: 14 })
         .then((m) => {
             if (!m && lugar.isConnected) lugar.outerHTML = vacio("No se pudo cargar el mapa. Probá de nuevo con mejor señal.", "ti-map-off");
         });

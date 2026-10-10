@@ -7,7 +7,7 @@
 // Sin librería (img-comparison-slider hacía lo mismo con 9 KB). Las fotos se cargan recién cuando se ven
 // (loading="lazy") y tienen su ancho y alto, así no empujan la pantalla al llegar.
 // ============================================
-import { esc } from "./ui.js?v=dbd4cbbcac";
+import { esc } from "./ui.js?v=9aeacc21d1";
 
 /** Solo fotos del propio sitio (una ruta como "img/x.webp"), nunca algo que venga de afuera. */
 const esFoto = (ruta) => typeof ruta === "string" && ruta.length <= 120 && /^[\w\-/.]+\.(webp|avif|jpe?g|png)$/i.test(ruta) && !ruta.includes("..");

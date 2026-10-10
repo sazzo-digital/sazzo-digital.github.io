@@ -4,10 +4,10 @@
 // kiosco y aplicás todo de una, con Deshacer. Y "La lista del proveedor en Excel": subís la lista que te mandó y los
 // precios se actualizan solos (también con Deshacer). El stock se baja a Excel. La empleada solo mira (y baja).
 // ============================================
-import { esc, aviso, vacio, mensajeDe } from "../../kit/js/ui.js?v=66194d9fee";
-import { bajarExcel, leerExcel } from "../../kit/js/archivos.js?v=66194d9fee";
-import { PROVEEDORES, TOPES, pesos, estadoStock } from "../datos.js?v=66194d9fee";
-import { pastillaStock } from "./comunes.js?v=66194d9fee";
+import { esc, aviso, vacio, mensajeDe } from "../../kit/js/ui.js?v=c830d16e78";
+import { bajarExcel, leerExcel } from "../../kit/js/archivos.js?v=c830d16e78";
+import { PROVEEDORES, TOPES, pesos, estadoStock } from "../datos.js?v=c830d16e78";
+import { pastillaStock } from "./comunes.js?v=c830d16e78";
 
 const RAPIDOS = [5, 10, 15, 20];
 

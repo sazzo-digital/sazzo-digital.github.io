@@ -7,7 +7,7 @@
 // - Las que se sacan con el celu al cargar una propiedad se achican en el equipo (hasta 1200 px, JPEG) y quedan en
 //   memoria mientras la demo está abierta: no se suben a ningún lado ni se guardan (como la firma de Taller).
 // ============================================
-import { TOPES } from "./datos.js?v=5e0516f6ed";
+import { TOPES } from "./datos.js?v=bc8d90946e";
 
 const CARPETA = "img/fotos/";
 const CUANTAS = { p1: 3, p2: 3, p3: 3, p4: 2, p5: 3, p6: 2, p7: 2, p8: 3, p9: 3, p10: 3, p11: 2, p12: 2 };

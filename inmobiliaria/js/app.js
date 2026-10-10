@@ -4,23 +4,24 @@
 // consultas, la agenda y las propiedades; Graciela (dueña) arranca por "Este mes" y lleva los alquileres.
 // irA() cambia de persona sin pasar por "Probala como…" (botones del recorrido: "Mirá lo que le llega a Tomás →").
 // ============================================
-import { $, conFundido } from "../kit/js/ui.js?v=5e0516f6ed";
-import { iniciarDemo } from "../kit/js/arranque.js?v=5e0516f6ed";
-import { vistaIngreso } from "../kit/js/ingreso.js?v=5e0516f6ed";
-import { pintarMarco } from "../kit/js/marco.js?v=5e0516f6ed";
-import { mostrarRuta } from "../kit/js/rutas.js?v=5e0516f6ed";
-import { vistaAcerca } from "../kit/js/acerca.js?v=5e0516f6ed";
-import { MARCA, PERSONAS, TAMBIEN, buscarPersona } from "./marca.js?v=5e0516f6ed";
-import { crearDatos } from "./datos.js?v=5e0516f6ed";
-import { vistaPropiedades, vistaFicha, vistaNuevaPropiedad } from "./vistas/propiedades.js?v=5e0516f6ed";
-import { vistaPedirVisita, vistaMisVisitas } from "./vistas/visita.js?v=5e0516f6ed";
-import { vistaConsultas, vistaConsulta, vistaNuevaConsulta } from "./vistas/consultas.js?v=5e0516f6ed";
-import { vistaAgenda } from "./vistas/agenda.js?v=5e0516f6ed";
-import { vistaEsteMes } from "./vistas/este-mes.js?v=5e0516f6ed";
-import { vistaAlquileres, vistaAlquiler } from "./vistas/alquileres.js?v=5e0516f6ed";
+import { $, conFundido } from "../kit/js/ui.js?v=bc8d90946e";
+import { iniciarDemo } from "../kit/js/arranque.js?v=bc8d90946e";
+import { vistaIngreso } from "../kit/js/ingreso.js?v=bc8d90946e";
+import { pintarMarco } from "../kit/js/marco.js?v=bc8d90946e";
+import { mostrarRuta } from "../kit/js/rutas.js?v=bc8d90946e";
+import { vistaAcerca } from "../kit/js/acerca.js?v=bc8d90946e";
+import { MARCA, PERSONAS, TAMBIEN, buscarPersona } from "./marca.js?v=bc8d90946e";
+import { aparte } from "../kit/js/aparte.js?v=bc8d90946e";
+import { leerSesionGuardada } from "../kit/js/guardado.js?v=bc8d90946e";
+
+// Los datos de ejemplo y las pantallas se bajan aparte (al terminar de cargar): "Probala como…" aparece sin esperarlos
+const pantallas = aparte(() => import("./pantallas.js?v=bc8d90946e"));
+const { vistaPropiedades, vistaFicha, vistaNuevaPropiedad, vistaPedirVisita, vistaMisVisitas, vistaConsultas, vistaConsulta, vistaNuevaConsulta, vistaAgenda, vistaEsteMes, vistaAlquileres, vistaAlquiler, avisosDe } = pantallas.funciones;
 
 iniciarDemo(MARCA);
-const datos = crearDatos();
+let datos = null; // se arma cuando bajan las pantallas
+const listos = pantallas.listo.then((m) => (datos = m.crearDatos()));
+const guardarSesion = (id) => listos.then(() => datos.guardado.guardarSesion(id));
 const app = $("#app");
 let usuario = null;
 let contenido = null;
@@ -79,21 +80,24 @@ const mostrar = () => mostrarRuta({ rutas: RUTAS, contenido, usuario });
 function ingresar() {
     usuario = null;
     contenido = null;
-    datos.guardado.guardarSesion(null);
+    guardarSesion(null);
     vistaIngreso(app, {
         marca: MARCA,
         personas: PERSONAS,
         alElegir: (id) => {
-            datos.guardado.guardarSesion(id);
+            guardarSesion(id);
             history.replaceState(null, "", "#/inicio");
             entrar(buscarPersona(id));
         }
     });
 }
 
-function entrar(persona) {
+async function entrar(persona) {
+    pantallas.ya(); // al elegir persona (o si ya había alguien adentro) se piden en el momento
+    await listos;
     usuario = persona;
     contenido = pintarMarco(app, {
+        avisos: () => avisosDe(datos), // avisos entre roles (vistas/avisos.js, kit/avisos.js)
         marca: MARCA,
         usuario,
         menu: MENU[usuario.rol],
@@ -110,7 +114,7 @@ function entrar(persona) {
 function irA(personaId, ruta = "/inicio") {
     const persona = buscarPersona(personaId);
     if (!persona) return;
-    datos.guardado.guardarSesion(persona.id);
+    guardarSesion(persona.id);
     history.replaceState(null, "", `#${ruta}`);
     entrar(persona);
 }
@@ -122,13 +126,13 @@ window.addEventListener("hashchange", () => {
 
 // Si otra pestaña cambió los datos (ej: Valeria pidiendo una visita en una pestaña y Tomás mirando las consultas en otra)
 window.addEventListener("storage", (e) => {
-    if (e.key === datos.guardado.claves.datos && contenido) {
+    if (datos && e.key === datos.guardado.claves.datos && contenido) {
         datos.guardado.olvidarCache();
         mostrar();
     }
 });
 
 // Si ya había elegido a alguien (volvió a abrir la demo), sigue con esa persona
-const yaAdentro = buscarPersona(datos.guardado.leerSesion());
+const yaAdentro = buscarPersona(leerSesionGuardada(MARCA.prefijo));
 if (yaAdentro) entrar(yaAdentro);
 else ingresar();

@@ -2,6 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval' 'sha256-ypxxyBu5TkrSUGL60qU4Dlz1Z6kb3U7PaE2UmoA0vOQ=' 'sha256-/EW64VEnWWKV31TMtBtNWIgXhCcLJJMMjYbbnKKTQKA=' 'inline-speculation-rules'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://tile.openstreetmap.org; font-src 'self'; connect-src 'self' https://script.google.com https://script.googleusercontent.com; worker-src 'self' blob:; media-src 'self' data: blob:; object-src 'none'; base-uri 'self'; form-action 'self'">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Sazzo · Tu mundo digital, en orden</title>
     <meta name="description" content="Sistemas, páginas web y automatizaciones para negocios. Probá nuestras demos en un toque, sin registrarte.">
@@ -22,8 +23,8 @@
     <link rel="icon" href="img/isotipo.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
     <!-- Letras desde el propio sitio (antes Google Fonts); el script de armar las apunta a la copia compartida -->
-    <link rel="stylesheet" href="letras/letras.css?v=6ecee73a77">
-    <link rel="stylesheet" href="css/catalogo.css?v=1fb3bdbd89">
+    <link rel="stylesheet" href="letras/letras.css?v=1ce210640e">
+    <link rel="stylesheet" href="css/catalogo.css?v=dbda57c1da">
     <!-- Si hay JavaScript, las secciones arrancan ocultas y aparecen al bajar (sin JavaScript se ve todo igual) -->
     <script>
         document.documentElement.classList.add("js");
@@ -34,6 +35,12 @@
                 document.querySelector('meta[name="theme-color"]').content = "#DDD1BB";
             }
         } catch (e) { /* sin almacenamiento: queda oscuro */ }
+    </script>
+    <!-- Demos que abren al instante: cuando el dedo o el mouse se acerca a "Probala ahora", el navegador (Chrome,
+         Edge, Brave) ya la va preparando. El registro de visitas de la demo cuenta recién cuando se muestra
+         (kit/js/visita.js → cuandoSeMuestre). Los navegadores que no lo entienden lo ignoran. -->
+    <script type="speculationrules">
+        { "prerender": [{ "where": { "selector_matches": "a[data-demo]" }, "eagerness": "moderate" }] }
     </script>
 </head>
 <body>
@@ -244,9 +251,9 @@
             <a href="#contacto" data-whatsapp data-solo-con-numero>WhatsApp</a>
             <a href="#contacto" data-instagram>Instagram</a>
         </p>
-        <p class="pie__chico">© <span data-anio>2026</span> Sazzo</p>
+        <p class="pie__chico">© <span data-anio>2026</span> Sazzo · <a href="privacidad.html">Privacidad</a></p>
     </footer>
 
-    <script type="module" src="js/catalogo.js?v=1fb3bdbd89"></script>
+    <script type="module" src="js/catalogo.js?v=dbda57c1da"></script>
 </body>
 </html>

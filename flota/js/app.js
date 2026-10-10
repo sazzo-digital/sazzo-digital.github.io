@@ -3,22 +3,24 @@
 // Cada persona tiene su menú. irA() cambia de persona sin pasar por "Probala como…" (lo usan los botones del
 // recorrido: "Mirá lo que le llega a Diego →").
 // ============================================
-import { $, conFundido } from "../kit/js/ui.js?v=a2320dc718";
-import { iniciarDemo } from "../kit/js/arranque.js?v=a2320dc718";
-import { vistaIngreso } from "../kit/js/ingreso.js?v=a2320dc718";
-import { pintarMarco } from "../kit/js/marco.js?v=a2320dc718";
-import { mostrarRuta } from "../kit/js/rutas.js?v=a2320dc718";
-import { vistaAcerca } from "../kit/js/acerca.js?v=a2320dc718";
-import { MARCA, PERSONAS, TAMBIEN, buscarPersona } from "./marca.js?v=a2320dc718";
-import { crearDatos } from "./datos.js?v=a2320dc718";
-import { vistaInicio } from "./vistas/inicio.js?v=a2320dc718";
-import { vistaAvisar } from "./vistas/chofer.js?v=a2320dc718";
-import { vistaArreglar } from "./vistas/mecanico.js?v=a2320dc718";
-import { vistaVehiculos, vistaFicha } from "./vistas/vehiculos.js?v=a2320dc718";
-import { vistaRepuestos } from "./vistas/repuestos.js?v=a2320dc718";
+import { $, conFundido } from "../kit/js/ui.js?v=3f853aa22c";
+import { iniciarDemo } from "../kit/js/arranque.js?v=3f853aa22c";
+import { vistaIngreso } from "../kit/js/ingreso.js?v=3f853aa22c";
+import { pintarMarco } from "../kit/js/marco.js?v=3f853aa22c";
+import { mostrarRuta } from "../kit/js/rutas.js?v=3f853aa22c";
+import { vistaAcerca } from "../kit/js/acerca.js?v=3f853aa22c";
+import { MARCA, PERSONAS, TAMBIEN, buscarPersona } from "./marca.js?v=3f853aa22c";
+import { aparte } from "../kit/js/aparte.js?v=3f853aa22c";
+import { leerSesionGuardada } from "../kit/js/guardado.js?v=3f853aa22c";
+
+// Los datos de ejemplo y las pantallas se bajan aparte (al terminar de cargar): "Probala como…" aparece sin esperarlos
+const pantallas = aparte(() => import("./pantallas.js?v=3f853aa22c"));
+const { vistaInicio, vistaAvisar, vistaArreglar, vistaVehiculos, vistaFicha, vistaRepuestos, avisosDe } = pantallas.funciones;
 
 iniciarDemo(MARCA);
-const datos = crearDatos();
+let datos = null; // se arma cuando bajan las pantallas
+const listos = pantallas.listo.then((m) => (datos = m.crearDatos()));
+const guardarSesion = (id) => listos.then(() => datos.guardado.guardarSesion(id));
 const app = $("#app");
 let usuario = null;
 let contenido = null;
@@ -49,21 +51,24 @@ const mostrar = () => mostrarRuta({ rutas: RUTAS, contenido, usuario });
 function ingresar() {
     usuario = null;
     contenido = null;
-    datos.guardado.guardarSesion(null);
+    guardarSesion(null);
     vistaIngreso(app, {
         marca: MARCA,
         personas: PERSONAS,
         alElegir: (id) => {
-            datos.guardado.guardarSesion(id);
+            guardarSesion(id);
             history.replaceState(null, "", "#/inicio");
             entrar(buscarPersona(id));
         }
     });
 }
 
-function entrar(persona) {
+async function entrar(persona) {
+    pantallas.ya(); // al elegir persona (o si ya había alguien adentro) se piden en el momento
+    await listos;
     usuario = persona;
     contenido = pintarMarco(app, {
+        avisos: () => avisosDe(datos), // avisos entre roles (vistas/avisos.js, kit/avisos.js)
         marca: MARCA,
         usuario,
         menu: MENU[usuario.rol],
@@ -80,7 +85,7 @@ function entrar(persona) {
 function irA(personaId, ruta = "/inicio") {
     const persona = buscarPersona(personaId);
     if (!persona) return;
-    datos.guardado.guardarSesion(persona.id);
+    guardarSesion(persona.id);
     history.replaceState(null, "", `#${ruta}`);
     entrar(persona);
 }
@@ -92,13 +97,13 @@ window.addEventListener("hashchange", () => {
 
 // Si otra pestaña cambió los datos (ej: Ramón en una pestaña y Diego en otra), se vuelven a leer
 window.addEventListener("storage", (e) => {
-    if (e.key === datos.guardado.claves.datos && contenido) {
+    if (datos && e.key === datos.guardado.claves.datos && contenido) {
         datos.guardado.olvidarCache();
         mostrar();
     }
 });
 
 // Si ya había elegido a alguien (volvió a abrir la demo), sigue con esa persona
-const yaAdentro = buscarPersona(datos.guardado.leerSesion());
+const yaAdentro = buscarPersona(leerSesionGuardada(MARCA.prefijo));
 if (yaAdentro) entrar(yaAdentro);
 else ingresar();

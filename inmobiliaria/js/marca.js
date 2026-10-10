@@ -3,7 +3,8 @@
 // Las personas son los roles reales del rubro (nombres inventados): la dueña (martillera), el agente que atiende
 // consultas y visitas, y una chica que busca alquilar y pide la visita desde el celular.
 // ============================================
-import { revisarMarca } from "../kit/js/marca.js?v=5e0516f6ed";
+import { revisarMarca } from "../kit/js/marca.js?v=bc8d90946e";
+import { negocioDe } from "../kit/js/colores.js?v=bc8d90946e";
 
 export const MARCA = revisarMarca({
     id: "inmobiliaria",
@@ -46,7 +47,8 @@ export const PERSONAS = [
 
 export const buscarPersona = (id) => PERSONAS.find((p) => p.id === id) ?? null;
 
-export const NEGOCIO = "Inmobiliaria Puerta Abierta"; // nombre de ejemplo (arriba sigue diciendo Sazzo Inmobiliaria)
+export const NEGOCIO = negocioDe(MARCA.prefijo, "Inmobiliaria Puerta Abierta"); // nombre de ejemplo (arriba sigue diciendo Sazzo Inmobiliaria)
+// (si el dueño escribió el nombre de su negocio en "Probala con tus colores", va ese: kit/colores.js)
 
 // "Acerca de": lo que la versión real puede sumar y la demo deja afuera para que se recorra en 2 minutos
 export const TAMBIEN = [

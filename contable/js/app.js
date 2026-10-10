@@ -3,25 +3,24 @@
 // El menú de abajo tiene lugar para 5: cada persona ve las 4 que más usa + "Más" (todas). Las pantallas que se
 // apagan en "Tu empresa" desaparecen del menú. irA() cambia de persona sin pasar por "Probala como…" (recorrido).
 // ============================================
-import { $, vacio, conFundido } from "../kit/js/ui.js?v=90b39ad86f";
-import { iniciarDemo } from "../kit/js/arranque.js?v=90b39ad86f";
-import { vistaIngreso } from "../kit/js/ingreso.js?v=90b39ad86f";
-import { pintarMarco } from "../kit/js/marco.js?v=90b39ad86f";
-import { mostrarRuta } from "../kit/js/rutas.js?v=90b39ad86f";
-import { vistaAcerca } from "../kit/js/acerca.js?v=90b39ad86f";
-import { MARCA, PERSONAS, TAMBIEN, buscarPersona } from "./marca.js?v=90b39ad86f";
-import { crearDatos } from "./datos.js?v=90b39ad86f";
-import { vistaInicio } from "./vistas/inicio.js?v=90b39ad86f";
-import { vistaFacturar, vistaNuevaFactura, vistaComprobante } from "./vistas/facturar.js?v=90b39ad86f";
-import { vistaCompras, vistaNuevaCompra } from "./vistas/compras.js?v=90b39ad86f";
-import { vistaIva } from "./vistas/iva.js?v=90b39ad86f";
-import { vistaCuentas, vistaFicha } from "./vistas/cuentas.js?v=90b39ad86f";
-import { vistaContabilidad } from "./vistas/contabilidad.js?v=90b39ad86f";
-import { vistaEmpresa } from "./vistas/empresa.js?v=90b39ad86f";
-import { vistaMas } from "./vistas/mas.js?v=90b39ad86f";
+import { $, vacio, conFundido } from "../kit/js/ui.js?v=3ddc591303";
+import { iniciarDemo } from "../kit/js/arranque.js?v=3ddc591303";
+import { vistaIngreso } from "../kit/js/ingreso.js?v=3ddc591303";
+import { pintarMarco } from "../kit/js/marco.js?v=3ddc591303";
+import { mostrarRuta } from "../kit/js/rutas.js?v=3ddc591303";
+import { vistaAcerca } from "../kit/js/acerca.js?v=3ddc591303";
+import { MARCA, PERSONAS, TAMBIEN, buscarPersona } from "./marca.js?v=3ddc591303";
+import { aparte } from "../kit/js/aparte.js?v=3ddc591303";
+import { leerSesionGuardada } from "../kit/js/guardado.js?v=3ddc591303";
+
+// Los datos de ejemplo y las pantallas se bajan aparte (al terminar de cargar): "Probala como…" aparece sin esperarlos
+const pantallas = aparte(() => import("./pantallas.js?v=3ddc591303"));
+const { vistaInicio, vistaFacturar, vistaNuevaFactura, vistaComprobante, vistaCompras, vistaNuevaCompra, vistaIva, vistaCuentas, vistaFicha, vistaContabilidad, vistaEmpresa, vistaMas, avisosDe } = pantallas.funciones;
 
 iniciarDemo(MARCA);
-const datos = crearDatos();
+let datos = null; // se arma cuando bajan las pantallas
+const listos = pantallas.listo.then((m) => (datos = m.crearDatos()));
+const guardarSesion = (id) => listos.then(() => datos.guardado.guardarSesion(id));
 const app = $("#app");
 let usuario = null;
 let contenido = null;
@@ -83,21 +82,24 @@ const mostrar = () => mostrarRuta({ rutas: RUTAS, contenido, usuario });
 function ingresar() {
     usuario = null;
     contenido = null;
-    datos.guardado.guardarSesion(null);
+    guardarSesion(null);
     vistaIngreso(app, {
         marca: MARCA,
         personas: PERSONAS,
         alElegir: (id) => {
-            datos.guardado.guardarSesion(id);
+            guardarSesion(id);
             history.replaceState(null, "", "#/inicio");
             entrar(buscarPersona(id));
         }
     });
 }
 
-function entrar(persona) {
+async function entrar(persona) {
+    pantallas.ya(); // al elegir persona (o si ya había alguien adentro) se piden en el momento
+    await listos;
     usuario = persona;
     contenido = pintarMarco(app, {
+        avisos: () => avisosDe(datos), // avisos entre roles (vistas/avisos.js, kit/avisos.js)
         marca: MARCA,
         usuario,
         menu: menuDe(persona),
@@ -114,7 +116,7 @@ function entrar(persona) {
 function irA(personaId, ruta = "/inicio") {
     const persona = buscarPersona(personaId);
     if (!persona) return;
-    datos.guardado.guardarSesion(persona.id);
+    guardarSesion(persona.id);
     history.replaceState(null, "", `#${ruta}`);
     entrar(persona);
 }
@@ -126,13 +128,13 @@ window.addEventListener("hashchange", () => {
 
 // Si otra pestaña cambió los datos (ej: Silvina factura en una pestaña y Patricia mira el IVA en otra)
 window.addEventListener("storage", (e) => {
-    if (e.key === datos.guardado.claves.datos && contenido) {
+    if (datos && e.key === datos.guardado.claves.datos && contenido) {
         datos.guardado.olvidarCache();
         mostrar();
     }
 });
 
 // Si ya había elegido a alguien (volvió a abrir la demo), sigue con esa persona
-const yaAdentro = buscarPersona(datos.guardado.leerSesion());
+const yaAdentro = buscarPersona(leerSesionGuardada(MARCA.prefijo));
 if (yaAdentro) entrar(yaAdentro);
 else ingresar();

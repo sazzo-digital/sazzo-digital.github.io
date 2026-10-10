@@ -2,8 +2,8 @@
 // Catálogo de Sazzo: arma las tarjetas de demos (desde demos.js), las animaciones al bajar, los botones de
 // contacto (desde config.js), guarda de dónde vino la visita (?o=papel / ?o=ig) y avisa a la medición.
 // ============================================
-import { DEMOS } from "./demos.js?v=1fb3bdbd89";
-import { CONTACTO, MEDICION, LINK_DEMOS, RUTA_LIBS } from "./config.js?v=1fb3bdbd89";
+import { DEMOS } from "./demos.js?v=dbda57c1da";
+import { CONTACTO, MEDICION, LINK_DEMOS, RUTA_LIBS } from "./config.js?v=dbda57c1da";
 
 const $ = (selector, raiz = document) => raiz.querySelector(selector);
 const $$ = (selector, raiz = document) => [...raiz.querySelectorAll(selector)];
@@ -147,6 +147,46 @@ $$("[data-demo]").forEach((a) => a.addEventListener("click", () => contar("proba
 
 // Cantidad de rubros en la portada (sale de la lista)
 $$("[data-contar]").forEach((el) => { el.dataset.contar = visibles.length; el.textContent = visibles.length; });
+
+// Datos para Google (JSON-LD, schema.org): Sazzo y la lista de demos activas, armada desde demos.js y config.js (así no
+// se escribe dos veces). Google lee lo que arma el JavaScript. Sin precios (no van en el catálogo).
+const base = new URL("./", location.href).href;
+const datosGoogle = document.createElement("script");
+datosGoogle.type = "application/ld+json";
+datosGoogle.textContent = JSON.stringify({
+    "@context": "https://schema.org",
+    "@graph": [
+        {
+            "@type": "Organization",
+            "@id": `${base}#sazzo`,
+            name: "Sazzo",
+            url: base,
+            logo: new URL("img/apple-touch-icon.png", base).href,
+            description: "Páginas web, apps y automatizaciones a medida para negocios.",
+            address: { "@type": "PostalAddress", addressLocality: "Neuquén", addressCountry: "AR" },
+            ...(CONTACTO.instagram && /^[\w.]{1,30}$/.test(CONTACTO.instagram) ? { sameAs: [`https://www.instagram.com/${CONTACTO.instagram}/`] } : {}),
+            ...(/^\d{8,15}$/.test(CONTACTO.whatsapp ?? "") ? { contactPoint: { "@type": "ContactPoint", contactType: "customer service", telephone: `+${CONTACTO.whatsapp}`, availableLanguage: "es" } } : {})
+        },
+        {
+            "@type": "ItemList",
+            name: "Demos de Sazzo",
+            itemListElement: visibles.filter((d) => d.estado === "activa" && linkDe(d)).map((d, i) => ({
+                "@type": "ListItem",
+                position: i + 1,
+                item: {
+                    "@type": "SoftwareApplication",
+                    name: `Sazzo ${d.nombre}`,
+                    description: d.rubro,
+                    applicationCategory: "BusinessApplication",
+                    operatingSystem: "Web",
+                    url: new URL(linkDe(d), location.href).href,
+                    publisher: { "@id": `${base}#sazzo` }
+                }
+            }))
+        }
+    ]
+});
+document.head.append(datosGoogle);
 
 // --- Contacto ---
 const linkWhatsapp = CONTACTO.whatsapp ? `https://wa.me/${CONTACTO.whatsapp}?text=${encodeURIComponent(CONTACTO.mensaje)}` : null;

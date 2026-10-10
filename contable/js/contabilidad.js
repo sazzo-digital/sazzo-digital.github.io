@@ -4,7 +4,7 @@
 // con lo que se facturó o se cobró. De ahí salen el libro diario, el mayor de cada cuenta y el balance de sumas y
 // saldos. Todo en centavos. Funciones puras: reciben la empresa (los datos) y devuelven listas nuevas.
 // ============================================
-import { COMPROBANTES, numeroComprobante, signo } from "./reglas.js?v=90b39ad86f";
+import { COMPROBANTES, numeroComprobante, signo } from "./reglas.js?v=3ddc591303";
 
 // Plan de cuentas (simple, el de una pyme comercial)
 export const CUENTAS_CONTABLES = [

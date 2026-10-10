@@ -7,12 +7,12 @@
 //   El dueño ve además el costo real por kilo de cada corte y el precio sugerido con su margen ("Aplicar", con
 //   Deshacer) y lo baja en PDF. Darío carga los pesos; los costos los ve Ricardo.
 // ============================================
-import { esc, aviso, vacio, fechaCorta } from "../../kit/js/ui.js?v=ece442dfab";
-import { armarPdf, pdfListo } from "../../kit/js/pdf.js?v=ece442dfab";
-import { TOPES, TIPOS_INGRESO, PROVEEDORES, pesos, kilos, aGramos, mermaEsperada } from "../datos.js?v=ece442dfab";
-import { NEGOCIO } from "../marca.js?v=ece442dfab";
-import { htmlMediaRes, activarMediaRes, ZONAS } from "../media-res.js?v=ece442dfab";
-import { guia, activarGuias, cuando, campoKg, kgEnCampo, porcentaje, unDecimal } from "./comunes.js?v=ece442dfab";
+import { esc, aviso, vacio, fechaCorta } from "../../kit/js/ui.js?v=5c760847bf";
+import { armarPdf, pdfListo } from "../../kit/js/pdf.js?v=5c760847bf";
+import { TOPES, TIPOS_INGRESO, PROVEEDORES, pesos, kilos, aGramos, mermaEsperada } from "../datos.js?v=5c760847bf";
+import { NEGOCIO } from "../marca.js?v=5c760847bf";
+import { htmlMediaRes, activarMediaRes, ZONAS } from "../media-res.js?v=5c760847bf";
+import { guia, activarGuias, cuando, campoKg, kgEnCampo, porcentaje, unDecimal } from "./comunes.js?v=5c760847bf";
 
 /** La merma contra la esperada: pastilla verde (igual o menos), amarilla (hasta 1,5 puntos más) o roja. */
 function pastillaMerma(merma, esperada) {

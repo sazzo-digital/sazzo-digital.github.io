@@ -5,6 +5,7 @@
 //       datos: [["Cliente", "Silvia"], ["Vehículo", "Gol · AB 123 CD"]], texto: "Motivo: hace ruido al frenar",
 //       columnas: ["Detalle", "Cant.", "Precio", "Subtotal"], filas: [["Pastillas", "1", "$ 45.000", "$ 45.000"]],
 //       total: "$ 187.000", aviso: "Presupuesto · no válido como factura", firma: { imagen, aclaracion: "Silvia" },
+//       foto: { imagen: "data:image/jpeg;base64,…", alto: 60 },   // opcional: arriba, sin deformar (esFoto, TOPE_FOTO)
 //       pie: "Hecho con Sazzo Taller (demo)"
 //   });
 //   pdfListo(blob, "Presupuesto N° 104")   // ventanita Compartir / Descargar
@@ -12,11 +13,36 @@
 // pasan a los caracteres que esa letra tiene (tildes, ñ, ¿¡, °, comillas sí; emojis no).
 // Librería: jsPDF (kit\libs\, MIT, ~410 KB), se baja recién al tocar el botón.
 // ============================================
-import { cargarLibreria, entregarArchivo, nombreDeArchivo } from "./archivos.js?v=edf52e7135";
-import { esFirma } from "./firma.js?v=edf52e7135";
+import { cargarLibreria, entregarArchivo, nombreDeArchivo } from "./archivos.js?v=949a9fe1e6";
+import { esFirma } from "./firma.js?v=949a9fe1e6";
 
 const TOPE_TEXTO = 600;
 const TOPE_FILAS = 200;
+
+// Una foto arriba del papel (la de la propiedad, el auto): JPEG o PNG en data:, con tope (unos 1,5 MB)
+export const TOPE_FOTO = 2_000_000;
+export const esFoto = (dato) => typeof dato === "string" && dato.length <= TOPE_FOTO && /^data:image\/(jpeg|png);base64,[A-Za-z0-9+/=]+$/.test(dato);
+
+/**
+ * Una foto del sitio o del celu (su dirección: "img/fotos/p1-a.webp" o blob:…) lista para el PDF: JPEG achicado (lado
+ * más largo `lado` px). Con un <img> y no con fetch, así la Content-Security-Policy la deja (img-src). null si no se pudo.
+ */
+export async function fotoParaPdf(url, { lado = 1200 } = {}) {
+    try {
+        const img = new Image();
+        img.src = url;
+        await img.decode();
+        const escala = Math.min(1, lado / Math.max(img.naturalWidth, img.naturalHeight));
+        const lienzo = document.createElement("canvas");
+        lienzo.width = Math.max(1, Math.round(img.naturalWidth * escala));
+        lienzo.height = Math.max(1, Math.round(img.naturalHeight * escala));
+        lienzo.getContext("2d").drawImage(img, 0, 0, lienzo.width, lienzo.height);
+        const dato = lienzo.toDataURL("image/jpeg", 0.82);
+        return esFoto(dato) ? dato : null;
+    } catch {
+        return null;
+    }
+}
 
 // Lo que la letra del PDF sabe escribir (Windows-1252); lo demás se saca
 const NO_ESCRIBIBLE = /[^\n\x20-\x7e -ÿŒœŠšŸŽžƒˆ˜–—‘-‚“-„†-•…‰‹›€™]/g;
@@ -45,7 +71,7 @@ export function colorDelTema() {
 
 export async function armarPdf({
     negocio = "", titulo = "", numero = "", fecha = "", acento = colorDelTema(),
-    datos = [], texto = "", columnas = [], filas = [], total = "", aviso = "", firma = null, pie = ""
+    datos = [], texto = "", columnas = [], filas = [], total = "", aviso = "", firma = null, pie = "", foto = null
 } = {}) {
     if (filas.length > TOPE_FILAS) throw new Error(`Demasiados renglones para el papel (máximo ${TOPE_FILAS}).`);
     const { jsPDF } = await cargarLibreria("jspdf.umd.min.js", "jspdf");
@@ -95,6 +121,17 @@ export async function armarPdf({
     doc.setLineWidth(0.8);
     doc.line(margen, y, ancho - margen, y);
     y += 7;
+
+    // La foto (opcional), a todo el ancho y con el alto que pida (30 a 90 mm), sin deformarla
+    if (foto && esFoto(foto.imagen)) {
+        const altoMax = Math.min(Math.max(Number(foto.alto) || 60, 30), 90);
+        const { width, height } = doc.getImageProperties(foto.imagen);
+        const escala = Math.min(util / width, altoMax / height);
+        const w = width * escala;
+        const h = height * escala;
+        doc.addImage(foto.imagen, foto.imagen.startsWith("data:image/png") ? "PNG" : "JPEG", margen + (util - w) / 2, y, w, h);
+        y += h + 6;
+    }
 
     // Datos (rótulo chico arriba, valor abajo), de a tres por renglón
     const porFila = 3;

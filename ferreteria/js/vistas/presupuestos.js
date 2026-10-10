@@ -5,13 +5,13 @@
 // renglón. "Mandar" fija los precios por 7 días y arma el mensaje; "PDF" lo deja para compartir. Cuando lo acepta,
 // "Pasar a venta" descuenta el stock y lo cobra (de contado o a su cuenta corriente).
 // ============================================
-import { esc, aviso, vacio, fechaCorta } from "../../kit/js/ui.js?v=0f2d2843ae";
-import { diaLocalDe } from "../../kit/js/fechas.js?v=0f2d2843ae";
-import { mostrarMensaje } from "../../kit/js/mensaje.js?v=0f2d2843ae";
-import { armarPdf, pdfListo } from "../../kit/js/pdf.js?v=0f2d2843ae";
-import { ESTADOS_PRESUPUESTO, TOPES, UNIDADES, VALIDEZ_DIAS, pesos, precioConUnidad, cantidadTexto, entender, diaMes } from "../datos.js?v=0f2d2843ae";
-import { NEGOCIO } from "../marca.js?v=0f2d2843ae";
-import { guia, activarGuias, pasos, pastillaEstado, tarjetaPresupuesto, cuando, validez, pintarCobro, etiquetaUnidad, htmlFoto } from "./comunes.js?v=0f2d2843ae";
+import { esc, aviso, vacio, fechaCorta } from "../../kit/js/ui.js?v=d783fb01c6";
+import { diaLocalDe } from "../../kit/js/fechas.js?v=d783fb01c6";
+import { mostrarMensaje } from "../../kit/js/mensaje.js?v=d783fb01c6";
+import { armarPdf, pdfListo } from "../../kit/js/pdf.js?v=d783fb01c6";
+import { ESTADOS_PRESUPUESTO, TOPES, UNIDADES, VALIDEZ_DIAS, pesos, precioConUnidad, cantidadTexto, entender, diaMes } from "../datos.js?v=d783fb01c6";
+import { NEGOCIO } from "../marca.js?v=d783fb01c6";
+import { guia, activarGuias, pasos, pastillaEstado, tarjetaPresupuesto, cuando, validez, pintarCobro, etiquetaUnidad, htmlFoto } from "./comunes.js?v=d783fb01c6";
 
 /** Lo que va en el PDF del presupuesto (lo usan el mostrador y el cliente). */
 export const datosPdf = (pr) => ({
@@ -74,7 +74,7 @@ export function vistaNuevoPresupuesto(cont, { usuario, datos }) {
                 <label>¿De qué cuenta?
                     <select name="cuenta">
                         <option value="">Sin cuenta corriente</option>
-                        ${cuentas.map((c) => `<option value="${esc(c.id)}">${esc(c.nombre)}${c.oficio ? ` (${esc(c.oficio)})` : ""}</option>`).join("")}
+                        ${cuentas.map((c) => `<option value="${esc(c.id)}">${esc(c.nombre)}</option>`).join("")}
                     </select>
                 </label>
                 <label data-para>¿Para quién?<input name="para" maxlength="${TOPES.nombre}" placeholder="Ej: Jorge, el vecino de la esquina"></label>
@@ -104,6 +104,7 @@ const elegidos = new Map(); // presupuestoId → itemId con el buscador abierto 
 export function vistaPresupuesto(cont, opciones, recien = null) {
     const { usuario, datos, irA, params: [id] } = opciones;
     const pr = datos.presupuesto(id);
+    datos.marcarVisto(usuario, pr.id); // ya lo está mirando: el aviso "Pedido nuevo" no le vuelve a saltar
     const empleado = usuario.rol === "empleado";
     const editable = pr.estado === "pedido";
     const otraVez = (r = null) => vistaPresupuesto(cont, opciones, r);

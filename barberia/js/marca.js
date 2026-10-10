@@ -2,7 +2,8 @@
 // Marca, personas y "también puede tener" de Sazzo Barbería (diseñada el 08/10/2026).
 // Las personas son los roles reales del rubro (nombres inventados): el barbero (y dueño) y un cliente.
 // ============================================
-import { revisarMarca } from "../kit/js/marca.js?v=2b683c2ec9";
+import { revisarMarca } from "../kit/js/marca.js?v=7f17c1a4d6";
+import { negocioDe } from "../kit/js/colores.js?v=7f17c1a4d6";
 
 export const MARCA = revisarMarca({
     id: "barberia",
@@ -36,7 +37,8 @@ export const PERSONAS = [
 
 export const buscarPersona = (id) => PERSONAS.find((p) => p.id === id) ?? null;
 
-export const NEGOCIO = "Barbería Don Leo"; // nombre de ejemplo (arriba sigue diciendo Sazzo Barbería)
+export const NEGOCIO = negocioDe(MARCA.prefijo, "Barbería Don Leo"); // nombre de ejemplo (arriba sigue diciendo Sazzo Barbería)
+// (si el dueño escribió el nombre de su negocio en "Probala con tus colores", va ese: kit/colores.js)
 
 // "Acerca de": lo que la versión real puede sumar y la demo deja afuera para que se recorra en 2 minutos
 export const TAMBIEN = [

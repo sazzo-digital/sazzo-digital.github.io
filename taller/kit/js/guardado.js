@@ -21,7 +21,8 @@
 //   minutos"). Mientras la usa (cada cambio que guarda), no se renuevan. Se avisa con un cartelito.
 // ============================================
 
-import { aviso } from "./ui.js?v=dbd4cbbcac";
+import { aviso } from "./ui.js?v=9aeacc21d1";
+import { olvidarAvisos } from "./avisos.js?v=9aeacc21d1";
 
 /** Nombres compartidos entre el catálogo y todas las demos (no pueden ser el prefijo de una demo). */
 export const COMPARTIDAS = ["sazzo-origen", "sazzo-equipo", "sazzo-tema", "sazzo-yo"];
@@ -35,6 +36,20 @@ export function hoyLocal(fecha = new Date()) {
 export const MENSAJE_RENOVADOS = "Los datos de ejemplo se renovaron para que estén al día.";
 export const SIN_USO_RENUEVA = 3 * 60 * 60 * 1000; // 3 horas sin guardar nada: al volver, datos nuevos
 
+const claveSesion = (prefijo) => `${prefijo}-sesion`;
+
+/**
+ * Quién quedó adentro la última vez (el id de la persona), sin armar los datos: el arranque lo usa para mostrar
+ * "Probala como…" mientras los datos y las pantallas se bajan aparte (kit/aparte.js). Sin localStorage: null.
+ */
+export function leerSesionGuardada(prefijo) {
+    try {
+        return localStorage.getItem(claveSesion(prefijo));
+    } catch {
+        return null;
+    }
+}
+
 export function crearGuardado({ prefijo, version, semilla } = {}) {
     if (!/^sazzo-[a-z0-9]+(-[a-z0-9]+)*$/.test(prefijo ?? "")) {
         throw new Error(`El prefijo de la demo tiene que ser "sazzo-" y su nombre en minúsculas (ej: "sazzo-kiosco"). Llegó: ${JSON.stringify(prefijo)}.`);
@@ -43,7 +58,7 @@ export function crearGuardado({ prefijo, version, semilla } = {}) {
     if (!Number.isInteger(version) || version < 1) throw new Error("La versión de los datos tiene que ser un número entero desde 1.");
     if (typeof semilla !== "function") throw new Error("Falta la función que crea los datos de prueba (semilla).");
 
-    const claves = { datos: `${prefijo}-datos`, sesion: `${prefijo}-sesion` };
+    const claves = { datos: `${prefijo}-datos`, sesion: claveSesion(prefijo) };
     let cache = null;
     let sesionEnMemoria = null; // por si el navegador no deja usar localStorage (ventana privada, permisos)
     let yaAviso = false; // el aviso de "no se pudo guardar" sale una sola vez (hasta "Empezar de cero")
@@ -77,6 +92,7 @@ export function crearGuardado({ prefijo, version, semilla } = {}) {
             // datos rotos o sin acceso: se regeneran
         }
         cache = { ...semilla(), version, armadoEl: hoyLocal(), usadoEl: Date.now() };
+        olvidarAvisos(prefijo); // datos nuevos: los avisos entre roles arrancan de cero (kit/avisos.js)
         persistir();
         if (deOtroDia && typeof document !== "undefined" && document.body) aviso(MENSAJE_RENOVADOS, "info");
         return cache;
@@ -90,6 +106,7 @@ export function crearGuardado({ prefijo, version, semilla } = {}) {
     /** "Empezar de cero": borra los datos de ESTA demo; al volver a leerlos aparecen los de fábrica. */
     function reiniciar() {
         cache = null;
+        olvidarAvisos(prefijo);
         yaAviso = false;
         try {
             localStorage.removeItem(claves.datos);

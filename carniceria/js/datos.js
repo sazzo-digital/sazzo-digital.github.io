@@ -11,18 +11,18 @@
 // Reglas del kit: exigir() en lo que modifica, topes en todo lo que se carga, nada se borra y se devuelven copias.
 // Las ventas guardan el precio y el costo del momento. Si cambia la forma de los datos, subir VERSION_DATOS.
 // ============================================
-import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=ece442dfab";
-import { enteroHasta, sinPasarse } from "../kit/js/topes.js?v=ece442dfab";
-import { diaLocalDe, fechaLocalISO } from "../kit/js/fechas.js?v=ece442dfab";
-import { filtrarPorTexto, comoSuena } from "../kit/js/buscar.js?v=ece442dfab";
-import { MARCA, NEGOCIO, buscarPersona } from "./marca.js?v=ece442dfab";
+import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=5c760847bf";
+import { enteroHasta, sinPasarse } from "../kit/js/topes.js?v=5c760847bf";
+import { diaLocalDe, fechaLocalISO } from "../kit/js/fechas.js?v=5c760847bf";
+import { filtrarPorTexto, comoSuena } from "../kit/js/buscar.js?v=5c760847bf";
+import { MARCA, NEGOCIO, buscarPersona } from "./marca.js?v=5c760847bf";
 
 export const VERSION_DATOS = 1;
 
 // ---------- Topes (cada uno con su prueba de valor absurdo) ----------
 export const TOPES = {
     gramosMin: 10, // 10 g: lo mínimo que se vende por peso
-    gramos: 50_000, // 50 kg en un renglón (una media res entera no se vende en el mostrador)
+    gramos: 100_000, // 100 kg en un renglón (un pedido grande para un evento; mil kilos no se venden en el mostrador)
     plataMin: 100, // "$100 de picada"
     plata: 1_000_000,
     precio: 1_000_000, // por kilo o por unidad
@@ -148,18 +148,40 @@ export function armarEtiqueta(plu, gramos, formato = ETIQUETA) {
 export const pesos = (n) => `$ ${Math.round(n).toLocaleString("es-AR")}`;
 
 /** "1,625 kg" (o con menos decimales: kilos(12400, 1) → "12,4 kg"). */
-export const kilos = (gramos, decimales = 3) =>
-    `${(gramos / 1000).toLocaleString("es-AR", { minimumFractionDigits: decimales, maximumFractionDigits: decimales })} kg`;
+export function kilos(gramos, decimales = 3) {
+    // Como se dice en el mostrador: "5 kg 400 g", "845 g", "2 kg". `decimales` redondea: 3 = al gramo, 1 = a 100 g,
+    // 0 = al kilo (para totales).
+    const paso = 10 ** (3 - Math.min(3, Math.max(0, decimales)));
+    const g = Math.round(Math.abs(gramos) / paso) * paso;
+    const signo = gramos < 0 && g ? "−" : "";
+    const kg = Math.floor(g / 1000);
+    const resto = g % 1000;
+    if (!kg) return `${signo}${resto} g`;
+    return `${signo}${kg.toLocaleString("es-AR")} kg${resto ? ` ${resto} g` : ""}`;
+}
+
+// Cómo se escriben las unidades: kg, kgs, k, kilo, kilos · g, gr, grs, gramo, gramos (con o sin espacios)
+const KG = "(?:kgs?|k|kilos?)";
+const G = "(?:grs?|g|gramos?)";
+const KG_Y_G = new RegExp(`^(\\d{1,5})\\s*${KG}\\.?\\s*(?:y\\s*)?(\\d{1,3})\\s*(?:${G}\\.?)?$`);
+const SOLO_G = new RegExp(`^(\\d{1,6})\\s*${G}\\.?$`);
+const SOLO_KG = new RegExp(`^(\\d{1,5}(?:[.,]\\d{1,3})?)\\s*(?:${KG}\\.?)?$`);
 
 /**
- * Kilos escritos ("1,625", "1.625", "2") → gramos enteros. Punto o coma = decimales (como la balanza), hasta 3.
- * Devuelve NaN si no se entiende (letras, negativos, "1e3", más de 3 decimales…).
+ * Kilos escritos → gramos enteros. Como la balanza ("1,625", "1.625", "2") o como se dice ("10kg 400g",
+ * "10 kg 400 g", "10 kilos 400", "10k400", "400 gr"). Punto o coma = decimales, hasta 3.
+ * Devuelve NaN si no se entiende (letras sueltas, negativos, "1e3", más de 3 decimales, "10 kg 4000 g"…).
  */
 export function aGramos(texto) {
     if (typeof texto === "number") return Number.isFinite(texto) && texto >= 0 ? Math.round(texto * 1000) : NaN;
-    const t = String(texto ?? "").trim().replace(/\s*kg$/i, "");
-    if (!/^\d{1,5}([.,]\d{1,3})?$/.test(t)) return NaN;
-    return Math.round(Number(t.replace(",", ".")) * 1000);
+    const dicho = String(texto ?? "").trim().toLowerCase().replace(/\s+/g, " ");
+    const kgYg = KG_Y_G.exec(dicho);
+    if (kgYg) return Number(kgYg[1]) * 1000 + Number(kgYg[2]);
+    const soloG = SOLO_G.exec(dicho);
+    if (soloG) return Number(soloG[1]);
+    const soloKg = SOLO_KG.exec(dicho);
+    if (soloKg) return Math.round(Number(soloKg[1].replace(",", ".")) * 1000);
+    return NaN;
 }
 
 /** El precio de un renglón por peso: gramos × precio por kilo, redondeado a $10 (como la balanza). */

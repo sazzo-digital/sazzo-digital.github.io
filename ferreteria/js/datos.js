@@ -15,12 +15,12 @@
 // Reglas del kit: exigir() en lo que modifica, topes en todo lo que se carga, nada se borra y se devuelven copias.
 // Las ventas guardan el precio y el costo del momento. Si cambia la forma de los datos, subir VERSION_DATOS.
 // ============================================
-import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=0f2d2843ae";
-import { enteroHasta, sinPasarse } from "../kit/js/topes.js?v=0f2d2843ae";
-import { diaLocalDe, fechaLocalISO } from "../kit/js/fechas.js?v=0f2d2843ae";
-import { columnasDe, numeroDe, textoParaComparar } from "../kit/js/tablas.js?v=0f2d2843ae";
-import { filtrarPorTexto, comoSuena } from "../kit/js/buscar.js?v=0f2d2843ae";
-import { MARCA, NEGOCIO, buscarPersona } from "./marca.js?v=0f2d2843ae";
+import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=d783fb01c6";
+import { enteroHasta, sinPasarse } from "../kit/js/topes.js?v=d783fb01c6";
+import { diaLocalDe, fechaLocalISO } from "../kit/js/fechas.js?v=d783fb01c6";
+import { columnasDe, numeroDe, textoParaComparar } from "../kit/js/tablas.js?v=d783fb01c6";
+import { filtrarPorTexto, comoSuena } from "../kit/js/buscar.js?v=d783fb01c6";
+import { MARCA, NEGOCIO, buscarPersona } from "./marca.js?v=d783fb01c6";
 
 export const VERSION_DATOS = 1;
 
@@ -400,12 +400,12 @@ const CATALOGO = {
     ]]
 };
 
-// Las cuentas corrientes: [id, nombre, oficio, tope]
+// Las cuentas corrientes: [id, nombre, tope]
 const CUENTAS = [
-    ["c-marcos", "Marcos Villalba", "Plomero", 300_000],
-    ["c-gustavo", "Gustavo Ríos", "Albañil", 200_000],
-    ["c-lucia", "Lucía Ferreyra", "Electricista", 250_000],
-    ["c-alamos", "Administración Los Álamos", "Consorcio", 500_000]
+    ["c-marcos", "Marcos Villalba", 300_000],
+    ["c-gustavo", "Gustavo Ríos", 200_000],
+    ["c-lucia", "Lucía Ferreyra", 250_000],
+    ["c-alamos", "Administración Los Álamos", 500_000]
 ];
 
 /** Números "al azar" pero siempre los mismos (así las pruebas y la demo arrancan igual). */
@@ -499,7 +499,7 @@ export function semilla() {
     }
 
     // Las cuentas, con lo que debían de antes
-    const cuentas = CUENTAS.map(([id, nombre, oficio, tope]) => ({ id, nombre, oficio, tope, movimientos: [] }));
+    const cuentas = CUENTAS.map(([id, nombre, tope]) => ({ id, nombre, tope, movimientos: [] }));
     const cuenta = (id) => cuentas.find((c) => c.id === id);
     const mov = (id, tipo, monto, dias, hora, { medio = null, nota = "", ventaId = null, por = "Osvaldo" } = {}) =>
         cuenta(id).movimientos.push({ id: `m-${id}-${cuenta(id).movimientos.length + 1}`, tipo, monto, fecha: momento(dias, hora), ventaId, medio, por, nota });
@@ -907,13 +907,13 @@ export function crearDatos(prefijo = MARCA.prefijo) {
         return armarCuentaConMovimientos(buscar(db().cuentas, usuario.cuentaId, "Tu cuenta ya no existe."));
     }
 
-    function nuevaCuenta(usuario, { nombre, oficio = "", tope = TOPE_CUENTA_NUEVA } = {}) {
+    function nuevaCuenta(usuario, { nombre, tope = TOPE_CUENTA_NUEVA } = {}) {
         exigir(esDueno(usuario), "Las cuentas corrientes las abre el dueño.");
         const n = sinPasarse(nombre, TOPES.nombre, "el nombre");
         exigir(n, "Poné el nombre del cliente.");
         exigir(!db().cuentas.some((c) => normal(c.nombre) === normal(n)), "Ya hay una cuenta con ese nombre.");
         revisarTope(db().cuentas, TOPES.cuentas, "cuentas");
-        const c = { id: nuevoId("c"), nombre: n, oficio: sinPasarse(oficio, 30, "el oficio"), tope: enteroHasta(tope, "El tope", { hasta: TOPES.tope }), movimientos: [] };
+        const c = { id: nuevoId("c"), nombre: n, tope: enteroHasta(tope, "El tope", { hasta: TOPES.tope }), movimientos: [] };
         db().cuentas.push(c);
         guardado.persistir();
         return armarCuenta(c);
@@ -1057,6 +1057,42 @@ export function crearDatos(prefijo = MARCA.prefijo) {
 
     const presupuesto = (id) => armarPresupuesto(buscar(db().presupuestos, id, "Ese presupuesto no existe."));
 
+    // ----- Novedades: el aviso "Pedido nuevo" (y "Lo aceptó", "Te lo mandaron") para la persona que entra -----
+    // Cada persona tiene su "ya lo vi" en el presupuesto (vistos: { personaId: estado que vio }): si el presupuesto
+    // cambia de estado, vuelve a avisar una vez. Así Nahuel y Osvaldo se enteran cada uno por su lado.
+
+    const yaLoVio = (usuario, pr) => pr.vistos?.[usuario.id] === pr.estado;
+
+    /** Lo que esta persona todavía no vio: el más nuevo primero. */
+    function novedades(usuario) {
+        let lista = [];
+        if (esCliente(usuario)) {
+            lista = db().presupuestos.filter((pr) => pr.clienteId === usuario.cuentaId && pr.estado === "enviado" && !yaLoVio(usuario, pr));
+        } else if (esDelLocal(usuario)) {
+            lista = db().presupuestos.filter((pr) => !yaLoVio(usuario, pr)
+                && ((pr.estado === "pedido" && pr.origen === "web") || (pr.estado === "aceptado" && pr.aceptadoPorCliente)));
+        }
+        const cuandoFue = (pr) => (pr.estado === "pedido" ? pr.creado : pr.estado === "enviado" ? pr.enviado : pr.aceptado) ?? "";
+        return lista.sort((a, b) => cuandoFue(b).localeCompare(cuandoFue(a))).map((pr) => {
+            const a = armarPresupuesto(pr);
+            return {
+                id: a.id, numero: a.numero, cliente: a.cliente, obra: a.obra, renglones: a.items.length, conFoto: a.items.some((i) => i.foto),
+                total: a.total, vence: a.vence, tipo: { pedido: "nuevo", aceptado: "aceptado", enviado: "enviado" }[a.estado],
+                ruta: esCliente(usuario) ? "/mis-presupuestos" : `/presupuestos/${a.id}`
+            };
+        });
+    }
+
+    /** "Ya lo vi": no vuelve a avisar hasta que el presupuesto cambie de estado. */
+    function marcarVisto(usuario, presupuestoId) {
+        const pr = buscar(db().presupuestos, presupuestoId, "Ese presupuesto no existe.");
+        exigir(esDelLocal(usuario) || (esCliente(usuario) && pr.clienteId === usuario.cuentaId), "Ese presupuesto no es tuyo.");
+        if (yaLoVio(usuario, pr)) return false;
+        pr.vistos = { ...(pr.vistos ?? {}), [usuario.id]: pr.estado };
+        guardado.persistir();
+        return true;
+    }
+
     /**
      * Pedir un presupuesto: el cliente desde el celular (va a su cuenta) o el mostrador (para una cuenta o para
      * alguien sin cuenta: `para`). `lineas`: lo que escribió, un artículo por renglón. `foto`: "lo de la foto".
@@ -1109,7 +1145,7 @@ export function crearDatos(prefijo = MARCA.prefijo) {
         exigir(esDelLocal(usuario), "El presupuesto lo arma la ferretería.");
         const pr = buscar(db().presupuestos, presupuestoId, "Ese presupuesto no existe.");
         exigir(pr.estado === "pedido" || pr.estado === "enviado" || pr.estado === "aceptado", "Ese presupuesto ya no se puede cambiar.");
-        if (pr.estado !== "pedido") Object.assign(pr, { estado: "pedido", enviado: null, vence: null, aceptado: null });
+        if (pr.estado !== "pedido") Object.assign(pr, { estado: "pedido", enviado: null, vence: null, aceptado: null, aceptadoPorCliente: false });
         return pr;
     }
 
@@ -1196,7 +1232,8 @@ export function crearDatos(prefijo = MARCA.prefijo) {
         exigir(esDelLocal(usuario) || (esCliente(usuario) && pr.clienteId === usuario.cuentaId), "Ese presupuesto no es tuyo.");
         exigir(pr.estado === "enviado", pr.estado === "aceptado" ? "Ya está aceptado." : "Se acepta cuando la ferretería lo manda.");
         exigir(!vencido(pr), "Venció: pedile a la ferretería que lo actualice.");
-        Object.assign(pr, { estado: "aceptado", aceptado: ahora() });
+        // Si lo aceptó el cliente desde su celu, al mostrador le llega el aviso; si lo anotó la ferretería, no
+        Object.assign(pr, { estado: "aceptado", aceptado: ahora(), aceptadoPorCliente: esCliente(usuario) });
         guardado.persistir();
         return armarPresupuesto(pr);
     }
@@ -1331,6 +1368,7 @@ export function crearDatos(prefijo = MARCA.prefijo) {
         pedidosSugeridos, mensajePedido, recibirPedido,
         listarCuentas, cuenta, miCuenta, nuevaCuenta, cambiarTope, cobrarCuenta, mensajeCuenta, revisarTopeCuenta,
         sugerencias, verRenglones, nuevoPresupuesto, presupuesto, listarPresupuestos, misPresupuestos,
+        novedades, marcarVisto,
         volverAArmar, elegirArticulo, cambiarCantidad, quitarRenglon, sumarArticulo, enviarPresupuesto, aceptarPresupuesto, venderPresupuesto, anularPresupuesto,
         armarTicket, vender,
         caja, semana, cerrarCaja

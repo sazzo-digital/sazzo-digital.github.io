@@ -3,7 +3,8 @@
 // Las personas son los roles reales de una pyme Responsable Inscripta (nombres inventados): administración, el dueño
 // y la contadora.
 // ============================================
-import { revisarMarca } from "../kit/js/marca.js?v=90b39ad86f";
+import { revisarMarca } from "../kit/js/marca.js?v=3ddc591303";
+import { negocioDe } from "../kit/js/colores.js?v=3ddc591303";
 
 export const MARCA = revisarMarca({
     id: "contable",
@@ -46,7 +47,8 @@ export const PERSONAS = [
 
 export const buscarPersona = (id) => PERSONAS.find((p) => p.id === id) ?? null;
 
-export const NEGOCIO = "Distribuidora Los Álamos S.R.L."; // empresa de ejemplo (se cambia en "Tu empresa")
+export const NEGOCIO = negocioDe(MARCA.prefijo, "Distribuidora Los Álamos S.R.L."); // empresa de ejemplo (se cambia en "Tu empresa")
+// (si el dueño escribió el nombre de su negocio en "Probala con tus colores", va ese: kit/colores.js)
 
 // "Acerca de": lo que la versión real puede sumar y la demo deja afuera para que se recorra en 2 minutos
 export const TAMBIEN = [

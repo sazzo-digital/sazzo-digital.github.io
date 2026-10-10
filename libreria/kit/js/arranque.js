@@ -5,13 +5,16 @@
 // 3. Si se abrió adentro de Instagram, WhatsApp o Facebook, avisa que conviene abrirla en el navegador.
 // 4. Avisa al registro de visitas que se abrió, y después cada pantalla que mira (medicion\LEEME.md).
 // 5. Si algo se rompe (un error que nadie atajó), lo avisa al registro de visitas (sin nada personal).
+// 6. El teclado del celu en los formularios: "Siguiente"/"Listo" en Enter y sin autocompletar datos (kit/teclado.js).
 // ============================================
-import { leerLink, contar, contarPantalla, vigilarErrores, medirVelocidad } from "./visita.js?v=ebb3923e44";
-import { recuperarColor } from "./colores.js?v=ebb3923e44";
-import { avisarSiEsNavegadorDeOtraApp } from "./navegador.js?v=ebb3923e44";
+import { leerLink, contar, contarPantalla, vigilarErrores, medirVelocidad } from "./visita.js?v=114958267d";
+import { recuperarColor } from "./colores.js?v=114958267d";
+import { avisarSiEsNavegadorDeOtraApp } from "./navegador.js?v=114958267d";
+import { prepararTeclado } from "./teclado.js?v=114958267d";
 
 export function iniciarDemo(marca) {
     leerLink();
+    prepararTeclado();
     vigilarErrores(marca.id);
     medirVelocidad(marca.id);
     recuperarColor(marca.prefijo);

@@ -3,11 +3,11 @@
 // la foto de cada propiedad (o su dibujo mientras no tenga), la tarjeta de una propiedad, los días en pastillas y la
 // ventanita del mensaje para copiar (del kit). Todo dato que entra a HTML pasa por esc().
 // ============================================
-import { esc } from "../../kit/js/ui.js?v=5e0516f6ed";
-import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=5e0516f6ed";
-import { mostrarMensaje as ventanaMensaje } from "../../kit/js/mensaje.js?v=5e0516f6ed";
-import { buscarPersona } from "../marca.js?v=5e0516f6ed";
-import { fotosDe } from "../fotos.js?v=5e0516f6ed";
+import { esc } from "../../kit/js/ui.js?v=bc8d90946e";
+import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=bc8d90946e";
+import { mostrarMensaje as ventanaMensaje } from "../../kit/js/mensaje.js?v=bc8d90946e";
+import { buscarPersona } from "../marca.js?v=bc8d90946e";
+import { fotosDe } from "../fotos.js?v=bc8d90946e";
 
 /** Botón del recorrido con la persona de la inmobiliaria: guia("u-agente", "/inicio", "Mirá lo que le llega a Tomás"). */
 export const guia = (personaId, ruta, texto) => htmlGuia({ persona: buscarPersona(personaId), ruta, texto });

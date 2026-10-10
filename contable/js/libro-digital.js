@@ -4,7 +4,7 @@
 // Largos por renglón: ventas 266 y 62; compras 325 y 84 (se controlan en las pruebas).
 // Números: a la derecha con ceros, en centavos. Textos: a la izquierda con espacios, en mayúsculas y sin tildes.
 // ============================================
-import { COMPROBANTES, ALICUOTAS, ORDEN_ALICUOTAS } from "./reglas.js?v=90b39ad86f";
+import { COMPROBANTES, ALICUOTAS, ORDEN_ALICUOTAS } from "./reglas.js?v=3ddc591303";
 
 const num = (n, largo) => String(Math.max(0, Math.round(n))).padStart(largo, "0").slice(-largo);
 const txt = (t, largo) =>

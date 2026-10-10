@@ -10,12 +10,12 @@
 // Las ventas guardan el precio y el costo del momento: si después sube un proveedor, lo vendido no cambia.
 // Si cambia la forma de los datos, subir VERSION_DATOS (se regeneran solos).
 // ============================================
-import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=ebb3923e44";
-import { enteroHasta, sinPasarse } from "../kit/js/topes.js?v=ebb3923e44";
-import { diaLocalDe, fechaLocalISO } from "../kit/js/fechas.js?v=ebb3923e44";
-import { columnasDe, numeroDe, textoParaComparar } from "../kit/js/tablas.js?v=ebb3923e44";
-import { filtrarPorTexto, comoSuena } from "../kit/js/buscar.js?v=ebb3923e44";
-import { MARCA, NEGOCIO, buscarPersona } from "./marca.js?v=ebb3923e44";
+import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=114958267d";
+import { enteroHasta, sinPasarse } from "../kit/js/topes.js?v=114958267d";
+import { diaLocalDe, fechaLocalISO } from "../kit/js/fechas.js?v=114958267d";
+import { columnasDe, numeroDe, textoParaComparar } from "../kit/js/tablas.js?v=114958267d";
+import { filtrarPorTexto, comoSuena } from "../kit/js/buscar.js?v=114958267d";
+import { MARCA, NEGOCIO, buscarPersona } from "./marca.js?v=114958267d";
 
 export const VERSION_DATOS = 2; // 2: los libros con ISBN
 

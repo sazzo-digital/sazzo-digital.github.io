@@ -2,7 +2,8 @@
 // Marca, personas y "también puede tener" de Sazzo Perfumería (diseñada el 08/10/2026).
 // Las personas son los roles reales del rubro (nombres inventados): la dueña y una clienta.
 // ============================================
-import { revisarMarca } from "../kit/js/marca.js?v=c28c82b591";
+import { revisarMarca } from "../kit/js/marca.js?v=c202475ee6";
+import { negocioDe } from "../kit/js/colores.js?v=c202475ee6";
 
 export const MARCA = revisarMarca({
     id: "perfumeria",
@@ -36,7 +37,8 @@ export const PERSONAS = [
 
 export const buscarPersona = (id) => PERSONAS.find((p) => p.id === id) ?? null;
 
-export const NEGOCIO = "Perfumería Esencia"; // nombre de ejemplo (arriba sigue diciendo Sazzo Perfumería)
+export const NEGOCIO = negocioDe(MARCA.prefijo, "Perfumería Esencia"); // nombre de ejemplo (arriba sigue diciendo Sazzo Perfumería)
+// (si el dueño escribió el nombre de su negocio en "Probala con tus colores", va ese: kit/colores.js)
 
 // "Acerca de": lo que la versión real puede sumar y la demo deja afuera para que se recorra en 2 minutos
 export const TAMBIEN = [

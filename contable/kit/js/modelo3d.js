@@ -5,9 +5,9 @@
 // con Quick Look, que model-viewer arma solo), aparece "Verlo en tu mesa". El visor (kit\3d\model-viewer.min.js,
 // Google, Apache-2.0, ~1 MB) se baja recién al tocar "Verlo en 3D". `colores` tiñe los materiales por su nombre.
 // ============================================
-import { esc, aviso } from "./ui.js?v=90b39ad86f";
-import { alSalirDeLaPantalla } from "./rutas.js?v=90b39ad86f";
-import { RUTA_3D } from "./config.js?v=90b39ad86f";
+import { esc, aviso } from "./ui.js?v=3ddc591303";
+import { alSalirDeLaPantalla } from "./rutas.js?v=3ddc591303";
+import { RUTA_3D } from "./config.js?v=3ddc591303";
 
 const VERSION_VISOR = "4.3.1";
 let visorCargado = null;

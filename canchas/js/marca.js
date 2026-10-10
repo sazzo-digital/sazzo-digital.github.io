@@ -2,7 +2,8 @@
 // Marca, personas y "también puede tener" de Sazzo Canchas (diseñada el 08/10/2026).
 // Las personas son los roles reales del rubro (nombres inventados): el dueño del complejo y un jugador.
 // ============================================
-import { revisarMarca } from "../kit/js/marca.js?v=91ee73c19f";
+import { revisarMarca } from "../kit/js/marca.js?v=cf1eab927b";
+import { negocioDe } from "../kit/js/colores.js?v=cf1eab927b";
 
 export const MARCA = revisarMarca({
     id: "canchas",
@@ -36,7 +37,8 @@ export const PERSONAS = [
 
 export const buscarPersona = (id) => PERSONAS.find((p) => p.id === id) ?? null;
 
-export const NEGOCIO = "Complejo El Potrero"; // nombre de ejemplo (arriba sigue diciendo Sazzo Canchas)
+export const NEGOCIO = negocioDe(MARCA.prefijo, "Complejo El Potrero"); // nombre de ejemplo (arriba sigue diciendo Sazzo Canchas)
+// (si el dueño escribió el nombre de su negocio en "Probala con tus colores", va ese: kit/colores.js)
 
 // "Acerca de": lo que la versión real puede sumar y la demo deja afuera para que se recorra en 1 minuto
 export const TAMBIEN = [

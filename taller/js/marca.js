@@ -2,7 +2,8 @@
 // Marca, personas y "también puede tener" de Sazzo Taller (diseñada el 08/10/2026).
 // Las personas son los roles reales del rubro (nombres inventados): el dueño y un mecánico.
 // ============================================
-import { revisarMarca } from "../kit/js/marca.js?v=dbd4cbbcac";
+import { revisarMarca } from "../kit/js/marca.js?v=9aeacc21d1";
+import { negocioDe } from "../kit/js/colores.js?v=9aeacc21d1";
 
 export const MARCA = revisarMarca({
     id: "taller",
@@ -36,7 +37,8 @@ export const PERSONAS = [
 
 export const buscarPersona = (id) => PERSONAS.find((p) => p.id === id) ?? null;
 
-export const NEGOCIO = "Taller del Centro"; // nombre de ejemplo (arriba sigue diciendo Sazzo Taller)
+export const NEGOCIO = negocioDe(MARCA.prefijo, "Taller del Centro"); // nombre de ejemplo (arriba sigue diciendo Sazzo Taller)
+// (si el dueño escribió el nombre de su negocio en "Probala con tus colores", va ese: kit/colores.js)
 
 // "Acerca de": lo que la versión real puede sumar y la demo deja afuera para que se recorra en 2 minutos
 export const TAMBIEN = [

@@ -6,10 +6,10 @@
 // cuadraditos del mapa los da OpenStreetMap (gratis, con su nombre abajo a la derecha, como pide su política; poco
 // tráfico: es una demo). Los puntos son de ejemplo: nunca se usa la ubicación de quien mira.
 // ============================================
-import { aviso } from "./ui.js?v=5e0516f6ed";
-import { alSalirDeLaPantalla } from "./rutas.js?v=5e0516f6ed";
-import { RUTA_LIBS } from "./config.js?v=5e0516f6ed";
-import { cargarLibreria } from "./archivos.js?v=5e0516f6ed";
+import { aviso } from "./ui.js?v=bc8d90946e";
+import { alSalirDeLaPantalla } from "./rutas.js?v=bc8d90946e";
+import { RUTA_LIBS } from "./config.js?v=bc8d90946e";
+import { cargarLibreria } from "./archivos.js?v=bc8d90946e";
 
 const VERSION = "1.9.4";
 export const TOPE_PUNTOS = 200;
@@ -29,7 +29,9 @@ export function revisarPuntos(puntos) {
             titulo: String(p.titulo ?? "").slice(0, 40),
             texto: String(p.texto ?? "").slice(0, 80),
             color: /^#[0-9a-f]{6}$/i.test(p.color) ? p.color : "#2563eb",
-            link: /^#\/[\w\-/?=&]{0,80}$/.test(p.link ?? "") ? p.link : null
+            link: /^#\/[\w\-/?=&]{0,80}$/.test(p.link ?? "") ? p.link : null,
+            // Una zona en vez de un punto ("es por acá", no "es acá"): un círculo de tantos metros (50 a 5000)
+            radio: Number.isFinite(Number(p.radio)) && p.radio !== null && p.radio !== "" ? Math.min(Math.max(Math.round(Number(p.radio)), 50), 5000) : null
         };
     });
 }
@@ -79,12 +81,18 @@ export async function mostrarMapa(lugar, puntos, { zoomMaximo = 15 } = {}) {
     const mapa = L.map(lugar, { scrollWheelZoom: false, attributionControl: true });
     L.tileLayer(MAPAS, { maxZoom: 19, attribution: NOMBRE_MAPAS }).addTo(mapa);
     mapa.attributionControl.setPrefix(false); // sin la banderita del prefijo: solo el nombre de OpenStreetMap
-    const marcas = lista.map((p) =>
-        L.circleMarker([p.lat, p.lng], { radius: 10, color: "#ffffff", weight: 2, fillColor: p.color, fillOpacity: 0.95 })
+    lista.forEach((p) =>
+        (p.radio
+            ? L.circle([p.lat, p.lng], { radius: p.radio, color: p.color, weight: 2, fillColor: p.color, fillOpacity: 0.22 })
+            : L.circleMarker([p.lat, p.lng], { radius: 10, color: "#ffffff", weight: 2, fillColor: p.color, fillOpacity: 0.95 }))
             .bindTooltip(p.titulo, { direction: "top", offset: [0, -8] })
             .bindPopup(globito(p))
             .addTo(mapa));
-    mapa.fitBounds(L.featureGroup(marcas).getBounds().pad(0.2), { maxZoom: zoomMaximo });
+    // El borde se calcula con los puntos (y lo que ocupa cada zona): un círculo recién agregado no se puede medir
+    // hasta que el mapa tiene vista
+    const limites = new L.LatLngBounds();
+    lista.forEach((p) => limites.extend(p.radio ? L.latLng(p.lat, p.lng).toBounds(p.radio * 2) : L.latLng(p.lat, p.lng)));
+    mapa.fitBounds(limites.pad(0.2), { maxZoom: zoomMaximo });
     alSalirDeLaPantalla(() => mapa.remove());
     return mapa;
 }

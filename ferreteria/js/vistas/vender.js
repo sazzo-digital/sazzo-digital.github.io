@@ -7,11 +7,11 @@
 // Código que no está → "¿Lo cargás?" y queda listo para vender.
 // En la compu, dos columnas (artículos | ticket); en el celular, el ticket abajo con una barrita arriba que lleva a él.
 // ============================================
-import { esc, aviso, vacio, fechaHora } from "../../kit/js/ui.js?v=0f2d2843ae";
-import { puedeEscanear, escanear } from "../../kit/js/escaner.js?v=0f2d2843ae";
-import { TOPES, MEDIOS, RUBROS, UNIDADES, DESCUENTO_MAYOR, pesos, precioMayor, precioConUnidad, cantidadTexto, numeroCantidad, redondearCantidad } from "../datos.js?v=0f2d2843ae";
-import { NEGOCIO } from "../marca.js?v=0f2d2843ae";
-import { pintarCobro, etiquetaUnidad } from "./comunes.js?v=0f2d2843ae";
+import { esc, aviso, vacio, fechaHora } from "../../kit/js/ui.js?v=d783fb01c6";
+import { puedeEscanear, escanear } from "../../kit/js/escaner.js?v=d783fb01c6";
+import { TOPES, MEDIOS, RUBROS, UNIDADES, DESCUENTO_MAYOR, pesos, precioMayor, precioConUnidad, cantidadTexto, numeroCantidad, redondearCantidad } from "../datos.js?v=d783fb01c6";
+import { NEGOCIO } from "../marca.js?v=d783fb01c6";
+import { pintarCobro, etiquetaUnidad } from "./comunes.js?v=d783fb01c6";
 
 // El ticket en curso queda en memoria mientras se navega (se vacía al cobrar)
 const ticket = new Map(); // productoId → cantidad

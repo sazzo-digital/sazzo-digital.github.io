@@ -3,11 +3,11 @@
 // de estado de un pedido, los pasos de una lista (pedida → separada → entregada) y "hace cuánto".
 // Todo dato que entra a HTML pasa por esc().
 // ============================================
-import { esc } from "../../kit/js/ui.js?v=ebb3923e44";
-import { diaLocalDe, fechaLocalISO } from "../../kit/js/fechas.js?v=ebb3923e44";
-import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=ebb3923e44";
-import { ESTADOS_PEDIDO, pesos } from "../datos.js?v=ebb3923e44";
-import { buscarPersona } from "../marca.js?v=ebb3923e44";
+import { esc } from "../../kit/js/ui.js?v=114958267d";
+import { diaLocalDe, fechaLocalISO } from "../../kit/js/fechas.js?v=114958267d";
+import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=114958267d";
+import { ESTADOS_PEDIDO, pesos } from "../datos.js?v=114958267d";
+import { buscarPersona } from "../marca.js?v=114958267d";
 
 /** Botón del recorrido con la persona de Librería: guia("u-empleado", "/listas", "Mirá lo que le llega a Joaquín"). */
 export const guia = (personaId, ruta, texto) => htmlGuia({ persona: buscarPersona(personaId), ruta, texto });
