@@ -3,7 +3,7 @@
 // Las personas son los roles reales de una pyme Responsable Inscripta (nombres inventados): administración, el dueño
 // y la contadora.
 // ============================================
-import { revisarMarca } from "../kit/js/marca.js?v=be942dc467";
+import { revisarMarca } from "../kit/js/marca.js?v=90b39ad86f";
 
 export const MARCA = revisarMarca({
     id: "contable",

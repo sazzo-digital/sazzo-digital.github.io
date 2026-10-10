@@ -3,18 +3,18 @@
 // Cada persona tiene su menú: Leo (barbero) la agenda y los clientes; Matías (cliente) sacar turno y sus turnos.
 // irA() cambia de persona sin pasar por "Probala como…" (botón del recorrido: "Mirá cómo lo ve Leo →").
 // ============================================
-import { $, conFundido } from "../kit/js/ui.js?v=5df3c0c0d4";
-import { iniciarDemo } from "../kit/js/arranque.js?v=5df3c0c0d4";
-import { vistaIngreso } from "../kit/js/ingreso.js?v=5df3c0c0d4";
-import { pintarMarco } from "../kit/js/marco.js?v=5df3c0c0d4";
-import { mostrarRuta } from "../kit/js/rutas.js?v=5df3c0c0d4";
-import { vistaAcerca } from "../kit/js/acerca.js?v=5df3c0c0d4";
-import { MARCA, PERSONAS, TAMBIEN, buscarPersona } from "./marca.js?v=5df3c0c0d4";
-import { crearDatos } from "./datos.js?v=5df3c0c0d4";
-import { vistaInicio } from "./vistas/inicio.js?v=5df3c0c0d4";
-import { vistaMisTurnos } from "./vistas/cliente.js?v=5df3c0c0d4";
-import { vistaNuevoTurno } from "./vistas/agenda.js?v=5df3c0c0d4";
-import { vistaClientes, vistaFicha } from "./vistas/clientes.js?v=5df3c0c0d4";
+import { $, conFundido } from "../kit/js/ui.js?v=2b683c2ec9";
+import { iniciarDemo } from "../kit/js/arranque.js?v=2b683c2ec9";
+import { vistaIngreso } from "../kit/js/ingreso.js?v=2b683c2ec9";
+import { pintarMarco } from "../kit/js/marco.js?v=2b683c2ec9";
+import { mostrarRuta } from "../kit/js/rutas.js?v=2b683c2ec9";
+import { vistaAcerca } from "../kit/js/acerca.js?v=2b683c2ec9";
+import { MARCA, PERSONAS, TAMBIEN, buscarPersona } from "./marca.js?v=2b683c2ec9";
+import { crearDatos } from "./datos.js?v=2b683c2ec9";
+import { vistaInicio } from "./vistas/inicio.js?v=2b683c2ec9";
+import { vistaMisTurnos } from "./vistas/cliente.js?v=2b683c2ec9";
+import { vistaNuevoTurno } from "./vistas/agenda.js?v=2b683c2ec9";
+import { vistaClientes, vistaFicha } from "./vistas/clientes.js?v=2b683c2ec9";
 
 iniciarDemo(MARCA);
 const datos = crearDatos();

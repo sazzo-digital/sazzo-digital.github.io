@@ -1,19 +1,19 @@
 // ============================================
 // Arranque de Restix Sazzo: "Probala como…" → marco (cabecera, banda, barrita de Sazzo, menú) → pantallas.
-// Lara (moza) ve el salón, la cocina (solo mirar) y la caja; Beto, la cocina.
+// Lara (moza) ve el salón, la cocina (solo mirar) y la caja; Beto, la cocina; Flor (cliente), la carta del QR.
 // irA() cambia de persona sin pasar por "Probala como…" (botón del recorrido: "Mirá lo que le llega a la cocina →").
 // ============================================
-import { $, conFundido } from "../kit/js/ui.js?v=342460e565";
-import { iniciarDemo } from "../kit/js/arranque.js?v=342460e565";
-import { vistaIngreso } from "../kit/js/ingreso.js?v=342460e565";
-import { pintarMarco } from "../kit/js/marco.js?v=342460e565";
-import { mostrarRuta } from "../kit/js/rutas.js?v=342460e565";
-import { vistaAcerca } from "../kit/js/acerca.js?v=342460e565";
-import { MARCA, PERSONAS, TAMBIEN, buscarPersona } from "./marca.js?v=342460e565";
-import { crearDatos } from "./datos.js?v=342460e565";
-import { vistaInicio } from "./vistas/inicio.js?v=342460e565";
-import { vistaMesa, vistaCobro, vistaCaja } from "./vistas/moza.js?v=342460e565";
-import { vistaCocina } from "./vistas/cocina.js?v=342460e565";
+import { $, conFundido } from "../kit/js/ui.js?v=edf52e7135";
+import { iniciarDemo } from "../kit/js/arranque.js?v=edf52e7135";
+import { vistaIngreso } from "../kit/js/ingreso.js?v=edf52e7135";
+import { pintarMarco } from "../kit/js/marco.js?v=edf52e7135";
+import { mostrarRuta } from "../kit/js/rutas.js?v=edf52e7135";
+import { vistaAcerca } from "../kit/js/acerca.js?v=edf52e7135";
+import { MARCA, PERSONAS, TAMBIEN, buscarPersona } from "./marca.js?v=edf52e7135";
+import { crearDatos } from "./datos.js?v=edf52e7135";
+import { vistaInicio } from "./vistas/inicio.js?v=edf52e7135";
+import { vistaMesa, vistaCobro, vistaCaja } from "./vistas/moza.js?v=edf52e7135";
+import { vistaCocina } from "./vistas/cocina.js?v=edf52e7135";
 
 iniciarDemo(MARCA);
 const datos = crearDatos();
@@ -24,7 +24,8 @@ let contenido = null;
 const ACERCA = { ruta: "/acerca", icono: "ti-info-circle", texto: "Acerca de" };
 const MENU = {
     moza: [{ ruta: "/inicio", icono: "ti-layout-grid", texto: "Salón" }, { ruta: "/cocina", icono: "ti-tools-kitchen-2", texto: "Cocina" }, { ruta: "/caja", icono: "ti-cash-register", texto: "Caja" }, ACERCA],
-    cocina: [{ ruta: "/inicio", icono: "ti-tools-kitchen-2", texto: "Cocina" }, ACERCA]
+    cocina: [{ ruta: "/inicio", icono: "ti-tools-kitchen-2", texto: "Cocina" }, ACERCA],
+    cliente: [{ ruta: "/inicio", icono: "ti-book", texto: "Carta" }, ACERCA]
 };
 
 const esMoza = (u) => u.rol === "moza";

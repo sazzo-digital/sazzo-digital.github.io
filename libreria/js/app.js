@@ -4,19 +4,19 @@
 // (los precios y la ganancia solo Mariela); Paula (clienta) pide la lista escolar y sigue su pedido.
 // irA() cambia de persona sin pasar por "Probala como…" (botones del recorrido: "Mirá lo que le llega a Joaquín →").
 // ============================================
-import { $, conFundido } from "../kit/js/ui.js?v=e4d4e57de1";
-import { iniciarDemo } from "../kit/js/arranque.js?v=e4d4e57de1";
-import { vistaIngreso } from "../kit/js/ingreso.js?v=e4d4e57de1";
-import { pintarMarco } from "../kit/js/marco.js?v=e4d4e57de1";
-import { mostrarRuta } from "../kit/js/rutas.js?v=e4d4e57de1";
-import { vistaAcerca } from "../kit/js/acerca.js?v=e4d4e57de1";
-import { MARCA, PERSONAS, TAMBIEN, buscarPersona } from "./marca.js?v=e4d4e57de1";
-import { crearDatos } from "./datos.js?v=e4d4e57de1";
-import { vistaInicio } from "./vistas/inicio.js?v=e4d4e57de1";
-import { vistaMisPedidos } from "./vistas/clienta.js?v=e4d4e57de1";
-import { vistaListas, vistaNuevaLista, vistaPedido } from "./vistas/listas.js?v=e4d4e57de1";
-import { vistaStock, vistaAumento, vistaLista, vistaMargen, vistaPedidosProveedor, vistaNuevoProducto } from "./vistas/stock.js?v=e4d4e57de1";
-import { vistaCaja } from "./vistas/caja.js?v=e4d4e57de1";
+import { $, conFundido } from "../kit/js/ui.js?v=ebb3923e44";
+import { iniciarDemo } from "../kit/js/arranque.js?v=ebb3923e44";
+import { vistaIngreso } from "../kit/js/ingreso.js?v=ebb3923e44";
+import { pintarMarco } from "../kit/js/marco.js?v=ebb3923e44";
+import { mostrarRuta } from "../kit/js/rutas.js?v=ebb3923e44";
+import { vistaAcerca } from "../kit/js/acerca.js?v=ebb3923e44";
+import { MARCA, PERSONAS, TAMBIEN, buscarPersona } from "./marca.js?v=ebb3923e44";
+import { crearDatos } from "./datos.js?v=ebb3923e44";
+import { vistaInicio } from "./vistas/inicio.js?v=ebb3923e44";
+import { vistaMisPedidos } from "./vistas/clienta.js?v=ebb3923e44";
+import { vistaListas, vistaNuevaLista, vistaPedido } from "./vistas/listas.js?v=ebb3923e44";
+import { vistaStock, vistaAumento, vistaLista, vistaMargen, vistaPedidosProveedor, vistaNuevoProducto } from "./vistas/stock.js?v=ebb3923e44";
+import { vistaCaja } from "./vistas/caja.js?v=ebb3923e44";
 
 iniciarDemo(MARCA);
 const datos = crearDatos();

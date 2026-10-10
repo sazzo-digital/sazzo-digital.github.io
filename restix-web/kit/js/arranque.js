@@ -6,9 +6,9 @@
 // 4. Avisa al registro de visitas que se abrió, y después cada pantalla que mira (medicion\LEEME.md).
 // 5. Si algo se rompe (un error que nadie atajó), lo avisa al registro de visitas (sin nada personal).
 // ============================================
-import { leerLink, contar, contarPantalla, vigilarErrores, medirVelocidad } from "./visita.js?v=342460e565";
-import { recuperarColor } from "./colores.js?v=342460e565";
-import { avisarSiEsNavegadorDeOtraApp } from "./navegador.js?v=342460e565";
+import { leerLink, contar, contarPantalla, vigilarErrores, medirVelocidad } from "./visita.js?v=edf52e7135";
+import { recuperarColor } from "./colores.js?v=edf52e7135";
+import { avisarSiEsNavegadorDeOtraApp } from "./navegador.js?v=edf52e7135";
 
 export function iniciarDemo(marca) {
     leerLink();

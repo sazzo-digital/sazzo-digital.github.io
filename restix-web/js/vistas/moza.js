@@ -3,15 +3,15 @@
 // grilla), la comanda de una mesa (al enviar se separa solo lo de la cocina y lo de la barra), el cobro dividiendo la
 // cuenta (todo junto, en partes iguales o por lo que consumió cada uno, cada parte con su medio de pago) y la caja.
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=342460e565";
-import { CATEGORIAS, MEDIOS, TOPES, carta, dividir, pesos } from "../datos.js?v=342460e565";
-import { MARCA, NEGOCIO } from "../marca.js?v=342460e565";
-import { htmlBotonSonido, activarBotonSonido, ding } from "../../kit/js/celular.js?v=342460e565";
-import { ticket, guia, activarGuias, haceMin, hora } from "./comunes.js?v=342460e565";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=edf52e7135";
+import { CATEGORIAS, MEDIOS, TOPES, carta, dividir, pesos } from "../datos.js?v=edf52e7135";
+import { MARCA, NEGOCIO } from "../marca.js?v=edf52e7135";
+import { htmlBotonSonido, activarBotonSonido, ding } from "../../kit/js/celular.js?v=edf52e7135";
+import { ticket, guia, activarGuias, haceMin, hora } from "./comunes.js?v=edf52e7135";
 
 const ESTADO_MESA = { libre: "Libre", abierta: "Abierta", cobrando: "Cobrando" };
 
-export function vistaPlano(cont, { usuario, datos }) {
+export function vistaPlano(cont, { usuario, datos, irA }) {
     const p = datos.plano();
     const tile = (m) => `
         <a class="mesa mesa--${esc(m.estado)}" href="#/mesa/${esc(m.id)}" aria-label="${esc(m.nombre)}: ${esc(ESTADO_MESA[m.estado])}">
@@ -49,6 +49,7 @@ export function vistaPlano(cont, { usuario, datos }) {
             <h2 class="subtitulo">${esc(s.texto)}</h2>
             <div class="mesas mesas--${esc(s.id)}">${s.mesas.map(tile).join("")}</div>
         </section>`).join("")}
+        ${guia("u-cliente", "/inicio", "Mirá la carta que ve el cliente con el QR")}
         <section class="sector">
             <h2 class="subtitulo"><i class="ti ti-motorbike"></i> Pedidos Ya</h2>
             ${p.pedidosYa.length ? `<ul class="tarjetas">${p.pedidosYa.map((o) => `
@@ -65,13 +66,14 @@ export function vistaPlano(cont, { usuario, datos }) {
         try {
             fn();
             aviso(msj);
-            vistaPlano(cont, { usuario, datos });
+            vistaPlano(cont, { usuario, datos, irA });
         } catch (err) {
             aviso(err, "error");
         }
     };
     cont.querySelectorAll("[data-aceptar]").forEach((b) => b.addEventListener("click", () => hacer(() => datos.aceptarPY(usuario, b.dataset.aceptar), "Aceptado: la comida va a la cocina")));
     cont.querySelectorAll("[data-entregar]").forEach((b) => b.addEventListener("click", () => hacer(() => datos.entregarPY(usuario, b.dataset.entregar), "Entregado: suma a la caja")));
+    activarGuias(cont, irA);
 }
 
 let categoria = "pizzas";

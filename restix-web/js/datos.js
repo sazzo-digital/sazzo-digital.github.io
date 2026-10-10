@@ -6,10 +6,10 @@
 // Reglas del kit: exigir() en lo que modifica, topes en todo lo que se carga y se devuelven copias.
 // Si cambia la forma de los datos, subir VERSION_DATOS (se regeneran solos).
 // ============================================
-import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=342460e565";
-import { enteroHasta } from "../kit/js/topes.js?v=342460e565";
-import { fechaLocalISO, diaLocalDe } from "../kit/js/fechas.js?v=342460e565";
-import { MARCA } from "./marca.js?v=342460e565";
+import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=edf52e7135";
+import { enteroHasta } from "../kit/js/topes.js?v=edf52e7135";
+import { fechaLocalISO, diaLocalDe } from "../kit/js/fechas.js?v=edf52e7135";
+import { MARCA } from "./marca.js?v=edf52e7135";
 
 export const VERSION_DATOS = 2;
 
@@ -44,21 +44,44 @@ export const CATEGORIAS = {
     sin: { texto: "Sin alcohol", destino: "barra", icono: "ti-bottle" }
 };
 
-// [id, nombre, categoría, precio]
+// [id, nombre, categoría, precio, descripción (la que ve el cliente en la carta del QR)]
 const CARTA = [
-    ["muzza", "Muzzarella", "pizzas", 14_000], ["napo", "Napolitana", "pizzas", 16_500], ["fugazzeta", "Fugazzeta", "pizzas", 16_000],
-    ["especial", "Especial (jamón y morrón)", "pizzas", 18_000],
-    ["clasica", "Hamburguesa clásica", "burgers", 13_500], ["doble", "Hamburguesa doble cheddar", "burgers", 17_000],
-    ["milanesa", "Milanesa con papas", "minutas", 15_000], ["papas", "Papas fritas", "minutas", 7_500], ["rabas", "Rabas", "minutas", 16_000],
-    ["flan", "Flan con dulce de leche", "postres", 6_500], ["helado", "Helado (2 bochas)", "postres", 6_000],
-    ["pinta-rubia", "Pinta rubia", "cervezas", 5_500], ["pinta-roja", "Pinta roja", "cervezas", 6_000], ["pinta-ipa", "Pinta IPA", "cervezas", 6_500],
-    ["fernet", "Fernet con cola", "tragos", 7_000], ["gin", "Gin tonic", "tragos", 8_000], ["aperol", "Aperol spritz", "tragos", 8_500],
-    ["coca", "Coca 500 ml", "sin", 3_500], ["agua", "Agua 500 ml", "sin", 2_800], ["limonada", "Limonada", "sin", 4_500]
-].map(([id, nombre, cat, precio]) => ({ id, nombre, cat, precio, destino: CATEGORIAS[cat].destino }));
+    ["muzza", "Muzzarella", "pizzas", 14_000, "Salsa de tomate, muzzarella y aceitunas verdes"],
+    ["napo", "Napolitana", "pizzas", 16_500, "Muzzarella, rodajas de tomate, ajo y albahaca"],
+    ["fugazzeta", "Fugazzeta", "pizzas", 16_000, "Rellena de muzzarella, con cebolla al horno"],
+    ["especial", "Especial (jamón y morrón)", "pizzas", 18_000, "Muzzarella, jamón cocido y morrones asados"],
+    ["clasica", "Hamburguesa clásica", "burgers", 13_500, "Medallón de carne, cheddar, lechuga y tomate"],
+    ["doble", "Hamburguesa doble cheddar", "burgers", 17_000, "Dos medallones, doble cheddar y panceta"],
+    ["milanesa", "Milanesa con papas", "minutas", 15_000, "Milanesa de carne con papas fritas"],
+    ["papas", "Papas fritas", "minutas", 7_500, "Porción grande, para compartir"],
+    ["rabas", "Rabas", "minutas", 16_000, "Rabas fritas con limón"],
+    ["flan", "Flan con dulce de leche", "postres", 6_500, "Casero, con dulce de leche"],
+    ["helado", "Helado (2 bochas)", "postres", 6_000, "Dos gustos a elección"],
+    ["pinta-rubia", "Pinta rubia", "cervezas", 5_500, "Tirada, de medio litro"],
+    ["pinta-roja", "Pinta roja", "cervezas", 6_000, "Tirada, de medio litro, maltosa"],
+    ["pinta-ipa", "Pinta IPA", "cervezas", 6_500, "Tirada, de medio litro, lupulada"],
+    ["fernet", "Fernet con cola", "tragos", 7_000, "Con mucho hielo"],
+    ["gin", "Gin tonic", "tragos", 8_000, "Gin, tónica, limón y pepino"],
+    ["aperol", "Aperol spritz", "tragos", 8_500, "Aperol, espumante y soda, con naranja"],
+    ["coca", "Coca 500 ml", "sin", 3_500, "Común o sin azúcar"],
+    ["agua", "Agua 500 ml", "sin", 2_800, "Con o sin gas"],
+    ["limonada", "Limonada", "sin", 4_500, "Con menta y jengibre"]
+].map(([id, nombre, cat, precio, descripcion]) => ({ id, nombre, cat, precio, descripcion, destino: CATEGORIAS[cat].destino }));
+
+// Los platos que se ven en 3D en la carta del cliente: uno por modelo (img\<modelo>.glb), para que lo que se ve
+// coincida con el nombre. Son genéricos, armados por código (como el frasco de la perfumería).
+export const MODELOS_3D = { muzza: "pizza", clasica: "hamburguesa", milanesa: "milanesa" };
 
 export const pesos = (n) => `$ ${Math.round(n).toLocaleString("es-AR")}`;
 export const item = (id) => CARTA.find((x) => x.id === id) ?? null;
 export const carta = () => copia(CARTA);
+
+/** La carta que ve el cliente con el QR de la mesa: por categoría, con descripción y el 3D donde hay. Solo mirar. */
+export const cartaCliente = () =>
+    Object.entries(CATEGORIAS).map(([id, c]) => ({
+        id, texto: c.texto, icono: c.icono,
+        productos: CARTA.filter((p) => p.cat === id).map((p) => ({ id: p.id, nombre: p.nombre, precio: p.precio, descripcion: p.descripcion, modelo: MODELOS_3D[p.id] ?? null }))
+    }));
 
 /** Dividir en partes iguales: redondeado a $100; la última parte se lleva la diferencia. */
 export function dividir(total, partes) {

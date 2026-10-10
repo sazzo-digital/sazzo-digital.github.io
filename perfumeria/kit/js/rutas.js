@@ -9,7 +9,7 @@
 //     `ancho`: en la PC usa más ancho (en el celular no cambia nada).
 // Cada vista recibe (contenedor, { usuario, params, consulta }) y dibuja adentro.
 // ============================================
-import { $$, esc, vacio, mensajeDe } from "./ui.js?v=c135ab59e0";
+import { $$, esc, vacio, mensajeDe } from "./ui.js?v=c28c82b591";
 
 /** Lo que hay después del # → { ruta: "/producto/p-1", consulta: URLSearchParams }. Sin hash: la de inicio. */
 export function leerHash(inicio = "/inicio") {

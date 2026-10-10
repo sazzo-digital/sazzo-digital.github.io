@@ -108,5 +108,45 @@ export const DEMOS = [
         pantalla: ["Lista de 1° grado · pedida por Paula", "Separada · se descontó del stock", "Papelera +15 % · tu margen intacto"],
         dispositivo: "compu",
         estado: "activa"
+    },
+    {
+        id: "ferreteria",
+        nombre: "Ferretería",
+        rubro: "Ferreterías y corralones",
+        pregunta: "¿Te piden \"lo de la foto\" y armás el presupuesto a mano?",
+        acento: "#94A3B8",
+        pantalla: ["Presupuesto de Marcos · 6 artículos", "PDF enviado · pasó a su cuenta", "Lista del proveedor +12 % · tu margen intacto"],
+        dispositivo: "compu",
+        estado: "activa"
+    },
+    {
+        id: "carniceria",
+        nombre: "Carnicería",
+        rubro: "Carnicerías, pollerías y granjas",
+        pregunta: "¿Sabés cuánto te deja de verdad cada media res?",
+        acento: "#F472B6",
+        pantalla: ["Pedido de Claudia · pesó 1,62 kg", "Media res · merma 24,1 %", "Precios nuevos · pizarra al día"],
+        dispositivo: "compu",
+        estado: "retirada"
+    },
+    {
+        id: "gimnasio",
+        nombre: "Gimnasio",
+        rubro: "Gimnasios, funcional y pilates",
+        pregunta: "¿Tus socios saben qué les toca hoy y vos sabés quién te debe la cuota?",
+        acento: "#A3E635",
+        pantalla: ["Hoy te toca: Día B · Piernas", "Sentadilla 60 kg · ¡nuevo récord!", "Franco · la cuota vence en 3 días"],
+        dispositivo: "celu",
+        estado: "retirada"
+    },
+    {
+        id: "inmobiliaria",
+        nombre: "Inmobiliaria",
+        rubro: "Inmobiliarias y martilleros",
+        pregunta: "¿Cada mes hacés a mano la cuenta de los alquileres que aumentan?",
+        acento: "#A78BFA",
+        pantalla: ["Depto 2 amb · Valeria pidió visita", "Sábado 11:00 · ficha enviada", "3 alquileres aumentan · aviso listo"],
+        dispositivo: "celu",
+        estado: "retirada"
     }
 ];

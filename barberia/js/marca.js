@@ -2,7 +2,7 @@
 // Marca, personas y "también puede tener" de Sazzo Barbería (diseñada el 08/10/2026).
 // Las personas son los roles reales del rubro (nombres inventados): el barbero (y dueño) y un cliente.
 // ============================================
-import { revisarMarca } from "../kit/js/marca.js?v=5df3c0c0d4";
+import { revisarMarca } from "../kit/js/marca.js?v=2b683c2ec9";
 
 export const MARCA = revisarMarca({
     id: "barberia",

@@ -3,12 +3,12 @@
 // nombre del grupo y seña simulada) y "Mis turnos" (con Cancelar y la regla de la seña a la vista).
 // Lo ocupado se ve, pero no se puede tocar: nunca se pisan.
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=3d373d8b58";
-import { TIPOS, TOPES, CANCELAR_HORAS, pesos, nombreFecha } from "../datos.js?v=3d373d8b58";
-import { NEGOCIO } from "../marca.js?v=3d373d8b58";
-import { guia, activarGuias, pastillaSena, pastillaEstado, chipsDias } from "./comunes.js?v=3d373d8b58";
-import { aHora, minutoAhora } from "../../kit/js/turnos.js?v=3d373d8b58";
-import { htmlCopiable, activarCopiables } from "../../kit/js/celular.js?v=3d373d8b58";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=91ee73c19f";
+import { TIPOS, TOPES, CANCELAR_HORAS, pesos, nombreFecha } from "../datos.js?v=91ee73c19f";
+import { NEGOCIO } from "../marca.js?v=91ee73c19f";
+import { guia, activarGuias, pastillaSena, pastillaEstado, chipsDias } from "./comunes.js?v=91ee73c19f";
+import { aHora, minutoAhora } from "../../kit/js/turnos.js?v=91ee73c19f";
+import { htmlCopiable, activarCopiables } from "../../kit/js/celular.js?v=91ee73c19f";
 
 // Lo elegido queda mientras se navega
 let fecha = null;

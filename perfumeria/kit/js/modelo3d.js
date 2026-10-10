@@ -5,9 +5,9 @@
 // con Quick Look, que model-viewer arma solo), aparece "Verlo en tu mesa". El visor (kit\3d\model-viewer.min.js,
 // Google, Apache-2.0, ~1 MB) se baja recién al tocar "Verlo en 3D". `colores` tiñe los materiales por su nombre.
 // ============================================
-import { esc, aviso } from "./ui.js?v=c135ab59e0";
-import { alSalirDeLaPantalla } from "./rutas.js?v=c135ab59e0";
-import { RUTA_3D } from "./config.js?v=c135ab59e0";
+import { esc, aviso } from "./ui.js?v=c28c82b591";
+import { alSalirDeLaPantalla } from "./rutas.js?v=c28c82b591";
+import { RUTA_3D } from "./config.js?v=c28c82b591";
 
 const VERSION_VISOR = "4.3.1";
 let visorCargado = null;
@@ -26,8 +26,13 @@ const aRGBA = (hex, alfa) => {
     return [((n >> 16) & 255) / 255, ((n >> 8) & 255) / 255, (n & 255) / 255, alfa];
 };
 
-export async function verEn3D({ titulo, src, colores = {}, alfa = 0.9 }) {
+export const NOTA_3D = "Es de ejemplo: en tu tienda va la foto o el 3D de tus productos.";
+export const TOPE_NOTA_3D = 140; // letras
+
+/** `nota`: el texto de abajo (ej. Restix: "en tu carta van tus platos"); si no viene, el de siempre. */
+export async function verEn3D({ titulo, src, colores = {}, alfa = 0.9, nota = NOTA_3D }) {
     if (!/^[\w\-/.]+\.glb$/.test(String(src))) throw new Error("El modelo 3D tiene que ser un archivo .glb del sitio.");
+    const textoNota = String(nota ?? "").trim().slice(0, TOPE_NOTA_3D) || NOTA_3D;
     document.querySelector("dialog.visor-3d")?.remove();
     const hoja = document.createElement("dialog");
     hoja.className = "hoja visor-3d";
@@ -38,7 +43,7 @@ export async function verEn3D({ titulo, src, colores = {}, alfa = 0.9 }) {
                 <button class="boton-icono" type="button" data-cerrar aria-label="Cerrar"><i class="ti ti-x"></i></button>
             </div>
             <div class="visor-3d__lugar"><p class="nota visor-3d__cargando"><i class="ti ti-loader-2" aria-hidden="true"></i> Cargando el 3D…</p></div>
-            <p class="nota"><i class="ti ti-hand-finger" aria-hidden="true"></i> Giralo con el dedo. Es de ejemplo: en tu tienda va la foto o el 3D de tus productos.</p>
+            <p class="nota"><i class="ti ti-hand-finger" aria-hidden="true"></i> Giralo con el dedo. ${esc(textoNota)}</p>
         </div>`;
     document.body.append(hoja);
     const cerrar = () => {

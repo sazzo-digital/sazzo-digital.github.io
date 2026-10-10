@@ -3,14 +3,14 @@
 // marcas reales), el carrito de Julieta (queda mientras se navega), el botón del recorrido y el mensaje para copiar
 // (del kit). Todo dato que entra a HTML pasa por esc().
 // ============================================
-import { esc } from "../../kit/js/ui.js?v=c135ab59e0";
-import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=c135ab59e0";
-import { FAMILIAS } from "../datos.js?v=c135ab59e0";
-import { buscarPersona } from "../marca.js?v=c135ab59e0";
+import { esc } from "../../kit/js/ui.js?v=c28c82b591";
+import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=c28c82b591";
+import { FAMILIAS } from "../datos.js?v=c28c82b591";
+import { buscarPersona } from "../marca.js?v=c28c82b591";
 
 export const guia = (personaId, ruta, texto) => htmlGuia({ persona: buscarPersona(personaId), ruta, texto });
 export { activarGuias };
-export { mostrarMensaje } from "../../kit/js/mensaje.js?v=c135ab59e0";
+export { mostrarMensaje } from "../../kit/js/mensaje.js?v=c28c82b591";
 
 /** Un frasco de perfume dibujado, del color de su familia. */
 export function frasco(familia, grande = false) {

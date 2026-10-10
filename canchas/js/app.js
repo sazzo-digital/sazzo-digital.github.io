@@ -3,18 +3,18 @@
 // Cada persona tiene su menú: Gustavo (dueño) la grilla y los fijos; Fede (jugador) reservar y sus turnos.
 // irA() cambia de persona sin pasar por "Probala como…" (botón del recorrido: "Mirá cómo lo ve Gustavo →").
 // ============================================
-import { $, conFundido } from "../kit/js/ui.js?v=3d373d8b58";
-import { iniciarDemo } from "../kit/js/arranque.js?v=3d373d8b58";
-import { vistaIngreso } from "../kit/js/ingreso.js?v=3d373d8b58";
-import { pintarMarco } from "../kit/js/marco.js?v=3d373d8b58";
-import { mostrarRuta } from "../kit/js/rutas.js?v=3d373d8b58";
-import { vistaAcerca } from "../kit/js/acerca.js?v=3d373d8b58";
-import { MARCA, PERSONAS, TAMBIEN, buscarPersona } from "./marca.js?v=3d373d8b58";
-import { crearDatos } from "./datos.js?v=3d373d8b58";
-import { vistaInicio } from "./vistas/inicio.js?v=3d373d8b58";
-import { vistaMisTurnos } from "./vistas/jugador.js?v=3d373d8b58";
-import { vistaTurno, vistaAnotar } from "./vistas/grilla.js?v=3d373d8b58";
-import { vistaFijos } from "./vistas/fijos.js?v=3d373d8b58";
+import { $, conFundido } from "../kit/js/ui.js?v=91ee73c19f";
+import { iniciarDemo } from "../kit/js/arranque.js?v=91ee73c19f";
+import { vistaIngreso } from "../kit/js/ingreso.js?v=91ee73c19f";
+import { pintarMarco } from "../kit/js/marco.js?v=91ee73c19f";
+import { mostrarRuta } from "../kit/js/rutas.js?v=91ee73c19f";
+import { vistaAcerca } from "../kit/js/acerca.js?v=91ee73c19f";
+import { MARCA, PERSONAS, TAMBIEN, buscarPersona } from "./marca.js?v=91ee73c19f";
+import { crearDatos } from "./datos.js?v=91ee73c19f";
+import { vistaInicio } from "./vistas/inicio.js?v=91ee73c19f";
+import { vistaMisTurnos } from "./vistas/jugador.js?v=91ee73c19f";
+import { vistaTurno, vistaAnotar } from "./vistas/grilla.js?v=91ee73c19f";
+import { vistaFijos } from "./vistas/fijos.js?v=91ee73c19f";
 
 iniciarDemo(MARCA);
 const datos = crearDatos();

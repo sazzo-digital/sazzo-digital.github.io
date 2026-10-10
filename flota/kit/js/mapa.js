@@ -6,10 +6,10 @@
 // cuadraditos del mapa los da OpenStreetMap (gratis, con su nombre abajo a la derecha, como pide su política; poco
 // tráfico: es una demo). Los puntos son de ejemplo: nunca se usa la ubicación de quien mira.
 // ============================================
-import { aviso } from "./ui.js?v=b66346cd06";
-import { alSalirDeLaPantalla } from "./rutas.js?v=b66346cd06";
-import { RUTA_LIBS } from "./config.js?v=b66346cd06";
-import { cargarLibreria } from "./archivos.js?v=b66346cd06";
+import { aviso } from "./ui.js?v=a2320dc718";
+import { alSalirDeLaPantalla } from "./rutas.js?v=a2320dc718";
+import { RUTA_LIBS } from "./config.js?v=a2320dc718";
+import { cargarLibreria } from "./archivos.js?v=a2320dc718";
 
 const VERSION = "1.9.4";
 export const TOPE_PUNTOS = 200;

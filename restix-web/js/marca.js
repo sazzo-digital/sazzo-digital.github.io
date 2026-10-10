@@ -1,8 +1,9 @@
 // ============================================
 // Marca, personas y "también puede tener" de Restix Sazzo (diseñada el 08/10/2026, opción B: el recorrido de Restix
-// rehecho con el kit). Las personas son los roles reales del rubro (nombres inventados): la moza y el de la cocina.
+// rehecho con el kit). Las personas son los roles reales del rubro (nombres inventados): la moza, el de la cocina y
+// (desde el 10/10) una clienta que abre la carta con el QR de la mesa.
 // ============================================
-import { revisarMarca } from "../kit/js/marca.js?v=342460e565";
+import { revisarMarca } from "../kit/js/marca.js?v=edf52e7135";
 
 export const MARCA = revisarMarca({
     id: "restix-web",
@@ -32,10 +33,21 @@ export const PERSONAS = [
         rolTexto: "Cocina",
         etiqueta: "Beto · Cocina",
         detalle: "Ve los pedidos que llegan a la cocina y avisa cuando están listos"
+    },
+    {
+        id: "u-cliente",
+        nombre: "Flor",
+        apellido: "Rivas",
+        rol: "cliente",
+        rolTexto: "Cliente (Mesa 4)",
+        etiqueta: "Flor · Cliente (Mesa 4)",
+        detalle: "Escanea el QR de la Mesa 4 y mira la carta, con platos en 3D"
     }
 ];
 
 export const buscarPersona = (id) => PERSONAS.find((p) => p.id === id) ?? null;
+
+export const MESA_CLIENTE = "Mesa 4"; // donde se sentó Flor (la misma de la pista del salón)
 
 export const NEGOCIO = "Bar El Farol"; // nombre de ejemplo (arriba sigue diciendo Restix Sazzo)
 

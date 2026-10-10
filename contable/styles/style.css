@@ -2849,7 +2849,14 @@ a.mas-item:hover {
   color: color-mix(in srgb, #ef4444 var(--tinta-mezcla, 70%), var(--texto));
 }
 
+.compra {
+  flex-wrap: wrap;
+}
+.compra .comprobante-fila__texto {
+  flex-basis: 9rem;
+}
 .compra__montos {
+  margin-left: auto;
   display: grid;
   justify-items: end;
   text-align: right;

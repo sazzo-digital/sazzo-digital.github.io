@@ -3,18 +3,18 @@
 // Las dos personas ven las mismas secciones; lo que cambia (precios, topes, últimos 7 días) lo controlan las
 // funciones de datos y cada pantalla. irA() cambia de persona sin pasar por "Probala como…" (botones del recorrido).
 // ============================================
-import { $, conFundido } from "../kit/js/ui.js?v=55789f8311";
-import { iniciarDemo } from "../kit/js/arranque.js?v=55789f8311";
-import { vistaIngreso } from "../kit/js/ingreso.js?v=55789f8311";
-import { pintarMarco } from "../kit/js/marco.js?v=55789f8311";
-import { mostrarRuta } from "../kit/js/rutas.js?v=55789f8311";
-import { vistaAcerca } from "../kit/js/acerca.js?v=55789f8311";
-import { MARCA, PERSONAS, TAMBIEN, buscarPersona } from "./marca.js?v=55789f8311";
-import { crearDatos } from "./datos.js?v=55789f8311";
-import { vistaInicio } from "./vistas/inicio.js?v=55789f8311";
-import { vistaFiados, vistaCliente } from "./vistas/fiados.js?v=55789f8311";
-import { vistaStock, vistaAumento, vistaLista } from "./vistas/stock.js?v=55789f8311";
-import { vistaCaja } from "./vistas/caja.js?v=55789f8311";
+import { $, conFundido } from "../kit/js/ui.js?v=66194d9fee";
+import { iniciarDemo } from "../kit/js/arranque.js?v=66194d9fee";
+import { vistaIngreso } from "../kit/js/ingreso.js?v=66194d9fee";
+import { pintarMarco } from "../kit/js/marco.js?v=66194d9fee";
+import { mostrarRuta } from "../kit/js/rutas.js?v=66194d9fee";
+import { vistaAcerca } from "../kit/js/acerca.js?v=66194d9fee";
+import { MARCA, PERSONAS, TAMBIEN, buscarPersona } from "./marca.js?v=66194d9fee";
+import { crearDatos } from "./datos.js?v=66194d9fee";
+import { vistaInicio } from "./vistas/inicio.js?v=66194d9fee";
+import { vistaFiados, vistaCliente } from "./vistas/fiados.js?v=66194d9fee";
+import { vistaStock, vistaAumento, vistaLista } from "./vistas/stock.js?v=66194d9fee";
+import { vistaCaja } from "./vistas/caja.js?v=66194d9fee";
 
 iniciarDemo(MARCA);
 const datos = crearDatos();
