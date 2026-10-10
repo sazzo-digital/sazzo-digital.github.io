@@ -3,13 +3,13 @@
 // atender primero (visitas pedidas desde la página, sin contestar, sin seguimiento), la ficha de cada consulta
 // (confirmar la visita, mandar la ficha en PDF y el mensaje, ofrecer otras propiedades, notas) y "Anotar consulta".
 // ============================================
-import { esc, aviso, vacio, mensajeDe } from "../../kit/js/ui.js?v=54226d45fc";
-import { aHora } from "../../kit/js/turnos.js?v=54226d45fc";
-import { TOPES, TIPOS, ZONAS, OPERACIONES, ORIGENES, ESTADOS_CONSULTA } from "../datos.js?v=54226d45fc";
-import { bajarFicha } from "./propiedades.js?v=54226d45fc";
+import { esc, aviso, vacio, mensajeDe } from "../../kit/js/ui.js?v=5e0516f6ed";
+import { aHora } from "../../kit/js/turnos.js?v=5e0516f6ed";
+import { TOPES, TIPOS, ZONAS, OPERACIONES, ORIGENES, ESTADOS_CONSULTA } from "../datos.js?v=5e0516f6ed";
+import { bajarFicha } from "./propiedades.js?v=5e0516f6ed";
 import {
     guia, activarGuias, pastillaConsulta, pastillaVisita, mostrarMensaje, hace, mayuscula, htmlFoto, medidas, hrefPropiedad
-} from "./comunes.js?v=54226d45fc";
+} from "./comunes.js?v=5e0516f6ed";
 
 let filtroEstado = "abiertas";
 const FILTROS = { abiertas: "Abiertas", nueva: "Nuevas", agendada: "Con visita", todas: "Todas" };
@@ -114,7 +114,7 @@ export function vistaConsulta(cont, { usuario, datos, params: [id], irA }) {
         <p class="tira"><span><i class="ti ${esc(c.origenIcono)}" aria-hidden="true"></i> ${esc(c.origenTexto)}</span><span>Llegó ${esc(hace(c.creado, hoy))}</span><span>La atiende <b>${esc(c.agente)}</b></span></p>
         ${c.mensaje ? `<blockquote class="cita">${esc(c.mensaje)}</blockquote>` : ""}
         <p class="busca"><i class="ti ti-search" aria-hidden="true"></i> Busca: <b>${esc(c.buscaTexto)}</b></p>
-        ${p ? `<a class="prop-chica prop-chica--link" href="${hrefPropiedad(usuario, p.id)}">${htmlFoto(p, { clase: "foto--chica" })}
+        ${p ? `<a class="prop-chica prop-chica--link" href="${hrefPropiedad(usuario, p.id)}">${htmlFoto(p, { clase: "foto--chica", tamanos: "80px" })}
             <span><small>Preguntó por</small><b>${esc(p.titulo)}</b><small>${esc(p.precioTexto)} · ${esc(p.zonaNombre)} · ${esc(medidas(p))}</small></span></a>` : ""}
         ${bloqueVisita()}
         ${otros.length ? `<p class="alerta alerta--info"><i class="ti ti-users"></i> <span>Otras <b>${esc(otros.length)}</b> consultas buscan algo como ${esc(p.titulo.toLowerCase())}: ${otros.map((o) => esc(o.nombre.split(" ")[0])).join(", ")}. <a href="${hrefPropiedad(usuario, p.id)}">Ofrecérselo</a></span></p>` : ""}

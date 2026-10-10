@@ -2,9 +2,9 @@
 // Lo de Valeria (la que busca), pensado para el celular: "Pedir visita" (día y hora libre, sin cargar ningún dato:
 // la inmobiliaria asigna quién la acompaña) y "Mis visitas" (pedida → confirmada, con Cancelar).
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=54226d45fc";
-import { aHora } from "../../kit/js/turnos.js?v=54226d45fc";
-import { guia, activarGuias, chipsDias, htmlFoto, medidas, pastillaVisita, mayuscula } from "./comunes.js?v=54226d45fc";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=5e0516f6ed";
+import { aHora } from "../../kit/js/turnos.js?v=5e0516f6ed";
+import { guia, activarGuias, chipsDias, htmlFoto, medidas, pastillaVisita, mayuscula } from "./comunes.js?v=5e0516f6ed";
 
 let fecha = null; // el día elegido queda mientras se navega
 
@@ -69,7 +69,7 @@ export function vistaPedirVisita(cont, { usuario, datos, params: [id], irA }) {
         <a class="volver" href="#/propiedad/${esc(p.id)}"><i class="ti ti-arrow-left"></i> La propiedad</a>
         <h1 class="titulo">Pedir visita</h1>
         <div class="prop-chica">
-            ${htmlFoto(p, { clase: "foto--chica" })}
+            ${htmlFoto(p, { clase: "foto--chica", tamanos: "80px" })}
             <span><b>${esc(p.titulo)}</b><small>${esc(p.precioTexto)} · ${esc(p.zonaNombre)} · ${esc(medidas(p))}</small></span>
         </div>
         <p class="nota pista"><i class="ti ti-hand-finger"></i><span>Probá: elegí un día y una hora libre. Después mirá cómo le llega a Tomás.</span></p>

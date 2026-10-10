@@ -4,20 +4,20 @@
 // consultas, la agenda y las propiedades; Graciela (dueña) arranca por "Este mes" y lleva los alquileres.
 // irA() cambia de persona sin pasar por "Probala como…" (botones del recorrido: "Mirá lo que le llega a Tomás →").
 // ============================================
-import { $, conFundido } from "../kit/js/ui.js?v=54226d45fc";
-import { iniciarDemo } from "../kit/js/arranque.js?v=54226d45fc";
-import { vistaIngreso } from "../kit/js/ingreso.js?v=54226d45fc";
-import { pintarMarco } from "../kit/js/marco.js?v=54226d45fc";
-import { mostrarRuta } from "../kit/js/rutas.js?v=54226d45fc";
-import { vistaAcerca } from "../kit/js/acerca.js?v=54226d45fc";
-import { MARCA, PERSONAS, TAMBIEN, buscarPersona } from "./marca.js?v=54226d45fc";
-import { crearDatos } from "./datos.js?v=54226d45fc";
-import { vistaPropiedades, vistaFicha, vistaNuevaPropiedad } from "./vistas/propiedades.js?v=54226d45fc";
-import { vistaPedirVisita, vistaMisVisitas } from "./vistas/visita.js?v=54226d45fc";
-import { vistaConsultas, vistaConsulta, vistaNuevaConsulta } from "./vistas/consultas.js?v=54226d45fc";
-import { vistaAgenda } from "./vistas/agenda.js?v=54226d45fc";
-import { vistaEsteMes } from "./vistas/este-mes.js?v=54226d45fc";
-import { vistaAlquileres, vistaAlquiler } from "./vistas/alquileres.js?v=54226d45fc";
+import { $, conFundido } from "../kit/js/ui.js?v=5e0516f6ed";
+import { iniciarDemo } from "../kit/js/arranque.js?v=5e0516f6ed";
+import { vistaIngreso } from "../kit/js/ingreso.js?v=5e0516f6ed";
+import { pintarMarco } from "../kit/js/marco.js?v=5e0516f6ed";
+import { mostrarRuta } from "../kit/js/rutas.js?v=5e0516f6ed";
+import { vistaAcerca } from "../kit/js/acerca.js?v=5e0516f6ed";
+import { MARCA, PERSONAS, TAMBIEN, buscarPersona } from "./marca.js?v=5e0516f6ed";
+import { crearDatos } from "./datos.js?v=5e0516f6ed";
+import { vistaPropiedades, vistaFicha, vistaNuevaPropiedad } from "./vistas/propiedades.js?v=5e0516f6ed";
+import { vistaPedirVisita, vistaMisVisitas } from "./vistas/visita.js?v=5e0516f6ed";
+import { vistaConsultas, vistaConsulta, vistaNuevaConsulta } from "./vistas/consultas.js?v=5e0516f6ed";
+import { vistaAgenda } from "./vistas/agenda.js?v=5e0516f6ed";
+import { vistaEsteMes } from "./vistas/este-mes.js?v=5e0516f6ed";
+import { vistaAlquileres, vistaAlquiler } from "./vistas/alquileres.js?v=5e0516f6ed";
 
 iniciarDemo(MARCA);
 const datos = crearDatos();

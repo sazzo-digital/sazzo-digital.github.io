@@ -3,17 +3,18 @@
 // el mapa, nunca la dirección; Valeria pide la visita, la inmobiliaria ve quiénes buscan algo así y baja el PDF) y
 // "Cargar propiedad" (con fotos sacadas con el celu, que no se suben a ningún lado).
 // ============================================
-import { esc, aviso, vacio, mensajeDe, fechaCorta } from "../../kit/js/ui.js?v=54226d45fc";
-import { fechaLocalISO, diaLocalDe } from "../../kit/js/fechas.js?v=54226d45fc";
-import { mostrarMapa } from "../../kit/js/mapa.js?v=54226d45fc";
-import { armarPdf, pdfListo } from "../../kit/js/pdf.js?v=54226d45fc";
-import { TOPES, TIPOS, ZONAS, OPERACIONES, CARACTERISTICAS, RADIO_ZONA, pesos, dolares } from "../datos.js?v=54226d45fc";
-import { NEGOCIO } from "../marca.js?v=54226d45fc";
-import { fotosDe, achicarFoto, guardarFotosEnMemoria, revisarArchivoFoto } from "../fotos.js?v=54226d45fc";
+import { esc, aviso, vacio, mensajeDe, fechaCorta } from "../../kit/js/ui.js?v=5e0516f6ed";
+import { fechaLocalISO, diaLocalDe } from "../../kit/js/fechas.js?v=5e0516f6ed";
+import { mostrarMapa } from "../../kit/js/mapa.js?v=5e0516f6ed";
+import { armarPdf, pdfListo } from "../../kit/js/pdf.js?v=5e0516f6ed";
+import { TOPES, TIPOS, ZONAS, OPERACIONES, CARACTERISTICAS, RADIO_ZONA, pesos, dolares } from "../datos.js?v=5e0516f6ed";
+import { NEGOCIO } from "../marca.js?v=5e0516f6ed";
+import { fotosDe, urlRecorrido, achicarFoto, guardarFotosEnMemoria, revisarArchivoFoto } from "../fotos.js?v=5e0516f6ed";
+import { abrirRecorrido } from "../visor360.js?v=5e0516f6ed";
 import {
     guia, activarGuias, tarjetaPropiedad, htmlFoto, medidas, hrefPropiedad, pastillaPropiedad, pastillaVisita,
     pastillaConsulta, mostrarMensaje, mayuscula
-} from "./comunes.js?v=54226d45fc";
+} from "./comunes.js?v=5e0516f6ed";
 
 // Lo elegido en los filtros queda mientras se navega
 const filtro = { operacion: null, ambientes: null, hasta: null, mapa: false };
@@ -150,14 +151,16 @@ export async function bajarFicha(boton, p) {
     }
 }
 
+const GALERIA = "(min-width: 1000px) 600px, 100vw";
+
 /** La galería: fotos que se deslizan con el dedo (sin librerías) y los puntitos de abajo. */
 function htmlGaleria(p) {
     const fotos = fotosDe(p);
-    if (fotos.length < 2) return `<div class="galeria galeria--una">${htmlFoto(p, { clase: "foto--grande", carga: "eager" })}</div>`;
+    if (fotos.length < 2) return `<div class="galeria galeria--una">${htmlFoto(p, { clase: "foto--grande", carga: "eager", tamanos: GALERIA })}</div>`;
     return `
         <div class="galeria" aria-roledescription="carrusel" aria-label="Fotos de ${esc(p.titulo)}">
             <div class="galeria__tira" tabindex="0">
-                ${fotos.map((_, n) => `<div class="galeria__foto" role="group" aria-label="Foto ${n + 1} de ${fotos.length}">${htmlFoto(p, { n, clase: "foto--grande", carga: n ? "lazy" : "eager" })}</div>`).join("")}
+                ${fotos.map((_, n) => `<div class="galeria__foto" role="group" aria-label="Foto ${n + 1} de ${fotos.length}">${htmlFoto(p, { n, clase: "foto--grande", carga: n ? "lazy" : "eager", tamanos: GALERIA })}</div>`).join("")}
             </div>
             <div class="galeria__puntos" aria-hidden="true">${fotos.map((_, n) => `<span${n ? "" : ' class="activo"'}></span>`).join("")}</div>
             <span class="galeria__cuantas"><i class="ti ti-photo" aria-hidden="true"></i> ${fotos.length}</span>
@@ -203,6 +206,7 @@ export function vistaFicha(cont, { usuario, datos, params: [id], irA }) {
         <div class="ficha">
             <div class="ficha__fotos">
                 ${htmlGaleria(p)}
+                ${urlRecorrido(p.recorrido) ? `<button class="boton boton--ancho recorrer" type="button" data-recorrer><i class="ti ti-3d-cube-sphere"></i> Recorrer 360°<small>Mirá todo el ambiente como si estuvieras adentro</small></button>` : ""}
                 ${fotosDe(p).length ? "" : `<p class="nota"><i class="ti ti-photo"></i><span>Esta propiedad todavía no tiene fotos: en la versión real van las tuyas.</span></p>`}
             </div>
             <div class="ficha__datos">
@@ -271,6 +275,13 @@ export function vistaFicha(cont, { usuario, datos, params: [id], irA }) {
     mapaCuandoSeVea(cont.querySelector(".mapa--zona"), p);
     const pdf = cont.querySelector("[data-pdf]");
     pdf?.addEventListener("click", () => bajarFicha(pdf, p));
+    cont.querySelector("[data-recorrer]")?.addEventListener("click", () => {
+        try {
+            abrirRecorrido({ url: urlRecorrido(p.recorrido), titulo: p.titulo });
+        } catch (e) {
+            aviso(e, "error");
+        }
+    });
     cont.querySelectorAll("[data-estado]").forEach((b) => b.addEventListener("click", () => {
         try {
             datos.cambiarEstadoPropiedad(usuario, p.id, b.dataset.estado);

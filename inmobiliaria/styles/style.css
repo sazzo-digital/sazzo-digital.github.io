@@ -3160,6 +3160,7 @@ details[open] > :not(summary) {
 .foto {
   display: block;
   width: 100%;
+  height: auto;
   aspect-ratio: 4/3;
   object-fit: cover;
   background: var(--superficie-2);
@@ -3585,4 +3586,126 @@ details[open] > :not(summary) {
   position: absolute;
   top: -0.5rem;
   right: -0.5rem;
+}
+
+.recorrer {
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.1rem 0.45rem;
+  margin-top: 0.6rem;
+}
+.recorrer small {
+  flex-basis: 100%;
+  font-size: 0.8rem;
+  font-weight: 400;
+  opacity: 0.85;
+  text-align: center;
+}
+
+.visor360 {
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: #05070a;
+  color: #f3f5f4;
+}
+.visor360[open] {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+}
+.visor360::backdrop {
+  background: rgba(0, 0, 0, 0.85);
+}
+.visor360__barra, .visor360__pie {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem 0.8rem;
+  padding: 0.6rem 0.9rem;
+}
+.visor360__barra {
+  padding-top: max(0.6rem, env(safe-area-inset-top));
+}
+.visor360__pie {
+  padding-bottom: max(0.7rem, env(safe-area-inset-bottom));
+  font-size: 0.85rem;
+  color: rgba(243, 245, 244, 0.82);
+}
+.visor360__titulo {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-width: 0;
+  flex: 1;
+  font-weight: 600;
+}
+.visor360__titulo span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.visor360__ayuda {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+.visor360__lugar {
+  position: relative;
+  min-height: 0;
+}
+.visor360__lienzo {
+  display: block;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+  cursor: grab;
+}
+.visor360__lienzo:active {
+  cursor: grabbing;
+}
+.visor360__lienzo:focus-visible {
+  outline: 2px solid var(--primario);
+  outline-offset: -2px;
+}
+.visor360__cargando {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 0.5rem;
+}
+.visor360__cargando .ti {
+  font-size: 2rem;
+  animation: gira-visor 1s linear infinite;
+}
+.visor360__plano {
+  height: 100%;
+  overflow-x: auto;
+}
+.visor360__plano img {
+  display: block;
+  height: 100%;
+  width: auto;
+  max-width: none;
+}
+.visor360 .boton-icono {
+  color: inherit;
+}
+
+@keyframes gira-visor {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .visor360__cargando .ti {
+    animation: none;
+  }
 }

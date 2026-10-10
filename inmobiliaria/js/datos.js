@@ -9,13 +9,13 @@
 // Reglas del kit: exigir() en lo que modifica, topes en todo lo que se carga, nada se borra y se devuelven copias.
 // Si cambia la forma de los datos, subir VERSION_DATOS (se regeneran solos).
 // ============================================
-import { crearGuardado, exigir, copia, nuevoId, buscar } from "../kit/js/guardado.js?v=54226d45fc";
-import { enteroHasta, sinPasarse } from "../kit/js/topes.js?v=54226d45fc";
-import { esFechaISO } from "../kit/js/fechas.js?v=54226d45fc";
-import { aHora, aMinutos, diaSemana, libres, revisarLibre } from "../kit/js/turnos.js?v=54226d45fc";
-import { MARCA, NEGOCIO, buscarPersona } from "./marca.js?v=54226d45fc";
+import { crearGuardado, exigir, copia, nuevoId, buscar } from "../kit/js/guardado.js?v=5e0516f6ed";
+import { enteroHasta, sinPasarse } from "../kit/js/topes.js?v=5e0516f6ed";
+import { esFechaISO } from "../kit/js/fechas.js?v=5e0516f6ed";
+import { aHora, aMinutos, diaSemana, libres, revisarLibre } from "../kit/js/turnos.js?v=5e0516f6ed";
+import { MARCA, NEGOCIO, buscarPersona } from "./marca.js?v=5e0516f6ed";
 
-export const VERSION_DATOS = 1;
+export const VERSION_DATOS = 2; // 2: las propiedades de fábrica traen fotos y dos, el recorrido 360
 
 // ---------- Topes (cada uno con su prueba de valor absurdo) ----------
 export const TOPES = {
@@ -250,6 +250,11 @@ const PROPIEDADES = [
         "Local con depósito al fondo y entrada para mercadería por la calle de atrás."]
 ];
 
+// Las fotos de cada propiedad de fábrica (img/fotos/, ver fotos.js) y las que tienen recorrido 360 (img/360/)
+const CUANTAS_FOTOS = { "p-1": 3, "p-2": 3, "p-3": 3, "p-4": 2, "p-5": 3, "p-6": 2, "p-7": 2, "p-8": 3, "p-9": 3, "p-10": 3, "p-11": 2, "p-12": 2 };
+const fotosDeFabrica = (id) => [..."abc"].slice(0, CUANTAS_FOTOS[id] ?? 0).map((l) => `${id.replace("-", "")}-${l}`);
+const RECORRIDO_360 = { "p-1": "p1", "p-5": "p5" };
+
 // Visitas que ya pasaron (de gente que ya no está en las consultas): [propiedad, quién, hace (días), hora, agente]
 const VISITAS_PASADAS = [
     ["p-1", "Lorena Paredes", 4, 11, "u-agente"],
@@ -301,7 +306,7 @@ export function semilla(base = new Date()) {
     const hoy = isoDe(base);
     const propiedades = PROPIEDADES.map(([id, titulo, tipo, operacion, zona, ambientes, dormitorios, banos, m2, precio, expensas, caracteristicas, agenteId, hace, descripcion]) => ({
         id, titulo, tipo, operacion, zona, ambientes, dormitorios, banos, m2, precio, expensas, caracteristicas, agenteId,
-        descripcion, estado: "disponible", publicada: momento(base, hace, 10), fotos: [], recorrido: null, nueva: false
+        descripcion, estado: "disponible", publicada: momento(base, hace, 10), fotos: fotosDeFabrica(id), recorrido: RECORRIDO_360[id] ?? null, nueva: false
     }));
 
     const consulta = (id, nombre, origen, propiedadId, busca, mensaje, estado, creado, ultimoContacto, agenteId) =>

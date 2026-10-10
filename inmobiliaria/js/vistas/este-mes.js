@@ -3,9 +3,9 @@
 // monto nuevo calculado y el aviso armado), los que vencen, los que no pagaron, las propiedades que nadie visita y
 // las consultas que esperan respuesta. Nada de esto es un contrato ni un recibo: es la lista para no olvidarse.
 // ============================================
-import { esc, aviso, animarNumeros } from "../../kit/js/ui.js?v=54226d45fc";
-import { INDICE_MENSUAL, pesos, porcentajeTexto, diaMes } from "../datos.js?v=54226d45fc";
-import { mostrarMensaje, mayuscula } from "./comunes.js?v=54226d45fc";
+import { esc, aviso, animarNumeros } from "../../kit/js/ui.js?v=5e0516f6ed";
+import { INDICE_MENSUAL, pesos, porcentajeTexto, diaMes } from "../datos.js?v=5e0516f6ed";
+import { mostrarMensaje, mayuscula } from "./comunes.js?v=5e0516f6ed";
 
 // "$ 2.805.700" sin cortarse entre el signo y el número
 const plata = (n) => pesos(n).replace(" ", String.fromCharCode(160));
