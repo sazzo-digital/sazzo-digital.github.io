@@ -4,11 +4,11 @@
 // celular, moviendo el teléfono ("Mover el celu"). Lo dibuja la placa de video (WebGL): para cada punto de la pantalla
 // calcula hacia dónde mira y toma ese color de la foto. Si el navegador no tiene WebGL, se ve la foto entera para
 // deslizar de costado.
-//   abrirRecorrido({ url: "img/360/p1.jpg", titulo: "Depto 2 ambientes con balcón" })
-// La foto se baja recién al abrirlo (~1 MB). Al cerrar se suelta todo (la placa de video, los sensores).
+//   abrirRecorrido({ url: "img/360/p1.webp", titulo: "Depto 2 ambientes con balcón" })
+// La foto se baja recién al abrirlo (~0,6 MB). Al cerrar se suelta todo (la placa de video, los sensores).
 // ============================================
-import { esc, aviso, sinMovimiento } from "../kit/js/ui.js?v=bc8d90946e";
-import { alSalirDeLaPantalla } from "../kit/js/rutas.js?v=bc8d90946e";
+import { esc, aviso, sinMovimiento } from "../kit/js/ui.js?v=c96e6a5c93";
+import { alSalirDeLaPantalla } from "../kit/js/rutas.js?v=c96e6a5c93";
 
 const VERTICES = `
 attribute vec2 punto;
@@ -66,7 +66,7 @@ function texturaPosible(gl, img) {
 }
 
 export function abrirRecorrido({ url, titulo = "" }) {
-    if (!/^img\/360\/[a-z0-9-]+\.jpg$/.test(url ?? "")) throw new Error("Ese recorrido no existe.");
+    if (!/^img\/360\/[a-z0-9-]+\.webp$/.test(url ?? "")) throw new Error("Ese recorrido no existe.");
     const ventana = document.createElement("dialog");
     ventana.className = "visor360";
     ventana.setAttribute("aria-label", `Recorrido 360 de ${titulo}`);

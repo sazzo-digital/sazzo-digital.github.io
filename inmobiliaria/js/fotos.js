@@ -3,11 +3,11 @@
 // - Las de ejemplo viven en img/fotos/<clave>.webp (960 x 720) y <clave>-chica.webp (480 x 360): fotos libres
 //   (CC0, sin obligación de nombrar al autor), nunca de un negocio real. ARCHIVOS dice cuáles están: si una propiedad
 //   pide una que no está, se ve su dibujo. De dónde salió cada una: fuentes-fotos.md (no se publica).
-// - Las 360 viven en img/360/<clave>.jpg (4096 x 2048, Poly Haven, CC0); se bajan recién al tocar "Recorrer 360°".
+// - Las 360 viven en img/360/<clave>.webp (4096 x 2048, Poly Haven, CC0); se bajan recién al tocar "Recorrer 360°".
 // - Las que se sacan con el celu al cargar una propiedad se achican en el equipo (hasta 1200 px, JPEG) y quedan en
 //   memoria mientras la demo está abierta: no se suben a ningún lado ni se guardan (como la firma de Taller).
 // ============================================
-import { TOPES } from "./datos.js?v=bc8d90946e";
+import { TOPES } from "./datos.js?v=c96e6a5c93";
 
 const CARPETA = "img/fotos/";
 const CUANTAS = { p1: 3, p2: 3, p3: 3, p4: 2, p5: 3, p6: 2, p7: 2, p8: 3, p9: 3, p10: 3, p11: 2, p12: 2 };
@@ -22,7 +22,7 @@ const TIPOS_FOTO = ["image/jpeg", "image/png", "image/webp", "image/heic", "imag
 export const urlFoto = (clave) => (ARCHIVOS.has(clave) ? { grande: `${CARPETA}${clave}.webp`, chica: `${CARPETA}${clave}-chica.webp` } : null);
 
 /** La foto 360 de una propiedad (o null). */
-export const urlRecorrido = (clave) => (RECORRIDOS.has(clave) ? `img/360/${clave}.jpg` : null);
+export const urlRecorrido = (clave) => (RECORRIDOS.has(clave) ? `img/360/${clave}.webp` : null);
 
 /** Todas las fotos que se pueden mostrar de una propiedad: las de ejemplo que estén y las del celu. */
 export function fotosDe(p) {
