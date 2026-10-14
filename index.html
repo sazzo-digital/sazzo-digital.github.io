@@ -24,7 +24,7 @@
     <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
     <!-- Letras desde el propio sitio (antes Google Fonts); el script de armar las apunta a la copia compartida -->
     <link rel="stylesheet" href="letras/letras.css?v=1ce210640e">
-    <link rel="stylesheet" href="css/catalogo.css?v=1b216dad84">
+    <link rel="stylesheet" href="css/catalogo.css?v=624513662e">
     <!-- Si hay JavaScript, las secciones arrancan ocultas y aparecen al bajar (sin JavaScript se ve todo igual) -->
     <script>
         document.documentElement.classList.add("js");
@@ -97,7 +97,7 @@
             <svg class="icono" aria-hidden="true"><use href="#i-luna"/></svg>
             <span class="interruptor-tema__perilla" aria-hidden="true"></span>
         </button>
-        <a class="boton boton--chico" href="#contacto" data-whatsapp>Escribinos</a>
+        <a class="boton boton--chico" href="#contacto" data-abrir-contacto>Escribinos</a>
     </header>
 
     <main>
@@ -122,7 +122,7 @@
             <p class="portada__texto">Sistemas, páginas web y automatizaciones para negocios. Probá nuestras demos en un toque, sin registrarte.</p>
             <div class="portada__botones">
                 <a class="boton" href="#demos">Probá las demos <svg class="icono" aria-hidden="true"><use href="#i-flecha"/></svg></a>
-                <a class="boton boton--borde" href="#contacto" data-whatsapp>Escribinos</a>
+                <a class="boton boton--borde" href="#contacto" data-abrir-contacto>Escribinos</a>
             </div>
             <ul class="portada__datos">
                 <li><strong data-contar="13">13</strong> rubros para probar</li>
@@ -233,6 +233,20 @@
         </section>
     </main>
 
+    <dialog class="ventana-contacto" id="ventana-contacto" aria-labelledby="ventana-contacto-titulo">
+        <div class="ventana-contacto__caja">
+            <button class="ventana-contacto__cerrar" type="button" data-cerrar aria-label="Cerrar">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            </button>
+            <h2 id="ventana-contacto-titulo">Escribinos</h2>
+            <p>Elegí por dónde te queda más cómodo.</p>
+            <div class="ventana-contacto__botones">
+                <a class="boton" href="#contacto" data-whatsapp data-solo-con-numero><svg class="icono" aria-hidden="true"><use href="#i-whatsapp"/></svg> WhatsApp</a>
+                <a class="boton" href="#contacto" data-instagram><svg class="icono" aria-hidden="true"><use href="#i-instagram"/></svg> Instagram</a>
+            </div>
+        </div>
+    </dialog>
+
     <footer class="pie">
         <svg class="pie__logo" viewBox="0 12 240 56" aria-label="sazzo" role="img">
             <g fill="none" stroke-width="10" stroke-linecap="round" stroke-linejoin="round">
@@ -254,6 +268,6 @@
         <p class="pie__chico">© <span data-anio>2026</span> Sazzo · <a href="privacidad.html">Privacidad</a></p>
     </footer>
 
-    <script type="module" src="js/catalogo.js?v=1b216dad84"></script>
+    <script type="module" src="js/catalogo.js?v=624513662e"></script>
 </body>
 </html>

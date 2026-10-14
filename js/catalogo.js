@@ -2,8 +2,8 @@
 // Catálogo de Sazzo: arma las tarjetas de demos (desde demos.js), las animaciones al bajar, los botones de
 // contacto (desde config.js), guarda de dónde vino la visita (?o=papel / ?o=ig) y avisa a la medición.
 // ============================================
-import { DEMOS } from "./demos.js?v=1b216dad84";
-import { CONTACTO, MEDICION, LINK_DEMOS, RUTA_LIBS } from "./config.js?v=1b216dad84";
+import { DEMOS } from "./demos.js?v=624513662e";
+import { CONTACTO, MEDICION, LINK_DEMOS, RUTA_LIBS } from "./config.js?v=624513662e";
 
 const $ = (selector, raiz = document) => raiz.querySelector(selector);
 const $$ = (selector, raiz = document) => [...raiz.querySelectorAll(selector)];
@@ -211,6 +211,18 @@ $$("[data-instagram]").forEach((a) => {
         if (linkWhatsapp && a.classList.contains("boton")) a.classList.add("boton--borde");
     } else a.hidden = true;
 });
+const ventanaContacto = $("#ventana-contacto");
+if ((linkWhatsapp || usuarioInstagram) && typeof ventanaContacto.showModal === "function") {
+    $$("[data-abrir-contacto]").forEach((a) =>
+        a.addEventListener("click", (e) => {
+            e.preventDefault();
+            ventanaContacto.showModal();
+        })
+    );
+    ventanaContacto.addEventListener("click", (e) => {
+        if (e.target === ventanaContacto || e.target.closest("[data-cerrar], a[target]")) ventanaContacto.close();
+    });
+}
 $$("[data-anio]").forEach((el) => (el.textContent = new Date().getFullYear()));
 
 // --- Animaciones al bajar ---
