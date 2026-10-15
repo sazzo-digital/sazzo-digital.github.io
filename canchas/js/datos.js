@@ -6,11 +6,11 @@
 // Reglas del kit: exigir() en lo que modifica, topes en todo lo que se carga, nada se borra (se anula o se libera)
 // y se devuelven copias. Si cambia la forma de los datos, subir VERSION_DATOS (se regeneran solos).
 // ============================================
-import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=cf1eab927b";
-import { sinPasarse } from "../kit/js/topes.js?v=cf1eab927b";
-import { fechaLocalISO } from "../kit/js/fechas.js?v=cf1eab927b";
-import { aMinutos, aHora, diaSemana, proximosDias, franjas, fijosDelDia, ocupados, libres, revisarLibre, sePisan } from "../kit/js/turnos.js?v=cf1eab927b";
-import { MARCA } from "./marca.js?v=cf1eab927b";
+import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=fa8b311e18";
+import { sinPasarse } from "../kit/js/topes.js?v=fa8b311e18";
+import { fechaLocalISO } from "../kit/js/fechas.js?v=fa8b311e18";
+import { aMinutos, aHora, diaSemana, proximosDias, franjas, fijosDelDia, ocupados, libres, revisarLibre, sePisan } from "../kit/js/turnos.js?v=fa8b311e18";
+import { MARCA } from "./marca.js?v=fa8b311e18";
 
 export const VERSION_DATOS = 2;
 
@@ -363,6 +363,10 @@ export function crearDatos(prefijo = MARCA.prefijo, { reloj = () => new Date() }
         }).sort((a, b) => ((a.dia + 6) % 7) - ((b.dia + 6) % 7) || a.inicio - b.inicio);
     }
 
+    function fijoQueChoca(lugarId, dia, inicio, duracion, sinId = null) {
+        return db().fijos.find((x) => x.id !== sinId && x.lugarId === lugarId && x.dia === dia && inicio < x.inicio + x.duracion && x.inicio < inicio + duracion);
+    }
+
     function liberarFijo(usuario, fijoId, fecha) {
         exigir(esDueno(usuario), "Solo el dueño libera turnos fijos.");
         const f = buscar(db().fijos, fijoId, "Ese turno fijo no existe.");
@@ -377,6 +381,8 @@ export function crearDatos(prefijo = MARCA.prefijo, { reloj = () => new Date() }
         exigir(f.liberadas.includes(fecha), "Esa semana no estaba liberada.");
         const pisa = db().turnos.find((t) => !t.anulado && sePisan(t, { lugarId: f.lugarId, fecha, inicio: f.inicio, duracion: f.duracion }));
         exigir(!pisa, `Ese horario ya lo reservó ${pisa?.grupo}: liberá ese turno primero.`);
+        const otroFijo = fijosDelDia(db().fijos.filter((x) => x.id !== f.id), fecha, f.lugarId).find((x) => sePisan(x, { lugarId: f.lugarId, fecha, inicio: f.inicio, duracion: f.duracion }));
+        exigir(!otroFijo, `Ese horario ya es fijo de ${otroFijo?.grupo}: no se puede volver.`);
         f.liberadas = f.liberadas.filter((d) => d !== fecha);
         guardado.persistir();
         return true;
@@ -393,6 +399,8 @@ export function crearDatos(prefijo = MARCA.prefijo, { reloj = () => new Date() }
         let fecha = proximosDias(TOPES.dias).find((d) => diaSemana(d) === dia);
         if (fecha === hoy() && Number.isInteger(inicio) && inicio < minutoActual()) fecha = fechaLocalISO(7);
         revisarLibre({ lugarId: cancha.id, fecha, inicio, horario: horarioDe(cancha, fecha), turnos: db().turnos, fijos: db().fijos, desdeMinuto: desdeMinuto(fecha) });
+        const otroFijo = fijoQueChoca(cancha.id, dia, inicio, TIPOS[cancha.tipo].duracion);
+        exigir(!otroFijo, `Ese horario ya es fijo de ${otroFijo?.grupo} los ${DIAS[dia]}: elegí otro.`);
         const f = { id: nuevoId("f"), lugarId: cancha.id, dia, inicio, duracion: TIPOS[cancha.tipo].duracion, grupo: g, liberadas: [], asistencia: {}, precio: TIPOS[cancha.tipo].precio, desde: fecha };
         db().fijos.push(f);
         guardado.persistir();

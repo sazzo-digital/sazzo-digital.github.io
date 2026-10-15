@@ -11,11 +11,11 @@
 // Reglas del kit: exigir() en lo que modifica, topes en todo lo que se carga, nada se borra y se devuelven copias.
 // Las ventas guardan el precio y el costo del momento. Si cambia la forma de los datos, subir VERSION_DATOS.
 // ============================================
-import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=5c760847bf";
-import { enteroHasta, sinPasarse } from "../kit/js/topes.js?v=5c760847bf";
-import { diaLocalDe, fechaLocalISO } from "../kit/js/fechas.js?v=5c760847bf";
-import { filtrarPorTexto, comoSuena } from "../kit/js/buscar.js?v=5c760847bf";
-import { MARCA, NEGOCIO, buscarPersona } from "./marca.js?v=5c760847bf";
+import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=3888f7b2a4";
+import { enteroHasta, sinPasarse } from "../kit/js/topes.js?v=3888f7b2a4";
+import { diaLocalDe, fechaLocalISO } from "../kit/js/fechas.js?v=3888f7b2a4";
+import { filtrarPorTexto, comoSuena } from "../kit/js/buscar.js?v=3888f7b2a4";
+import { MARCA, NEGOCIO, buscarPersona } from "./marca.js?v=3888f7b2a4";
 
 export const VERSION_DATOS = 1;
 
@@ -947,21 +947,27 @@ export function crearDatos(prefijo = MARCA.prefijo) {
             i.precio = a.precio; // el precio del día que se prepara
             i.costo = a.costo;
         });
-        Object.assign(pe, { estado: "listo", listo: ahora(), avisado: ahora(), preparadoPor: usuario.nombre });
+        Object.assign(pe, { estado: "listo", listo: ahora(), preparadoPor: usuario.nombre });
         guardado.persistir();
         const a = armarPedido(pe);
         return { pedido: a, mensaje: mensajeListo(a) };
     }
 
     /** Volver a avisar (el mensaje de "listo"). */
-    function avisarPedido(usuario, pedidoId) {
+    function mensajeAviso(usuario, pedidoId) {
         exigir(esDelLocal(usuario), "Avisa la carnicería.");
         const pe = buscar(db().pedidos, pedidoId, "Ese pedido no existe.");
         exigir(pe.estado === "listo", "Se avisa cuando el pedido está listo.");
-        pe.avisado = ahora();
-        guardado.persistir();
         const a = armarPedido(pe);
         return { pedido: a, mensaje: mensajeListo(a) };
+    }
+
+    function avisarPedido(usuario, pedidoId) {
+        const { mensaje } = mensajeAviso(usuario, pedidoId);
+        const pe = buscar(db().pedidos, pedidoId);
+        pe.avisado = ahora();
+        guardado.persistir();
+        return { pedido: armarPedido(pe), mensaje };
     }
 
     /** Vinieron a buscarlo: se cobra y queda como venta (el stock ya se descontó al prepararlo). */
@@ -1062,7 +1068,7 @@ export function crearDatos(prefijo = MARCA.prefijo) {
         verAumento, aplicarAumento, deshacerCambio, ultimoCambio,
         listarDespostes, desposte, ingresar, cargarPeso, terminarDesposte, verSugeridos, aplicarSugeridos, historial,
         armarTicket, vender,
-        nuevoPedido, pedido, listarPedidos, misPedidos, pesarItem, marcarListo, avisarPedido, entregarPedido, anularPedido,
+        nuevoPedido, pedido, listarPedidos, misPedidos, pesarItem, marcarListo, mensajeAviso, avisarPedido, entregarPedido, anularPedido,
         caja, semana, cerrarCaja
     };
 }

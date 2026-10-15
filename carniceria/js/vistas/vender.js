@@ -6,18 +6,24 @@
 // peso. Ticket con vuelto, alias para la transferencia, "ding" al cobrar y la vista previa del ticket.
 // En la compu, dos columnas (cortes | ticket); en el celular, el ticket abajo con una barrita arriba que lleva a él.
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=5c760847bf";
-import { puedeEscanear, escanear } from "../../kit/js/escaner.js?v=5c760847bf";
-import { mantenerPantallaPrendida, htmlCopiable, activarCopiables, htmlBotonSonido, activarBotonSonido, ding } from "../../kit/js/celular.js?v=5c760847bf";
-import { TOPES, MEDIOS, ALIAS, ANIMALES, ETIQUETA, pesos, kilos, aGramos, precioPorPeso, gramosPara, leerEtiqueta } from "../datos.js?v=5c760847bf";
-import { MARCA, NEGOCIO } from "../marca.js?v=5c760847bf";
-import { campoKg, kgEnCampo, precioDe, hora } from "./comunes.js?v=5c760847bf";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=3888f7b2a4";
+import { puedeEscanear, escanear } from "../../kit/js/escaner.js?v=3888f7b2a4";
+import { mantenerPantallaPrendida, htmlCopiable, activarCopiables, htmlBotonSonido, activarBotonSonido, ding } from "../../kit/js/celular.js?v=3888f7b2a4";
+import { TOPES, MEDIOS, ALIAS, ANIMALES, ETIQUETA, pesos, kilos, aGramos, precioPorPeso, gramosPara, leerEtiqueta } from "../datos.js?v=3888f7b2a4";
+import { MARCA, NEGOCIO } from "../marca.js?v=3888f7b2a4";
+import { campoKg, kgEnCampo, precioDe, hora } from "./comunes.js?v=3888f7b2a4";
+import { EVENTO_REINICIO } from "../../kit/js/guardado.js?v=3888f7b2a4";
 
 // El ticket en curso queda en memoria mientras se navega (se vacía al cobrar)
-const ticket = new Map(); // articuloId → { gramos } o { unidades }
+export const ticket = new Map(); // articuloId → { gramos } o { unidades }
 let medio = "efectivo";
 let animal = null; // null = lo que más sale
 let pesando = null; // { id, modo: "kg" | "plata" } mientras se escribe el peso de un corte
+addEventListener(EVENTO_REINICIO, () => {
+    ticket.clear();
+    medio = "efectivo";
+    pesando = null;
+});
 
 const BILLETES = [10_000, 20_000, 50_000];
 const RAPIDOS_KG = [0.5, 1, 1.5, 2];

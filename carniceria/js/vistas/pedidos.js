@@ -4,12 +4,12 @@
 // diferencia. "Listo: avisarle" lo separa (se descuenta del stock) y arma el mensaje para WhatsApp; "Cobrar y
 // entregar" lo pasa a la caja; o se anula (lo separado vuelve al stock).
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=5c760847bf";
-import { mostrarMensaje } from "../../kit/js/mensaje.js?v=5c760847bf";
-import { htmlCopiable, activarCopiables, ding } from "../../kit/js/celular.js?v=5c760847bf";
-import { ESTADOS_PEDIDO, MEDIOS, RETIROS, TOPES, ALIAS, pesos, kilos, aGramos, precioPorPeso } from "../datos.js?v=5c760847bf";
-import { MARCA } from "../marca.js?v=5c760847bf";
-import { guia, activarGuias, pasos, pastillaEstado, tarjetaPedido, cuando, campoKg, kgEnCampo, loPedido } from "./comunes.js?v=5c760847bf";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=3888f7b2a4";
+import { mostrarMensaje } from "../../kit/js/mensaje.js?v=3888f7b2a4";
+import { htmlCopiable, activarCopiables, ding } from "../../kit/js/celular.js?v=3888f7b2a4";
+import { ESTADOS_PEDIDO, MEDIOS, RETIROS, TOPES, ALIAS, pesos, kilos, aGramos, precioPorPeso } from "../datos.js?v=3888f7b2a4";
+import { MARCA } from "../marca.js?v=3888f7b2a4";
+import { guia, activarGuias, pasos, pastillaEstado, tarjetaPedido, cuando, campoKg, kgEnCampo, loPedido } from "./comunes.js?v=3888f7b2a4";
 
 /** Billetes "redondos" para cobrar un pedido: el próximo múltiplo de $10.000, de $20.000 y $50.000. */
 const billetesPara = (total) => [...new Set([10_000, 20_000, 50_000].map((b) => Math.ceil(Math.max(1, total) / b) * b))].slice(0, 3);
@@ -227,7 +227,12 @@ export function vistaPedido(cont, opciones, recien = null) {
                 const { mensaje } = datos.marcarListo(usuario, pe.id);
                 ding(MARCA.prefijo);
                 otraVez("listo");
-                mostrarMensaje(`Avisarle a ${pe.para}`, mensaje);
+                mostrarMensaje(`Avisarle a ${pe.para}`, mensaje, {
+                    alConfirmar: () => {
+                        datos.avisarPedido(usuario, pe.id);
+                        otraVez("listo");
+                    }
+                });
             } catch (err) {
                 aviso(err, "error");
             }
@@ -235,7 +240,7 @@ export function vistaPedido(cont, opciones, recien = null) {
     } else if (pe.estado === "listo") {
         acciones.innerHTML = `
             <div class="acciones">
-                <button class="boton boton--secundario" type="button" data-avisar><i class="ti ti-message-circle"></i> Avisar de nuevo</button>
+                <button class="boton boton--secundario" type="button" data-avisar><i class="ti ti-message-circle"></i> ${pe.avisado ? "Avisar de nuevo" : "Avisarle"}</button>
                 ${pe.avisado ? `<span class="nota avisado"><i class="ti ti-check"></i> Avisado ${esc(cuando(pe.avisado))}</span>` : ""}
             </div>
             ${empleado && recien === "listo" ? guia("u-dueno", abierto ? `/desposte/${abierto.id}` : "/caja", abierto ? "Pasá a Ricardo: terminá el desposte de hoy" : "Pasá a Ricardo: mirá la caja") : ""}
@@ -248,8 +253,13 @@ export function vistaPedido(cont, opciones, recien = null) {
             ${htmlAnular("Anular (lo separado vuelve al stock)")}`;
         acciones.querySelector("[data-avisar]").addEventListener("click", () => {
             try {
-                const { mensaje } = datos.avisarPedido(usuario, pe.id);
-                mostrarMensaje(`Avisarle a ${pe.para}`, mensaje);
+                const { mensaje } = datos.mensajeAviso(usuario, pe.id);
+                mostrarMensaje(`Avisarle a ${pe.para}`, mensaje, {
+                    alConfirmar: () => {
+                        datos.avisarPedido(usuario, pe.id);
+                        otraVez();
+                    }
+                });
             } catch (err) {
                 aviso(err, "error");
             }

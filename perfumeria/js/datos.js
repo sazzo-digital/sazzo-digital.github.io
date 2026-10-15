@@ -6,11 +6,11 @@
 // Reglas del kit: exigir() en lo que modifica, topes en todo lo que se carga, nada se borra (se cancela) y se
 // devuelven copias. Si cambia la forma de los datos, subir VERSION_DATOS (se regeneran solos).
 // ============================================
-import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=c202475ee6";
-import { filtrarPorTexto } from "../kit/js/buscar.js?v=c202475ee6";
-import { enteroHasta } from "../kit/js/topes.js?v=c202475ee6";
-import { fechaLocalISO, diaLocalDe } from "../kit/js/fechas.js?v=c202475ee6";
-import { MARCA, NEGOCIO } from "./marca.js?v=c202475ee6";
+import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=3623a70e16";
+import { filtrarPorTexto } from "../kit/js/buscar.js?v=3623a70e16";
+import { enteroHasta } from "../kit/js/topes.js?v=3623a70e16";
+import { fechaLocalISO, diaLocalDe } from "../kit/js/fechas.js?v=3623a70e16";
+import { MARCA, NEGOCIO } from "./marca.js?v=3623a70e16";
 
 export const VERSION_DATOS = 3;
 
@@ -308,18 +308,24 @@ export function crearDatos(prefijo = MARCA.prefijo) {
         return pasar(o, "preparado");
     }
 
-    function avisarListo(usuario, id) {
+    function mensajeListo(usuario, id) {
         const o = pedidoDe(usuario, id);
         exigir(o.estado === "preparado", "Primero hay que prepararlo.");
+        return {
+            pedido: armarPedido(o),
+            mensaje: `Hola ${nombreDe(o.clientaId)}! Tu pedido ya está listo para retirar en ${NEGOCIO}: ${o.renglones.map((r) => `${r.nombre} (${PRESENTACIONES[r.presentacion].texto.toLowerCase()})`).join(", ")}. Total: ${pesos(totalDe(o.renglones))}. ¡Te esperamos!`
+        };
+    }
+
+    function avisarListo(usuario, id) {
+        const { mensaje } = mensajeListo(usuario, id);
+        const o = pedidoDe(usuario, id);
         if (!o.avisado) {
             o.avisado = true;
             o.historial.push({ estado: "avisado", en: ahora() });
             guardado.persistir();
         }
-        return {
-            pedido: armarPedido(o),
-            mensaje: `Hola ${nombreDe(o.clientaId)}! Tu pedido ya está listo para retirar en ${NEGOCIO}: ${o.renglones.map((r) => `${r.nombre} (${PRESENTACIONES[r.presentacion].texto.toLowerCase()})`).join(", ")}. Total: ${pesos(totalDe(o.renglones))}. ¡Te esperamos!`
-        };
+        return { pedido: armarPedido(o), mensaje };
     }
 
     function entregar(usuario, id) {
@@ -337,9 +343,9 @@ export function crearDatos(prefijo = MARCA.prefijo) {
                 const p = db().perfumes.find((x) => x.id === r.perfumeId);
                 const pr = PRESENTACIONES[r.presentacion];
                 if (!p) return;
-                if (pr.decant) p.ml += pr.ml * r.cantidad;
-                else if (r.presentacion === "f50") p.stock50 += r.cantidad;
-                else p.stock100 += r.cantidad;
+                if (pr.decant) p.ml = Math.min(TOPES.ml, p.ml + pr.ml * r.cantidad);
+                else if (r.presentacion === "f50") p.stock50 = Math.min(TOPES.frascos, p.stock50 + r.cantidad);
+                else p.stock100 = Math.min(TOPES.frascos, p.stock100 + r.cantidad);
             });
         }
         o.canceladoPor = usuario?.id ?? null; // para el aviso entre roles: a quién se le avisa (vistas/avisos.js)
@@ -382,7 +388,11 @@ export function crearDatos(prefijo = MARCA.prefijo) {
         const favorito = Object.entries(cuantos).sort((a, b) => b[1] - a[1])[0]?.[0] ?? null;
         const ultima = suyos.map((o) => o.creadoEn).sort().at(-1) ?? null;
         const [mes, dia] = c.cumple.split("-").map(Number);
-        return { ...copia(c), compras: suyos.length, favorito, ultima: ultima ? diaLocalDe(ultima) : null, cumpleMes: mes, cumpleDia: dia };
+        return { ...copia(c), compras: suyos.length, favorito, ultima: ultima ? diaLocalDe(ultima) : null, cumpleMes: mes, cumpleDia: dia, puedeSaludar: puedeSaludarYa(c) };
+    }
+
+    function puedeSaludarYa(c) {
+        return !c.saludadaEn || new Date(c.saludadaEn).getFullYear() < new Date().getFullYear();
     }
 
     function clientas(usuario, { esteMes = false } = {}) {
@@ -395,20 +405,25 @@ export function crearDatos(prefijo = MARCA.prefijo) {
     }
 
     /** El saludo de cumpleaños (para copiar), una vez por año. */
-    function saludar(usuario, id) {
+    function mensajeSaludo(usuario, id) {
         exigir(esDuena(usuario), "El saludo lo manda la dueña.");
         const c = buscar(db().clientas, id, "Esa clienta no existe.");
-        const anio = new Date().getFullYear();
-        exigir(!c.saludadaEn || new Date(c.saludadaEn).getFullYear() < anio, `A ${c.nombre} ya la saludaste este año.`);
+        exigir(puedeSaludarYa(c), `A ${c.nombre} ya la saludaste este año.`);
+        return { clienta: armarClienta(c), mensaje: `¡Feliz cumple, ${c.nombre}! Para festejar, en ${NEGOCIO} te espera un regalo en tu próxima compra. ¡Que lo disfrutes!` };
+    }
+
+    function saludar(usuario, id) {
+        const { mensaje } = mensajeSaludo(usuario, id);
+        const c = buscar(db().clientas, id);
         c.saludadaEn = ahora();
         guardado.persistir();
-        return { clienta: armarClienta(c), mensaje: `¡Feliz cumple, ${c.nombre}! Para festejar, en ${NEGOCIO} te espera un regalo en tu próxima compra. ¡Que lo disfrutes!` };
+        return { clienta: armarClienta(c), mensaje };
     }
 
     return {
         guardado,
         listarPerfumes, perfume, recomendar, armarCarrito, mandarPedido, misPedidos,
-        pedidos, preparar, avisarListo, entregar, cancelar,
-        stock, corregirStock, clientas, saludar
+        pedidos, preparar, mensajeListo, avisarListo, entregar, cancelar,
+        stock, corregirStock, clientas, mensajeSaludo, saludar
     };
 }

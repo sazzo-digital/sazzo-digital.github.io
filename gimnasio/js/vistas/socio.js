@@ -5,10 +5,10 @@
 // - "Mi cuota": cuándo vence, el pago de ejemplo (alias para copiar y "Ya transferí") y sus pagos anteriores.
 //   Nada de tarjetas ni cobro de verdad: es una demo.
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=9c146b12b6";
-import { htmlCopiable, activarCopiables } from "../../kit/js/celular.js?v=9c146b12b6";
-import { SOCIO_DE, pesos, fechaCorta, nombreFecha } from "../datos.js?v=9c146b12b6";
-import { guia, activarGuias, pastilla, pastillaCuota, chipsDias, graficoPeso, barrasSemanas } from "./comunes.js?v=9c146b12b6";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=023f950ac9";
+import { htmlCopiable, activarCopiables } from "../../kit/js/celular.js?v=023f950ac9";
+import { SOCIO_DE, pesos, fechaCorta, nombreFecha } from "../datos.js?v=023f950ac9";
+import { guia, activarGuias, pastilla, pastillaCuota, chipsDias, graficoPeso, barrasSemanas } from "./comunes.js?v=023f950ac9";
 
 let fechaClases = null; // el día elegido en "Clases" queda mientras se navega
 
@@ -25,7 +25,7 @@ export function vistaSemana(cont, { usuario, datos, irA }) {
         const llena = c.quedan === 0;
         const mia = c.mia;
         let accion;
-        if (c.empezo) accion = pastilla(mia ? "Fuiste" : "Ya empezó", "suave");
+        if (c.empezo) accion = pastilla(!mia ? "Ya empezó" : mia.estado === "espera" ? "Estabas en espera" : c.vino ? "Fuiste" : "Reservaste", "suave");
         else if (mia?.estado === "reservada") accion = `<button class="boton boton--chico boton--secundario" type="button" data-liberar="${esc(mia.id)}">Liberar</button>`;
         else if (mia?.estado === "espera") accion = `<button class="boton boton--chico boton--secundario" type="button" data-liberar="${esc(mia.id)}">Salir de la espera</button>`;
         else accion = `<button class="boton boton--chico" type="button" data-reservar="${esc(c.claseId)}">${llena ? "Anotarme en espera" : "Reservar"}</button>`;

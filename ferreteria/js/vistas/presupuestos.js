@@ -5,13 +5,13 @@
 // renglón. "Mandar" fija los precios por 7 días y arma el mensaje; "PDF" lo deja para compartir. Cuando lo acepta,
 // "Pasar a venta" descuenta el stock y lo cobra (de contado o a su cuenta corriente).
 // ============================================
-import { esc, aviso, vacio, fechaCorta } from "../../kit/js/ui.js?v=d783fb01c6";
-import { diaLocalDe } from "../../kit/js/fechas.js?v=d783fb01c6";
-import { mostrarMensaje } from "../../kit/js/mensaje.js?v=d783fb01c6";
-import { armarPdf, pdfListo } from "../../kit/js/pdf.js?v=d783fb01c6";
-import { ESTADOS_PRESUPUESTO, TOPES, UNIDADES, VALIDEZ_DIAS, pesos, precioConUnidad, cantidadTexto, entender, diaMes } from "../datos.js?v=d783fb01c6";
-import { NEGOCIO } from "../marca.js?v=d783fb01c6";
-import { guia, activarGuias, pasos, pastillaEstado, tarjetaPresupuesto, cuando, validez, pintarCobro, etiquetaUnidad, htmlFoto } from "./comunes.js?v=d783fb01c6";
+import { esc, aviso, vacio, fechaCorta } from "../../kit/js/ui.js?v=0461255cc4";
+import { diaLocalDe } from "../../kit/js/fechas.js?v=0461255cc4";
+import { mostrarMensaje } from "../../kit/js/mensaje.js?v=0461255cc4";
+import { armarPdf, pdfListo } from "../../kit/js/pdf.js?v=0461255cc4";
+import { ESTADOS_PRESUPUESTO, TOPES, UNIDADES, VALIDEZ_DIAS, pesos, precioConUnidad, cantidadTexto, entender, diaMes } from "../datos.js?v=0461255cc4";
+import { NEGOCIO } from "../marca.js?v=0461255cc4";
+import { guia, activarGuias, pasos, pastillaEstado, tarjetaPresupuesto, cuando, validez, pintarCobro, etiquetaUnidad, htmlFoto } from "./comunes.js?v=0461255cc4";
 
 /** Lo que va en el PDF del presupuesto (lo usan el mostrador y el cliente). */
 export const datosPdf = (pr) => ({
@@ -283,10 +283,14 @@ export function vistaPresupuesto(cont, opciones, recien = null) {
 
     function mandar() {
         try {
-            const { mensaje } = datos.enviarPresupuesto(usuario, pr.id);
-            elegidos.delete(pr.id);
-            otraVez("enviado");
-            mostrarMensaje(`Mandar a ${pr.cliente || "el cliente"}`, mensaje);
+            const { mensaje } = datos.mensajePresupuesto(usuario, pr.id);
+            mostrarMensaje(`Mandar a ${pr.cliente || "el cliente"}`, mensaje, {
+                alConfirmar: () => {
+                    datos.enviarPresupuesto(usuario, pr.id);
+                    elegidos.delete(pr.id);
+                    otraVez("enviado");
+                }
+            });
         } catch (err) {
             aviso(err, "error");
         }

@@ -9,11 +9,11 @@
 // Reglas del kit: exigir() en lo que modifica, topes en todo lo que se carga, nada se borra y se devuelven copias.
 // Si cambia la forma de los datos, subir VERSION_DATOS (se regeneran solos).
 // ============================================
-import { crearGuardado, exigir, copia, nuevoId, buscar } from "../kit/js/guardado.js?v=c96e6a5c93";
-import { enteroHasta, sinPasarse } from "../kit/js/topes.js?v=c96e6a5c93";
-import { esFechaISO } from "../kit/js/fechas.js?v=c96e6a5c93";
-import { aHora, aMinutos, diaSemana, libres, revisarLibre } from "../kit/js/turnos.js?v=c96e6a5c93";
-import { MARCA, NEGOCIO, buscarPersona } from "./marca.js?v=c96e6a5c93";
+import { crearGuardado, exigir, copia, nuevoId, buscar } from "../kit/js/guardado.js?v=382e4254cc";
+import { enteroHasta, sinPasarse } from "../kit/js/topes.js?v=382e4254cc";
+import { esFechaISO } from "../kit/js/fechas.js?v=382e4254cc";
+import { aHora, aMinutos, diaSemana, libres, revisarLibre } from "../kit/js/turnos.js?v=382e4254cc";
+import { MARCA, NEGOCIO, buscarPersona } from "./marca.js?v=382e4254cc";
 
 export const VERSION_DATOS = 2; // 2: las propiedades de fábrica traen fotos y dos, el recorrido 360
 
@@ -556,7 +556,11 @@ export function crearDatos(prefijo = MARCA.prefijo, { reloj = () => new Date() }
         const porHora = new Map();
         orden.forEach((agenteId) => libres({ lugarId: agenteId, fecha, horario, turnos: db().visitas, desdeMinuto: desdeMinuto(fecha) })
             .forEach((inicio) => porHora.set(inicio, [...(porHora.get(inicio) ?? []), agenteId])));
-        return [...porHora].sort((a, b) => a[0] - b[0]).map(([inicio, agentes]) => ({ inicio, agentes }));
+        return [...porHora].filter(([inicio]) => !visitaEnLaPropiedad(propiedadId, fecha, inicio)).sort((a, b) => a[0] - b[0]).map(([inicio, agentes]) => ({ inicio, agentes }));
+    }
+
+    function visitaEnLaPropiedad(propiedadId, fecha, inicio) {
+        return db().visitas.find((v) => !v.anulado && v.propiedadId === propiedadId && v.fecha === fecha && inicio < v.inicio + v.duracion && v.inicio < inicio + DURACION_VISITA) ?? null;
     }
 
     function crearVisita({ propiedadId, consultaId, quien, fecha, inicio, agenteId = null, estado, visto }) {
@@ -571,6 +575,7 @@ export function crearDatos(prefijo = MARCA.prefijo, { reloj = () => new Date() }
         exigir(agentes.length, "Ese horario ya no está libre. Elegí otro.");
         exigir(AGENTES.includes(agentes[0]), "Ese agente no existe.");
         revisarLibre({ lugarId: agentes[0], fecha, inicio, horario, turnos: db().visitas, desdeMinuto: desdeMinuto(fecha) });
+        exigir(!visitaEnLaPropiedad(propiedadId, fecha, inicio), "A esa hora ya hay otra visita en esa propiedad. Elegí otro horario.");
         const v = { id: nuevoId("v"), propiedadId, consultaId, quien, lugarId: agentes[0], agenteId: agentes[0], fecha, inicio, duracion: DURACION_VISITA, estado, anulado: false, visto, creada: ahoraISO() };
         db().visitas.push(v);
         return v;

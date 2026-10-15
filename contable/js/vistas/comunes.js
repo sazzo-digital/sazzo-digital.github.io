@@ -3,9 +3,9 @@
 // tipo de comprobante, tablas con scroll propio (la página nunca se corre de costado) y el "Pidiendo CAE a ARCA…".
 // Todo lo que viene de los datos pasa por esc().
 // ============================================
-import { esc, fechaCorta } from "../../kit/js/ui.js?v=3ddc591303";
-import { ultimosPeriodos, nombrePeriodo, periodoActual, COMPROBANTES, CONDICIONES, formatoCuit } from "../reglas.js?v=3ddc591303";
-import { buscarPersona } from "../marca.js?v=3ddc591303";
+import { esc, fechaCorta } from "../../kit/js/ui.js?v=a996ce2352";
+import { ultimosPeriodos, nombrePeriodo, periodoActual, COMPROBANTES, CONDICIONES, formatoCuit } from "../reglas.js?v=a996ce2352";
+import { buscarPersona } from "../marca.js?v=a996ce2352";
 
 export { fechaCorta };
 

@@ -2100,6 +2100,22 @@ body.guardando .boton:not(.boton--secundario) {
   gap: 0.5rem;
   flex-wrap: wrap;
 }
+.mensaje__confirmar {
+  display: grid;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  padding-top: 0.9rem;
+  border-top: 1px solid var(--borde);
+}
+.mensaje__confirmar .boton {
+  min-height: 3rem;
+  font-size: 1.05rem;
+}
+.mensaje__pregunta {
+  margin: 0 0 0.2rem;
+  font-weight: 700;
+  text-align: center;
+}
 
 .camara {
   position: fixed;

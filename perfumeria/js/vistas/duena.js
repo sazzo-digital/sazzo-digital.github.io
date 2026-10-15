@@ -3,9 +3,9 @@
 // entregado), el stock (frascos y botellas madre en ml, lo que hay que pedir primero) y las clientas (lo que compra
 // cada una y "Cumplen este mes" con el saludo para copiar).
 // ============================================
-import { esc, aviso, vacio, fechaCorta, fechaHora } from "../../kit/js/ui.js?v=c202475ee6";
-import { TOPES, MADRE_POCO_ML, pesos } from "../datos.js?v=c202475ee6";
-import { frasco, pastillaPedido, mostrarMensaje } from "./comunes.js?v=c202475ee6";
+import { esc, aviso, vacio, fechaCorta, fechaHora } from "../../kit/js/ui.js?v=3623a70e16";
+import { TOPES, MADRE_POCO_ML, pesos } from "../datos.js?v=3623a70e16";
+import { frasco, pastillaPedido, mostrarMensaje } from "./comunes.js?v=3623a70e16";
 
 const MESES = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
 
@@ -52,8 +52,14 @@ export function vistaPedidos(cont, { usuario, datos }) {
             aviso(`Pedido de ${o.clienta} preparado: se descontó el stock`);
         },
         avisar: (id) => {
-            const r = datos.avisarListo(usuario, id);
-            mostrarMensaje("Avisar que está listo", r.mensaje);
+            const r = datos.mensajeListo(usuario, id);
+            mostrarMensaje("Avisar que está listo", r.mensaje, {
+                alConfirmar: () => {
+                    datos.avisarListo(usuario, id);
+                    aviso("Anotado: le avisaste");
+                    otraVez();
+                }
+            });
         },
         entregar: (id) => {
             datos.entregar(usuario, id);
@@ -143,7 +149,7 @@ export function vistaClientas(cont, { usuario, datos }) {
                 ${soloCumple ? `
                 <div class="tarjeta__pie">
                     <small>${c.saludadaEn ? `La saludaste el ${esc(fechaCorta(c.saludadaEn.slice(0, 10)))}` : "Todavía no la saludaste"}</small>
-                    <button class="boton boton--chico" type="button" data-saludar="${esc(c.id)}"${c.saludadaEn ? " disabled" : ""}><i class="ti ti-gift"></i> Saludarla</button>
+                    <button class="boton boton--chico" type="button" data-saludar="${esc(c.id)}"${c.puedeSaludar ? "" : " disabled"}><i class="ti ti-gift"></i> Saludarla</button>
                 </div>` : ""}
             </li>`).join("")}</ul>` : vacio("Nadie cumple este mes.", "ti-cake")}`;
     cont.querySelectorAll("[data-cumple]").forEach((b) => b.addEventListener("click", () => {
@@ -152,9 +158,14 @@ export function vistaClientas(cont, { usuario, datos }) {
     }));
     cont.querySelectorAll("[data-saludar]").forEach((b) => b.addEventListener("click", () => {
         try {
-            const r = datos.saludar(usuario, b.dataset.saludar);
-            mostrarMensaje(`Saludar a ${r.clienta.nombre}`, r.mensaje);
-            vistaClientas(cont, { usuario, datos });
+            const r = datos.mensajeSaludo(usuario, b.dataset.saludar);
+            mostrarMensaje(`Saludar a ${r.clienta.nombre}`, r.mensaje, {
+                alConfirmar: () => {
+                    datos.saludar(usuario, b.dataset.saludar);
+                    aviso("Anotado: la saludaste");
+                    vistaClientas(cont, { usuario, datos });
+                }
+            });
         } catch (err) {
             aviso(err, "error");
         }

@@ -5,15 +5,16 @@
 //   mostrarMensaje("Avisar que está listo", "Hola Silvia! Tu auto ya está listo…");
 // Todo pasa por esc(). Si el navegador no deja usar el portapapeles, deja el texto seleccionado para copiarlo a mano.
 // ============================================
-import { esc, aviso } from "./ui.js?v=9c146b12b6";
-import { puedeCompartir, compartir } from "./celular.js?v=9c146b12b6";
+import { esc, aviso } from "./ui.js?v=023f950ac9";
+import { puedeCompartir, compartir } from "./celular.js?v=023f950ac9";
 
 export const NOTA_MENSAJE = "En la versión real, este botón abre WhatsApp con el mensaje escrito. En la demo, lo copiás.";
 export const NOTA_MENSAJE_COMPARTIR = "En la versión real, el mensaje le llega al cliente por WhatsApp. En la demo, lo compartís o lo copiás vos.";
 export const TOPE_MENSAJE = 2000; // letras
 
-export function mostrarMensaje(titulo, mensaje, { nota } = {}) {
+export function mostrarMensaje(titulo, mensaje, { nota, alConfirmar, pregunta = "¿Ya se lo mandaste?" } = {}) {
     const conCompartir = puedeCompartir();
+    const conConfirmar = typeof alConfirmar === "function";
     nota ??= conCompartir ? NOTA_MENSAJE_COMPARTIR : NOTA_MENSAJE;
     const texto = String(mensaje ?? "");
     if (!texto.trim()) throw new Error("Falta el mensaje.");
@@ -27,23 +28,38 @@ export function mostrarMensaje(titulo, mensaje, { nota } = {}) {
         <div class="mensaje__acciones">
             ${conCompartir ? `<button class="boton" type="button" data-compartir><i class="ti ti-share"></i> Compartir</button>` : ""}
             <button class="boton${conCompartir ? " boton--secundario" : ""}" type="button" data-copiar><i class="ti ti-copy"></i> Copiar mensaje</button>
-            <button class="boton boton--secundario" type="button" data-cerrar>Cerrar</button>
-        </div>`;
+            ${conConfirmar ? "" : `<button class="boton boton--secundario" type="button" data-cerrar>Cerrar</button>`}
+        </div>
+        ${conConfirmar ? `
+        <div class="mensaje__confirmar">
+            <p class="mensaje__pregunta">${esc(pregunta)}</p>
+            <button class="boton boton--ancho" type="button" data-si><i class="ti ti-check"></i> Sí, lo mandé</button>
+            <button class="boton boton--secundario boton--ancho" type="button" data-no>No</button>
+        </div>` : ""}`;
     document.body.append(ventana);
     const cerrar = () => {
         if (ventana.open) ventana.close();
         ventana.remove();
     };
-    ventana.querySelector("[data-cerrar]").addEventListener("click", cerrar);
+    ventana.querySelector("[data-cerrar]")?.addEventListener("click", cerrar);
+    ventana.querySelector("[data-no]")?.addEventListener("click", cerrar);
+    ventana.querySelector("[data-si]")?.addEventListener("click", () => {
+        try {
+            alConfirmar();
+            cerrar();
+        } catch (error) {
+            aviso(error, "error");
+        }
+    });
     ventana.addEventListener("cancel", cerrar);
     ventana.querySelector("[data-compartir]")?.addEventListener("click", async () => {
-        if (await compartir({ titulo, texto })) cerrar();
+        if ((await compartir({ titulo, texto })) && !conConfirmar) cerrar();
     });
     ventana.querySelector("[data-copiar]").addEventListener("click", async () => {
         try {
             await navigator.clipboard.writeText(texto);
             aviso("Mensaje copiado");
-            cerrar();
+            if (!conConfirmar) cerrar();
         } catch {
             const rango = document.createRange();
             rango.selectNodeContents(ventana.querySelector(".mensaje__texto"));

@@ -16,7 +16,7 @@
 // de cero" o datos renovados) se borra (guardado.js → olvidarAvisos). Funciona en el mismo aparato o en dos pestañas;
 // en dos celulares distintos no (los datos viven en cada navegador).
 // ============================================
-import { esc } from "./ui.js?v=9aeacc21d1";
+import { esc } from "./ui.js?v=540eb283bb";
 
 const TOPE_VISTOS = 300; // por persona (los más viejos se van)
 const TOPE_BASE = 2000;

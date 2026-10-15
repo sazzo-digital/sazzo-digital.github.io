@@ -15,12 +15,12 @@
 // Reglas del kit: exigir() en lo que modifica, topes en todo lo que se carga, nada se borra y se devuelven copias.
 // Las ventas guardan el precio y el costo del momento. Si cambia la forma de los datos, subir VERSION_DATOS.
 // ============================================
-import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=d783fb01c6";
-import { enteroHasta, sinPasarse } from "../kit/js/topes.js?v=d783fb01c6";
-import { diaLocalDe, fechaLocalISO } from "../kit/js/fechas.js?v=d783fb01c6";
-import { columnasDe, numeroDe, textoParaComparar } from "../kit/js/tablas.js?v=d783fb01c6";
-import { filtrarPorTexto, comoSuena } from "../kit/js/buscar.js?v=d783fb01c6";
-import { MARCA, NEGOCIO, buscarPersona } from "./marca.js?v=d783fb01c6";
+import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=0461255cc4";
+import { enteroHasta, sinPasarse } from "../kit/js/topes.js?v=0461255cc4";
+import { diaLocalDe, fechaLocalISO } from "../kit/js/fechas.js?v=0461255cc4";
+import { columnasDe, numeroDe, textoParaComparar } from "../kit/js/tablas.js?v=0461255cc4";
+import { filtrarPorTexto, comoSuena } from "../kit/js/buscar.js?v=0461255cc4";
+import { MARCA, NEGOCIO, buscarPersona } from "./marca.js?v=0461255cc4";
 
 export const VERSION_DATOS = 1;
 
@@ -1202,28 +1202,38 @@ export function crearDatos(prefijo = MARCA.prefijo) {
     }
 
     /** Mandarlo: fija los precios de hoy por 7 días y arma el mensaje (en la demo se copia o se comparte). */
-    function enviarPresupuesto(usuario, presupuestoId) {
+    function prepararEnvio(usuario, presupuestoId) {
         exigir(esDelLocal(usuario), "El presupuesto lo manda la ferretería.");
         const pr = buscar(db().presupuestos, presupuestoId, "Ese presupuesto no existe.");
         exigir(pr.estado === "pedido" || pr.estado === "enviado", pr.estado === "aceptado" ? "Ya lo aceptó: pasalo a venta." : "Ese presupuesto ya no se puede mandar.");
         exigir(pr.items.every((i) => i.productoId), "Hay renglones sin elegir el artículo: elegilo o sacá el renglón.");
-        pr.items.forEach((i) => {
+        const items = pr.items.map((i) => {
             const p = buscar(db().productos, i.productoId);
-            i.precio = precioPara(p, i.cantidad);
-            i.costo = p.costo;
+            return { ...i, precio: precioPara(p, i.cantidad), costo: p.costo };
         });
         const vence = new Date();
         vence.setDate(vence.getDate() + VALIDEZ_DIAS);
         vence.setHours(20, 0, 0, 0);
-        Object.assign(pr, { estado: "enviado", enviado: ahora(), vence: vence.toISOString() });
-        guardado.persistir();
-        const a = armarPresupuesto(pr);
+        const cambios = { items, estado: "enviado", enviado: ahora(), vence: vence.toISOString() };
+        const a = armarPresupuesto({ ...pr, ...cambios });
         const nombre = a.cliente ? ` ${a.cliente.split(" ")[0]}` : "";
-        const hasta = diaMes(vence.toISOString());
+        const hasta = diaMes(cambios.vence);
         const mensaje = `Hola${nombre}! Te paso el presupuesto N° ${a.numero} de ${NEGOCIO}${a.obra ? ` (${a.obra})` : ""}: `
             + `${a.items.length} ${a.items.length === 1 ? "artículo" : "artículos"}, total ${pesos(a.total)}. Los precios valen hasta el ${hasta}. `
             + (a.esDeMarcos ? "Si te sirve, aceptalo desde tu celu y te lo preparamos." : "Si te sirve, respondé este mensaje y te lo preparamos.");
-        return { presupuesto: a, mensaje };
+        return { pr, cambios, presupuesto: a, mensaje };
+    }
+
+    function mensajePresupuesto(usuario, presupuestoId) {
+        const { presupuesto, mensaje } = prepararEnvio(usuario, presupuestoId);
+        return { presupuesto, mensaje };
+    }
+
+    function enviarPresupuesto(usuario, presupuestoId) {
+        const { pr, cambios, mensaje } = prepararEnvio(usuario, presupuestoId);
+        Object.assign(pr, cambios);
+        guardado.persistir();
+        return { presupuesto: armarPresupuesto(pr), mensaje };
     }
 
     /** El cliente lo acepta (desde su celu) o la ferretería anota que lo aceptó por teléfono. */
@@ -1369,7 +1379,7 @@ export function crearDatos(prefijo = MARCA.prefijo) {
         listarCuentas, cuenta, miCuenta, nuevaCuenta, cambiarTope, cobrarCuenta, mensajeCuenta, revisarTopeCuenta,
         sugerencias, verRenglones, nuevoPresupuesto, presupuesto, listarPresupuestos, misPresupuestos,
         novedades, marcarVisto,
-        volverAArmar, elegirArticulo, cambiarCantidad, quitarRenglon, sumarArticulo, enviarPresupuesto, aceptarPresupuesto, venderPresupuesto, anularPresupuesto,
+        volverAArmar, elegirArticulo, cambiarCantidad, quitarRenglon, sumarArticulo, mensajePresupuesto, enviarPresupuesto, aceptarPresupuesto, venderPresupuesto, anularPresupuesto,
         armarTicket, vender,
         caja, semana, cerrarCaja
     };

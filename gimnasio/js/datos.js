@@ -9,13 +9,13 @@
 // se devuelven copias. Sin teléfonos, mails ni documentos: nada de datos personales. Pagos de ejemplo, sin tarjetas.
 // Si cambia la forma de los datos, subir VERSION_DATOS (se regeneran solos).
 // ============================================
-import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=9c146b12b6";
-import { filtrarPorTexto } from "../kit/js/buscar.js?v=9c146b12b6";
-import { sinPasarse } from "../kit/js/topes.js?v=9c146b12b6";
-import { fechaLocalISO } from "../kit/js/fechas.js?v=9c146b12b6";
-import { aMinutos, aHora, diaSemana } from "../kit/js/turnos.js?v=9c146b12b6";
-import { esFirma } from "../kit/js/firma.js?v=9c146b12b6";
-import { MARCA, NEGOCIO } from "./marca.js?v=9c146b12b6";
+import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=023f950ac9";
+import { filtrarPorTexto } from "../kit/js/buscar.js?v=023f950ac9";
+import { sinPasarse } from "../kit/js/topes.js?v=023f950ac9";
+import { fechaLocalISO } from "../kit/js/fechas.js?v=023f950ac9";
+import { aMinutos, aHora, diaSemana } from "../kit/js/turnos.js?v=023f950ac9";
+import { esFirma } from "../kit/js/firma.js?v=023f950ac9";
+import { MARCA, NEGOCIO } from "./marca.js?v=023f950ac9";
 
 export const VERSION_DATOS = 1;
 
@@ -794,7 +794,8 @@ export function crearDatos(prefijo = MARCA.prefijo, { reloj = () => new Date() }
             return {
                 claseId: c.id, nombre: c.nombre, hora: c.hora, hasta: aHora(aMinutos(c.hora) + c.duracion), profe: profe(c.profeId).nombre,
                 cupo: c.cupo, anotados, quedan: Math.max(0, c.cupo - anotados), espera: de.filter((r) => r.estado === "espera").length,
-                empezo: empezo(c.id, fecha), mia: mia ? armarReserva(mia) : null
+                empezo: empezo(c.id, fecha), mia: mia ? armarReserva(mia) : null,
+                vino: mia?.estado === "reservada" && db().asistencias.some((a) => a.socioId === s.id && a.fecha === fecha)
             };
         });
     }

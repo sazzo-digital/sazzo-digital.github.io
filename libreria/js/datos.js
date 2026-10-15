@@ -10,12 +10,12 @@
 // Las ventas guardan el precio y el costo del momento: si después sube un proveedor, lo vendido no cambia.
 // Si cambia la forma de los datos, subir VERSION_DATOS (se regeneran solos).
 // ============================================
-import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=114958267d";
-import { enteroHasta, sinPasarse } from "../kit/js/topes.js?v=114958267d";
-import { diaLocalDe, fechaLocalISO } from "../kit/js/fechas.js?v=114958267d";
-import { columnasDe, numeroDe, textoParaComparar } from "../kit/js/tablas.js?v=114958267d";
-import { filtrarPorTexto, comoSuena } from "../kit/js/buscar.js?v=114958267d";
-import { MARCA, NEGOCIO, buscarPersona } from "./marca.js?v=114958267d";
+import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=52dd7a0994";
+import { enteroHasta, sinPasarse } from "../kit/js/topes.js?v=52dd7a0994";
+import { diaLocalDe, fechaLocalISO } from "../kit/js/fechas.js?v=52dd7a0994";
+import { columnasDe, numeroDe, textoParaComparar } from "../kit/js/tablas.js?v=52dd7a0994";
+import { filtrarPorTexto, comoSuena } from "../kit/js/buscar.js?v=52dd7a0994";
+import { MARCA, NEGOCIO, buscarPersona } from "./marca.js?v=52dd7a0994";
 
 export const VERSION_DATOS = 2; // 2: los libros con ISBN
 
@@ -825,11 +825,17 @@ export function crearDatos(prefijo = MARCA.prefijo) {
 
     /** El mensaje de "ya está separada" (en la demo se copia) y queda anotado que se avisó. */
     function avisarPedido(usuario, pedidoId) {
+        const { mensaje } = mensajeAviso(usuario, pedidoId);
+        const pe = buscar(db().pedidos, pedidoId);
+        pe.avisado = ahora();
+        guardado.persistir();
+        return { pedido: armarPedido(pe), mensaje };
+    }
+
+    function mensajeAviso(usuario, pedidoId) {
         exigir(esDelLocal(usuario), "Avisa la librería.");
         const pe = buscar(db().pedidos, pedidoId, "Ese pedido no existe.");
         exigir(pe.estado === "separada", "Se avisa cuando la lista está separada.");
-        pe.avisado = ahora();
-        guardado.persistir();
         const a = armarPedido(pe);
         const faltan = a.items.filter((i) => i.falta);
         const mensaje = `Hola${a.cliente ? ` ${a.cliente}` : ""}! Ya separamos la lista de ${a.grado} (${a.colegio}) para ${a.para} en ${NEGOCIO}. `
@@ -980,7 +986,7 @@ export function crearDatos(prefijo = MARCA.prefijo) {
         verAumento, aplicarAumento, verMargen, aplicarMargen, deshacerCambio, ultimoCambio,
         verLista, aplicarLista, listaDeEjemplo,
         pedidosSugeridos, mensajePedido, recibirPedido,
-        listas, nuevoPedido, pedido, listarPedidos, misPedidos, cambiarArticulo, separarPedido, avisarPedido, entregarPedido, anularPedido,
+        listas, nuevoPedido, pedido, listarPedidos, misPedidos, cambiarArticulo, separarPedido, mensajeAviso, avisarPedido, entregarPedido, anularPedido,
         armarTicket, vender,
         caja, semana, cerrarCaja
     };

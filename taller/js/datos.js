@@ -7,11 +7,11 @@
 // Reglas del kit: exigir() en lo que modifica, topes en todo lo que se carga y se devuelven copias.
 // Si cambia la forma de los datos, subir VERSION_DATOS (se regeneran solos).
 // ============================================
-import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=9aeacc21d1";
-import { filtrarPorTexto } from "../kit/js/buscar.js?v=9aeacc21d1";
-import { enteroHasta, sinPasarse } from "../kit/js/topes.js?v=9aeacc21d1";
-import { fechaLocalISO, esFechaISO, diaLocalDe } from "../kit/js/fechas.js?v=9aeacc21d1";
-import { MARCA, NEGOCIO } from "./marca.js?v=9aeacc21d1";
+import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=540eb283bb";
+import { filtrarPorTexto } from "../kit/js/buscar.js?v=540eb283bb";
+import { enteroHasta, sinPasarse } from "../kit/js/topes.js?v=540eb283bb";
+import { fechaLocalISO, esFechaISO, diaLocalDe } from "../kit/js/fechas.js?v=540eb283bb";
+import { MARCA, NEGOCIO } from "./marca.js?v=540eb283bb";
 
 export const VERSION_DATOS = 3;
 
@@ -377,21 +377,27 @@ export function crearDatos(prefijo = MARCA.prefijo) {
     const llegoRepuesto = (u, id) => paso(u, id, { desde: "esperando", hacia: "reparacion" });
     const terminado = (u, id) => paso(u, id, { desde: "reparacion", hacia: "listo" });
 
-    function avisarListo(usuario, id) {
+    function mensajeListo(usuario, id) {
         exigir(esDueno(usuario), "Al cliente le avisa el dueño.");
         const o = buscar(db().ordenes, id, "Esa orden no existe.");
         exigir(o.estado === "listo", "Todavía no está listo.");
         const a = autoDe(o.autoId);
         const c = cliente(a.clienteId);
+        return {
+            orden: armar(o, usuario),
+            mensaje: `Hola ${c.nombre.split(" ")[0]}! Tu ${a.modelo} ${formatoPatente(a.patente)} ya está listo para retirar. Te esperamos de 8 a 18 en ${NEGOCIO}. Total: ${pesos(totalDe(o.renglones))}.`
+        };
+    }
+
+    function avisarListo(usuario, id) {
+        const { mensaje } = mensajeListo(usuario, id);
+        const o = buscar(db().ordenes, id);
         if (!o.avisado) {
             o.avisado = true;
             o.historial.push({ estado: "avisado", en: ahora(), por: usuario.nombre });
             guardado.persistir();
         }
-        return {
-            orden: armar(o, usuario),
-            mensaje: `Hola ${c.nombre.split(" ")[0]}! Tu ${a.modelo} ${formatoPatente(a.patente)} ya está listo para retirar. Te esperamos de 8 a 18 en ${NEGOCIO}. Total: ${pesos(totalDe(o.renglones))}.`
-        };
+        return { orden: armar(o, usuario), mensaje };
     }
 
     /** Entregado: queda en el historial del auto (y si llevaba service, cuenta como el último service). */
@@ -422,8 +428,13 @@ export function crearDatos(prefijo = MARCA.prefijo) {
         return {
             ...copia(a), patenteTexto: formatoPatente(a.patente), cliente: copia(c),
             visitas: visitas.length, abierta: visitas.find((o) => ABIERTOS.includes(o.estado))?.id ?? null,
-            ultimaVisita: visitas[0] ? diaLocalDe(visitas[0].recibidaEn) : null
+            ultimaVisita: visitas[0] ? diaLocalDe(visitas[0].recibidaEn) : null,
+            puedeLlamar: puedeLlamarYa(a)
         };
+    }
+
+    function puedeLlamarYa(a) {
+        return !a.llamadoEn || (Date.now() - new Date(a.llamadoEn)) / 864e5 >= RELLAMAR_DIAS;
     }
 
     /** Buscar por patente (con o sin espacios) o por nombre del cliente. */
@@ -456,12 +467,10 @@ export function crearDatos(prefijo = MARCA.prefijo) {
         }).filter(Boolean).sort((a, b) => b.meses - a.meses);
     }
 
-    function llamar(usuario, autoId) {
+    function mensajeLlamar(usuario, autoId) {
         exigir(esDueno(usuario), "A los clientes los llama el dueño.");
         const a = buscar(db().autos, autoId, "Ese auto no existe.");
-        if (a.llamadoEn) exigir((Date.now() - new Date(a.llamadoEn)) / 864e5 >= RELLAMAR_DIAS, "A ese cliente ya le escribiste hace poco: esperá unos días.");
-        a.llamadoEn = ahora();
-        guardado.persistir();
+        exigir(puedeLlamarYa(a), "A ese cliente ya le escribiste hace poco: esperá unos días.");
         const c = cliente(a.clienteId);
         const meses = mesesDesde(a.ultimoService.fecha);
         return {
@@ -470,11 +479,19 @@ export function crearDatos(prefijo = MARCA.prefijo) {
         };
     }
 
+    function llamar(usuario, autoId) {
+        const { mensaje } = mensajeLlamar(usuario, autoId);
+        const a = buscar(db().autos, autoId);
+        a.llamadoEn = ahora();
+        guardado.persistir();
+        return { auto: armarAuto(a), mensaje };
+    }
+
     return {
         guardado,
         buscarPatente, entroUnAuto, pizarra, orden, anotar, agregarRenglon, quitarRenglon, cambiarPrecio,
-        mandarPresupuesto, aprobar, faltaRepuesto, llegoRepuesto, terminado, avisarListo, entregar, anular,
-        listarAutos, auto, paraLlamar, llamar,
+        mandarPresupuesto, aprobar, faltaRepuesto, llegoRepuesto, terminado, mensajeListo, avisarListo, entregar, anular,
+        listarAutos, auto, paraLlamar, mensajeLlamar, llamar,
         mecanicoDe
     };
 }

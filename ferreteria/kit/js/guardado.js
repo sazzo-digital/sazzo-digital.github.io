@@ -21,8 +21,8 @@
 //   minutos"). Mientras la usa (cada cambio que guarda), no se renuevan. Se avisa con un cartelito.
 // ============================================
 
-import { aviso } from "./ui.js?v=d783fb01c6";
-import { olvidarAvisos } from "./avisos.js?v=d783fb01c6";
+import { aviso } from "./ui.js?v=0461255cc4";
+import { olvidarAvisos } from "./avisos.js?v=0461255cc4";
 
 /** Nombres compartidos entre el catálogo y todas las demos (no pueden ser el prefijo de una demo). */
 export const COMPARTIDAS = ["sazzo-origen", "sazzo-equipo", "sazzo-tema", "sazzo-yo"];
@@ -33,7 +33,9 @@ export function hoyLocal(fecha = new Date()) {
     return `${fecha.getFullYear()}-${dos(fecha.getMonth() + 1)}-${dos(fecha.getDate())}`;
 }
 
-export const MENSAJE_RENOVADOS = "Los datos de ejemplo se renovaron para que estén al día.";
+export const EVENTO_REINICIO = "sazzo-reinicio";
+
+export const MENSAJE_RENOVADOS ="Los datos de ejemplo se renovaron para que estén al día.";
 export const SIN_USO_RENUEVA = 3 * 60 * 60 * 1000; // 3 horas sin guardar nada: al volver, datos nuevos
 
 const claveSesion = (prefijo) => `${prefijo}-sesion`;
@@ -113,6 +115,7 @@ export function crearGuardado({ prefijo, version, semilla } = {}) {
         } catch {
             // nada que borrar
         }
+        dispatchEvent(new CustomEvent(EVENTO_REINICIO, { detail: { prefijo } }));
     }
 
     /** Quién está adentro (el id de la persona elegida en "entrar como…"), o null. */

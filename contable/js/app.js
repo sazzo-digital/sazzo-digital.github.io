@@ -3,18 +3,18 @@
 // El menú de abajo tiene lugar para 5: cada persona ve las 4 que más usa + "Más" (todas). Las pantallas que se
 // apagan en "Tu empresa" desaparecen del menú. irA() cambia de persona sin pasar por "Probala como…" (recorrido).
 // ============================================
-import { $, vacio, conFundido } from "../kit/js/ui.js?v=3ddc591303";
-import { iniciarDemo } from "../kit/js/arranque.js?v=3ddc591303";
-import { vistaIngreso } from "../kit/js/ingreso.js?v=3ddc591303";
-import { pintarMarco } from "../kit/js/marco.js?v=3ddc591303";
-import { mostrarRuta } from "../kit/js/rutas.js?v=3ddc591303";
-import { vistaAcerca } from "../kit/js/acerca.js?v=3ddc591303";
-import { MARCA, PERSONAS, TAMBIEN, buscarPersona } from "./marca.js?v=3ddc591303";
-import { aparte } from "../kit/js/aparte.js?v=3ddc591303";
-import { leerSesionGuardada } from "../kit/js/guardado.js?v=3ddc591303";
+import { $, vacio, conFundido } from "../kit/js/ui.js?v=a996ce2352";
+import { iniciarDemo } from "../kit/js/arranque.js?v=a996ce2352";
+import { vistaIngreso } from "../kit/js/ingreso.js?v=a996ce2352";
+import { pintarMarco } from "../kit/js/marco.js?v=a996ce2352";
+import { mostrarRuta } from "../kit/js/rutas.js?v=a996ce2352";
+import { vistaAcerca } from "../kit/js/acerca.js?v=a996ce2352";
+import { MARCA, PERSONAS, TAMBIEN, buscarPersona } from "./marca.js?v=a996ce2352";
+import { aparte } from "../kit/js/aparte.js?v=a996ce2352";
+import { leerSesionGuardada } from "../kit/js/guardado.js?v=a996ce2352";
 
 // Los datos de ejemplo y las pantallas se bajan aparte (al terminar de cargar): "Probala como…" aparece sin esperarlos
-const pantallas = aparte(() => import("./pantallas.js?v=3ddc591303"));
+const pantallas = aparte(() => import("./pantallas.js?v=a996ce2352"));
 const { vistaInicio, vistaFacturar, vistaNuevaFactura, vistaComprobante, vistaCompras, vistaNuevaCompra, vistaIva, vistaCuentas, vistaFicha, vistaContabilidad, vistaEmpresa, vistaMas, avisosDe } = pantallas.funciones;
 
 iniciarDemo(MARCA);
@@ -129,8 +129,11 @@ window.addEventListener("hashchange", () => {
 // Si otra pestaña cambió los datos (ej: Silvina factura en una pestaña y Patricia mira el IVA en otra)
 window.addEventListener("storage", (e) => {
     if (datos && e.key === datos.guardado.claves.datos && contenido) {
+        const modulos = () => JSON.stringify(datos.leerEmpresa().modulos ?? {});
+        const antes = modulos();
         datos.guardado.olvidarCache();
-        mostrar();
+        if (modulos() !== antes) entrar(usuario);
+        else mostrar();
     }
 });
 

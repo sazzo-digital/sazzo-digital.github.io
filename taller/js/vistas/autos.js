@@ -2,9 +2,9 @@
 // Autos y clientes: buscar por patente o por nombre; cada auto con todas sus visitas. Y "Para llamar": los que tienen
 // el service vencido (más de 6 meses o 10.000 km) y no están en el taller, con el mensaje para recordárselo.
 // ============================================
-import { esc, aviso, vacio, fechaCorta } from "../../kit/js/ui.js?v=9aeacc21d1";
-import { pesos } from "../datos.js?v=9aeacc21d1";
-import { chapa, pastillaEstado, mostrarMensaje } from "./comunes.js?v=9aeacc21d1";
+import { esc, aviso, vacio, fechaCorta } from "../../kit/js/ui.js?v=540eb283bb";
+import { pesos } from "../datos.js?v=540eb283bb";
+import { chapa, pastillaEstado, mostrarMensaje } from "./comunes.js?v=540eb283bb";
 
 let vista = "todos"; // "todos" o "llamar"
 let texto = "";
@@ -28,7 +28,7 @@ export function vistaAutos(cont, { usuario, datos }) {
                 <p class="tarjeta__quien">${esc(a.cliente.nombre)} · ${esc(a.motivo)}</p>
                 <div class="tarjeta__pie">
                     <small>${a.llamadoEn ? `Le escribiste el ${esc(fechaCorta(a.llamadoEn.slice(0, 10)))}` : "Todavía no le escribiste"}</small>
-                    <button class="boton boton--chico" type="button" data-llamar="${esc(a.id)}"${a.llamadoEn ? " disabled" : ""}><i class="ti ti-message-circle"></i> Escribirle</button>
+                    <button class="boton boton--chico" type="button" data-llamar="${esc(a.id)}"${a.puedeLlamar ? "" : " disabled"}><i class="ti ti-message-circle"></i> Escribirle</button>
                 </div>
             </li>`).join("") : `<li>${vacio("Nadie tiene el service vencido.", "ti-circle-check")}</li>`}</ul>` : `
         <label class="buscador">
@@ -60,9 +60,13 @@ export function vistaAutos(cont, { usuario, datos }) {
     }));
     cont.querySelectorAll("[data-llamar]").forEach((b) => b.addEventListener("click", () => {
         try {
-            const r = datos.llamar(usuario, b.dataset.llamar);
-            mostrarMensaje(`Escribirle a ${r.auto.cliente.nombre}`, r.mensaje);
-            vistaAutos(cont, { usuario, datos });
+            const r = datos.mensajeLlamar(usuario, b.dataset.llamar);
+            mostrarMensaje(`Escribirle a ${r.auto.cliente.nombre}`, r.mensaje, {
+                alConfirmar: () => {
+                    datos.llamar(usuario, b.dataset.llamar);
+                    vistaAutos(cont, { usuario, datos });
+                }
+            });
         } catch (err) {
             aviso(err, "error");
         }

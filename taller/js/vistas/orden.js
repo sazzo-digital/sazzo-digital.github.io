@@ -4,14 +4,14 @@
 // El mecánico carga lo que encontró y los repuestos, sin ver precios. Y el presupuesto (dueño): para imprimir, con la
 // firma del cliente en pantalla y en PDF para mandarlo por WhatsApp.
 // ============================================
-import { esc, aviso, fechaCorta, fechaHora } from "../../kit/js/ui.js?v=9aeacc21d1";
-import { fechaLocalISO } from "../../kit/js/fechas.js?v=9aeacc21d1";
-import { pedirFirma, esFirma } from "../../kit/js/firma.js?v=9aeacc21d1";
-import { htmlBotonDictar, activarDictado } from "../../kit/js/dictado.js?v=9aeacc21d1";
-import { armarPdf, pdfListo } from "../../kit/js/pdf.js?v=9aeacc21d1";
-import { ESTADOS, REPUESTOS, MANO_DE_OBRA, TOPES, pesos } from "../datos.js?v=9aeacc21d1";
-import { NEGOCIO } from "../marca.js?v=9aeacc21d1";
-import { guia, activarGuias, chapa, pastillaEstado, textoPromesa, mostrarMensaje } from "./comunes.js?v=9aeacc21d1";
+import { esc, aviso, fechaCorta, fechaHora } from "../../kit/js/ui.js?v=540eb283bb";
+import { fechaLocalISO } from "../../kit/js/fechas.js?v=540eb283bb";
+import { pedirFirma, esFirma } from "../../kit/js/firma.js?v=540eb283bb";
+import { htmlBotonDictar, activarDictado } from "../../kit/js/dictado.js?v=540eb283bb";
+import { armarPdf, pdfListo } from "../../kit/js/pdf.js?v=540eb283bb";
+import { ESTADOS, REPUESTOS, MANO_DE_OBRA, TOPES, pesos } from "../datos.js?v=540eb283bb";
+import { NEGOCIO } from "../marca.js?v=540eb283bb";
+import { guia, activarGuias, chapa, pastillaEstado, textoPromesa, mostrarMensaje } from "./comunes.js?v=540eb283bb";
 
 export function vistaOrden(cont, { usuario, datos, irA, params: [id] }) {
     const o = datos.orden(id, usuario);
@@ -134,8 +134,8 @@ export function vistaOrden(cont, { usuario, datos, irA, params: [id] }) {
         falta: () => hacer(() => datos.faltaRepuesto(usuario, o.id), "Esperando repuesto"),
         llego: () => hacer(() => datos.llegoRepuesto(usuario, o.id), "Vuelve a reparación"),
         avisar: () => {
-            const r = hacer(() => datos.avisarListo(usuario, o.id));
-            if (r) mostrarMensaje("Avisar que está listo", r.mensaje);
+            const r = hacer(() => datos.mensajeListo(usuario, o.id));
+            if (r) mostrarMensaje("Avisar que está listo", r.mensaje, { alConfirmar: () => hacer(() => datos.avisarListo(usuario, o.id), "Anotado: le avisaste") });
         },
         entregar: () => {
             if (!confirm("¿Lo entregaste? La orden sale de la pizarra y queda en el historial del auto.")) return;

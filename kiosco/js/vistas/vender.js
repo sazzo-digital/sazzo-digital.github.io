@@ -5,17 +5,22 @@
 // Código que no está → "¿Lo cargás?" y queda listo para vender.
 // En la compu, dos columnas (productos | ticket); en el celular, el ticket abajo con una barrita arriba que lleva a él.
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=c830d16e78";
-import { puedeEscanear, escanear } from "../../kit/js/escaner.js?v=c830d16e78";
-import { mantenerPantallaPrendida, htmlCopiable, activarCopiables, htmlBotonSonido, activarBotonSonido, ding } from "../../kit/js/celular.js?v=c830d16e78";
-import { girarRuleta } from "../../kit/js/ruleta.js?v=c830d16e78";
-import { TOPES, MEDIOS, PREMIOS, PROMO_DESDE, ganaTirada, pesos } from "../datos.js?v=c830d16e78";
-import { MARCA, NEGOCIO } from "../marca.js?v=c830d16e78";
-import { guia, activarGuias } from "./comunes.js?v=c830d16e78";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=e10b43c439";
+import { puedeEscanear, escanear } from "../../kit/js/escaner.js?v=e10b43c439";
+import { mantenerPantallaPrendida, htmlCopiable, activarCopiables, htmlBotonSonido, activarBotonSonido, ding } from "../../kit/js/celular.js?v=e10b43c439";
+import { girarRuleta } from "../../kit/js/ruleta.js?v=e10b43c439";
+import { TOPES, MEDIOS, PREMIOS, PROMO_DESDE, ganaTirada, pesos } from "../datos.js?v=e10b43c439";
+import { MARCA, NEGOCIO } from "../marca.js?v=e10b43c439";
+import { guia, activarGuias } from "./comunes.js?v=e10b43c439";
+import { EVENTO_REINICIO } from "../../kit/js/guardado.js?v=e10b43c439";
 
 // El ticket en curso queda en memoria mientras se navega (se vacía al cobrar)
-const ticket = new Map(); // productoId → cantidad
+export const ticket = new Map(); // productoId → cantidad
 let medio = "efectivo";
+addEventListener(EVENTO_REINICIO, () => {
+    ticket.clear();
+    medio = "efectivo";
+});
 
 const BILLETES = [2_000, 5_000, 10_000, 20_000];
 const ALIAS = "la.esquina.kiosco"; // de ejemplo: al cobrar con transferencia se copia con un toque

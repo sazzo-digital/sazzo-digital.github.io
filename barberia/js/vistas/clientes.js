@@ -2,9 +2,9 @@
 // Clientes (barbero): buscador, "no vuelven hace más de 30 / 45 / 60 días" con "Invitarlo" (mensaje para copiar y
 // la fecha en que se lo invitó), y la ficha de cada uno: qué se hace siempre, notas, historial y "Sacarle turno".
 // ============================================
-import { esc, aviso, vacio, fechaCorta } from "../../kit/js/ui.js?v=7f17c1a4d6";
-import { NO_VUELVEN, TOPES, nombreFecha } from "../datos.js?v=7f17c1a4d6";
-import { mostrarMensaje } from "./comunes.js?v=7f17c1a4d6";
+import { esc, aviso, vacio, fechaCorta } from "../../kit/js/ui.js?v=ac10ab51cb";
+import { NO_VUELVEN, TOPES, nombreFecha } from "../datos.js?v=ac10ab51cb";
+import { mostrarMensaje } from "./comunes.js?v=ac10ab51cb";
 
 let noVuelven = null; // null = todos; si no, los días
 let texto = "";
@@ -40,14 +40,18 @@ export function vistaClientes(cont, { usuario, datos }) {
                 ${noVuelven ? `
                 <div class="tarjeta__pie">
                     <small>${c.invitadoEn ? `Lo invitaste el ${esc(fechaCorta(c.invitadoEn.slice(0, 10)))}` : "Todavía no lo invitaste"}</small>
-                    <button class="boton boton--chico" type="button" data-invitar="${esc(c.id)}"${c.invitadoEn ? " disabled" : ""}><i class="ti ti-message-circle"></i> Invitarlo</button>
+                    <button class="boton boton--chico" type="button" data-invitar="${esc(c.id)}"${c.puedeInvitar ? "" : " disabled"}><i class="ti ti-message-circle"></i> Invitarlo</button>
                 </div>` : ""}
             </li>`).join("") : `<li>${vacio(noVuelven ? "Nadie hace tanto que no viene. ¡Bien!" : "No hay clientes con ese nombre.", "ti-users")}</li>`;
         lista.querySelectorAll("[data-invitar]").forEach((b) => b.addEventListener("click", () => {
             try {
-                const r = datos.invitar(usuario, b.dataset.invitar);
-                mostrarMensaje(`Invitar a ${r.cliente.nombre}`, r.mensaje);
-                pintar();
+                const r = datos.mensajeInvitar(usuario, b.dataset.invitar);
+                mostrarMensaje(`Invitar a ${r.cliente.nombre}`, r.mensaje, {
+                    alConfirmar: () => {
+                        datos.invitar(usuario, b.dataset.invitar);
+                        pintar();
+                    }
+                });
             } catch (err) {
                 aviso(err, "error");
             }
