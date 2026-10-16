@@ -6,13 +6,13 @@
 // peso. Ticket con vuelto, alias para la transferencia, "ding" al cobrar y la vista previa del ticket.
 // En la compu, dos columnas (cortes | ticket); en el celular, el ticket abajo con una barrita arriba que lleva a él.
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=4dcef64c11";
-import { puedeEscanear, escanear } from "../../kit/js/escaner.js?v=4dcef64c11";
-import { mantenerPantallaPrendida, htmlCopiable, activarCopiables, htmlBotonSonido, activarBotonSonido, ding } from "../../kit/js/celular.js?v=4dcef64c11";
-import { TOPES, MEDIOS, ALIAS, ANIMALES, ETIQUETA, pesos, kilos, aGramos, precioPorPeso, gramosPara, leerEtiqueta } from "../datos.js?v=4dcef64c11";
-import { MARCA, NEGOCIO } from "../marca.js?v=4dcef64c11";
-import { campoKg, kgEnCampo, precioDe, hora } from "./comunes.js?v=4dcef64c11";
-import { EVENTO_REINICIO } from "../../kit/js/guardado.js?v=4dcef64c11";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=76618fb2cb";
+import { puedeEscanear, escanear } from "../../kit/js/escaner.js?v=76618fb2cb";
+import { mantenerPantallaPrendida, htmlCopiable, activarCopiables, htmlBotonSonido, activarBotonSonido, ding } from "../../kit/js/celular.js?v=76618fb2cb";
+import { TOPES, MEDIOS, ALIAS, ANIMALES, ETIQUETA, pesos, kilos, aGramos, precioPorPeso, gramosPara, leerEtiqueta } from "../datos.js?v=76618fb2cb";
+import { MARCA, NEGOCIO } from "../marca.js?v=76618fb2cb";
+import { campoKg, kgEnCampo, precioDe, hora } from "./comunes.js?v=76618fb2cb";
+import { EVENTO_REINICIO } from "../../kit/js/guardado.js?v=76618fb2cb";
 
 // El ticket en curso queda en memoria mientras se navega (se vacía al cobrar)
 export const ticket = new Map(); // articuloId → { gramos } o { unidades }
@@ -235,7 +235,7 @@ export function vistaVender(cont, { usuario, datos }) {
                     <span class="renglon__total">${esc(pesos(r.subtotal))}</span>
                 </li>`).join("")}
             </ul>
-            <div class="total"><span>Total${armado.gramos ? ` <small>${esc(kilos(armado.gramos, 2))}</small>` : ""}</span><b>${esc(pesos(armado.total))}</b></div>
+            <div class="total"><span>Total${armado.gramos ? ` <small>${esc(kilos(armado.gramos))}</small>` : ""}</span><b>${esc(pesos(armado.total))}</b></div>
             <div class="chips medios" role="radiogroup" aria-label="Cómo paga">
                 ${Object.entries(MEDIOS).map(([id, texto]) => `<button class="chip${medio === id ? " activo" : ""}" type="button" role="radio" aria-checked="${medio === id}" data-medio="${id}">${texto}</button>`).join("")}
             </div>

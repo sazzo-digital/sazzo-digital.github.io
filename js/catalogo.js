@@ -2,8 +2,8 @@
 // Catálogo de Sazzo: arma las tarjetas de demos (desde demos.js), las animaciones al bajar, los botones de
 // contacto (desde config.js), guarda de dónde vino la visita (?o=papel / ?o=ig) y avisa a la medición.
 // ============================================
-import { DEMOS } from "./demos.js?v=b836aff244";
-import { CONTACTO, MEDICION, LINK_DEMOS, RUTA_LIBS } from "./config.js?v=b836aff244";
+import { DEMOS, TRABAJOS } from "./demos.js?v=46d42e3a4b";
+import { CONTACTO, MEDICION, LINK_DEMOS, RUTA_LIBS } from "./config.js?v=46d42e3a4b";
 
 const $ = (selector, raiz = document) => raiz.querySelector(selector);
 const $$ = (selector, raiz = document) => [...raiz.querySelectorAll(selector)];
@@ -113,6 +113,11 @@ function linkDe(demo) {
     return /^[a-z0-9]+(-[a-z0-9]+)*$/.test(carpeta) ? LINK_DEMOS.replace("{id}", carpeta) : null;
 }
 
+function listaTildes(items, clase) {
+    if (!items?.length) return "";
+    return `<ul class="tildes ${clase}">${items.map((i) => `<li><svg class="icono" aria-hidden="true"><use href="#i-tilde"/></svg><span>${esc(i)}</span></li>`).join("")}</ul>`;
+}
+
 function tarjeta(demo) {
     const renglones = demo.pantalla.map((r, i) => `<div class="celu__renglon" style="--i:${i}">${esc(r)}</div>`).join("");
     const link = demo.estado === "activa" ? linkDe(demo) : null;
@@ -131,6 +136,8 @@ function tarjeta(demo) {
                 <h3 class="demo__nombre">${esc(demo.nombre)}</h3>
                 <p class="demo__rubro">${esc(demo.rubro)}</p>
                 <p class="demo__pregunta">${esc(demo.pregunta)}</p>
+                ${listaTildes(demo.items, "demo__items")}
+                ${demo.enVivo ? `<p class="demo__vivo"><svg class="icono" aria-hidden="true"><use href="#i-vivo"/></svg><span><strong>En vivo:</strong> ${esc(demo.enVivo)}</span></p>` : ""}
                 <div class="demo__pie">
                     ${boton}
                     <span class="demo__etiqueta">${etiquetaDe(demo)}</span>
@@ -142,6 +149,80 @@ function tarjeta(demo) {
 
 const visibles = DEMOS.filter((d) => d.estado !== "retirada");
 $("#lista-demos").innerHTML = visibles.map(tarjeta).join("");
+
+const linkSeguro = (url) => (/^https:\/\/[a-z0-9.-]+\.[a-z]{2,}\/[\w./-]*$/i.test(url ?? "") ? url : null);
+const capturaDe = (t, tipo) => t.capturas.find((c) => (tipo === "celu" ? c.alto > c.ancho : c.ancho > c.alto));
+
+function tarjetaTrabajo(t) {
+    const compu = capturaDe(t, "compu");
+    const celu = capturaDe(t, "celu");
+    const link = linkSeguro(t.link);
+    return `
+        <article class="trabajo revelar">
+            <button class="trabajo__vista" type="button" data-trabajo="${esc(t.id)}" aria-label="Ver más grandes las capturas de la web de ${esc(t.nombre)}">
+                ${compu ? `<span class="trabajo__compu"><img src="${esc(compu.src)}" width="${esc(compu.ancho)}" height="${esc(compu.alto)}" alt="" loading="lazy" decoding="async"></span>` : ""}
+                ${celu ? `<span class="trabajo__celu"><img src="${esc(celu.src)}" width="${esc(celu.ancho)}" height="${esc(celu.alto)}" alt="" loading="lazy" decoding="async"></span>` : ""}
+                <span class="trabajo__agrandar"><svg class="icono" aria-hidden="true"><use href="#i-lupa"/></svg> Tocá para agrandar</span>
+            </button>
+            <div class="trabajo__texto">
+                <p class="trabajo__tipo"><svg class="icono" aria-hidden="true"><use href="#i-web"/></svg> Página web</p>
+                <h3 class="trabajo__nombre">${esc(t.nombre)}</h3>
+                <p class="trabajo__rubro">${esc(t.rubro)}</p>
+                ${listaTildes(t.items, "trabajo__items")}
+                ${link ? `<a class="boton boton--chico" href="${esc(link)}" target="_blank" rel="noopener">Ver la web en vivo <svg class="icono" aria-hidden="true"><use href="#i-flecha"/></svg></a>` : ""}
+            </div>
+        </article>`;
+}
+
+$("#lista-trabajos").innerHTML = TRABAJOS.map(tarjetaTrabajo).join("");
+
+const galeria = $("#galeria");
+let enGaleria = { trabajo: null, indice: 0 };
+
+function mostrarCaptura() {
+    const { trabajo, indice } = enGaleria;
+    const c = trabajo.capturas[indice];
+    const img = $("img", galeria);
+    img.src = c.src;
+    img.width = c.ancho;
+    img.height = c.alto;
+    img.alt = `${trabajo.nombre}: ${c.texto}`;
+    galeria.classList.toggle("galeria--celu", c.alto > c.ancho);
+    $("figcaption", galeria).textContent = `${c.texto} · ${indice + 1} de ${trabajo.capturas.length}`;
+    $(".galeria__puntos", galeria).innerHTML = trabajo.capturas.map((_, i) => `<span class="galeria__punto${i === indice ? " activo" : ""}"></span>`).join("");
+}
+
+function pasarCaptura(paso) {
+    const total = enGaleria.trabajo.capturas.length;
+    enGaleria.indice = (enGaleria.indice + paso + total) % total;
+    mostrarCaptura();
+}
+
+if (typeof galeria.showModal === "function") {
+    $$("[data-trabajo]").forEach((b) =>
+        b.addEventListener("click", () => {
+            enGaleria = { trabajo: TRABAJOS.find((t) => t.id === b.dataset.trabajo), indice: 0 };
+            $(".galeria__titulo", galeria).textContent = enGaleria.trabajo.nombre;
+            mostrarCaptura();
+            galeria.showModal();
+        })
+    );
+    galeria.addEventListener("click", (e) => {
+        if (e.target === galeria || e.target.closest("[data-cerrar]")) galeria.close();
+        const paso = e.target.closest("[data-paso]");
+        if (paso) pasarCaptura(Number(paso.dataset.paso));
+    });
+    galeria.addEventListener("keydown", (e) => {
+        if (e.key === "ArrowRight") pasarCaptura(1);
+        if (e.key === "ArrowLeft") pasarCaptura(-1);
+    });
+    let inicioX = null;
+    $(".galeria__foto", galeria).addEventListener("pointerdown", (e) => (inicioX = e.clientX));
+    $(".galeria__foto", galeria).addEventListener("pointerup", (e) => {
+        if (inicioX !== null && Math.abs(e.clientX - inicioX) > 50) pasarCaptura(e.clientX < inicioX ? 1 : -1);
+        inicioX = null;
+    });
+}
 // Atajos arriba de las tarjetas: cada tarjeta mide casi media pantalla y Restix queda muy abajo. Para el dueño que
 // escaneó el papel en su local: toca su rubro y baja directo (solo ids de letras, números y guiones).
 $("#atajos").innerHTML = visibles

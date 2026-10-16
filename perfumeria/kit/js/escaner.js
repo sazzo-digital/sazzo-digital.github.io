@@ -6,9 +6,9 @@
 // por tenerlo. La cámara pide permiso, se ve en una ventanita y se apaga al leer, al cerrar, al cambiar de pantalla
 // o al esconder la pestaña. Nada sale del celular: la imagen no se guarda ni se manda.
 // ============================================
-import { aviso } from "./ui.js?v=fb00b1348d";
-import { alSalirDeLaPantalla } from "./rutas.js?v=fb00b1348d";
-import { RUTA_ESCANER } from "./config.js?v=fb00b1348d";
+import { aviso } from "./ui.js?v=f6f04463ca";
+import { alSalirDeLaPantalla } from "./rutas.js?v=f6f04463ca";
+import { RUTA_ESCANER } from "./config.js?v=f6f04463ca";
 
 export const FORMATOS_PRODUCTOS = ["ean_13", "ean_8", "upc_a", "upc_e", "code_128"];
 export const TOPE_CODIGO = 40; // letras: un código de producto real tiene 8 a 14

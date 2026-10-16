@@ -9,13 +9,13 @@
 // se devuelven copias. Sin teléfonos, mails ni documentos: nada de datos personales. Pagos de ejemplo, sin tarjetas.
 // Si cambia la forma de los datos, subir VERSION_DATOS (se regeneran solos).
 // ============================================
-import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=64c671c71d";
-import { filtrarPorTexto } from "../kit/js/buscar.js?v=64c671c71d";
-import { sinPasarse } from "../kit/js/topes.js?v=64c671c71d";
-import { fechaLocalISO } from "../kit/js/fechas.js?v=64c671c71d";
-import { aMinutos, aHora, diaSemana } from "../kit/js/turnos.js?v=64c671c71d";
-import { esFirma } from "../kit/js/firma.js?v=64c671c71d";
-import { MARCA, NEGOCIO } from "./marca.js?v=64c671c71d";
+import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=7fff73397b";
+import { filtrarPorTexto } from "../kit/js/buscar.js?v=7fff73397b";
+import { sinPasarse } from "../kit/js/topes.js?v=7fff73397b";
+import { fechaLocalISO } from "../kit/js/fechas.js?v=7fff73397b";
+import { aMinutos, aHora, diaSemana } from "../kit/js/turnos.js?v=7fff73397b";
+import { esFirma } from "../kit/js/firma.js?v=7fff73397b";
+import { MARCA, NEGOCIO } from "./marca.js?v=7fff73397b";
 
 export const VERSION_DATOS = 1;
 

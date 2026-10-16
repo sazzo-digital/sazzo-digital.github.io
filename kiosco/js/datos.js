@@ -6,12 +6,12 @@
 // Las ventas guardan el precio del momento: si después sube un proveedor, lo vendido no cambia.
 // Si cambia la forma de los datos, subir VERSION_DATOS (se regeneran solos).
 // ============================================
-import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=1e47ba62db";
-import { enteroHasta, sinPasarse } from "../kit/js/topes.js?v=1e47ba62db";
-import { diaLocalDe, fechaLocalISO } from "../kit/js/fechas.js?v=1e47ba62db";
-import { columnasDe, numeroDe, textoParaComparar } from "../kit/js/tablas.js?v=1e47ba62db";
-import { filtrarPorTexto } from "../kit/js/buscar.js?v=1e47ba62db";
-import { MARCA } from "./marca.js?v=1e47ba62db";
+import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=25cdac245a";
+import { enteroHasta, sinPasarse } from "../kit/js/topes.js?v=25cdac245a";
+import { diaLocalDe, fechaLocalISO } from "../kit/js/fechas.js?v=25cdac245a";
+import { columnasDe, numeroDe, textoParaComparar } from "../kit/js/tablas.js?v=25cdac245a";
+import { filtrarPorTexto } from "../kit/js/buscar.js?v=25cdac245a";
+import { MARCA } from "./marca.js?v=25cdac245a";
 
 export const VERSION_DATOS = 2;
 

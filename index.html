@@ -24,7 +24,7 @@
     <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
     <!-- Letras desde el propio sitio (antes Google Fonts); el script de armar las apunta a la copia compartida -->
     <link rel="stylesheet" href="letras/letras.css?v=1ce210640e">
-    <link rel="stylesheet" href="css/catalogo.css?v=b836aff244">
+    <link rel="stylesheet" href="css/catalogo.css?v=46d42e3a4b">
     <!-- Si hay JavaScript, las secciones arrancan ocultas y aparecen al bajar (sin JavaScript se ve todo igual) -->
     <script>
         document.documentElement.classList.add("js");
@@ -65,6 +65,10 @@
             <symbol id="i-whatsapp" viewBox="0 0 24 24"><path d="M4 20l1.2-3.6A8 8 0 1 1 8 19z"/><path d="M9.5 9.5c.3 1.8 2.2 3.7 4 4l1.2-1 1.8.8-.4 1.4c-3 .5-7-3.5-6.5-6.5l1.4-.4.8 1.8z"/></symbol>
             <symbol id="i-instagram" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="4.5"/><circle cx="12" cy="12" r="3.5"/><path d="M16.5 7.5v.01"/></symbol>
             <symbol id="i-flecha" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+            <symbol id="i-vivo" viewBox="0 0 24 24"><path d="M4 8h13l-3-3M20 16H7l3 3"/></symbol>
+            <symbol id="i-tilde" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7"/></symbol>
+            <symbol id="i-lupa" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 20 20M10.5 7.5v6M7.5 10.5h6"/></symbol>
+            <symbol id="i-cerrar" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
             <symbol id="i-marca" viewBox="0 0 24 24"><path d="M5 4h14v16l-7-4-7 4z"/><path d="M9 9h6"/></symbol>
             <symbol id="i-estilo" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 3v18"/><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor"/></symbol>
             <symbol id="i-pantallas" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M9 9v11"/></symbol>
@@ -158,8 +162,21 @@
             <h2 class="seccion__titulo revelar">Probá una demo</h2>
             <p class="seccion__bajada revelar">Elegí tu rubro. Son datos de ejemplo: tocá todo lo que quieras, no se rompe nada. Adentro podés probarla con tus colores y en modo claro u oscuro.</p>
             <!-- Atajos a cada rubro (los arma js/catalogo.js): un toque y baja directo a su tarjeta -->
+            <div class="en-vivo revelar">
+                <svg class="icono icono--grande" aria-hidden="true"><use href="#i-vivo"/></svg>
+                <div>
+                    <h3>Probá los roles en vivo</h3>
+                    <p>Cada demo tiene varias personas: dueño, empleado, cliente. Hacé algo con una, cambiá a la otra en el momento y mirá cómo le llega: un pedido que hace el cliente lo recibe el local, un cobro del empleado aparece en la caja del dueño. Se prueba cambiando de persona en el mismo celu o compu.</p>
+                </div>
+            </div>
             <nav class="atajos revelar" id="atajos" aria-label="Ir directo a un rubro"></nav>
             <div class="demos" id="lista-demos"></div>
+        </section>
+
+        <section class="seccion" id="paginas-web">
+            <h2 class="seccion__titulo revelar">También hacemos páginas web</h2>
+            <p class="seccion__bajada revelar">Webs reales, hechas por Sazzo. Tocá las capturas para verlas más grandes.</p>
+            <div class="trabajos" id="lista-trabajos"></div>
         </section>
 
         <!-- 4. Cómo funciona -->
@@ -233,6 +250,22 @@
         </section>
     </main>
 
+    <dialog class="galeria" id="galeria" aria-labelledby="galeria-titulo">
+        <div class="galeria__barra">
+            <p class="galeria__titulo" id="galeria-titulo"></p>
+            <button class="galeria__boton" type="button" data-cerrar aria-label="Cerrar"><svg class="icono" aria-hidden="true"><use href="#i-cerrar"/></svg></button>
+        </div>
+        <figure class="galeria__foto">
+            <img alt="" decoding="async">
+            <figcaption></figcaption>
+        </figure>
+        <div class="galeria__pie">
+            <button class="galeria__boton galeria__anterior" type="button" data-paso="-1" aria-label="Captura anterior"><svg class="icono" aria-hidden="true"><use href="#i-flecha"/></svg></button>
+            <div class="galeria__puntos"></div>
+            <button class="galeria__boton" type="button" data-paso="1" aria-label="Captura siguiente"><svg class="icono" aria-hidden="true"><use href="#i-flecha"/></svg></button>
+        </div>
+    </dialog>
+
     <dialog class="ventana-contacto" id="ventana-contacto" aria-labelledby="ventana-contacto-titulo">
         <div class="ventana-contacto__caja">
             <button class="ventana-contacto__cerrar" type="button" data-cerrar aria-label="Cerrar">
@@ -268,6 +301,6 @@
         <p class="pie__chico">© <span data-anio>2026</span> Sazzo · <a href="privacidad.html">Privacidad</a></p>
     </footer>
 
-    <script type="module" src="js/catalogo.js?v=b836aff244"></script>
+    <script type="module" src="js/catalogo.js?v=46d42e3a4b"></script>
 </body>
 </html>

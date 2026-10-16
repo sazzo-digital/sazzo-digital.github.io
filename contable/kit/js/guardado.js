@@ -21,8 +21,8 @@
 //   minutos"). Mientras la usa (cada cambio que guarda), no se renuevan. Se avisa con un cartelito.
 // ============================================
 
-import { aviso } from "./ui.js?v=ae811f4d87";
-import { olvidarAvisos } from "./avisos.js?v=ae811f4d87";
+import { aviso } from "./ui.js?v=01834dc122";
+import { olvidarAvisos } from "./avisos.js?v=01834dc122";
 
 /** Nombres compartidos entre el catálogo y todas las demos (no pueden ser el prefijo de una demo). */
 export const COMPARTIDAS = ["sazzo-origen", "sazzo-equipo", "sazzo-tema", "sazzo-yo"];
@@ -103,6 +103,13 @@ export function crearGuardado({ prefijo, version, semilla } = {}) {
     /** La próxima lectura vuelve a leer el localStorage (lo cambió otra pestaña). */
     function olvidarCache() {
         cache = null;
+        let borrados = false;
+        try {
+            borrados = localStorage.getItem(claves.datos) === null;
+        } catch {
+            borrados = false;
+        }
+        if (borrados) dispatchEvent(new CustomEvent(EVENTO_REINICIO, { detail: { prefijo } }));
     }
 
     /** "Empezar de cero": borra los datos de ESTA demo; al volver a leerlos aparecen los de fábrica. */

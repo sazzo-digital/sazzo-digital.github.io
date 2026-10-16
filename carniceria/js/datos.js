@@ -11,11 +11,11 @@
 // Reglas del kit: exigir() en lo que modifica, topes en todo lo que se carga, nada se borra y se devuelven copias.
 // Las ventas guardan el precio y el costo del momento. Si cambia la forma de los datos, subir VERSION_DATOS.
 // ============================================
-import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=4dcef64c11";
-import { enteroHasta, sinPasarse } from "../kit/js/topes.js?v=4dcef64c11";
-import { diaLocalDe, fechaLocalISO } from "../kit/js/fechas.js?v=4dcef64c11";
-import { filtrarPorTexto, comoSuena } from "../kit/js/buscar.js?v=4dcef64c11";
-import { MARCA, NEGOCIO, buscarPersona } from "./marca.js?v=4dcef64c11";
+import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=76618fb2cb";
+import { enteroHasta, sinPasarse } from "../kit/js/topes.js?v=76618fb2cb";
+import { diaLocalDe, fechaLocalISO } from "../kit/js/fechas.js?v=76618fb2cb";
+import { filtrarPorTexto, comoSuena } from "../kit/js/buscar.js?v=76618fb2cb";
+import { MARCA, NEGOCIO, buscarPersona } from "./marca.js?v=76618fb2cb";
 
 export const VERSION_DATOS = 1;
 

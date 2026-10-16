@@ -7,13 +7,13 @@
 // trae `wow`, esa línea va arriba de las personas: le dice a quien llega de Instagram qué va a pasar.
 // y qué hacer al elegir una (alElegir(id): guardar la sesión y arrancar la demo).
 // ============================================
-import { $, $$, esc, iniciales, mensajeDe } from "./ui.js?v=4dcef64c11";
-import { logoSazzo, nombreDemo } from "./marca.js?v=4dcef64c11";
-import { pieAcerca, htmlTambien } from "./acerca.js?v=4dcef64c11";
-import { linkOtrasDemos, linkQuieroEsto } from "./enlaces.js?v=4dcef64c11";
-import { activarBotonesSazzo } from "./marco.js?v=4dcef64c11";
-import { contar, contarPantalla } from "./visita.js?v=4dcef64c11";
-import { soltarPantalla } from "./rutas.js?v=4dcef64c11";
+import { $, $$, esc, iniciales, mensajeDe } from "./ui.js?v=76618fb2cb";
+import { logoSazzo, nombreDemo } from "./marca.js?v=76618fb2cb";
+import { pieAcerca, htmlTambien } from "./acerca.js?v=76618fb2cb";
+import { linkOtrasDemos, linkQuieroEsto } from "./enlaces.js?v=76618fb2cb";
+import { activarBotonesSazzo } from "./marco.js?v=76618fb2cb";
+import { contar, contarPantalla } from "./visita.js?v=76618fb2cb";
+import { soltarPantalla } from "./rutas.js?v=76618fb2cb";
 
 /** La pantalla entera va en <main>: los lectores de pantalla saltan directo ahí (axe: landmark-one-main). */
 function htmlCompleta(marca, tambien) {

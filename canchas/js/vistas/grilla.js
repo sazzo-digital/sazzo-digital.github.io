@@ -4,12 +4,12 @@
 // "Anotar turno" en un casillero libre (para cuando llaman por teléfono).
 // Los turnos que reservó un jugador y Gustavo todavía no miró aparecen arriba y marcados "Nuevo".
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=f256255110";
-import { mantenerPantallaPrendida } from "../../kit/js/celular.js?v=f256255110";
-import { aHora } from "../../kit/js/turnos.js?v=f256255110";
-import { TOPES, CANCHAS, TIPOS, pesos, nombreFecha, horarioDe } from "../datos.js?v=f256255110";
-import { pastillaSena, pastillaEstado, chipsDias } from "./comunes.js?v=f256255110";
-import { buscarPersona } from "../marca.js?v=f256255110";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=a594f3020b";
+import { mantenerPantallaPrendida } from "../../kit/js/celular.js?v=a594f3020b";
+import { aHora } from "../../kit/js/turnos.js?v=a594f3020b";
+import { TOPES, CANCHAS, TIPOS, pesos, nombreFecha, horarioDe } from "../datos.js?v=a594f3020b";
+import { pastillaSena, pastillaEstado, chipsDias } from "./comunes.js?v=a594f3020b";
+import { buscarPersona } from "../marca.js?v=a594f3020b";
 
 const PASO = 30; // la grilla va de media hora en media hora (entran los turnos de 60 y los de 90 min)
 

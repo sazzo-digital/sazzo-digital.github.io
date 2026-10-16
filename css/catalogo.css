@@ -296,6 +296,93 @@ a { color: inherit; }
 .ventana-contacto__cerrar:focus-visible { outline: 3px solid var(--verde); outline-offset: 2px; }
 @keyframes ventana-entra { from { opacity: 0; transform: translateY(12px) scale(.97); } }
 
+/* 9b2. Roles en vivo */
+.en-vivo {
+    display: flex; gap: 1rem; align-items: flex-start; max-width: 44rem; margin: 1.6rem auto 0; padding: 1.1rem 1.2rem;
+    border: 1px solid var(--borde); border-left: 3px solid var(--verde); border-radius: var(--radio);
+    background: radial-gradient(ellipse at left, var(--verde-suave), transparent 70%), var(--superficie);
+}
+.en-vivo .icono--grande { flex: none; width: 30px; height: 30px; }
+.en-vivo h3 { font-size: 1.05rem; }
+.en-vivo p { margin-top: .3rem; color: var(--texto-suave); font-size: .92rem; }
+.demo__vivo {
+    display: flex; gap: .45rem; align-items: flex-start; margin-top: .65rem; padding: .5rem .65rem; border-radius: 10px;
+    background: color-mix(in srgb, var(--acento) 12%, transparent); font-size: .86rem; line-height: 1.35;
+}
+.demo__vivo .icono { flex: none; width: 1rem; height: 1rem; margin-top: .1rem; color: var(--acento); }
+.demo__vivo strong { color: var(--texto); }
+
+/* 9c. Ítems con tilde */
+.tildes { list-style: none; padding: 0; margin: .7rem 0 0; display: grid; gap: .35rem; }
+.tildes li { display: flex; gap: .45rem; align-items: flex-start; font-size: .9rem; line-height: 1.35; color: var(--texto-suave); }
+.tildes .icono { flex: none; width: 1rem; height: 1rem; margin-top: .12rem; color: var(--acento, var(--verde)); stroke-width: 2.6; }
+
+/* 9d. Páginas web hechas por Sazzo */
+.trabajos { margin-top: 2.4rem; display: grid; gap: 1.2rem; }
+.trabajo {
+    display: grid; gap: 1.4rem; padding: 1.2rem; border-radius: calc(var(--radio) + 6px);
+    background: radial-gradient(ellipse at top left, var(--verde-suave), transparent 60%), var(--superficie);
+    border: 1px solid var(--borde);
+}
+.trabajo__vista {
+    position: relative; display: block; width: 100%; padding: 0 1.6rem 1.6rem 0; border: 0; background: none;
+    cursor: zoom-in; text-align: left; color: inherit; font: inherit;
+}
+.trabajo__vista:focus-visible { outline: 3px solid var(--verde); outline-offset: 4px; border-radius: 14px; }
+.trabajo__compu {
+    display: block; padding: 22px 6px 6px; border-radius: 12px; background: #050807; border: 1.5px solid #26332f;
+    box-shadow: var(--sombra); position: relative; transition: transform .3s ease;
+}
+.trabajo__compu::before {
+    content: ""; position: absolute; top: 8px; left: 10px; width: 6px; height: 6px; border-radius: 50%;
+    background: #f87171; box-shadow: 10px 0 #fbbf24, 20px 0 #34d399;
+}
+.trabajo__compu img { display: block; width: 100%; height: auto; border-radius: 6px; }
+.trabajo__celu {
+    position: absolute; right: 0; bottom: 0; width: 28%; max-width: 140px; padding: 5px; border-radius: 16px;
+    background: #050807; border: 1.5px solid #26332f; box-shadow: var(--sombra); transition: transform .3s ease;
+}
+.trabajo__celu img { display: block; width: 100%; height: auto; aspect-ratio: 9 / 18; object-fit: cover; object-position: top; border-radius: 11px; }
+.trabajo__agrandar {
+    position: absolute; left: .7rem; bottom: 2.2rem; display: inline-flex; align-items: center; gap: .35rem;
+    padding: .35rem .7rem; border-radius: 999px; background: rgb(5 8 7 / 78%); color: #e6efeb;
+    font-size: .8rem; font-weight: 600; backdrop-filter: blur(4px);
+}
+.trabajo__vista:hover .trabajo__compu { transform: translateY(-3px); }
+.trabajo__vista:hover .trabajo__celu { transform: translateY(-6px) rotate(-2deg); }
+.trabajo__tipo { display: inline-flex; align-items: center; gap: .4rem; font: 500 .78rem var(--fuente-numeros); letter-spacing: .08em; text-transform: uppercase; color: var(--verde); }
+.trabajo__nombre { margin-top: .5rem; font-size: clamp(1.4rem, 4vw, 1.8rem); }
+.trabajo__rubro { color: var(--texto-suave); font-size: .92rem; margin-top: .15rem; }
+.trabajo__items { margin: 1rem 0 1.3rem; }
+.trabajo__items li { color: var(--texto); }
+@media (min-width: 860px) {
+    .trabajo { grid-template-columns: 1.35fr 1fr; align-items: center; padding: 1.8rem; gap: 2.2rem; }
+}
+
+/* 9e. Galería: la captura grande */
+.galeria {
+    width: min(1100px, calc(100% - 24px)); max-height: calc(100dvh - 24px); padding: 0; border: 1px solid var(--borde);
+    border-radius: var(--radio); background: var(--superficie); color: var(--texto); box-shadow: var(--sombra); overflow: hidden;
+}
+.galeria[open] { display: flex; flex-direction: column; animation: ventana-entra .25s ease-out; }
+.galeria::backdrop { background: rgb(0 0 0 / 75%); backdrop-filter: blur(3px); }
+.galeria__barra, .galeria__pie { display: flex; align-items: center; justify-content: space-between; gap: .8rem; padding: .6rem .8rem; }
+.galeria__titulo { font-weight: 700; padding-left: .3rem; }
+.galeria__boton {
+    display: grid; place-items: center; width: 42px; height: 42px; flex: none; border: 1px solid var(--borde); border-radius: 50%;
+    background: var(--superficie-2); color: var(--texto); cursor: pointer;
+}
+.galeria__boton:hover { border-color: var(--verde); }
+.galeria__boton:focus-visible { outline: 3px solid var(--verde); outline-offset: 2px; }
+.galeria__anterior .icono { transform: rotate(180deg); }
+.galeria__foto { margin: 0; flex: 1 1 auto; min-height: 0; display: grid; place-items: center; gap: .5rem; padding: 0 .8rem; touch-action: pan-y; }
+.galeria__foto img { max-width: 100%; max-height: calc(100dvh - 190px); width: auto; height: auto; border-radius: 10px; border: 1px solid var(--borde); user-select: none; }
+.galeria--celu .galeria__foto img { max-height: calc(100dvh - 190px); }
+.galeria__foto figcaption { color: var(--texto-suave); font-size: .85rem; }
+.galeria__puntos { display: flex; gap: .4rem; }
+.galeria__punto { width: 8px; height: 8px; border-radius: 50%; background: var(--borde); }
+.galeria__punto.activo { background: var(--verde); }
+
 /* 10. Pie */
 .pie { border-top: 1px solid var(--borde); padding: 2.6rem 16px 2rem; text-align: center; color: var(--texto-suave); }
 .pie__logo { width: 120px; height: auto; display: block; margin: 0 auto .8rem; overflow: visible; }

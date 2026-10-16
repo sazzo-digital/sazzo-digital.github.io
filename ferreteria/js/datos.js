@@ -15,12 +15,12 @@
 // Reglas del kit: exigir() en lo que modifica, topes en todo lo que se carga, nada se borra y se devuelven copias.
 // Las ventas guardan el precio y el costo del momento. Si cambia la forma de los datos, subir VERSION_DATOS.
 // ============================================
-import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=01b2a0dc1f";
-import { enteroHasta, sinPasarse } from "../kit/js/topes.js?v=01b2a0dc1f";
-import { diaLocalDe, fechaLocalISO } from "../kit/js/fechas.js?v=01b2a0dc1f";
-import { columnasDe, numeroDe, textoParaComparar } from "../kit/js/tablas.js?v=01b2a0dc1f";
-import { filtrarPorTexto, comoSuena } from "../kit/js/buscar.js?v=01b2a0dc1f";
-import { MARCA, NEGOCIO, buscarPersona } from "./marca.js?v=01b2a0dc1f";
+import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=3124c09b0f";
+import { enteroHasta, sinPasarse } from "../kit/js/topes.js?v=3124c09b0f";
+import { diaLocalDe, fechaLocalISO } from "../kit/js/fechas.js?v=3124c09b0f";
+import { columnasDe, numeroDe, textoParaComparar } from "../kit/js/tablas.js?v=3124c09b0f";
+import { filtrarPorTexto, comoSuena } from "../kit/js/buscar.js?v=3124c09b0f";
+import { MARCA, NEGOCIO, buscarPersona } from "./marca.js?v=3124c09b0f";
 
 export const VERSION_DATOS = 1;
 
@@ -277,7 +277,9 @@ export function entender(linea) {
             s = m[3];
         }
     }
-    return { texto, buscado: s.trim(), cantidad: cantidad > 0 ? cantidad : null, unidad, foto: /\bfoto\b/.test(s) };
+    const negativa = /^-\s*\d/.test(normal(texto)) || /\b(?:x|por)\s*-\s*\d/.test(normal(texto));
+    const cantidadMala = negativa || cantidad === 0;
+    return { texto, buscado: s.trim().replace(/^-\s*/, ""), cantidad: cantidad > 0 ? cantidad : null, unidad, foto: /\bfoto\b/.test(s), cantidadMala };
 }
 
 /** La cantidad de un renglón entendido para un artículo: lo que dijo, ajustado a su unidad (por unidad, para arriba). */
@@ -1012,6 +1014,8 @@ export function crearDatos(prefijo = MARCA.prefijo) {
         exigir(Array.isArray(lineas), "Escribí lo que necesitás, un artículo por renglón.");
         const limpias = lineas.map((l) => String(l ?? "").trim()).filter(Boolean);
         exigir(limpias.every((l) => l.length <= TOPES.texto), `Cada renglón puede tener hasta ${TOPES.texto} letras.`);
+        const mala = limpias.find((l) => entender(l).cantidadMala);
+        exigir(!mala, `En "${mala}" la cantidad tiene que ser mayor que 0.`);
         if (foto) limpias.push("Lo de la foto");
         exigir(limpias.length, "Escribí lo que necesitás, un artículo por renglón.");
         exigir(limpias.length <= TOPES.renglones, `Un presupuesto puede tener hasta ${TOPES.renglones} renglones.`);

@@ -6,12 +6,12 @@
 // Reglas del kit: exigir() en lo que modifica, topes en todo lo que se carga, nada se borra (se cancela) y se
 // devuelven copias. Si cambia la forma de los datos, subir VERSION_DATOS (se regeneran solos).
 // ============================================
-import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=58d5773882";
-import { filtrarPorTexto } from "../kit/js/buscar.js?v=58d5773882";
-import { sinPasarse } from "../kit/js/topes.js?v=58d5773882";
-import { fechaLocalISO } from "../kit/js/fechas.js?v=58d5773882";
-import { aMinutos, aHora, diaSemana, proximosDias, ocupados, libres, revisarLibre } from "../kit/js/turnos.js?v=58d5773882";
-import { MARCA } from "./marca.js?v=58d5773882";
+import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=fa29a3e30b";
+import { filtrarPorTexto } from "../kit/js/buscar.js?v=fa29a3e30b";
+import { sinPasarse } from "../kit/js/topes.js?v=fa29a3e30b";
+import { fechaLocalISO } from "../kit/js/fechas.js?v=fa29a3e30b";
+import { aMinutos, aHora, diaSemana, proximosDias, ocupados, libres, revisarLibre } from "../kit/js/turnos.js?v=fa29a3e30b";
+import { MARCA } from "./marca.js?v=fa29a3e30b";
 
 export const VERSION_DATOS = 2;
 
@@ -413,8 +413,10 @@ export function crearDatos(prefijo = MARCA.prefijo, { reloj = () => new Date() }
     function guardarFicha(usuario, id, { siempre = "", notas = "" } = {}) {
         exigir(esBarbero(usuario), "Solo el barbero cambia la ficha.");
         const c = buscar(db().clientes, id, "Ese cliente no existe.");
-        c.siempre = sinPasarse(siempre, TOPES.siempre, "\"qué se hace siempre\"");
-        c.notas = sinPasarse(notas, TOPES.notas, "las notas");
+        const textoSiempre = sinPasarse(siempre, TOPES.siempre, "\"qué se hace siempre\"");
+        const textoNotas = sinPasarse(notas, TOPES.notas, "las notas");
+        c.siempre = textoSiempre;
+        c.notas = textoNotas;
         guardado.persistir();
         return armarCliente(c);
     }

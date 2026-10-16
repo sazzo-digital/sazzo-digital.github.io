@@ -2,9 +2,9 @@
 // Piezas que comparten las pantallas de Restix Sazzo: el botón del recorrido (del kit), el ticket de una comanda
 // (cocina o barra) y "hace cuánto". Todo dato que entra a HTML pasa por esc().
 // ============================================
-import { esc } from "../../kit/js/ui.js?v=18c497fa70";
-import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=18c497fa70";
-import { buscarPersona } from "../marca.js?v=18c497fa70";
+import { esc } from "../../kit/js/ui.js?v=c8a29a9636";
+import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=c8a29a9636";
+import { buscarPersona } from "../marca.js?v=c8a29a9636";
 
 export const guia = (personaId, ruta, texto) => htmlGuia({ persona: buscarPersona(personaId), ruta, texto });
 export { activarGuias };

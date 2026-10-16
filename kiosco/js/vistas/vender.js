@@ -5,14 +5,14 @@
 // Código que no está → "¿Lo cargás?" y queda listo para vender.
 // En la compu, dos columnas (productos | ticket); en el celular, el ticket abajo con una barrita arriba que lleva a él.
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=1e47ba62db";
-import { puedeEscanear, escanear } from "../../kit/js/escaner.js?v=1e47ba62db";
-import { mantenerPantallaPrendida, htmlCopiable, activarCopiables, htmlBotonSonido, activarBotonSonido, ding } from "../../kit/js/celular.js?v=1e47ba62db";
-import { girarRuleta } from "../../kit/js/ruleta.js?v=1e47ba62db";
-import { TOPES, MEDIOS, PREMIOS, PROMO_DESDE, ganaTirada, pesos } from "../datos.js?v=1e47ba62db";
-import { MARCA, NEGOCIO } from "../marca.js?v=1e47ba62db";
-import { guia, activarGuias } from "./comunes.js?v=1e47ba62db";
-import { EVENTO_REINICIO } from "../../kit/js/guardado.js?v=1e47ba62db";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=25cdac245a";
+import { puedeEscanear, escanear } from "../../kit/js/escaner.js?v=25cdac245a";
+import { mantenerPantallaPrendida, htmlCopiable, activarCopiables, htmlBotonSonido, activarBotonSonido, ding } from "../../kit/js/celular.js?v=25cdac245a";
+import { girarRuleta } from "../../kit/js/ruleta.js?v=25cdac245a";
+import { TOPES, MEDIOS, PREMIOS, PROMO_DESDE, ganaTirada, pesos } from "../datos.js?v=25cdac245a";
+import { MARCA, NEGOCIO } from "../marca.js?v=25cdac245a";
+import { guia, activarGuias } from "./comunes.js?v=25cdac245a";
+import { EVENTO_REINICIO } from "../../kit/js/guardado.js?v=25cdac245a";
 
 // El ticket en curso queda en memoria mientras se navega (se vacía al cobrar)
 export const ticket = new Map(); // productoId → cantidad

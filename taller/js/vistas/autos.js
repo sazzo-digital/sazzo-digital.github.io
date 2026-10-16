@@ -2,9 +2,9 @@
 // Autos y clientes: buscar por patente o por nombre; cada auto con todas sus visitas. Y "Para llamar": los que tienen
 // el service vencido (más de 6 meses o 10.000 km) y no están en el taller, con el mensaje para recordárselo.
 // ============================================
-import { esc, aviso, vacio, fechaCorta } from "../../kit/js/ui.js?v=1044f9b834";
-import { pesos } from "../datos.js?v=1044f9b834";
-import { chapa, pastillaEstado, mostrarMensaje } from "./comunes.js?v=1044f9b834";
+import { esc, aviso, vacio, fechaCorta } from "../../kit/js/ui.js?v=c722de930b";
+import { pesos } from "../datos.js?v=c722de930b";
+import { chapa, pastillaEstado, mostrarMensaje } from "./comunes.js?v=c722de930b";
 
 let vista = "todos"; // "todos" o "llamar"
 let texto = "";
