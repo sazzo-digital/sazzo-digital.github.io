@@ -1,0 +1,33 @@
+{
+    "id":  "./",
+    "name":  "Sazzo Taller",
+    "short_name":  "Taller",
+    "description":  "Para talleres mecánicos: la orden de trabajo de cada auto, el presupuesto para imprimir, el aviso de que ya está listo y los que tienen el service vencido.",
+    "lang":  "es-AR",
+    "start_url":  "./",
+    "scope":  "./",
+    "display":  "standalone",
+    "orientation":  "any",
+    "background_color":  "#0a0e0d",
+    "theme_color":  "#0a0e0d",
+    "icons":  [
+                  {
+                      "src":  "../img/icono-192.png",
+                      "sizes":  "192x192",
+                      "type":  "image/png",
+                      "purpose":  "any"
+                  },
+                  {
+                      "src":  "../img/icono-512.png",
+                      "sizes":  "512x512",
+                      "type":  "image/png",
+                      "purpose":  "any"
+                  },
+                  {
+                      "src":  "../img/icono-adaptable-512.png",
+                      "sizes":  "512x512",
+                      "type":  "image/png",
+                      "purpose":  "maskable"
+                  }
+              ]
+}

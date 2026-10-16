@@ -5,12 +5,13 @@
 // - Vane (dueña): la cuota y los pagos (registrar, confirmar el aviso de transferencia, deshacer, recordatorio armado),
 //   el apto físico y el reglamento firmado en pantalla, si viene o no (invitar a volver) y la baja.
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=ab7575362c";
-import { pedirFirma } from "../../kit/js/firma.js?v=ab7575362c";
-import { armarPdf, pdfListo } from "../../kit/js/pdf.js?v=ab7575362c";
-import { NEGOCIO } from "../marca.js?v=ab7575362c";
-import { TOPES, REINVITAR_DIAS, pesos, kilos, cuanto, fechaCorta, nombreFecha } from "../datos.js?v=ab7575362c";
-import { guia, activarGuias, pastilla, pastillaCuota, cara, haceDias, graficoPeso, barrasSemanas, mostrarMensaje } from "./comunes.js?v=ab7575362c";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=289ec4bb58";
+import { pedirFirma } from "../../kit/js/firma.js?v=289ec4bb58";
+import { armarPdf, pdfListo } from "../../kit/js/pdf.js?v=289ec4bb58";
+import { NEGOCIO, MARCA } from "../marca.js?v=289ec4bb58";
+import { htmlConsigna, htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=289ec4bb58";
+import { TOPES, REINVITAR_DIAS, pesos, kilos, cuanto, fechaCorta, nombreFecha } from "../datos.js?v=289ec4bb58";
+import { guia, activarGuias, pastilla, pastillaCuota, cara, haceDias, graficoPeso, barrasSemanas, mostrarMensaje } from "./comunes.js?v=289ec4bb58";
 
 let ajustando = null; // "diaId|ejercicioId" del ejercicio que el profe está ajustando
 let medio = "efectivo"; // lo último elegido al registrar un pago
@@ -109,7 +110,7 @@ function htmlProfe(a, datos) {
             <button class="boton" type="submit"><i class="ti ti-send" aria-hidden="true"></i> Dejar nota</button>
         </form>
         ${a.notas.length ? `<ul class="notas-profe">${a.notas.slice(0, 6).map((n) => `<li>${esc(n.texto)}<small>${esc(nombreFecha(n.fecha, datos.hoy()))}</small></li>`).join("")}</ul>` : ""}
-        ${a.id === "s-franco" ? guia("u-duena", "/inicio", "Ahora mirá lo que ve Vane") : ""}`;
+        ${a.id === "s-franco" ? htmlConsigna({ paso: 2, total: 5, accion: "Dejale una nota a Franco y, si querés, ajustale el peso.", resultado: "Franco lo ve en su celu.", guia: guia("u-duena", "/inicio", "Ahora mirá lo que ve Vane") }) : ""}`;
 }
 
 function activarProfe(cont, opciones, a) {
@@ -264,11 +265,14 @@ function htmlDuena(a, datos) {
                 </section>
             </div>
         </div>
-        ${a.id === "s-franco" ? guia("u-socio", "/cuota", "Mirá lo que ve Franco") : ""}`;
+        ${a.id !== "s-franco" ? "" : a.avisoPago
+            ? htmlConsigna({ paso: 5, total: 5, accion: "Fijate si llegó la transferencia y tocá “Llegó: confirmar”.", resultado: "Franco queda al día y la caja sube." })
+            : `${a.pagos.some((p) => p.estado === "confirmado" && p.confirmadoEl === datos.hoy()) ? htmlConsignaFinal(MARCA) : ""}${guia("u-socio", "/cuota", "Mirá lo que ve Franco")}`}`;
 }
 
 function activarDuena(cont, opciones, a) {
     const { usuario, datos } = opciones;
+    activarConsigna(cont, MARCA);
     const hacer = (fn, mensaje) => () => {
         try {
             const r = fn();

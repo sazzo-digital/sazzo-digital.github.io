@@ -6,13 +6,13 @@
 // peso. Ticket con vuelto, alias para la transferencia, "ding" al cobrar y la vista previa del ticket.
 // En la compu, dos columnas (cortes | ticket); en el celular, el ticket abajo con una barrita arriba que lleva a él.
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=8f8507cb31";
-import { puedeEscanear, escanear } from "../../kit/js/escaner.js?v=8f8507cb31";
-import { mantenerPantallaPrendida, htmlCopiable, activarCopiables, htmlBotonSonido, activarBotonSonido, ding } from "../../kit/js/celular.js?v=8f8507cb31";
-import { TOPES, MEDIOS, ALIAS, ANIMALES, ETIQUETA, pesos, kilos, aGramos, precioPorPeso, gramosPara, leerEtiqueta } from "../datos.js?v=8f8507cb31";
-import { MARCA, NEGOCIO } from "../marca.js?v=8f8507cb31";
-import { campoKg, kgEnCampo, precioDe, hora } from "./comunes.js?v=8f8507cb31";
-import { EVENTO_REINICIO } from "../../kit/js/guardado.js?v=8f8507cb31";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=d0fa7e2aa0";
+import { puedeEscanear, escanear } from "../../kit/js/escaner.js?v=d0fa7e2aa0";
+import { mantenerPantallaPrendida, htmlCopiable, activarCopiables, htmlBotonSonido, activarBotonSonido, ding } from "../../kit/js/celular.js?v=d0fa7e2aa0";
+import { TOPES, MEDIOS, ALIAS, ANIMALES, ETIQUETA, pesos, kilos, aGramos, precioPorPeso, gramosPara, leerEtiqueta } from "../datos.js?v=d0fa7e2aa0";
+import { MARCA, NEGOCIO } from "../marca.js?v=d0fa7e2aa0";
+import { campoKg, kgEnCampo, precioDe, hora } from "./comunes.js?v=d0fa7e2aa0";
+import { EVENTO_REINICIO } from "../../kit/js/guardado.js?v=d0fa7e2aa0";
 
 // El ticket en curso queda en memoria mientras se navega (se vacía al cobrar)
 export const ticket = new Map(); // articuloId → { gramos } o { unidades }
@@ -378,7 +378,7 @@ export function vistaVender(cont, { usuario, datos }) {
     pintarPesar();
     pintarTicket();
     if (!ticket.size) {
-        cont.querySelector(".productos").insertAdjacentHTML("afterbegin", `<p class="nota pista"><i class="ti ti-hand-finger"></i> Probá: tocá Asado y escribí el peso de la balanza (1,625), o pedí "$8.000 de picada" y fijate cuánto cortar.</p>`);
+        cont.querySelector(".productos").insertAdjacentHTML("afterbegin", `<p class="nota"><i class="ti ti-bulb"></i> Probá: tocá Asado y escribí el peso de la balanza (1,625), o pedí "$8.000 de picada" y fijate cuánto cortar.</p>`);
     }
 }
 

@@ -3,11 +3,12 @@
 // una columna por estado; en el celu, uno abajo del otro con pastillas para filtrar. El mecánico ve solo sus autos.
 // "+ Entró un auto": se escribe la patente y, si ya vino, completa solo el auto, el cliente y la última vez.
 // ============================================
-import { esc, aviso } from "../../kit/js/ui.js?v=4788997dbc";
-import { fechaLocalISO } from "../../kit/js/fechas.js?v=4788997dbc";
-import { TOPES, NAFTA, MECANICOS, esPatente, formatoPatente } from "../datos.js?v=4788997dbc";
-import { NEGOCIO } from "../marca.js?v=4788997dbc";
-import { guia, activarGuias, chapa, pastillaEstado, textoPromesa } from "./comunes.js?v=4788997dbc";
+import { esc, aviso } from "../../kit/js/ui.js?v=0579abf08d";
+import { fechaLocalISO } from "../../kit/js/fechas.js?v=0579abf08d";
+import { TOPES, NAFTA, MECANICOS, esPatente, formatoPatente } from "../datos.js?v=0579abf08d";
+import { NEGOCIO } from "../marca.js?v=0579abf08d";
+import { guia, activarGuias, chapa, pastillaEstado, textoPromesa } from "./comunes.js?v=0579abf08d";
+import { htmlConsigna } from "../../kit/js/consigna.js?v=0579abf08d";
 
 let filtro = "todos";
 
@@ -29,7 +30,7 @@ export function vistaPizarra(cont, { usuario, datos }) {
             <h1 class="titulo">${dueno ? "Taller" : "Mis autos"}</h1>
             ${dueno ? `<a class="boton" href="#/entro"><i class="ti ti-car"></i> Entró un auto</a>` : `<span class="negocio"><i class="ti ti-tool"></i>${esc(NEGOCIO)}</span>`}
         </div>
-        ${dueno ? `<p class="nota pista"><i class="ti ti-hand-finger"></i> <span>Probá: tocá "Entró un auto" y escribí la patente AB&nbsp;123&nbsp;CD.</span></p>` : ""}
+        ${dueno ? htmlConsigna({ paso: 1, total: 5, accion: "Tocá “Entró un auto” y escribí la patente AB 123 CD.", resultado: "Se arma la orden y le llega al mecánico." }) : ""}
         <div class="tira">
             <span><b>${esc(p.contadores.adentro)}</b> adentro</span>
             <span><b>${esc(p.contadores.reparacion)}</b> en reparación</span>
@@ -127,7 +128,7 @@ export function vistaEntro(cont, { usuario, datos, irA, consulta }) {
                     <p>${chapa(o.auto.patenteTexto)} ${esc(o.auto.modelo)} de ${esc(o.cliente.nombre)}</p>
                     <p class="nota">“${esc(o.dijo)}” · se la diste a ${esc(o.mecanico)}</p>
                 </div>
-                ${o.mecanico === "Seba" ? guia("u-mecanico", `/orden/${o.id}`, "Mirá lo que le llega a Seba") : ""}
+                ${htmlConsigna({ paso: 1, total: 5, accion: "Cargá el auto que entró.", hecho: `orden N° ${o.numero} para ${o.mecanico}`, guia: o.mecanico === "Seba" ? guia("u-mecanico", `/orden/${o.id}`, "Mirá lo que le llega a Seba") : "" })}
                 <a class="boton boton--secundario boton--ancho" href="#/orden/${esc(o.id)}"><i class="ti ti-file-text"></i> Ver la orden</a>`;
             activarGuias(cont, irA);
             aviso("Orden guardada");

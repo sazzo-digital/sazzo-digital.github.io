@@ -3,8 +3,8 @@
 // visitas del día por agente (Tomás ve las suyas; Graciela, las de los dos). Las pedidas desde la página se
 // confirman desde su consulta; las que ya pasaron se marcan "Visitó" o "No vino".
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=9ba5fbd9c2";
-import { pastillaVisita, chipsDias, mayuscula } from "./comunes.js?v=9ba5fbd9c2";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=0ca3fb45de";
+import { pastillaVisita, chipsDias, mayuscula } from "./comunes.js?v=0ca3fb45de";
 
 let fecha = null; // el día elegido queda mientras se navega
 
@@ -29,7 +29,7 @@ export function vistaAgenda(cont, { usuario, datos }) {
         </li>`;
     cont.innerHTML = `
         <h1 class="titulo">Agenda de visitas</h1>
-        <p class="nota pista"><i class="ti ti-info-circle"></i><span>Lunes a viernes de 9 a 19 y sábados de 9 a 13. Nadie puede estar en dos visitas a la vez.</span></p>
+        <p class="nota"><i class="ti ti-info-circle"></i><span>Lunes a viernes de 9 a 19 y sábados de 9 a 13. Nadie puede estar en dos visitas a la vez.</span></p>
         ${chipsDias(dias, fecha, datos.visitasPorDia(usuario))}
         <p class="tira"><span><b>${esc(mayuscula(a.nombre))}</b></span><span>${esc(total)} visita${total === 1 ? "" : "s"}</span></p>
         ${a.cerrado ? vacio("Los domingos no hay visitas.", "ti-calendar-off") : `

@@ -2,9 +2,11 @@
 // Clientes (barbero): buscador, "no vuelven hace más de 30 / 45 / 60 días" con "Invitarlo" (mensaje para copiar y
 // la fecha en que se lo invitó), y la ficha de cada uno: qué se hace siempre, notas, historial y "Sacarle turno".
 // ============================================
-import { esc, aviso, vacio, fechaCorta } from "../../kit/js/ui.js?v=d08c0e2b96";
-import { NO_VUELVEN, TOPES, nombreFecha } from "../datos.js?v=d08c0e2b96";
-import { mostrarMensaje } from "./comunes.js?v=d08c0e2b96";
+import { esc, aviso, vacio, fechaCorta } from "../../kit/js/ui.js?v=cf8a4b352a";
+import { NO_VUELVEN, TOPES, nombreFecha } from "../datos.js?v=cf8a4b352a";
+import { mostrarMensaje } from "./comunes.js?v=cf8a4b352a";
+import { htmlConsigna, htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=cf8a4b352a";
+import { MARCA } from "../marca.js?v=cf8a4b352a";
 
 let noVuelven = null; // null = todos; si no, los días
 let texto = "";
@@ -24,7 +26,9 @@ export function vistaClientes(cont, { usuario, datos }) {
             <button class="chip${noVuelven ? "" : " activo"}" type="button" data-nv="">Todos</button>
             ${NO_VUELVEN.map((d) => `<button class="chip chip--alerta${noVuelven === d ? " activo" : ""}" type="button" data-nv="${d}">No vuelven hace +${d} días <b>${contar(d)}</b></button>`).join("")}
         </div>
-        ${noVuelven ? `<p class="nota pista"><i class="ti ti-hand-finger"></i> Estos hace rato que no vienen y no tienen turno. Invitalos a volver.</p>` : ""}
+        ${noVuelven
+            ? htmlConsigna({ paso: 3, total: 3, accion: "Estos hace rato que no vienen y no tienen turno: tocá “Invitarlo” en uno.", resultado: "Te arma el mensaje para mandarle." })
+            : htmlConsigna({ paso: 3, total: 3, accion: "Tocá “No vuelven hace +45 días”.", resultado: "Te muestra a quién conviene invitar a volver." })}
         <ul class="tarjetas lista-clientes"></ul>`;
 
     const lista = cont.querySelector(".lista-clientes");
@@ -50,6 +54,11 @@ export function vistaClientes(cont, { usuario, datos }) {
                     alConfirmar: () => {
                         datos.invitar(usuario, b.dataset.invitar);
                         pintar();
+                        const consigna = cont.querySelector(".consigna");
+                        if (consigna) {
+                            consigna.outerHTML = htmlConsignaFinal(MARCA);
+                            activarConsigna(cont, MARCA);
+                        }
                     }
                 });
             } catch (err) {

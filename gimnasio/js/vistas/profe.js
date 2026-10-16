@@ -3,10 +3,11 @@
 // quién está entrenando, quién terminó y qué día de la rutina le toca), los avisos (récords de hoy y ayer, y los que
 // vienen pero hace rato que no anotan lo que hacen) y un buscador para llegar a la ficha de cualquiera de sus alumnos.
 // ============================================
-import { esc, vacio } from "../../kit/js/ui.js?v=ab7575362c";
-import { kilos } from "../datos.js?v=ab7575362c";
-import { NEGOCIO } from "../marca.js?v=ab7575362c";
-import { pastilla, cara } from "./comunes.js?v=ab7575362c";
+import { esc, vacio } from "../../kit/js/ui.js?v=289ec4bb58";
+import { kilos } from "../datos.js?v=289ec4bb58";
+import { NEGOCIO } from "../marca.js?v=289ec4bb58";
+import { pastilla, cara } from "./comunes.js?v=289ec4bb58";
+import { htmlConsigna } from "../../kit/js/consigna.js?v=289ec4bb58";
 
 let texto = ""; // lo buscado queda mientras se navega
 
@@ -64,7 +65,7 @@ export function vistaGimnasioHoy(cont, { usuario, datos }) {
                 <span><b>${esc(s.socio)}</b> viene, pero ${s.desde ? `hace ${esc(s.desde)} días que no anota lo que hace` : "nunca anotó lo que hace"}</span>
             </a></li>`).join("")}
         </ul>` : ""}
-        ${recordFranco ? `<p class="nota pista"><i class="ti ti-hand-finger" aria-hidden="true"></i><span>Probá: tocá a Franco, dejale una nota y subile la sentadilla para la próxima.</span></p>` : ""}
+        ${recordFranco ? htmlConsigna({ paso: 2, total: 5, accion: "Tocá a Franco, dejale una nota y subile la sentadilla para la próxima.", resultado: "Franco lo ve en su celu." }) : ""}
         ${g.horarios.length ? g.horarios.map((h) => `
         <section class="horario">
             <h2 class="horario__hora"><i class="ti ti-clock" aria-hidden="true"></i>${esc(h.hora)} <small>${esc(h.alumnos.length)} ${h.alumnos.length === 1 ? "alumno" : "alumnos"} · ${(() => {

@@ -3,12 +3,13 @@
 // en Mis Comprobantes y faltan cargar) y cargar una a mano, con el IVA calculado solo. Una compra mal cargada se
 // anula (no se borra). Solo administración carga; Hernán y Patricia miran.
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=a74a0ff6b5";
-import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=a74a0ff6b5";
-import { TOPES } from "../datos.js?v=a74a0ff6b5";
-import { ALICUOTAS, ORDEN_ALICUOTAS, pesos, numeroComprobante, nombrePeriodo, periodoActual, fechaISO, aCentavos } from "../reglas.js?v=a74a0ff6b5";
-import { buscarPersona } from "../marca.js?v=a74a0ff6b5";
-import { diaMes, periodoPedido, htmlSelectorMes, activarSelectorMes, conEspera, nombreDe } from "./comunes.js?v=a74a0ff6b5";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=03798c8bfa";
+import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=03798c8bfa";
+import { htmlConsigna } from "../../kit/js/consigna.js?v=03798c8bfa";
+import { TOPES } from "../datos.js?v=03798c8bfa";
+import { ALICUOTAS, ORDEN_ALICUOTAS, pesos, numeroComprobante, nombrePeriodo, periodoActual, fechaISO, aCentavos } from "../reglas.js?v=03798c8bfa";
+import { buscarPersona } from "../marca.js?v=03798c8bfa";
+import { diaMes, periodoPedido, htmlSelectorMes, activarSelectorMes, conEspera, nombreDe } from "./comunes.js?v=03798c8bfa";
 
 const puedeCargar = (u) => u.rol === "admin";
 
@@ -33,7 +34,7 @@ export function vistaCompras(cont, { usuario, datos, consulta, irA }) {
             <h2 class="titulo">Listo: ${esc(traidas)} facturas traídas de ARCA</h2>
             <p>El crédito fiscal del mes ya las incluye.</p>
         </div>
-        ${htmlGuia({ persona: patricia, ruta: "/iva", texto: "Mirá cómo la contadora ya tiene el IVA del mes" })}` : ""}
+        ${htmlConsigna({ paso: 2, total: 3, accion: "Traé las compras de ARCA.", hecho: "el IVA de las compras ya está sumado", guia: htmlGuia({ persona: patricia, ruta: "/iva", texto: "Mirá cómo la contadora ya tiene el IVA del mes" }) })}` : ""}
         ${pendientes.length ? `
         <div class="bloque aviso-arca">
             <h2 class="subtitulo"><i class="ti ti-cloud-download"></i> ARCA tiene ${pendientes.length} facturas tuyas sin cargar</h2>

@@ -5,8 +5,8 @@
 //   El mecánico lo toma y lo arregla → al chofer le salta "Ya lo están viendo" y "¡Arreglado!" (Marta también se entera).
 // Acá solo se dice qué pasó y a quién le importa; el kit decide qué es nuevo para cada uno.
 // ============================================
-import { PERSONAS } from "../marca.js?v=f38d8e13f7";
-import { tipoProblema } from "../datos.js?v=f38d8e13f7";
+import { PERSONAS } from "../marca.js?v=842bff8c10";
+import { tipoProblema } from "../datos.js?v=842bff8c10";
 
 export function avisosDe(datos) {
     const db = datos.guardado.db();

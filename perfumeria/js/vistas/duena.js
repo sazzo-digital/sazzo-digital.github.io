@@ -3,9 +3,11 @@
 // entregado), el stock (frascos y botellas madre en ml, lo que hay que pedir primero) y las clientas (lo que compra
 // cada una y "Cumplen este mes" con el saludo para copiar).
 // ============================================
-import { esc, aviso, vacio, fechaCorta, fechaHora } from "../../kit/js/ui.js?v=2bd9bdbf19";
-import { TOPES, MADRE_POCO_ML, pesos } from "../datos.js?v=2bd9bdbf19";
-import { frasco, pastillaPedido, mostrarMensaje } from "./comunes.js?v=2bd9bdbf19";
+import { esc, aviso, vacio, fechaCorta, fechaHora } from "../../kit/js/ui.js?v=f04a42026d";
+import { TOPES, MADRE_POCO_ML, pesos } from "../datos.js?v=f04a42026d";
+import { frasco, pastillaPedido, mostrarMensaje } from "./comunes.js?v=f04a42026d";
+import { htmlConsigna, htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=f04a42026d";
+import { MARCA } from "../marca.js?v=f04a42026d";
 
 const MESES = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
 
@@ -28,8 +30,14 @@ export function vistaPedidos(cont, { usuario, datos }) {
                 </span>
             </div>
         </li>`;
+    const consigna = p.nuevos.length
+        ? htmlConsigna({ paso: 2, total: 3, accion: "Tocá “Preparado” en el pedido nuevo.", resultado: "Se descuenta el frasco o los ml de la botella madre." })
+        : p.preparados.some((o) => !o.avisado)
+            ? htmlConsigna({ paso: 3, total: 3, accion: "Tocá “Avisar que está listo”.", resultado: "Te arma el mensaje para mandarle." })
+            : p.preparados.some((o) => o.avisado) ? htmlConsignaFinal(MARCA) : "";
     cont.innerHTML = `
         <h1 class="titulo">Pedidos</h1>
+        ${consigna}
         <div class="tira">
             <span><b>${esc(p.dia.llegaron)}</b> llegaron hoy</span>
             <span>Vendido hoy <b>${esc(pesos(p.dia.vendido))}</b></span>
@@ -45,6 +53,7 @@ export function vistaPedidos(cont, { usuario, datos }) {
             <ul class="tarjetas">${p.entregadosHoy.map((o) => `<li class="tarjeta"><div class="tarjeta__fila"><b>${esc(o.clienta)} · N° ${esc(o.numero)}</b><b>${esc(pesos(o.total))}</b></div></li>`).join("")}</ul>
         </details>` : ""}`;
 
+    activarConsigna(cont, MARCA);
     const otraVez = () => vistaPedidos(cont, { usuario, datos });
     const acciones = {
         preparar: (id) => {
@@ -138,7 +147,7 @@ export function vistaClientas(cont, { usuario, datos }) {
             <button class="chip${soloCumple ? "" : " activo"}" type="button" data-cumple="">Todas</button>
             <button class="chip chip--alerta${soloCumple ? " activo" : ""}" type="button" data-cumple="1"><i class="ti ti-cake"></i> Cumplen en ${esc(mes)} <b>${cumplen.length}</b></button>
         </div>
-        ${soloCumple ? `<p class="nota pista"><i class="ti ti-hand-finger"></i> Mandales un saludo con un regalo: es lo que más las hace volver.</p>` : ""}
+        ${soloCumple ? `<p class="nota"><i class="ti ti-cake"></i> Mandales un saludo con un regalo: es lo que más las hace volver.</p>` : ""}
         ${lista.length ? `<ul class="tarjetas">${lista.map((c) => `
             <li class="tarjeta${soloCumple ? " tarjeta--cumple" : ""}">
                 <div class="tarjeta__fila">

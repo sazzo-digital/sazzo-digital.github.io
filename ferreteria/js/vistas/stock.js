@@ -9,11 +9,13 @@
 //   "Pedidos a proveedores": lo que bajó del mínimo, por proveedor, con el mensaje para copiar y "Llegó".
 //   "Cargar artículo": con costo y margen (el precio sale solo).
 // ============================================
-import { esc, aviso, vacio, mensajeDe } from "../../kit/js/ui.js?v=86c054c83c";
-import { mostrarMensaje } from "../../kit/js/mensaje.js?v=86c054c83c";
-import { bajarExcel, leerExcel } from "../../kit/js/archivos.js?v=86c054c83c";
-import { PROVEEDORES, RUBROS, TOPES, UNIDADES, DESCUENTO_MAYOR, nombreRubro, pesos, precioDe, precioConUnidad, cantidadTexto } from "../datos.js?v=86c054c83c";
-import { pastillaStock, etiquetaUnidad } from "./comunes.js?v=86c054c83c";
+import { esc, aviso, vacio, mensajeDe } from "../../kit/js/ui.js?v=8ec449d814";
+import { mostrarMensaje } from "../../kit/js/mensaje.js?v=8ec449d814";
+import { bajarExcel, leerExcel } from "../../kit/js/archivos.js?v=8ec449d814";
+import { PROVEEDORES, RUBROS, TOPES, UNIDADES, DESCUENTO_MAYOR, nombreRubro, pesos, precioDe, precioConUnidad, cantidadTexto } from "../datos.js?v=8ec449d814";
+import { pastillaStock, etiquetaUnidad } from "./comunes.js?v=8ec449d814";
+import { htmlConsigna, htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=8ec449d814";
+import { MARCA } from "../marca.js?v=8ec449d814";
 
 const RAPIDOS = [5, 10, 15, 20];
 let textoBuscado = ""; // el buscador de Stock recuerda lo escrito mientras se navega
@@ -68,7 +70,7 @@ export function vistaStock(cont, { usuario, datos, consulta }) {
             <a class="boton boton--chico boton--secundario" href="#/stock/nuevo"><i class="ti ti-plus"></i> Cargar artículo</a>
         </div>
         ${htmlUltimoCambio(datos.ultimoCambio())}` : `<p class="nota"><i class="ti ti-info-circle"></i> Los precios, los costos y el stock los cambia Osvaldo.</p>`}
-        ${dueno && pedir && aPedir.length ? `<p class="nota pista"><i class="ti ti-hand-finger"></i> Esto bajó del mínimo (lo vendido de los presupuestos también descuenta). Armá los pedidos de un toque: el mensaje al proveedor sale armado.</p>
+        ${dueno && pedir && aPedir.length ? `<p class="nota"><i class="ti ti-package"></i> Esto bajó del mínimo (lo vendido de los presupuestos también descuenta). Armá los pedidos de un toque: el mensaje al proveedor sale armado.</p>
             <a class="boton boton--ancho" href="#/stock/pedidos"><i class="ti ti-truck-delivery"></i> Armar los pedidos a los proveedores</a>` : ""}
         <form class="buscar buscar--stock" novalidate>
             <label class="buscador">
@@ -213,7 +215,7 @@ export function vistaAumento(cont, { usuario, datos }) {
     cont.innerHTML = `
         <a class="volver" href="#/stock"><i class="ti ti-arrow-left"></i> Stock y precios</a>
         <h1 class="titulo">Subió un proveedor</h1>
-        <p class="nota pista"><i class="ti ti-hand-finger"></i> Te mandó la lista nueva: elegí el proveedor y cuánto subió. Sube el costo y cada precio se recalcula con tu margen.</p>
+        <p class="nota"><i class="ti ti-trending-up"></i> Te mandó la lista nueva: elegí el proveedor y cuánto subió. Sube el costo y cada precio se recalcula con tu margen.</p>
         <div class="bloque">
             <p class="rotulo-chico">Proveedor</p>
             <div class="chips">${PROVEEDORES.map((p) => `<button class="chip" type="button" data-proveedor="${esc(p.id)}">${esc(p.nombre)}</button>`).join("")}</div>
@@ -281,7 +283,7 @@ export function vistaMargen(cont, { usuario, datos }) {
     cont.innerHTML = `
         <a class="volver" href="#/stock"><i class="ti ti-arrow-left"></i> Stock y precios</a>
         <h1 class="titulo">Cambiar margen</h1>
-        <p class="nota pista"><i class="ti ti-hand-finger"></i> Cuánto le ganás a cada rubro: cambiás el margen y todos sus precios se recalculan sobre el costo.</p>
+        <p class="nota"><i class="ti ti-percentage"></i> Cuánto le ganás a cada rubro: cambiás el margen y todos sus precios se recalculan sobre el costo.</p>
         <div class="bloque">
             <p class="rotulo-chico">Rubro</p>
             <div class="chips">${RUBROS.map((r) => `<button class="chip" type="button" data-rubro="${esc(r.id)}">${esc(r.nombre)}</button>`).join("")}</div>
@@ -328,7 +330,7 @@ export function vistaLista(cont, { usuario, datos }) {
     cont.innerHTML = `
         <a class="volver" href="#/stock"><i class="ti ti-arrow-left"></i> Stock y precios</a>
         <h1 class="titulo">La lista del proveedor en Excel</h1>
-        <p class="nota pista"><i class="ti ti-hand-finger"></i> ¿Te mandó la lista nueva en Excel? Subila: se actualiza el costo de cada artículo y el precio de venta sale solo, con tu margen. Probá con la de ejemplo.</p>
+        ${htmlConsigna({ paso: 5, total: 5, accion: "¿Te mandó la lista nueva en Excel? Bajá la de ejemplo, subila y aplicala.", resultado: "Se actualiza el costo de cada artículo y el precio sale solo, con tu margen." })}
         <ol class="pasos-lista">
             <li>
                 <span>Bajá la lista de ejemplo de Sanitarios del Centro (sube un 12 %).</span>
@@ -369,6 +371,11 @@ export function vistaLista(cont, { usuario, datos }) {
                 aviso(`${cambio.cambios.length} precios actualizados`);
                 // Muestra el aviso con Deshacer en el mismo lugar (es también .resultado-aumento)
                 despuesDeAplicar(cont, { usuario, datos, cambio, alDeshacer: () => (lugar.innerHTML = "") });
+                const consigna = cont.querySelector(".consigna");
+                if (consigna) {
+                    consigna.outerHTML = htmlConsignaFinal(MARCA);
+                    activarConsigna(cont, MARCA);
+                }
             } catch (err) {
                 aviso(err, "error");
             }
@@ -401,7 +408,7 @@ export function vistaPedidosProveedor(cont, { usuario, datos }) {
     cont.innerHTML = `
         <a class="volver" href="#/stock?ver=pedir"><i class="ti ti-arrow-left"></i> Stock y precios</a>
         <h1 class="titulo">Pedidos a proveedores</h1>
-        <p class="nota pista"><i class="ti ti-hand-finger"></i> Armado solo con lo que bajó del mínimo (hasta tener el doble). Copiá el pedido y, cuando llegue, tocá "Llegó".</p>
+        <p class="nota"><i class="ti ti-truck-delivery"></i> Armado solo con lo que bajó del mínimo (hasta tener el doble). Copiá el pedido y, cuando llegue, tocá "Llegó".</p>
         ${pedidos.length ? pedidos.map((pr) => `
         <section class="bloque pedido-proveedor">
             <div class="tarjeta__fila">

@@ -2,14 +2,14 @@
 // Piezas que comparten las pantallas de Sazzo Taller: el botón del recorrido y el mensaje para copiar (del kit), la
 // patente dibujada como chapa y la pastilla del estado de una orden. Todo dato que entra a HTML pasa por esc().
 // ============================================
-import { esc } from "../../kit/js/ui.js?v=4788997dbc";
-import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=4788997dbc";
-import { fechaLocalISO } from "../../kit/js/fechas.js?v=4788997dbc";
-import { buscarPersona } from "../marca.js?v=4788997dbc";
+import { esc } from "../../kit/js/ui.js?v=0579abf08d";
+import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=0579abf08d";
+import { fechaLocalISO } from "../../kit/js/fechas.js?v=0579abf08d";
+import { buscarPersona } from "../marca.js?v=0579abf08d";
 
 export const guia = (personaId, ruta, texto) => htmlGuia({ persona: buscarPersona(personaId), ruta, texto });
 export { activarGuias };
-export { mostrarMensaje } from "../../kit/js/mensaje.js?v=4788997dbc";
+export { mostrarMensaje } from "../../kit/js/mensaje.js?v=0579abf08d";
 
 /** La patente como una chapa (con la franja de arriba). */
 export const chapa = (texto, grande = false) => `<span class="chapa${grande ? " chapa--grande" : ""}">${esc(texto)}</span>`;

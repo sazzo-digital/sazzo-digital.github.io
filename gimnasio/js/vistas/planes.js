@@ -4,9 +4,9 @@
 // repeticiones, descanso y peso de arranque, sacar), copiar una rutina y asignarla a un alumno.
 // Cambiar una rutina cambia la de todos los que la usan; para uno solo está "Ajustar" en su ficha.
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=ab7575362c";
-import { EJERCICIOS, TOPES, kilos, cuanto } from "../datos.js?v=ab7575362c";
-import { pastilla } from "./comunes.js?v=ab7575362c";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=289ec4bb58";
+import { EJERCICIOS, TOPES, kilos, cuanto } from "../datos.js?v=289ec4bb58";
+import { pastilla } from "./comunes.js?v=289ec4bb58";
 
 let editando = null; // "nombre", "dia|A" o "ej|A|banca": lo que está abierto para cambiar
 
@@ -14,7 +14,7 @@ export function vistaPlanes(cont, { datos }) {
     const planes = datos.listarPlanes();
     cont.innerHTML = `
         <h1 class="titulo">Rutinas</h1>
-        <p class="nota pista"><i class="ti ti-info-circle" aria-hidden="true"></i><span>Rutinas armadas para asignar. Copiá una y cambiala a gusto. Son de ejemplo.</span></p>
+        <p class="nota"><i class="ti ti-info-circle" aria-hidden="true"></i><span>Rutinas armadas para asignar. Copiá una y cambiala a gusto. Son de ejemplo.</span></p>
         <ul class="tarjetas">${planes.map((p) => `
             <li class="tarjeta tarjeta--abre">
                 <div class="tarjeta__fila">

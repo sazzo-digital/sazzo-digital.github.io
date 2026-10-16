@@ -3,11 +3,12 @@
 // filtros que importan (cuota vencida, vence esta semana, avisaron que pagaron, no vienen hace +3 semanas, sin apto,
 // bajas) con la acción de cada uno a mano (recordatorio, confirmar, invitar), el buscador, Excel y el alta.
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=ab7575362c";
-import { bajarExcel } from "../../kit/js/archivos.js?v=ab7575362c";
-import { NEGOCIO } from "../marca.js?v=ab7575362c";
-import { PLANES_CUOTA, HORAS, DIAS_CORTOS, ORDEN_SEMANA, TOPES, REAVISAR_DIAS, REINVITAR_DIAS, pesos, fechaCorta } from "../datos.js?v=ab7575362c";
-import { guia, activarGuias, pastilla, pastillaCuota, cara, haceDias, mostrarMensaje } from "./comunes.js?v=ab7575362c";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=289ec4bb58";
+import { bajarExcel } from "../../kit/js/archivos.js?v=289ec4bb58";
+import { NEGOCIO } from "../marca.js?v=289ec4bb58";
+import { PLANES_CUOTA, HORAS, DIAS_CORTOS, ORDEN_SEMANA, TOPES, REAVISAR_DIAS, REINVITAR_DIAS, pesos, fechaCorta } from "../datos.js?v=289ec4bb58";
+import { guia, activarGuias, pastilla, pastillaCuota, cara, haceDias, mostrarMensaje } from "./comunes.js?v=289ec4bb58";
+import { htmlConsigna } from "../../kit/js/consigna.js?v=289ec4bb58";
 
 let filtro = "pronto"; // de entrada, los que vencen esta semana: lo primero que mira la dueña
 let texto = "";
@@ -24,6 +25,13 @@ const FILTROS = [
     ["sin-apto", "Sin apto físico", "chip--alerta"],
     ["todos", "Todos", ""],
     ["bajas", "Bajas", ""]
+];
+
+const CUADROS = [
+    ["vencida", "Vencidas", "mal"],
+    ["pronto", "Vencen esta semana", "alerta"],
+    ["no-vienen", "No vienen", "suave"],
+    ["sin-apto", "Sin apto", "suave"]
 ];
 
 const PISTA = {
@@ -43,9 +51,13 @@ export function vistaSocios(cont, opciones) {
     // El momento wow: Franco vence esta semana → recordatorio → "Mirá lo que le llega a Franco"
     const franco = datos.listarSocios({ filtro: "todos" }).find((a) => a.id === "s-franco");
     const francoDebe = franco && franco.estadoCuota !== "al-dia" && !franco.avisoPago;
-    const pista = filtro === "pronto" && francoDebe && !hacePoco(franco.recordadoEn, REAVISAR_DIAS)
-        ? "Probá: mandale el recordatorio a Franco. Le vence en unos días."
-        : PISTA[filtro];
+    const consigna = filtro === "pronto" && francoDebe && !hacePoco(franco.recordadoEn, REAVISAR_DIAS)
+        ? htmlConsigna({ paso: 3, total: 5, accion: "Mandale el recordatorio a Franco: le vence en unos días.", resultado: "Le llega el mensaje armado." })
+        : francoDebe && hacePoco(franco.recordadoEn, REAVISAR_DIAS)
+            ? htmlConsigna({ paso: 3, total: 5, accion: "Mandale el recordatorio a Franco.", hecho: "recordatorio mandado", guia: guia("u-socio", "/cuota", "Mirá lo que le llega a Franco") })
+            : filtro === "avisaron" && franco?.avisoPago
+                ? htmlConsigna({ paso: 5, total: 5, accion: "Abrí a Franco y confirmá el pago.", resultado: "Franco queda al día y la caja sube." })
+                : "";
 
     cont.innerHTML = `
         <div class="titulo-con-accion">
@@ -55,17 +67,18 @@ export function vistaSocios(cont, opciones) {
                 <a class="boton boton--chico" href="#/socios/nuevo"><i class="ti ti-user-plus" aria-hidden="true"></i> Socio nuevo</a>
             </span>
         </div>
-        <div class="numeros-grandes">
-            <div><span>Socios activos</span><b>${esc(t.activos)}</b><small>${esc(t.alDia)} con la cuota al día</small></div>
-            <div class="mal"><span>Cuotas vencidas</span><b>${esc(t.vencidas)}</b><small>${esc(t.pronto)} vencen esta semana</small></div>
-            <div><span>Cobrado este mes</span><b>${esc(pesos(t.cobradoMes))}</b><small>${esc(NEGOCIO)}</small></div>
-            <div class="alerta"><span>Por cobrar</span><b>${esc(pesos(t.porCobrar))}</b><small>vencidas y esta semana</small></div>
+        <div class="caja-mes">
+            <span>Cobrado este mes</span>
+            <b>${esc(pesos(t.cobradoMes))}</b>
+            <small>${esc(t.activos)} socios activos · ${esc(t.alDia)} al día · por cobrar ${esc(pesos(t.porCobrar))}</small>
         </div>
-        <div class="chips filtros" role="tablist" aria-label="Filtro">
-            ${FILTROS.map(([k, txt, clase]) => `<button class="chip ${clase}${filtro === k ? " activo" : ""}" type="button" role="tab" aria-selected="${filtro === k}" data-filtro="${esc(k)}">${esc(txt)} <b>${esc(cuantos[k])}</b></button>`).join("")}
+        <div class="cuadros" role="tablist" aria-label="Filtro">
+            ${CUADROS.map(([k, txt, clase]) => `<button class="cuadro cuadro--${clase}${filtro === k ? " activo" : ""}" type="button" role="tab" aria-selected="${filtro === k}" data-filtro="${esc(k)}"><b>${esc(cuantos[k])}</b><span>${esc(txt)}</span></button>`).join("")}
         </div>
-        ${pista ? `<p class="nota pista"><i class="ti ti-hand-finger" aria-hidden="true"></i><span>${esc(pista)}</span></p>` : ""}
-        ${francoDebe && hacePoco(franco.recordadoEn, REAVISAR_DIAS) ? guia("u-socio", "/cuota", "Mirá lo que le llega a Franco") : ""}
+        <div class="chips filtros" role="tablist" aria-label="Más filtros">
+            ${FILTROS.filter(([k]) => !CUADROS.some(([c]) => c === k)).map(([k, txt, clase]) => `<button class="chip ${clase}${filtro === k ? " activo" : ""}" type="button" role="tab" aria-selected="${filtro === k}" data-filtro="${esc(k)}">${esc(txt)} <b>${esc(cuantos[k])}</b></button>`).join("")}
+        </div>
+        ${consigna || (PISTA[filtro] ? `<p class="nota"><i class="ti ti-info-circle" aria-hidden="true"></i><span>${esc(PISTA[filtro])}</span></p>` : "")}
         <label class="buscador">
             <i class="ti ti-search" aria-hidden="true"></i>
             <span class="solo-lector">Buscar socio</span>

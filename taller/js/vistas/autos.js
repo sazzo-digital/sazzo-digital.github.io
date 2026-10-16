@@ -2,9 +2,9 @@
 // Autos y clientes: buscar por patente o por nombre; cada auto con todas sus visitas. Y "Para llamar": los que tienen
 // el service vencido (más de 6 meses o 10.000 km) y no están en el taller, con el mensaje para recordárselo.
 // ============================================
-import { esc, aviso, vacio, fechaCorta } from "../../kit/js/ui.js?v=4788997dbc";
-import { pesos } from "../datos.js?v=4788997dbc";
-import { chapa, pastillaEstado, mostrarMensaje } from "./comunes.js?v=4788997dbc";
+import { esc, aviso, vacio, fechaCorta } from "../../kit/js/ui.js?v=0579abf08d";
+import { pesos } from "../datos.js?v=0579abf08d";
+import { chapa, pastillaEstado, mostrarMensaje } from "./comunes.js?v=0579abf08d";
 
 let vista = "todos"; // "todos" o "llamar"
 let texto = "";
@@ -21,7 +21,7 @@ export function vistaAutos(cont, { usuario, datos }) {
             <button class="chip chip--alerta${vista === "llamar" ? " activo" : ""}" type="button" data-vista="llamar">Para llamar <b>${llamar.length}</b></button>
         </div>` : ""}
         ${vista === "llamar" ? `
-        <p class="nota pista"><i class="ti ti-hand-finger"></i> Les toca el service y no vinieron. Escribiles: es lo que más gente trae de vuelta.</p>
+        <p class="nota"><i class="ti ti-bell"></i> Les toca el service y no vinieron. Escribiles: es lo que más gente trae de vuelta.</p>
         <ul class="tarjetas">${llamar.length ? llamar.map((a) => `
             <li class="tarjeta tarjeta--alerta">
                 <div class="tarjeta__fila"><a class="tarjeta__titulo" href="#/autos/${esc(a.id)}">${chapa(a.patenteTexto)} ${esc(a.modelo)}</a></div>

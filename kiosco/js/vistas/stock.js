@@ -4,10 +4,12 @@
 // kiosco y aplicás todo de una, con Deshacer. Y "La lista del proveedor en Excel": subís la lista que te mandó y los
 // precios se actualizan solos (también con Deshacer). El stock se baja a Excel. La empleada solo mira (y baja).
 // ============================================
-import { esc, aviso, vacio, mensajeDe } from "../../kit/js/ui.js?v=9d8300a5a6";
-import { bajarExcel, leerExcel } from "../../kit/js/archivos.js?v=9d8300a5a6";
-import { PROVEEDORES, TOPES, pesos, estadoStock } from "../datos.js?v=9d8300a5a6";
-import { pastillaStock } from "./comunes.js?v=9d8300a5a6";
+import { esc, aviso, vacio, mensajeDe } from "../../kit/js/ui.js?v=85347c5bd0";
+import { bajarExcel, leerExcel } from "../../kit/js/archivos.js?v=85347c5bd0";
+import { PROVEEDORES, TOPES, pesos, estadoStock } from "../datos.js?v=85347c5bd0";
+import { pastillaStock } from "./comunes.js?v=85347c5bd0";
+import { htmlConsigna, htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=85347c5bd0";
+import { MARCA } from "../marca.js?v=85347c5bd0";
 
 const RAPIDOS = [5, 10, 15, 20];
 
@@ -141,7 +143,7 @@ export function vistaAumento(cont, { usuario, datos }) {
     cont.innerHTML = `
         <a class="volver" href="#/stock"><i class="ti ti-arrow-left"></i> Stock y precios</a>
         <h1 class="titulo">Subió un proveedor</h1>
-        <p class="nota pista"><i class="ti ti-hand-finger"></i> Te mandó la lista nueva: elegí el proveedor y cuánto subió, mirá cómo quedan y aplicalo de una.</p>
+        ${htmlConsigna({ paso: 3, total: 3, accion: "Te mandó la lista nueva: elegí el proveedor y cuánto subió, mirá cómo quedan y aplicalo.", resultado: "Cambian todos sus precios de una, con Deshacer." })}
         <div class="bloque">
             <p class="rotulo-chico">Proveedor</p>
             <div class="chips">${PROVEEDORES.map((p) => `<button class="chip" type="button" data-proveedor="${esc(p.id)}">${esc(p.nombre)}</button>`).join("")}</div>
@@ -183,6 +185,11 @@ export function vistaAumento(cont, { usuario, datos }) {
                 lugar.innerHTML = "";
                 pintar();
             });
+            const consigna = cont.querySelector(".consigna");
+            if (consigna) {
+                consigna.outerHTML = htmlConsignaFinal(MARCA);
+                activarConsigna(cont, MARCA);
+            }
             aviso(`${a.cambios.length} precios actualizados`);
             pintar();
             lugar.scrollIntoView({ block: "center" });
@@ -202,7 +209,7 @@ export function vistaLista(cont, { usuario, datos }) {
     cont.innerHTML = `
         <a class="volver" href="#/stock"><i class="ti ti-arrow-left"></i> Stock y precios</a>
         <h1 class="titulo">La lista del proveedor en Excel</h1>
-        <p class="nota pista"><i class="ti ti-hand-finger"></i> ¿Te mandó la lista nueva en Excel? Subila y los precios se actualizan solos, con tu redondeo. Probá con la de ejemplo.</p>
+        <p class="nota"><i class="ti ti-file-spreadsheet"></i> ¿Te mandó la lista nueva en Excel? Subila y los precios se actualizan solos, con tu redondeo. Probá con la de ejemplo.</p>
         <ol class="pasos-lista">
             <li>
                 <span>Bajá la lista de ejemplo de Bebidas Norte (sube un 12 %).</span>

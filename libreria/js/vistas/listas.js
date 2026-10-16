@@ -3,10 +3,11 @@
 // En cada pedido: si alcanza el stock de cada artículo (y, si no, otro de la misma familia: el cuaderno rojo por el
 // azul), "Separar" (se descuenta del stock), "Avisar" (mensaje para copiar) y "Cobrar y entregar" (queda como venta).
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=da3c504853";
-import { mostrarMensaje } from "../../kit/js/mensaje.js?v=da3c504853";
-import { ESTADOS_PEDIDO, MEDIOS, TOPES, pesos } from "../datos.js?v=da3c504853";
-import { guia, activarGuias, pasos, pastillaEstado, tarjetaPedido, cuando } from "./comunes.js?v=da3c504853";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=c96e24d926";
+import { mostrarMensaje } from "../../kit/js/mensaje.js?v=c96e24d926";
+import { ESTADOS_PEDIDO, MEDIOS, TOPES, pesos } from "../datos.js?v=c96e24d926";
+import { guia, activarGuias, pasos, pastillaEstado, tarjetaPedido, cuando } from "./comunes.js?v=c96e24d926";
+import { htmlConsigna } from "../../kit/js/consigna.js?v=c96e24d926";
 
 /** Billetes "redondos" para cobrar una lista: el próximo múltiplo de $10.000, de $50.000 y $100.000. */
 const billetesPara = (total) => [...new Set([10_000, 50_000, 100_000].map((b) => Math.ceil(Math.max(1, total) / b) * b))].slice(0, 3);
@@ -25,7 +26,7 @@ export function vistaListas(cont, { usuario, datos, consulta }) {
             <h1 class="titulo">Listas escolares</h1>
             <a class="boton boton--chico" href="#/listas/nueva"><i class="ti ti-plus"></i> Armar una en el mostrador</a>
         </div>
-        ${nuevaWeb ? `<p class="nota pista"><i class="ti ti-hand-finger"></i> Te llegó la lista de ${esc(nuevaWeb.para)}: tocala para armarla y separarla.</p>` : ""}
+        ${nuevaWeb ? htmlConsigna({ paso: 2, total: 4, accion: `Te llegó la lista de ${nuevaWeb.para}: tocala para armarla y separarla.`, resultado: "Se descuenta del stock." }) : ""}
         <div class="numeros-caja">
             <div class="numero-caja"><span>Para armar</span><b>${esc(cuenta("nueva"))}</b></div>
             <div class="numero-caja"><span>Separadas</span><b>${esc(cuenta("separada"))}</b><small>esperando que las busquen</small></div>
@@ -155,7 +156,7 @@ export function vistaPedido(cont, opciones, recien = null) {
             <h2 class="titulo">Entregada y cobrada</h2>
             <p>${esc(pesos(pe.total))}${opciones.vuelto != null ? ` · vuelto <b>${esc(pesos(opciones.vuelto))}</b>` : ""}</p>
         </div>` : ""}
-        ${pe.estado === "nueva" && empleado ? `<p class="nota pista"><i class="ti ti-hand-finger"></i> Fijate que haya de todo${sinAlcanzar ? ": hay algo que no alcanza, cambialo por otro" : ""} y separala. Se descuenta del stock.</p>` : ""}
+        ${pe.estado === "nueva" && empleado ? htmlConsigna({ paso: 2, total: 4, accion: `Fijate que haya de todo${sinAlcanzar ? ": hay algo que no alcanza, cambialo por otro" : ""} y separala.`, resultado: "Se descuenta del stock." }) : ""}
         <ul class="filas-stock items-pedido">${pe.items.map(filaItem).join("")}</ul>
         <div class="total"><span>${pe.estado === "nueva" && sinAlcanzar ? "Si la separás así" : "Total"}</span><b>${esc(pesos(pe.estado === "nueva" ? pe.totalSiSepara : pe.total))}</b></div>
         <div class="acciones-pedido"></div>`;
@@ -181,7 +182,7 @@ export function vistaPedido(cont, opciones, recien = null) {
                 <button class="boton boton--secundario" type="button" data-avisar><i class="ti ti-message-circle"></i> Avisar${pe.cliente ? ` a ${esc(pe.cliente)}` : ""} que está lista</button>
                 ${pe.avisado ? `<span class="nota avisado"><i class="ti ti-check"></i> Avisado ${esc(cuando(pe.avisado))}</span>` : ""}
             </div>
-            ${empleado && recien === "separada" ? guia("u-duena", "/stock?ver=pedir", "Pasá a Mariela: mirá qué hay que reponer") : ""}
+            ${empleado && recien === "separada" ? htmlConsigna({ paso: 2, total: 4, accion: "Separá la lista.", hecho: "lista separada", guia: guia("u-duena", "/stock?ver=pedir", "Pasá a Mariela: mirá qué hay que reponer") }) : ""}
             <form class="formulario bloque entregar" novalidate>
                 <h2 class="subtitulo"><i class="ti ti-cash"></i> Vinieron a buscarla: cobrar y entregar</h2>
                 <div class="chips medios" role="radiogroup" aria-label="Cómo paga"></div>

@@ -4,18 +4,19 @@
 // de agua "DEMO · SIN VALIDEZ FISCAL", el CAE de prueba y el lugar del QR dibujado. Desde ahí, la nota de crédito.
 // Solo administración carga; Hernán y Patricia miran.
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=a74a0ff6b5";
-import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=a74a0ff6b5";
-import { TOPES, CUENTAS, ID_CONSUMIDOR_FINAL } from "../datos.js?v=a74a0ff6b5";
-import { PRODUCTOS } from "../semilla.js?v=a74a0ff6b5";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=03798c8bfa";
+import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=03798c8bfa";
+import { htmlConsigna } from "../../kit/js/consigna.js?v=03798c8bfa";
+import { TOPES, CUENTAS, ID_CONSUMIDOR_FINAL } from "../datos.js?v=03798c8bfa";
+import { PRODUCTOS } from "../semilla.js?v=03798c8bfa";
 import {
     COMPROBANTES, ALICUOTAS, ORDEN_ALICUOTAS, TOPE_CF_IDENTIFICAR, pesos, numeroComprobante, formatoCuit, nombrePeriodo, signo
-} from "../reglas.js?v=a74a0ff6b5";
-import { buscarPersona } from "../marca.js?v=a74a0ff6b5";
+} from "../reglas.js?v=03798c8bfa";
+import { buscarPersona } from "../marca.js?v=03798c8bfa";
 import {
     fechaCorta, diaMes, pastillaTipo, periodoPedido, htmlSelectorMes, activarSelectorMes, documento, condicionTexto,
     logoEmpresa, conEspera, nombreDe
-} from "./comunes.js?v=a74a0ff6b5";
+} from "./comunes.js?v=03798c8bfa";
 
 const puedeCargar = (u) => u.rol === "admin";
 const OPCIONES_ALICUOTA = [...ORDEN_ALICUOTAS, "ex"];
@@ -282,7 +283,7 @@ export function vistaComprobante(cont, { usuario, datos, params: [id], consulta,
         ${usuario.rol === "admin" && c.tipo === "FA" ? `
         <div class="siguiente-paso no-imprimir">
             <a class="boton boton--grande" href="#/compras"><i class="ti ti-cloud-download"></i> Ahora traé las compras de ARCA</a>
-            ${htmlGuia({ persona: patricia, ruta: "/iva", texto: "O mirá cómo ya lo ve la contadora" })}
+            ${htmlConsigna({ paso: 2, total: 3, accion: "Ahora traé las compras de ARCA.", resultado: "El IVA de las compras del mes se suma solo.", guia: htmlGuia({ persona: patricia, ruta: "/iva", texto: "O mirá cómo ya lo ve la contadora" }) })}
         </div>` : ""}` : `<h1 class="titulo no-imprimir">${esc(t.nombre)} ${esc(numeroComprobante(c.puntoVenta, c.numero))}</h1>`}
 
         <article class="factura" aria-label="${esc(t.nombre)}">

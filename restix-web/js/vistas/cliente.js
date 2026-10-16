@@ -4,11 +4,11 @@
 // (verEn3D del kit: el plato se gira con el dedo y, donde el celular puede, "Verlo en tu mesa" en tamaño real).
 // Solo mirar, como la carta real de Restix: el pedido lo sigue tomando la moza.
 // ============================================
-import { esc, aviso } from "../../kit/js/ui.js?v=a86e661e0a";
-import { verEn3D } from "../../kit/js/modelo3d.js?v=a86e661e0a";
-import { cartaCliente, pesos } from "../datos.js?v=a86e661e0a";
-import { NEGOCIO, MESA_CLIENTE } from "../marca.js?v=a86e661e0a";
-import { guia, activarGuias } from "./comunes.js?v=a86e661e0a";
+import { esc, aviso } from "../../kit/js/ui.js?v=633ebcf9e8";
+import { verEn3D } from "../../kit/js/modelo3d.js?v=633ebcf9e8";
+import { cartaCliente, pesos, notaDe3D } from "../datos.js?v=633ebcf9e8";
+import { NEGOCIO, MESA_CLIENTE } from "../marca.js?v=633ebcf9e8";
+import { guia, activarGuias } from "./comunes.js?v=633ebcf9e8";
 
 const MODELO_VALIDO = /^[a-z0-9-]+$/; // nombre del .glb de img\, sin la extensión
 
@@ -29,7 +29,7 @@ export function vistaCarta(cont, { irA }) {
             <h1 class="titulo">Carta</h1>
             <span class="negocio"><i class="ti ti-qrcode" aria-hidden="true"></i>${esc(NEGOCIO)} · ${esc(MESA_CLIENTE)}</span>
         </div>
-        <p class="nota pista"><i class="ti ti-hand-finger"></i> <span>Abriste la carta con el QR de la mesa. Tocá <b>Ver en 3D</b> en la Muzzarella y giralo con el dedo.</span></p>
+        <p class="nota"><i class="ti ti-qrcode"></i> <span>Abriste la carta con el QR de la mesa. Tocá <b>Ver en 3D</b> en la Muzzarella y giralo con el dedo.</span></p>
         <nav class="chips carta-cats" aria-label="Categorías">${categorias.map((c) => `<button class="chip" type="button" data-ir="${esc(c.id)}"><i class="ti ${esc(c.icono)}" aria-hidden="true"></i>${esc(c.texto)}</button>`).join("")}</nav>
         ${categorias.map((c) => `
         <section class="carta-cat" id="carta-${esc(c.id)}">
@@ -46,7 +46,7 @@ export function vistaCarta(cont, { irA }) {
     cont.querySelectorAll("[data-3d]").forEach((b) => b.addEventListener("click", () => {
         const p = productos.find((x) => x.id === b.dataset["3d"]);
         if (!p?.modelo) return;
-        verEn3D({ titulo: p.nombre, src: `img/${p.modelo}.glb` }).catch((err) => aviso(err, "error"));
+        verEn3D({ titulo: p.nombre, src: `img/${p.modelo}.glb`, nota: notaDe3D(p.modelo) }).catch((err) => aviso(err, "error"));
     }));
     activarGuias(cont, irA);
 }

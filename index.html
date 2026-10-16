@@ -23,8 +23,8 @@
     <link rel="icon" href="img/isotipo.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
     <!-- Letras desde el propio sitio (antes Google Fonts); el script de armar las apunta a la copia compartida -->
-    <link rel="stylesheet" href="letras/letras.css?v=75bb8ee7ef">
-    <link rel="stylesheet" href="css/catalogo.css?v=526835b55f">
+    <link rel="stylesheet" href="letras/letras.css?v=d61373a123">
+    <link rel="stylesheet" href="css/catalogo.css?v=c5558ab858">
     <!-- Si hay JavaScript, las secciones arrancan ocultas y aparecen al bajar (sin JavaScript se ve todo igual) -->
     <script>
         document.documentElement.classList.add("js");
@@ -82,6 +82,12 @@
             <symbol id="i-paleta" viewBox="0 0 24 24"><path d="M12 21a9 9 0 0 1 0-18c5 0 9 3.6 9 8 0 1.1-.5 2.1-1.3 2.8-.8.8-2 1.2-3.2 1.2h-2.5a2 2 0 0 0-1 3.8 1.3 1.3 0 0 1-1 2.2"/><circle cx="8.5" cy="10.5" r="1"/><circle cx="12.5" cy="7.5" r="1"/><circle cx="16.5" cy="10.5" r="1"/></symbol>
             <symbol id="i-mas" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
             <symbol id="i-detalle" viewBox="0 0 24 24"><path d="M13 5h8M13 9h5M13 15h8M13 19h5"/><rect x="3" y="4" width="6" height="6" rx="1"/><rect x="3" y="14" width="6" height="6" rx="1"/></symbol>
+            <symbol id="i-caja" viewBox="0 0 24 24"><path d="M3.5 7.5 12 3l8.5 4.5v9L12 21l-8.5-4.5z"/><path d="M3.5 7.5 12 12l8.5-4.5M12 12v9"/></symbol>
+            <symbol id="i-reloj" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></symbol>
+            <symbol id="i-planilla" viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M4 9h16M4 15h16M10 9v12"/></symbol>
+            <symbol id="i-chispa" viewBox="0 0 24 24"><path d="M12 3c.6 4.2 2.8 6.4 7 7-4.2.6-6.4 2.8-7 7-.6-4.2-2.8-6.4-7-7 4.2-.6 6.4-2.8 7-7z"/><path d="M19 16.5c.2 1.4.9 2.1 2.3 2.3-1.4.2-2.1.9-2.3 2.3-.2-1.4-.9-2.1-2.3-2.3 1.4-.2 2.1-.9 2.3-2.3z"/></symbol>
+            <symbol id="i-sobre" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/></symbol>
+            <symbol id="i-enviar" viewBox="0 0 24 24"><path d="M20.5 3.5 10 14M20.5 3.5 14 20.5l-4-6.5-6.5-4z"/></symbol>
         </defs>
     </svg>
 
@@ -125,11 +131,13 @@
                 </svg>
             </h1>
             <p class="portada__frase">Tu mundo digital, en orden.</p>
-            <p class="portada__texto">Sistemas, páginas web y automatizaciones para negocios. Probá nuestras demos en un toque, sin registrarte.</p>
+            <p class="portada__texto">Sistemas, páginas web y automatizaciones para negocios.</p>
             <div class="portada__botones">
                 <a class="boton" href="#demos">Probá las demos <svg class="icono" aria-hidden="true"><use href="#i-flecha"/></svg></a>
                 <a class="boton boton--borde" href="#contacto" data-abrir-contacto>Escribinos</a>
             </div>
+            <p class="portada__gancho"><svg class="icono" aria-hidden="true"><use href="#i-rayo"/></svg>Al instante y sin registrarte</p>
+            <nav class="atajos portada__atajos" id="atajos" aria-label="Ir directo a un rubro"></nav>
             <ul class="portada__datos">
                 <li><strong data-contar="13">13</strong> rubros para probar</li>
                 <li><strong>0</strong> registros ni datos tuyos</li>
@@ -137,7 +145,25 @@
             </ul>
         </section>
 
-        <!-- 2. Qué hacemos -->
+        <!-- 2. Las demos (las tarjetas las arma js/catalogo.js desde js/demos.js) -->
+        <section class="seccion" id="demos">
+            <h2 class="seccion__titulo revelar">Probá una demo</h2>
+            <p class="seccion__bajada revelar">Elegí tu rubro. Son datos de ejemplo: tocá todo lo que quieras, no se rompe nada. Adentro podés probarla con tus colores y en modo claro u oscuro.</p>
+            <div class="en-vivo revelar">
+                <svg class="icono icono--grande" aria-hidden="true"><use href="#i-vivo"/></svg>
+                <div>
+                    <h3>Probá los roles en vivo</h3>
+                    <p>Cada demo tiene varias personas: dueño, empleado, cliente. Hacé algo con una, cambiá a la otra en el momento y mirá cómo le llega: un pedido que hace el cliente lo recibe el local, un cobro del empleado aparece en la caja del dueño. Se prueba cambiando de persona en el mismo celu o compu.</p>
+                </div>
+            </div>
+            <div class="demos" id="lista-demos"></div>
+            <div class="flechas-demos">
+                <button type="button" data-flecha="-1" aria-label="Demos anteriores">←</button>
+                <button type="button" data-flecha="1" aria-label="Más demos">→</button>
+            </div>
+        </section>
+
+        <!-- 3. Qué hacemos -->
         <section class="seccion" id="que-hacemos">
             <h2 class="seccion__titulo revelar">Qué hacemos</h2>
             <div class="servicios">
@@ -152,27 +178,45 @@
                     <p>Que te encuentren en Google, con tus productos, tu horario y un botón para escribirte.</p>
                 </article>
                 <article class="servicio revelar">
-                    <svg class="icono icono--grande" aria-hidden="true"><use href="#i-rayo"/></svg>
-                    <h3>Automatizaciones</h3>
-                    <p>Avisos a tu WhatsApp o tu mail, planillas que se llenan solas y mensajes que la IA te deja listos: vos revisás y los mandás.</p>
+                    <svg class="icono icono--grande" aria-hidden="true"><use href="#i-caja"/></svg>
+                    <h3>Control de stock simple y potente</h3>
+                    <p>Escaneás con la cámara del celu, ves el stock por proveedor y te marca lo que hay que pedir. La lista del proveedor entra desde un Excel.</p>
+                    <a class="paso__link servicio__link" href="#demo-kiosco" data-link-demo="kiosco">Probalo en Kiosco <svg class="icono" aria-hidden="true"><use href="#i-flecha"/></svg></a>
                 </article>
             </div>
-        </section>
-
-        <!-- 3. Las demos (las tarjetas las arma js/catalogo.js desde js/demos.js) -->
-        <section class="seccion" id="demos">
-            <h2 class="seccion__titulo revelar">Probá una demo</h2>
-            <p class="seccion__bajada revelar">Elegí tu rubro. Son datos de ejemplo: tocá todo lo que quieras, no se rompe nada. Adentro podés probarla con tus colores y en modo claro u oscuro.</p>
-            <!-- Atajos a cada rubro (los arma js/catalogo.js): un toque y baja directo a su tarjeta -->
-            <div class="en-vivo revelar">
-                <svg class="icono icono--grande" aria-hidden="true"><use href="#i-vivo"/></svg>
-                <div>
-                    <h3>Probá los roles en vivo</h3>
-                    <p>Cada demo tiene varias personas: dueño, empleado, cliente. Hacé algo con una, cambiá a la otra en el momento y mirá cómo le llega: un pedido que hace el cliente lo recibe el local, un cobro del empleado aparece en la caja del dueño. Se prueba cambiando de persona en el mismo celu o compu.</p>
+            <div class="automatiza revelar">
+                <div class="automatiza__texto">
+                    <svg class="icono icono--grande" aria-hidden="true"><use href="#i-rayo"/></svg>
+                    <h3>Automatizaciones</h3>
+                    <p>Tareas que se hacen solas mientras vos atendés. Elegí una y mirá cómo funciona por dentro.</p>
+                    <div class="automatiza__elegir" role="group" aria-label="Elegí una automatización">
+                        <button class="automatiza__opcion" type="button" data-flujo="resumen" aria-pressed="true">El resumen del día, en tu WhatsApp</button>
+                        <button class="automatiza__opcion" type="button" data-flujo="respuestas" aria-pressed="false">Respuestas listas para tus clientes</button>
+                    </div>
+                    <p class="automatiza__nota"><svg class="icono" aria-hidden="true"><use href="#i-tilde"/></svg>Nada le llega a tus clientes sin que vos lo apruebes.</p>
+                </div>
+                <div class="pizarra">
+                    <div class="pizarra__flujo" data-flujo="resumen">
+                        <ol class="flujo" aria-label="Cómo funciona el resumen del día">
+                            <li class="nodo" style="--i:0"><svg class="icono" aria-hidden="true"><use href="#i-reloj"/></svg><strong>Todos los días, 21&nbsp;h</strong><small>Arranca solo</small></li>
+                            <li class="nodo" style="--i:1"><svg class="icono" aria-hidden="true"><use href="#i-planilla"/></svg><strong>Lee tu caja y tu stock</strong><small>Lo que pasó hoy</small></li>
+                            <li class="nodo nodo--ia" style="--i:2"><svg class="icono" aria-hidden="true"><use href="#i-chispa"/></svg><strong>La IA arma el resumen</strong><small>Corto y claro</small></li>
+                            <li class="nodo" style="--i:3"><svg class="icono" aria-hidden="true"><use href="#i-whatsapp"/></svg><strong>Te llega a vos</strong><small>A tu WhatsApp</small></li>
+                        </ol>
+                        <p class="pizarra__mensaje">Hoy: 48 ventas. Se está terminando la yerba (quedan 3) y la gaseosa de 1,5 L (quedan 2).</p>
+                    </div>
+                    <div class="pizarra__flujo" data-flujo="respuestas" hidden>
+                        <ol class="flujo" aria-label="Cómo funcionan las respuestas listas">
+                            <li class="nodo" style="--i:0"><svg class="icono" aria-hidden="true"><use href="#i-sobre"/></svg><strong>Llega una consulta</strong><small>Por tu web o tu mail</small></li>
+                            <li class="nodo nodo--ia" style="--i:1"><svg class="icono" aria-hidden="true"><use href="#i-chispa"/></svg><strong>La IA escribe la respuesta</strong><small>Con los datos de tu negocio</small></li>
+                            <li class="nodo" style="--i:2"><svg class="icono" aria-hidden="true"><use href="#i-tilde"/></svg><strong>Vos la mirás</strong><small>La cambiás si querés</small></li>
+                            <li class="nodo" style="--i:3"><svg class="icono" aria-hidden="true"><use href="#i-enviar"/></svg><strong>Sale con un toque</strong><small>Al mail o al WhatsApp</small></li>
+                        </ol>
+                        <p class="pizarra__mensaje">"¿Tienen turno el sábado?" → "¡Hola! Sí, a las 10 y a las 11:30. ¿Te reservo uno?"</p>
+                    </div>
+                    <p class="pizarra__pie">Así se ve por dentro: cada cajita hace una cosa y le pasa el dato a la siguiente. Lo armamos con n8n.</p>
                 </div>
             </div>
-            <nav class="atajos revelar" id="atajos" aria-label="Ir directo a un rubro"></nav>
-            <div class="demos" id="lista-demos"></div>
         </section>
 
         <section class="seccion" id="paginas-web">
@@ -247,8 +291,7 @@
         <!-- 6. Nosotros (sin nombres), con el globo que gira (se baja recién cuando llega a la pantalla) -->
         <section class="seccion nosotros revelar">
             <div class="globo" aria-hidden="true"><canvas width="600" height="600"></canvas></div>
-            <p>Somos un equipo dedicado a ordenar tu mundo digital.</p>
-            <p class="nosotros__bajada">Hecho en Argentina. Tu sistema anda en la web: desde el local, tu casa o donde estés.</p>
+            <p>Vos atendé tu negocio. Del sistema nos ocupamos nosotros.</p>
         </section>
     </main>
 
@@ -292,26 +335,44 @@
     </dialog>
 
     <footer class="pie">
-        <svg class="pie__logo" viewBox="0 12 240 56" aria-label="sazzo" role="img">
-            <g fill="none" stroke-width="10" stroke-linecap="round" stroke-linejoin="round">
-                <path stroke="var(--letras)" d="M34.26 28.75 A13 7.5 0 1 0 23 40 A13 7.5 0 1 1 11.74 51.25"/>
-                <circle stroke="var(--letras)" cx="67" cy="40" r="15.4"/>
-                <path stroke="var(--letras)" d="M82.4 25 V55"/>
-                <path stroke="var(--verde)" d="M98 25 H124 L98 55 H124"/>
-                <path stroke="var(--verde)" d="M140 25 H166 L140 55 H166"/>
-                <circle stroke="var(--letras)" cx="197" cy="40" r="15.4"/>
-            </g>
-            <circle fill="var(--verde)" cx="197" cy="40" r="5"/>
-            <path class="cursor" fill="none" stroke="var(--verde)" stroke-width="7" stroke-linecap="round" d="M231 24 V56"/>
-        </svg>
-        <p>Tu mundo digital, en orden.</p>
-        <p class="pie__links">
-            <a href="#contacto" data-whatsapp data-solo-con-numero>WhatsApp</a>
-            <a href="#contacto" data-instagram>Instagram</a>
-        </p>
-        <p class="pie__chico">© <span data-anio>2026</span> Sazzo · <a href="privacidad.html">Privacidad</a></p>
+        <div class="pie__columnas">
+            <div class="pie__marca">
+                <svg class="pie__logo" viewBox="0 12 240 56" aria-label="sazzo" role="img">
+                    <g fill="none" stroke-width="10" stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="var(--letras)" d="M34.26 28.75 A13 7.5 0 1 0 23 40 A13 7.5 0 1 1 11.74 51.25"/>
+                        <circle stroke="var(--letras)" cx="67" cy="40" r="15.4"/>
+                        <path stroke="var(--letras)" d="M82.4 25 V55"/>
+                        <path stroke="var(--verde)" d="M98 25 H124 L98 55 H124"/>
+                        <path stroke="var(--verde)" d="M140 25 H166 L140 55 H166"/>
+                        <circle stroke="var(--letras)" cx="197" cy="40" r="15.4"/>
+                    </g>
+                    <circle fill="var(--verde)" cx="197" cy="40" r="5"/>
+                    <path class="cursor" fill="none" stroke="var(--verde)" stroke-width="7" stroke-linecap="round" d="M231 24 V56"/>
+                </svg>
+                <p class="pie__frase">Tu mundo digital, en orden.</p>
+                <p class="pie__suave">Sistemas, páginas web y automatizaciones para negocios.</p>
+            </div>
+            <nav class="pie__lista" aria-label="Secciones">
+                <h2>Explorar</h2>
+                <a href="#demos">Demos</a>
+                <a href="#que-hacemos">Qué hacemos</a>
+                <a href="#paginas-web">Páginas web</a>
+                <a href="#como-funciona">Cómo funciona</a>
+                <a href="#contacto">Contacto</a>
+            </nav>
+            <div class="pie__lista">
+                <h2>Contacto</h2>
+                <a href="#contacto" data-whatsapp data-solo-con-numero><svg class="icono" aria-hidden="true"><use href="#i-whatsapp"/></svg> <span data-numero>WhatsApp</span></a>
+                <a href="#contacto" data-instagram><svg class="icono" aria-hidden="true"><use href="#i-instagram"/></svg> <span data-usuario>Instagram</span></a>
+                <a href="./"><svg class="icono" aria-hidden="true"><use href="#i-web"/></svg> <span data-dominio>sazzo.com.ar</span></a>
+            </div>
+        </div>
+        <div class="pie__legal">
+            <span>© <span data-anio>2026</span> Sazzo. Todos los derechos reservados.</span>
+            <span><a href="privacidad.html">Privacidad</a> · Hecho en Argentina</span>
+        </div>
     </footer>
 
-    <script type="module" src="js/catalogo.js?v=526835b55f"></script>
+    <script type="module" src="js/catalogo.js?v=c5558ab858"></script>
 </body>
 </html>

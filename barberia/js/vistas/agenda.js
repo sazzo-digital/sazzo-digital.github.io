@@ -3,11 +3,12 @@
 // los dos; en la compu, una columna por barbero) y "+ Turno" (cargar a mano el que pidió por mensaje o entró sin
 // turno). El turno que sacó un cliente desde el celular aparece resaltado hasta que Leo hace algo con él.
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=d08c0e2b96";
-import { aHora } from "../../kit/js/turnos.js?v=d08c0e2b96";
-import { fechaLocalISO } from "../../kit/js/fechas.js?v=d08c0e2b96";
-import { SERVICIOS, BARBEROS, TOPES, pesos, nombreFecha } from "../datos.js?v=d08c0e2b96";
-import { pastillaEstado, chipsDias, mostrarMensaje } from "./comunes.js?v=d08c0e2b96";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=cf8a4b352a";
+import { aHora } from "../../kit/js/turnos.js?v=cf8a4b352a";
+import { fechaLocalISO } from "../../kit/js/fechas.js?v=cf8a4b352a";
+import { SERVICIOS, BARBEROS, TOPES, pesos, nombreFecha } from "../datos.js?v=cf8a4b352a";
+import { pastillaEstado, chipsDias, mostrarMensaje } from "./comunes.js?v=cf8a4b352a";
+import { htmlConsigna } from "../../kit/js/consigna.js?v=cf8a4b352a";
 
 let ver = "todos"; // "todos" o el id de un barbero
 
@@ -54,7 +55,8 @@ export function vistaAgenda(cont, { usuario, datos, consulta }) {
                 <i class="ti ti-bell-ringing" aria-hidden="true"></i>
                 <span><b>${esc(t.cliente)} sacó turno · ${esc(nombreFecha(t.fecha))} ${esc(t.hora)} con ${esc(t.barbero)}</b><small>${esc(t.servicio)} · desde el celular</small></span>
                 <a class="boton boton--chico boton--secundario" href="#/inicio?fecha=${esc(t.fecha)}" data-ir-nuevo="${esc(t.id)}">Ver</a>
-            </li>`).join("")}</ul>` : ""}
+            </li>`).join("")}</ul>
+        ${htmlConsigna({ paso: 2, total: 3, accion: "Ahí está el turno que sacaste desde el celu. Ahora andá a Clientes.", resultado: "Ves quiénes hace rato que no vienen." })}` : ""}
         ${chipsDias(dias, fecha)}
         ${salteoHoy ? `<p class="nota"><i class="ti ti-moon" aria-hidden="true"></i> <span>Hoy ya no queda nada: te mostramos ${esc(nombreFecha(fecha))}.</span></p>` : ""}
         <div class="tira">

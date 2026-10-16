@@ -7,12 +7,12 @@
 // Código que no está → "¿Lo cargás?" y queda listo para vender.
 // En la compu, dos columnas (artículos | ticket); en el celular, el ticket abajo con una barrita arriba que lleva a él.
 // ============================================
-import { esc, aviso, vacio, fechaHora } from "../../kit/js/ui.js?v=86c054c83c";
-import { puedeEscanear, escanear } from "../../kit/js/escaner.js?v=86c054c83c";
-import { TOPES, MEDIOS, RUBROS, UNIDADES, DESCUENTO_MAYOR, pesos, precioMayor, precioConUnidad, cantidadTexto, numeroCantidad, redondearCantidad } from "../datos.js?v=86c054c83c";
-import { NEGOCIO } from "../marca.js?v=86c054c83c";
-import { pintarCobro, etiquetaUnidad } from "./comunes.js?v=86c054c83c";
-import { EVENTO_REINICIO } from "../../kit/js/guardado.js?v=86c054c83c";
+import { esc, aviso, vacio, fechaHora } from "../../kit/js/ui.js?v=8ec449d814";
+import { puedeEscanear, escanear } from "../../kit/js/escaner.js?v=8ec449d814";
+import { TOPES, MEDIOS, RUBROS, UNIDADES, DESCUENTO_MAYOR, pesos, precioMayor, precioConUnidad, cantidadTexto, numeroCantidad, redondearCantidad } from "../datos.js?v=8ec449d814";
+import { NEGOCIO } from "../marca.js?v=8ec449d814";
+import { pintarCobro, etiquetaUnidad } from "./comunes.js?v=8ec449d814";
+import { EVENTO_REINICIO } from "../../kit/js/guardado.js?v=8ec449d814";
 
 // El ticket en curso queda en memoria mientras se navega (se vacía al cobrar)
 export const ticket = new Map(); // productoId → cantidad
@@ -284,7 +284,7 @@ export function vistaVender(cont, { usuario, datos }) {
     pintarProductos();
     pintarTicket();
     if (!ticket.size) {
-        cont.querySelector(".productos").insertAdjacentHTML("afterbegin", `<p class="nota pista"><i class="ti ti-hand-finger"></i> Probá: buscá “taco del 8” y llevá 100 (sale por mayor), sumá 10 m de “cable 2,5” y cobralo a la cuenta de Gustavo: se pasa del tope.</p>`);
+        cont.querySelector(".productos").insertAdjacentHTML("afterbegin", `<p class="nota"><i class="ti ti-bulb"></i> Probá: buscá “taco del 8” y llevá 100 (sale por mayor), sumá 10 m de “cable 2,5” y cobralo a la cuenta de Gustavo: se pasa del tope.</p>`);
     }
 }
 

@@ -2,9 +2,10 @@
 // Pantallas del mecánico (Diego): los problemas abiertos (los que tienen que parar y los nuevos primero),
 // "Me hago cargo" y "Listo, arreglado" con los repuestos que usó (se descuentan solos).
 // ============================================
-import { esc, vacio, aviso } from "../../kit/js/ui.js?v=f38d8e13f7";
-import { TOPES, cantidadCon } from "../datos.js?v=f38d8e13f7";
-import { haceCuanto, pastillaVehiculo, pastillaUrgencia, pastillaProblema, guia, activarGuias, textoRepuestos } from "./comunes.js?v=f38d8e13f7";
+import { esc, vacio, aviso } from "../../kit/js/ui.js?v=842bff8c10";
+import { TOPES, cantidadCon } from "../datos.js?v=842bff8c10";
+import { haceCuanto, pastillaVehiculo, pastillaUrgencia, pastillaProblema, guia, activarGuias, textoRepuestos } from "./comunes.js?v=842bff8c10";
+import { htmlConsigna } from "../../kit/js/consigna.js?v=842bff8c10";
 
 export function vistaInicioMecanico(cont, { usuario, datos, irA }) {
     const abiertos = datos.problemasAbiertos();
@@ -14,6 +15,7 @@ export function vistaInicioMecanico(cont, { usuario, datos, irA }) {
         <p class="resumen-linea">${abiertos.length
             ? `${abiertos.length} ${abiertos.length === 1 ? "problema abierto" : "problemas abiertos"}${nuevos ? ` · <b>${nuevos} ${nuevos === 1 ? "nuevo" : "nuevos"}</b>` : ""}`
             : "Sin problemas abiertos"}</p>
+        ${nuevos ? htmlConsigna({ paso: 2, total: 3, accion: "Tocá “Me hago cargo” en el problema nuevo y después “Listo, arreglado”.", resultado: "Marta lo ve en su tablero y el chofer se entera." }) : ""}
         ${abiertos.length ? `<ul class="tarjetas">${abiertos.map((p) => `
             <li class="tarjeta${p.estado === "avisado" ? " tarjeta--nuevo" : ""}${p.urgencia === "parar" ? " tarjeta--urgente" : ""}">
                 <div class="tarjeta__fila">
@@ -118,7 +120,7 @@ function arreglado(cont, p, datos, irA) {
             ${avisosStock.length ? `<ul class="hecho__avisos">${avisosStock.join("")}</ul>` : ""}
             ${pastillaProblema(p.estado)}
         </div>
-        ${guia("u-admin", "/inicio", "Mirá lo que ve Marta")}
+        ${htmlConsigna({ paso: 2, total: 3, accion: "Arreglá el problema.", hecho: "el vehículo vuelve a andar", guia: guia("u-admin", "/inicio", "Mirá lo que ve Marta") })}
         <a class="boton boton--secundario boton--ancho" href="#/inicio"><i class="ti ti-list"></i> Volver a mis problemas</a>`;
     activarGuias(cont, irA);
     window.scrollTo(0, 0);

@@ -2,10 +2,11 @@
 // La cocina (Beto; la moza también la puede mirar): los pedidos que llegan, lo más viejo primero, con cuánto hace que
 // esperan (en rojo si pasan los 15 minutos). "Listo" lo saca y la mesa ve "comida lista".
 // ============================================
-import { esc, aviso } from "../../kit/js/ui.js?v=a86e661e0a";
-import { mantenerPantallaPrendida, htmlBotonVoz, activarBotonVoz, decir } from "../../kit/js/celular.js?v=a86e661e0a";
-import { MARCA } from "../marca.js?v=a86e661e0a";
-import { ticket, guia, activarGuias, haceMin, hora } from "./comunes.js?v=a86e661e0a";
+import { esc, aviso } from "../../kit/js/ui.js?v=633ebcf9e8";
+import { mantenerPantallaPrendida, htmlBotonVoz, activarBotonVoz, decir } from "../../kit/js/celular.js?v=633ebcf9e8";
+import { MARCA } from "../marca.js?v=633ebcf9e8";
+import { ticket, guia, activarGuias, haceMin, hora } from "./comunes.js?v=633ebcf9e8";
+import { htmlConsigna } from "../../kit/js/consigna.js?v=633ebcf9e8";
 
 const DEMORA_MIN = 15;
 const leidas = new Set(); // los pedidos que ya se leyeron en voz alta (una vez cada uno)
@@ -35,7 +36,8 @@ export function vistaCocina(cont, { usuario, datos, irA }, recien = null) {
             <i class="ti ti-circle-check" aria-hidden="true"></i>
             <p><b>${esc(recien.mesa)}: listo.</b> La moza lo ve en la mesa.</p>
         </div>
-        ${guia("u-moza", recien.mesaId.startsWith("py") ? "/inicio" : `/mesa/${recien.mesaId}`, "Mirá cómo lo ve Lara")}` : ""}
+        ${htmlConsigna({ paso: 2, total: 3, accion: "Marcá el pedido listo.", hecho: `${recien.mesa} lista`, guia: guia("u-moza", recien.mesaId.startsWith("py") ? "/inicio" : `/mesa/${recien.mesaId}`, "Mirá cómo lo ve Lara") })}` : ""}
+        ${!recien && esCocina && c.pendientes.length ? htmlConsigna({ paso: 2, total: 3, accion: "Tocá “Listo” en el pedido de la Mesa 4.", resultado: "Lara ve que la comida está lista para servir." }) : ""}
         ${!esCocina ? `<p class="nota"><i class="ti ti-info-circle"></i> Esto es lo que ve la cocina. "Listo" lo marca Beto.</p>` : ""}
         ${c.pendientes.length ? `<div class="tickets">${c.pendientes.map((p) => `
             <div class="pendiente${p.nueva ? " pendiente--nueva" : ""}${p.minutos >= DEMORA_MIN ? " pendiente--demora" : ""}">

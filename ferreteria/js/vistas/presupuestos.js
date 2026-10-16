@@ -5,13 +5,14 @@
 // renglón. "Mandar" fija los precios por 7 días y arma el mensaje; "PDF" lo deja para compartir. Cuando lo acepta,
 // "Pasar a venta" descuenta el stock y lo cobra (de contado o a su cuenta corriente).
 // ============================================
-import { esc, aviso, vacio, fechaCorta } from "../../kit/js/ui.js?v=86c054c83c";
-import { diaLocalDe } from "../../kit/js/fechas.js?v=86c054c83c";
-import { mostrarMensaje } from "../../kit/js/mensaje.js?v=86c054c83c";
-import { armarPdf, pdfListo } from "../../kit/js/pdf.js?v=86c054c83c";
-import { ESTADOS_PRESUPUESTO, TOPES, UNIDADES, VALIDEZ_DIAS, pesos, precioConUnidad, cantidadTexto, entender, diaMes } from "../datos.js?v=86c054c83c";
-import { NEGOCIO } from "../marca.js?v=86c054c83c";
-import { guia, activarGuias, pasos, pastillaEstado, tarjetaPresupuesto, cuando, validez, pintarCobro, etiquetaUnidad, htmlFoto } from "./comunes.js?v=86c054c83c";
+import { esc, aviso, vacio, fechaCorta } from "../../kit/js/ui.js?v=8ec449d814";
+import { diaLocalDe } from "../../kit/js/fechas.js?v=8ec449d814";
+import { mostrarMensaje } from "../../kit/js/mensaje.js?v=8ec449d814";
+import { armarPdf, pdfListo } from "../../kit/js/pdf.js?v=8ec449d814";
+import { ESTADOS_PRESUPUESTO, TOPES, UNIDADES, VALIDEZ_DIAS, pesos, precioConUnidad, cantidadTexto, entender, diaMes } from "../datos.js?v=8ec449d814";
+import { NEGOCIO } from "../marca.js?v=8ec449d814";
+import { guia, activarGuias, pasos, pastillaEstado, tarjetaPresupuesto, cuando, validez, pintarCobro, etiquetaUnidad, htmlFoto } from "./comunes.js?v=8ec449d814";
+import { htmlConsigna } from "../../kit/js/consigna.js?v=8ec449d814";
 
 /** Lo que va en el PDF del presupuesto (lo usan el mostrador y el cliente). */
 export const datosPdf = (pr) => ({
@@ -41,7 +42,7 @@ export function vistaPresupuestos(cont, { usuario, datos, consulta }) {
             <h1 class="titulo">Presupuestos</h1>
             <a class="boton boton--chico" href="#/presupuestos/nuevo"><i class="ti ti-plus"></i> Armar uno en el mostrador</a>
         </div>
-        ${nuevoWeb ? `<p class="nota pista"><i class="ti ti-hand-finger"></i> Te llegó el pedido de ${esc(nuevoWeb.cliente)}${nuevoWeb.items.some((i) => i.foto) ? " (con una foto)" : ""}: tocalo para armarlo y mandárselo.</p>` : ""}
+        ${nuevoWeb ? htmlConsigna({ paso: 2, total: 5, accion: `Te llegó el pedido de ${nuevoWeb.cliente}${nuevoWeb.items.some((i) => i.foto) ? " (con una foto)" : ""}: tocalo para armarlo y mandárselo.`, resultado: "El buscador entiende cómo lo pidió." }) : ""}
         <div class="numeros-caja">
             <div class="numero-caja"><span>Para armar</span><b>${esc(cuenta("pedido"))}</b></div>
             <div class="numero-caja"><span>Enviados</span><b>${esc(cuenta("enviado"))}</b><small>esperando la respuesta</small></div>
@@ -169,9 +170,9 @@ export function vistaPresupuesto(cont, opciones, recien = null) {
             <p>${esc(pesos(pr.total))}${opciones.vuelto != null ? ` · vuelto <b>${esc(pesos(opciones.vuelto))}</b>` : ""} · se descontó del stock</p>
         </div>` : ""}
         ${pr.vencido ? `<p class="alerta alerta--alerta"><i class="ti ti-clock"></i> ${esc(validez(pr))}: van los precios de hoy${pr.subio > 0 ? ` (sube ${esc(pesos(pr.subio))})` : ""}. Volvé a armarlo y mandalo de nuevo, o vendelo así.</p>` : ""}
-        ${editable && empleado ? `<p class="nota pista"><i class="ti ti-hand-finger"></i> ${pr.sinResolver
-            ? conFoto ? `Mirá la foto que mandó: tocá “Elegir qué es” y buscá (es una canilla de 1/2). Después, mandáselo.` : `Hay renglones que el buscador no entendió: tocá “Elegir qué es”. Después, mandáselo.`
-            : "Revisá las cantidades y mandáselo: quedan fijos los precios por 7 días."}</p>` : ""}
+        ${editable && empleado ? htmlConsigna({ paso: 2, total: 5, accion: pr.sinResolver
+            ? conFoto ? "Mirá la foto que mandó: tocá “Elegir qué es” y buscá (es una canilla de 1/2). Después, mandáselo." : "Hay renglones que el buscador no entendió: tocá “Elegir qué es”. Después, mandáselo."
+            : "Revisá las cantidades y mandáselo.", resultado: "Le llega con el PDF y los precios quedan fijos por 7 días." }) : ""}
         <div class="presupuesto-cuerpo${conFoto ? " presupuesto-cuerpo--foto" : ""}">
             ${conFoto ? `<figure class="foto-cliente">${htmlFoto()}<figcaption><i class="ti ti-photo"></i> La foto que mandó ${esc(pr.cliente.split(" ")[0] || "el cliente")}</figcaption></figure>` : ""}
             <div>
@@ -202,7 +203,8 @@ export function vistaPresupuesto(cont, opciones, recien = null) {
                 <button class="boton boton--secundario" type="button" data-aceptar><i class="ti ti-phone"></i> Lo aceptó por teléfono</button>` : ""}
                 <button class="boton-link" type="button" data-rearmar><i class="ti ti-pencil"></i> Volver a armarlo</button>
             </div>
-            ${pr.estado === "enviado" && pr.esDeMarcos && recien === "enviado" ? guia("u-cliente", "/mis-presupuestos", "Mirá lo que le llega a Marcos") : ""}
+            ${pr.estado === "enviado" && pr.esDeMarcos && recien === "enviado" ? htmlConsigna({ paso: 2, total: 5, accion: "Mandale el presupuesto.", hecho: "presupuesto mandado, con el PDF", guia: guia("u-cliente", "/mis-presupuestos", "Mirá lo que le llega a Marcos") }) : ""}
+            ${pr.estado === "aceptado" && empleado ? htmlConsigna({ paso: 4, total: 5, accion: "Lo aceptó: pasalo a venta, a su cuenta corriente.", resultado: "Se descuenta del stock y queda en su cuenta." }) : ""}
             <section class="bloque pasar-a-venta">
                 <h2 class="subtitulo"><i class="ti ti-cash-register"></i> ${pr.estado === "aceptado" ? "Lo aceptó: pasalo a venta" : "Vino a buscarlo: pasalo a venta"}</h2>
                 ${pr.faltan ? `<p class="alerta alerta--alerta"><i class="ti ti-alert-triangle"></i> Falta stock de ${esc(pr.faltan)} ${pr.faltan === 1 ? "artículo" : "artículos"}: volvé a armarlo con lo que hay.</p>` : ""}
@@ -226,7 +228,7 @@ export function vistaPresupuesto(cont, opciones, recien = null) {
         acciones.innerHTML = `
             <div class="acciones">${botonPdf}</div>
             <p class="nota"><i class="ti ti-receipt"></i> Vendido ${esc(cuando(pr.vendido))}${pr.tieneCuenta ? ": quedó en su cuenta corriente" : ": quedó en la caja del día"}.</p>
-            ${recien === "vendido" && empleado ? guia("u-dueno", "/stock/lista", "Pasá a Osvaldo: subí la lista del proveedor") : ""}
+            ${recien === "vendido" && empleado ? htmlConsigna({ paso: 4, total: 5, accion: "Pasalo a venta.", hecho: "vendido", guia: guia("u-dueno", "/stock/lista", "Pasá a Osvaldo: subí la lista del proveedor") }) : ""}
             ${recien === "vendido" && !empleado ? `<a class="boton boton--secundario boton--ancho" href="#/stock?ver=pedir"><i class="ti ti-package"></i> Mirá qué quedó para pedir</a>` : ""}`;
     }
 

@@ -3,12 +3,13 @@
 // nombre del grupo y seña simulada) y "Mis turnos" (con Cancelar y la regla de la seña a la vista).
 // Lo ocupado se ve, pero no se puede tocar: nunca se pisan.
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=02e370389b";
-import { TIPOS, TOPES, CANCELAR_HORAS, pesos, nombreFecha } from "../datos.js?v=02e370389b";
-import { NEGOCIO } from "../marca.js?v=02e370389b";
-import { guia, activarGuias, pastillaSena, pastillaEstado, chipsDias } from "./comunes.js?v=02e370389b";
-import { aHora, minutoAhora } from "../../kit/js/turnos.js?v=02e370389b";
-import { htmlCopiable, activarCopiables } from "../../kit/js/celular.js?v=02e370389b";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=21e7a89345";
+import { TIPOS, TOPES, CANCELAR_HORAS, pesos, nombreFecha } from "../datos.js?v=21e7a89345";
+import { NEGOCIO } from "../marca.js?v=21e7a89345";
+import { guia, activarGuias, pastillaSena, pastillaEstado, chipsDias } from "./comunes.js?v=21e7a89345";
+import { htmlConsigna } from "../../kit/js/consigna.js?v=21e7a89345";
+import { aHora, minutoAhora } from "../../kit/js/turnos.js?v=21e7a89345";
+import { htmlCopiable, activarCopiables } from "../../kit/js/celular.js?v=21e7a89345";
 
 // Lo elegido queda mientras se navega
 let fecha = null;
@@ -95,7 +96,7 @@ export function vistaReservar(cont, { usuario, datos, irA }) {
                 <p>${esc(nombreFecha(t.fecha))} de ${esc(t.hora)} a ${esc(t.hasta)} · ${esc(t.grupo)}</p>
                 ${pastillaSena(t.sena)}
             </div>
-            ${guia("u-dueno", `/inicio?fecha=${t.fecha}`, "Mirá cómo lo ve Gustavo")}
+            ${htmlConsigna({ paso: 1, total: 2, accion: "Reservá una cancha.", hecho: "turno confirmado con la seña", guia: guia("u-dueno", `/inicio?fecha=${t.fecha}`, "Mirá cómo lo ve Gustavo") })}
             <a class="boton boton--secundario boton--ancho" href="#/turnos"><i class="ti ti-calendar"></i> Mis turnos</a>`;
         activarGuias(cont, irA);
         window.scrollTo(0, 0);
@@ -106,7 +107,7 @@ export function vistaReservar(cont, { usuario, datos, irA }) {
             <h1 class="titulo">Reservá tu cancha</h1>
             <span class="negocio"><i class="ti ti-building-stadium" aria-hidden="true"></i>${esc(NEGOCIO)}</span>
         </div>
-        <p class="nota pista"><i class="ti ti-hand-finger"></i> Probá: elegí una hora, poné el nombre del grupo y pagá la seña. Después mirá cómo le llega a Gustavo.</p>
+        ${htmlConsigna({ paso: 1, total: 2, accion: "Elegí una hora, poné el nombre del grupo y pagá la seña.", resultado: "A Gustavo le aparece en la grilla al toque." })}
         ${chipsDias(dias, fecha)}
         <div class="chips tipos" role="tablist" aria-label="Tipo de cancha">
             ${Object.entries(TIPOS).map(([id, t]) => `<button class="chip" type="button" role="tab" data-tipo="${id}">${esc(t.texto)}</button>`).join("")}

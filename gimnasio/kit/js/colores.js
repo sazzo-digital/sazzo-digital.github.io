@@ -9,7 +9,7 @@
 //   primero se aplica). La imagen se lee EN el celular (se achica a 64 × 64 y se cuentan los colores): no se sube a
 //   ningún lado ni se guarda. Logo en blanco y negro → se avisa y se elige de la lista.
 // ============================================
-import { $, $$, esc } from "./ui.js?v=ab7575362c";
+import { $, $$, esc } from "./ui.js?v=289ec4bb58";
 
 // Fondos contra los que tiene que leerse el acento (base/_temas.scss)
 const TARJETA_CLARA = "#e9dfcc";
@@ -324,50 +324,4 @@ export function abrirColores(prefijo, { alElegir } = {}) {
     });
     hoja.showModal();
     return hoja;
-}
-
-// ---------- Globito "Probala con tus colores" (la primera vez que se abre cada demo) ----------
-// Aparece arriba del botón de la paleta de la barrita, con una puntita que lo señala. Se cierra al tocarlo o al
-// tocar la paleta y no vuelve a aparecer en esa demo ("sazzo-kiosco-globito-colores"). Sin almacenamiento
-// (ventana privada estricta): no vuelve a aparecer hasta recargar.
-const globitosVistos = new Set();
-export const claveGlobito = (prefijo) => `${prefijo}-globito-colores`;
-
-export function yaVioGlobito(prefijo) {
-    if (globitosVistos.has(prefijo)) return true;
-    try {
-        return localStorage.getItem(claveGlobito(prefijo)) === "1";
-    } catch {
-        return false;
-    }
-}
-
-function marcarGlobitoVisto(prefijo) {
-    globitosVistos.add(prefijo);
-    try {
-        localStorage.setItem(claveGlobito(prefijo), "1");
-    } catch {
-        // sin almacenamiento: queda en memoria
-    }
-}
-
-/** Muestra el globito al lado de la paleta de la barrita (si hay barrita y no lo vio). Devuelve el globito o null. */
-export function mostrarGlobitoColores(raiz, prefijo) {
-    const paleta = $(".barra-sazzo [data-colores]", raiz);
-    if (!paleta || yaVioGlobito(prefijo)) return null;
-    $(".globito-colores", raiz)?.remove();
-    const lugar = document.createElement("div");
-    lugar.className = "globito-colores";
-    lugar.innerHTML = `
-        <button class="globito-colores__burbuja" type="button" aria-label="Probala con tus colores: tocá la paleta de abajo. Cerrar este aviso">
-            <i class="ti ti-palette" aria-hidden="true"></i><span>Probala con tus colores</span><i class="ti ti-x" aria-hidden="true"></i>
-        </button>`;
-    paleta.closest(".barra-sazzo").before(lugar);
-    const cerrar = () => {
-        marcarGlobitoVisto(prefijo);
-        lugar.remove();
-    };
-    $("button", lugar).addEventListener("click", cerrar);
-    paleta.addEventListener("click", cerrar);
-    return lugar;
 }

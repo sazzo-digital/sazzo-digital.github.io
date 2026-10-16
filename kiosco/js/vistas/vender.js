@@ -5,14 +5,15 @@
 // Código que no está → "¿Lo cargás?" y queda listo para vender.
 // En la compu, dos columnas (productos | ticket); en el celular, el ticket abajo con una barrita arriba que lleva a él.
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=9d8300a5a6";
-import { puedeEscanear, escanear } from "../../kit/js/escaner.js?v=9d8300a5a6";
-import { mantenerPantallaPrendida, htmlCopiable, activarCopiables, htmlBotonSonido, activarBotonSonido, ding } from "../../kit/js/celular.js?v=9d8300a5a6";
-import { girarRuleta } from "../../kit/js/ruleta.js?v=9d8300a5a6";
-import { TOPES, MEDIOS, PREMIOS, PROMO_DESDE, ganaTirada, pesos } from "../datos.js?v=9d8300a5a6";
-import { MARCA, NEGOCIO } from "../marca.js?v=9d8300a5a6";
-import { guia, activarGuias } from "./comunes.js?v=9d8300a5a6";
-import { EVENTO_REINICIO } from "../../kit/js/guardado.js?v=9d8300a5a6";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=85347c5bd0";
+import { puedeEscanear, escanear } from "../../kit/js/escaner.js?v=85347c5bd0";
+import { mantenerPantallaPrendida, htmlCopiable, activarCopiables, htmlBotonSonido, activarBotonSonido, ding } from "../../kit/js/celular.js?v=85347c5bd0";
+import { girarRuleta } from "../../kit/js/ruleta.js?v=85347c5bd0";
+import { TOPES, MEDIOS, PREMIOS, PROMO_DESDE, ganaTirada, pesos } from "../datos.js?v=85347c5bd0";
+import { MARCA, NEGOCIO } from "../marca.js?v=85347c5bd0";
+import { guia, activarGuias } from "./comunes.js?v=85347c5bd0";
+import { htmlConsigna } from "../../kit/js/consigna.js?v=85347c5bd0";
+import { EVENTO_REINICIO } from "../../kit/js/guardado.js?v=85347c5bd0";
 
 // El ticket en curso queda en memoria mientras se navega (se vacía al cobrar)
 export const ticket = new Map(); // productoId → cantidad
@@ -194,8 +195,8 @@ export function vistaVender(cont, { usuario, datos, irA }) {
         ding(MARCA.prefijo);
         const recorrido = usuario.rol === "empleada"
             ? v.medio === "fiado"
-                ? guia("u-dueno", "/stock/aumento", "Pasá a Rubén: subí los precios de un proveedor")
-                : `<p class="nota pista"><i class="ti ti-hand-finger"></i> Ahora probá anotar un fiado: leche y pan lactal para Graciela.</p>`
+                ? htmlConsigna({ paso: 2, total: 3, accion: "Anotá un fiado.", hecho: `quedó en la libreta${v.cliente ? ` de ${v.cliente.nombre}` : ""}`, guia: guia("u-dueno", "/stock/aumento", "Pasá a Rubén: subí los precios de un proveedor") })
+                : htmlConsigna({ paso: 2, total: 3, accion: "Ahora anotá un fiado: leche y pan lactal para Graciela.", resultado: "Queda en su libreta, con su tope." })
             : "";
         lugarTicket.innerHTML = `
             <div class="hecho">
@@ -296,7 +297,7 @@ export function vistaVender(cont, { usuario, datos, irA }) {
     pintarProductos();
     pintarTicket();
     if (usuario.rol === "empleada" && !ticket.size) {
-        grilla.insertAdjacentHTML("afterbegin", `<p class="nota pista"><i class="ti ti-hand-finger"></i> Probá: tocá “Gaseosa cola 1,5 L” y “Alfajor triple”, y cobrá con $10.000.</p>`);
+        grilla.insertAdjacentHTML("afterbegin", htmlConsigna({ paso: 1, total: 3, accion: "Tocá “Gaseosa cola 1,5 L” y “Alfajor triple”, y cobrá con $10.000.", resultado: "Te calcula el vuelto solo." }));
     }
 }
 

@@ -6,10 +6,10 @@
 // Reglas del kit: exigir() en lo que modifica, topes en todo lo que se carga y se devuelven copias.
 // Si cambia la forma de los datos, subir VERSION_DATOS (se regeneran solos).
 // ============================================
-import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=a86e661e0a";
-import { enteroHasta } from "../kit/js/topes.js?v=a86e661e0a";
-import { fechaLocalISO, diaLocalDe } from "../kit/js/fechas.js?v=a86e661e0a";
-import { MARCA } from "./marca.js?v=a86e661e0a";
+import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=633ebcf9e8";
+import { enteroHasta } from "../kit/js/topes.js?v=633ebcf9e8";
+import { fechaLocalISO, diaLocalDe } from "../kit/js/fechas.js?v=633ebcf9e8";
+import { MARCA } from "./marca.js?v=633ebcf9e8";
 
 export const VERSION_DATOS = 2;
 
@@ -53,7 +53,7 @@ const CARTA = [
     ["clasica", "Hamburguesa clásica", "burgers", 13_500, "Medallón de carne, cheddar, lechuga y tomate"],
     ["doble", "Hamburguesa doble cheddar", "burgers", 17_000, "Dos medallones, doble cheddar y panceta"],
     ["milanesa", "Milanesa con papas", "minutas", 15_000, "Milanesa de carne con papas fritas"],
-    ["papas", "Papas fritas", "minutas", 7_500, "Porción grande, para compartir"],
+    ["papas", "Papas fritas", "minutas", 7_500, "Porción grande con ketchup, para compartir"],
     ["rabas", "Rabas", "minutas", 16_000, "Rabas fritas con limón"],
     ["flan", "Flan con dulce de leche", "postres", 6_500, "Casero, con dulce de leche"],
     ["helado", "Helado (2 bochas)", "postres", 6_000, "Dos gustos a elección"],
@@ -69,8 +69,14 @@ const CARTA = [
 ].map(([id, nombre, cat, precio, descripcion]) => ({ id, nombre, cat, precio, descripcion, destino: CATEGORIAS[cat].destino }));
 
 // Los platos que se ven en 3D en la carta del cliente: uno por modelo (img\<modelo>.glb), para que lo que se ve
-// coincida con el nombre. Son genéricos, armados por código (como el frasco de la perfumería).
-export const MODELOS_3D = { muzza: "pizza", clasica: "hamburguesa", milanesa: "milanesa" };
+// coincida con el nombre.
+export const MODELOS_3D = { muzza: "pizza", clasica: "hamburguesa", papas: "papas" };
+export const AUTORES_3D = { pizza: "ARtemis 3D", hamburguesa: "McClatchy New Ventures Lab", papas: "Emm (edemaistre)" };
+
+export const notaDe3D = (modelo) => {
+    const autor = AUTORES_3D[modelo];
+    return autor ? `Es de ejemplo: en tu carta van tus platos. Escaneo 3D: ${autor}, CC BY 4.0.` : "Es de ejemplo: en tu carta van tus platos.";
+};
 
 export const pesos = (n) => `$ ${Math.round(n).toLocaleString("es-AR")}`;
 export const item = (id) => CARTA.find((x) => x.id === id) ?? null;

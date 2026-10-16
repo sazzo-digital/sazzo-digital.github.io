@@ -7,14 +7,15 @@
 // trae `wow`, esa línea va arriba de las personas: le dice a quien llega de Instagram qué va a pasar.
 // y qué hacer al elegir una (alElegir(id): guardar la sesión y arrancar la demo).
 // ============================================
-import { $, $$, esc, iniciales, mensajeDe } from "./ui.js?v=da3c504853";
-import { logoSazzo, nombreDemo } from "./marca.js?v=da3c504853";
-import { pieAcerca } from "./acerca.js?v=da3c504853";
-import { linkOtrasDemos, linkQuieroEsto } from "./enlaces.js?v=da3c504853";
-import { activarBotonesSazzo } from "./marco.js?v=da3c504853";
-import { revisarDetalle, htmlBotonDetalle } from "./detalle.js?v=da3c504853";
-import { contar, contarPantalla } from "./visita.js?v=da3c504853";
-import { soltarPantalla } from "./rutas.js?v=da3c504853";
+import { $, $$, esc, iniciales, mensajeDe } from "./ui.js?v=c96e24d926";
+import { logoSazzo, nombreDemo } from "./marca.js?v=c96e24d926";
+import { pieAcerca } from "./acerca.js?v=c96e24d926";
+import { linkOtrasDemos, linkQuieroEsto } from "./enlaces.js?v=c96e24d926";
+import { activarBotonesSazzo, htmlBarraSazzo, medirPie } from "./marco.js?v=c96e24d926";
+import { revisarDetalle, htmlBotonDetalle } from "./detalle.js?v=c96e24d926";
+import { htmlBotonInstalar } from "./instalar.js?v=c96e24d926";
+import { contar, contarPantalla } from "./visita.js?v=c96e24d926";
+import { soltarPantalla } from "./rutas.js?v=c96e24d926";
 
 function htmlCompleta(marca) {
     if (!marca.completa) return "";
@@ -50,13 +51,15 @@ export function htmlIngreso({ marca, personas, detalle = null }) {
             </div>
             ${htmlCompleta(marca)}
             ${revisarDetalle(detalle) ? htmlBotonDetalle("boton boton--secundario boton--ancho ingreso__detalle") : ""}
+            ${htmlBotonInstalar("boton boton--secundario boton--ancho ingreso__instalar")}
             <p class="nota ingreso__nota"><i class="ti ti-flask" aria-hidden="true"></i> Modo prueba: datos inventados, guardados solo en este navegador. No te pedimos ningún dato.</p>
             <div class="ingreso__sazzo">
                 <a class="boton boton--secundario" href="${esc(linkOtrasDemos())}" data-otras-demos><i class="ti ti-layout-grid"></i> Ver otras demos</a>
                 <a class="boton boton--secundario" href="${esc(quiero.href)}" data-quiero-esto${quiero.externo ? ' target="_blank" rel="noopener"' : ""}><i class="ti ti-brand-whatsapp"></i> Quiero esto para mi negocio</a>
             </div>
             ${pieAcerca(marca)}
-        </main>`;
+        </main>
+        <div class="pie-celu pie-celu--ingreso">${htmlBarraSazzo(marca, undefined, !!revisarDetalle(detalle))}</div>`;
 }
 
 /** Una sola persona (comercio de una persona): entra directo, sin pantalla de elegir. Si falla, muestra la pantalla con el error. */
@@ -85,6 +88,7 @@ function mostrarIngreso(cont, { marca, personas, alElegir, detalle }) {
     const foco = document.activeElement;
     if (!foco || foco === document.body || !foco.isConnected) $("[data-persona]", cont)?.focus({ preventScroll: true });
     activarBotonesSazzo(cont, marca, detalle);
+    medirPie(cont);
     const error = $(".formulario__error", cont);
     $$("[data-persona]", cont).forEach((b) =>
         b.addEventListener("click", async () => {

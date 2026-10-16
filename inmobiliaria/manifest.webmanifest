@@ -1,0 +1,33 @@
+{
+    "id":  "./",
+    "name":  "Sazzo Inmobiliaria",
+    "short_name":  "Inmobiliaria",
+    "description":  "Para inmobiliarias y martilleros: que no se pierda ninguna consulta, coordinar visitas sin pisarse, mandar la ficha de la propiedad y tener a mano los alquileres que aumentan, vencen o no se pagaron.",
+    "lang":  "es-AR",
+    "start_url":  "./",
+    "scope":  "./",
+    "display":  "standalone",
+    "orientation":  "any",
+    "background_color":  "#0a0e0d",
+    "theme_color":  "#0a0e0d",
+    "icons":  [
+                  {
+                      "src":  "../img/icono-192.png",
+                      "sizes":  "192x192",
+                      "type":  "image/png",
+                      "purpose":  "any"
+                  },
+                  {
+                      "src":  "../img/icono-512.png",
+                      "sizes":  "512x512",
+                      "type":  "image/png",
+                      "purpose":  "any"
+                  },
+                  {
+                      "src":  "../img/icono-adaptable-512.png",
+                      "sizes":  "512x512",
+                      "type":  "image/png",
+                      "purpose":  "maskable"
+                  }
+              ]
+}

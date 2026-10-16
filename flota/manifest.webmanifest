@@ -1,0 +1,33 @@
+{
+    "id":  "./",
+    "name":  "Sazzo Flota",
+    "short_name":  "Flota",
+    "description":  "Para empresas con vehículos: qué vehículo anda y cuál está en el taller, los problemas que avisan los choferes y los repuestos.",
+    "lang":  "es-AR",
+    "start_url":  "./",
+    "scope":  "./",
+    "display":  "standalone",
+    "orientation":  "any",
+    "background_color":  "#0a0e0d",
+    "theme_color":  "#0a0e0d",
+    "icons":  [
+                  {
+                      "src":  "../img/icono-192.png",
+                      "sizes":  "192x192",
+                      "type":  "image/png",
+                      "purpose":  "any"
+                  },
+                  {
+                      "src":  "../img/icono-512.png",
+                      "sizes":  "512x512",
+                      "type":  "image/png",
+                      "purpose":  "any"
+                  },
+                  {
+                      "src":  "../img/icono-adaptable-512.png",
+                      "sizes":  "512x512",
+                      "type":  "image/png",
+                      "purpose":  "maskable"
+                  }
+              ]
+}

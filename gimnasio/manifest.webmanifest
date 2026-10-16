@@ -1,0 +1,33 @@
+{
+    "id":  "./",
+    "name":  "Sazzo Gimnasio",
+    "short_name":  "Gimnasio",
+    "description":  "Para gimnasios, boxes de funcional y estudios de pilates: la rutina de cada socio día por día, el seguimiento del profe y las cuotas.",
+    "lang":  "es-AR",
+    "start_url":  "./",
+    "scope":  "./",
+    "display":  "standalone",
+    "orientation":  "any",
+    "background_color":  "#0a0e0d",
+    "theme_color":  "#0a0e0d",
+    "icons":  [
+                  {
+                      "src":  "../img/icono-192.png",
+                      "sizes":  "192x192",
+                      "type":  "image/png",
+                      "purpose":  "any"
+                  },
+                  {
+                      "src":  "../img/icono-512.png",
+                      "sizes":  "512x512",
+                      "type":  "image/png",
+                      "purpose":  "any"
+                  },
+                  {
+                      "src":  "../img/icono-adaptable-512.png",
+                      "sizes":  "512x512",
+                      "type":  "image/png",
+                      "purpose":  "maskable"
+                  }
+              ]
+}

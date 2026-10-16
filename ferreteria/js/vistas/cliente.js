@@ -5,12 +5,13 @@
 //   "Mis presupuestos": cómo va cada uno (pedido → te lo mandaron → aceptado → retirado), el PDF, "Aceptar" y su
 //   cuenta corriente (lo que debe y los últimos movimientos).
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=86c054c83c";
-import { armarPdf, pdfListo } from "../../kit/js/pdf.js?v=86c054c83c";
-import { TOPES, pesos, cantidadTexto } from "../datos.js?v=86c054c83c";
-import { NEGOCIO } from "../marca.js?v=86c054c83c";
-import { guia, activarGuias, pasos, pastillaEstado, cuando, validez, barraTope, haceDias, htmlFoto } from "./comunes.js?v=86c054c83c";
-import { datosPdf } from "./presupuestos.js?v=86c054c83c";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=8ec449d814";
+import { armarPdf, pdfListo } from "../../kit/js/pdf.js?v=8ec449d814";
+import { TOPES, pesos, cantidadTexto } from "../datos.js?v=8ec449d814";
+import { NEGOCIO } from "../marca.js?v=8ec449d814";
+import { guia, activarGuias, pasos, pastillaEstado, cuando, validez, barraTope, haceDias, htmlFoto } from "./comunes.js?v=8ec449d814";
+import { htmlConsigna } from "../../kit/js/consigna.js?v=8ec449d814";
+import { datosPdf } from "./presupuestos.js?v=8ec449d814";
 
 // Lo que va escribiendo queda en memoria mientras se navega
 const EJEMPLO = ["cano de 1/2 x 3", "4 codos de 1/2", "2 llaves de paso 1/2", "teflon"];
@@ -24,7 +25,7 @@ export function vistaPedirPresupuesto(cont, { usuario, datos, irA }) {
             <h1 class="titulo">Pedir presupuesto</h1>
             <span class="negocio"><i class="ti ti-building-store" aria-hidden="true"></i>${esc(NEGOCIO)}</span>
         </div>
-        <p class="nota pista"><i class="ti ti-hand-finger"></i> Probá: escribí como le hablás al de la ferretería, un artículo por renglón. Ya te dejamos un ejemplo; cambialo si querés y pedilo.</p>
+        ${htmlConsigna({ paso: 1, total: 5, accion: "Escribí como le hablás al de la ferretería, un artículo por renglón (ya hay un ejemplo), y pedilo.", resultado: "Le llega a Nahuel para armar el presupuesto." })}
         <button class="ticket-barra" type="button"></button>
         <div class="pedir-presupuesto">
             <form class="bloque formulario escribir" novalidate>
@@ -116,7 +117,7 @@ export function vistaPedirPresupuesto(cont, { usuario, datos, irA }) {
                 <p>N° ${esc(pr.numero)}${pr.obra ? ` · ${esc(pr.obra)}` : ""} · ${esc(pr.items.length)} renglones</p>
                 <p class="nota"><i class="ti ti-bell"></i> ${esc(NEGOCIO)} lo revisa${pr.sinResolver ? ", mira la foto" : ""} y te lo manda con el precio final.</p>
             </div>
-            ${guia("u-empleado", `/presupuestos/${pr.id}`, "Mirá lo que le llega a Nahuel")}
+            ${htmlConsigna({ paso: 1, total: 5, accion: "Pedí el presupuesto.", hecho: "presupuesto pedido", guia: guia("u-empleado", `/presupuestos/${pr.id}`, "Mirá lo que le llega a Nahuel") })}
             <a class="boton boton--secundario boton--ancho" href="#/mis-presupuestos"><i class="ti ti-list"></i> Ver mis presupuestos</a>`;
         activarGuias(cont, irA);
         window.scrollTo(0, 0);
@@ -174,8 +175,9 @@ export function vistaMisPresupuestos(cont, { usuario, datos, irA }, recien = nul
                 ${pr.estado === "enviado" && !pr.vencido ? `<button class="boton" type="button" data-aceptar="${esc(pr.id)}"><i class="ti ti-thumb-up"></i> Aceptar el presupuesto</button>` : ""}
                 ${["enviado", "aceptado", "vendido"].includes(pr.estado) ? `<button class="boton boton--secundario" type="button" data-pdf="${esc(pr.id)}"><i class="ti ti-file-type-pdf"></i> PDF</button>` : ""}
             </div>
-            ${pr.estado === "pedido" ? guia("u-empleado", `/presupuestos/${pr.id}`, "Mirá lo que le llega a Nahuel") : ""}
-            ${recien === pr.id ? guia("u-empleado", `/presupuestos/${pr.id}`, "Pasá a Nahuel: que lo pase a venta") : ""}
+            ${pr.estado === "pedido" ? htmlConsigna({ paso: 1, total: 5, accion: "Pedí el presupuesto.", hecho: "presupuesto pedido", guia: guia("u-empleado", `/presupuestos/${pr.id}`, "Mirá lo que le llega a Nahuel") }) : ""}
+            ${pr.estado === "enviado" && !pr.vencido && recien !== pr.id ? htmlConsigna({ paso: 3, total: 5, accion: "Tocá “Aceptar el presupuesto”.", resultado: "Va a tu cuenta corriente y Nahuel lo prepara." }) : ""}
+            ${recien === pr.id ? htmlConsigna({ paso: 3, total: 5, accion: "Aceptá el presupuesto.", hecho: "aceptado, a tu cuenta", guia: guia("u-empleado", `/presupuestos/${pr.id}`, "Pasá a Nahuel: que lo pase a venta") }) : ""}
         </section>`).join("")
         : `${vacio("Todavía no pediste ningún presupuesto.", "ti-file-text")}<p class="sin-pedidos"><a class="boton" href="#/inicio"><i class="ti ti-clipboard-list"></i> Pedir un presupuesto</a></p>`}`;
 

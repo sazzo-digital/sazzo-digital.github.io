@@ -2,9 +2,10 @@
 // Lo de Valeria (la que busca), pensado para el celular: "Pedir visita" (día y hora libre, sin cargar ningún dato:
 // la inmobiliaria asigna quién la acompaña) y "Mis visitas" (pedida → confirmada, con Cancelar).
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=9ba5fbd9c2";
-import { aHora } from "../../kit/js/turnos.js?v=9ba5fbd9c2";
-import { guia, activarGuias, chipsDias, htmlFoto, medidas, pastillaVisita, mayuscula } from "./comunes.js?v=9ba5fbd9c2";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=0ca3fb45de";
+import { aHora } from "../../kit/js/turnos.js?v=0ca3fb45de";
+import { guia, activarGuias, chipsDias, htmlFoto, medidas, pastillaVisita, mayuscula } from "./comunes.js?v=0ca3fb45de";
+import { htmlConsigna } from "../../kit/js/consigna.js?v=0ca3fb45de";
 
 let fecha = null; // el día elegido queda mientras se navega
 
@@ -59,7 +60,7 @@ export function vistaPedirVisita(cont, { usuario, datos, params: [id], irA }) {
                 <p><b>${esc(mayuscula(v.fechaNombre))} a las ${esc(v.hora)}</b> · ${esc(v.propiedad)}</p>
                 <p class="nota"><i class="ti ti-brand-whatsapp"></i><span>Te confirman por WhatsApp. Te acompaña ${esc(v.agente)}.</span></p>
             </div>
-            ${guia(v.agenteId, "/inicio", `Mirá lo que le llega a ${v.agente}`)}
+            ${htmlConsigna({ paso: 1, total: 3, accion: "Pedí una visita.", hecho: "visita pedida", guia: guia(v.agenteId, "/inicio", `Mirá lo que le llega a ${v.agente}`) })}
             <a class="boton boton--secundario boton--ancho" href="#/mis-visitas"><i class="ti ti-calendar-event"></i> Mis visitas</a>`;
         activarGuias(cont, irA);
         window.scrollTo(0, 0);
@@ -72,7 +73,7 @@ export function vistaPedirVisita(cont, { usuario, datos, params: [id], irA }) {
             ${htmlFoto(p, { clase: "foto--chica", tamanos: "80px" })}
             <span><b>${esc(p.titulo)}</b><small>${esc(p.precioTexto)} · ${esc(p.zonaNombre)} · ${esc(medidas(p))}</small></span>
         </div>
-        <p class="nota pista"><i class="ti ti-hand-finger"></i><span>Probá: elegí un día y una hora libre. Después mirá cómo le llega a Tomás.</span></p>
+        ${htmlConsigna({ paso: 1, total: 3, accion: "Elegí un día y una hora libre, y pedila.", resultado: "Le llega a Tomás para confirmarla." })}
         <p class="rotulo-chico">Día</p>
         ${chipsDias(dias, fecha)}
         <p class="rotulo-chico">Hora</p>

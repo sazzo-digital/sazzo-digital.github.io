@@ -4,12 +4,13 @@
 // diferencia. "Listo: avisarle" lo separa (se descuenta del stock) y arma el mensaje para WhatsApp; "Cobrar y
 // entregar" lo pasa a la caja; o se anula (lo separado vuelve al stock).
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=8f8507cb31";
-import { mostrarMensaje } from "../../kit/js/mensaje.js?v=8f8507cb31";
-import { htmlCopiable, activarCopiables, ding } from "../../kit/js/celular.js?v=8f8507cb31";
-import { ESTADOS_PEDIDO, MEDIOS, RETIROS, TOPES, ALIAS, pesos, kilos, aGramos, precioPorPeso } from "../datos.js?v=8f8507cb31";
-import { MARCA } from "../marca.js?v=8f8507cb31";
-import { guia, activarGuias, pasos, pastillaEstado, tarjetaPedido, cuando, campoKg, kgEnCampo, loPedido } from "./comunes.js?v=8f8507cb31";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=d0fa7e2aa0";
+import { mostrarMensaje } from "../../kit/js/mensaje.js?v=d0fa7e2aa0";
+import { htmlCopiable, activarCopiables, ding } from "../../kit/js/celular.js?v=d0fa7e2aa0";
+import { ESTADOS_PEDIDO, MEDIOS, RETIROS, TOPES, ALIAS, pesos, kilos, aGramos, precioPorPeso } from "../datos.js?v=d0fa7e2aa0";
+import { MARCA } from "../marca.js?v=d0fa7e2aa0";
+import { guia, activarGuias, pasos, pastillaEstado, tarjetaPedido, cuando, campoKg, kgEnCampo, loPedido } from "./comunes.js?v=d0fa7e2aa0";
+import { htmlConsigna } from "../../kit/js/consigna.js?v=d0fa7e2aa0";
 
 /** Billetes "redondos" para cobrar un pedido: el próximo múltiplo de $10.000, de $20.000 y $50.000. */
 const billetesPara = (total) => [...new Set([10_000, 20_000, 50_000].map((b) => Math.ceil(Math.max(1, total) / b) * b))].slice(0, 3);
@@ -29,7 +30,7 @@ export function vistaPedidos(cont, { usuario, datos, consulta }) {
             <h1 class="titulo">Pedidos</h1>
             <a class="boton boton--chico" href="#/pedidos/nuevo"><i class="ti ti-plus"></i> Anotar uno del teléfono</a>
         </div>
-        ${nuevoWeb ? `<p class="nota pista"><i class="ti ti-hand-finger"></i> Te llegó el pedido de ${esc(nuevoWeb.para)}: tocalo para pesarlo y avisarle.</p>` : ""}
+        ${nuevoWeb ? htmlConsigna({ paso: 2, total: 3, accion: `Te llegó el pedido de ${nuevoWeb.para}: tocalo para pesarlo y avisarle.`, resultado: "El precio se ajusta al peso real." }) : ""}
         <div class="numeros-caja">
             <div class="numero-caja"><span>Para preparar</span><b>${esc(cuenta("nuevo"))}</b></div>
             <div class="numero-caja"><span>Listos</span><b>${esc(cuenta("listo"))}</b><small>esperando que los busquen</small></div>
@@ -175,7 +176,7 @@ export function vistaPedido(cont, opciones, recien = null) {
             <h2 class="titulo">Entregado y cobrado</h2>
             <p>${esc(pesos(pe.total))}${opciones.vuelto != null ? ` · vuelto <b>${esc(pesos(opciones.vuelto))}</b>` : ""}</p>
         </div>` : ""}
-        ${pe.estado === "nuevo" && empleado ? `<p class="nota pista"><i class="ti ti-hand-finger"></i> Cortá y pesá cada cosa, y escribí lo que marcó la balanza (probá: asado 1kg 620g, picada 980g, milanesas 1kg 50g; también vale 1,620). El total se ajusta solo.</p>` : ""}
+        ${pe.estado === "nuevo" && empleado ? htmlConsigna({ paso: 2, total: 3, accion: "Cortá y pesá cada cosa, escribí lo que marcó la balanza (asado 1kg 620g, picada 980g, milanesas 1kg 50g) y avisale que está listo.", resultado: "El total se ajusta solo." }) : ""}
         <ul class="filas-stock items-pedido">${pe.items.map(filaItem).join("")}</ul>
         <div class="total total--pedido">
             <span>${pe.real === null ? "Total aproximado" : "Total"}${pe.sinPesar ? ` <small>falta pesar ${esc(pe.sinPesar)}</small>` : ""}</span>
@@ -243,7 +244,7 @@ export function vistaPedido(cont, opciones, recien = null) {
                 <button class="boton boton--secundario" type="button" data-avisar><i class="ti ti-message-circle"></i> ${pe.avisado ? "Avisar de nuevo" : "Avisarle"}</button>
                 ${pe.avisado ? `<span class="nota avisado"><i class="ti ti-check"></i> Avisado ${esc(cuando(pe.avisado))}</span>` : ""}
             </div>
-            ${empleado && recien === "listo" ? guia("u-dueno", abierto ? `/desposte/${abierto.id}` : "/caja", abierto ? "Pasá a Ricardo: terminá el desposte de hoy" : "Pasá a Ricardo: mirá la caja") : ""}
+            ${empleado && recien === "listo" ? htmlConsigna({ paso: 2, total: 3, accion: "Pesalo y avisale.", hecho: "listo para retirar", guia: guia("u-dueno", abierto ? `/desposte/${abierto.id}` : "/caja", abierto ? "Pasá a Ricardo: terminá el desposte de hoy" : "Pasá a Ricardo: mirá la caja") }) : ""}
             <form class="formulario bloque entregar" novalidate>
                 <h2 class="subtitulo"><i class="ti ti-cash"></i> Vinieron a buscarlo: cobrar y entregar</h2>
                 <div class="chips medios" role="radiogroup" aria-label="Cómo paga"></div>

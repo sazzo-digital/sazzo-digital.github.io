@@ -3,11 +3,12 @@
 // kilo, "en plata" o por unidad) y cómo lo quiere ("milanesas finitas"), el combo del asado, el horario de retiro y
 // pedir. El total es aproximado: la carnicería lo pesa y se ajusta. Después, en "Mis pedidos", cómo va.
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=8f8507cb31";
-import { TOPES, ANIMALES, RETIROS, COMBO_ASADO, pesos, kilos, precioPorPeso, gramosPara } from "../datos.js?v=8f8507cb31";
-import { NEGOCIO } from "../marca.js?v=8f8507cb31";
-import { htmlMediaRes, activarMediaRes } from "../media-res.js?v=8f8507cb31";
-import { guia, activarGuias, pasos, pastillaEstado, cuando, precioDe, loPedido } from "./comunes.js?v=8f8507cb31";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=d0fa7e2aa0";
+import { TOPES, ANIMALES, RETIROS, COMBO_ASADO, pesos, kilos, precioPorPeso, gramosPara } from "../datos.js?v=d0fa7e2aa0";
+import { NEGOCIO } from "../marca.js?v=d0fa7e2aa0";
+import { htmlMediaRes, activarMediaRes } from "../media-res.js?v=d0fa7e2aa0";
+import { guia, activarGuias, pasos, pastillaEstado, cuando, precioDe, loPedido } from "./comunes.js?v=d0fa7e2aa0";
+import { htmlConsigna } from "../../kit/js/consigna.js?v=d0fa7e2aa0";
 
 // Lo elegido queda en memoria mientras se navega
 const carrito = new Map(); // articuloId → { modo, cantidad, aclaracion }
@@ -40,7 +41,7 @@ export function vistaPedir(cont, { usuario, datos, irA }) {
                 <h1 class="titulo">Hacé tu pedido</h1>
                 <span class="negocio"><i class="ti ti-building-store" aria-hidden="true"></i>${esc(NEGOCIO)}</span>
             </div>
-            <p class="nota pista"><i class="ti ti-hand-finger"></i> Probá: tocá el asado en la vaca, pedí 1,5 kg, sumá picada y milanesas "finitas", y pedilo. La carnicería lo pesa y te avisa.</p>
+            ${htmlConsigna({ paso: 1, total: 3, accion: "Tocá el asado en la vaca, pedí 1,5 kg, sumá picada y milanesas “finitas”, y pedilo.", resultado: "La carnicería lo pesa y te avisa." })}
             <button class="ticket-barra" type="button"${carrito.size ? "" : " hidden"}></button>
             <div class="pedir">
                 <section>
@@ -243,7 +244,7 @@ export function vistaPedir(cont, { usuario, datos, irA }) {
                 <p class="vuelto vuelto--grande"><b>${esc(pesos(pe.estimado))}</b> aprox.</p>
                 <p class="nota"><i class="ti ti-bell"></i> ${esc(NEGOCIO)} lo pesa, te avisa cuando está listo y te dice el total justo. Lo pagás al retirarlo.</p>
             </div>
-            ${guia("u-empleado", `/pedidos/${pe.id}`, "Mirá lo que le llega a Darío")}
+            ${htmlConsigna({ paso: 1, total: 3, accion: "Pedí.", hecho: "pedido enviado", guia: guia("u-empleado", `/pedidos/${pe.id}`, "Mirá lo que le llega a Darío") })}
             <a class="boton boton--secundario boton--ancho" href="#/mis-pedidos"><i class="ti ti-list"></i> Ver mis pedidos</a>`;
         activarGuias(cont, irA);
         window.scrollTo(0, 0);
@@ -289,7 +290,7 @@ export function vistaMisPedidos(cont, { usuario, datos, irA }) {
                 </li>`).join("")}</ul>
             <div class="total"><span>${pe.estado === "entregado" ? "Pagaste" : pe.real === null ? "Total aproximado" : "Total"}</span><b>${esc(pesos(pe.total))}</b></div>
             ${pe.diferencia ? `<p class="nota"><i class="ti ti-scale"></i> Con el peso justo: ${pe.diferencia > 0 ? "+" : "−"}${esc(pesos(Math.abs(pe.diferencia)))} de lo que calculaste.</p>` : ""}
-            ${pe.estado === "nuevo" ? guia("u-empleado", `/pedidos/${pe.id}`, "Mirá lo que le llega a Darío") : ""}
+            ${pe.estado === "nuevo" ? htmlConsigna({ paso: 1, total: 3, accion: "Pedí.", hecho: "pedido enviado", guia: guia("u-empleado", `/pedidos/${pe.id}`, "Mirá lo que le llega a Darío") }) : ""}
         </section>`).join("")
         : `${vacio("Todavía no hiciste ningún pedido.", "ti-clipboard-list")}<p class="sin-pedidos"><a class="boton" href="#/inicio"><i class="ti ti-shopping-bag"></i> Hacer un pedido</a></p>`}`;
     activarGuias(cont, irA);

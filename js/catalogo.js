@@ -2,8 +2,8 @@
 // Catálogo de Sazzo: arma las tarjetas de demos (desde demos.js), las animaciones al bajar, los botones de
 // contacto (desde config.js), guarda de dónde vino la visita (?o=papel / ?o=ig) y avisa a la medición.
 // ============================================
-import { DEMOS, TRABAJOS } from "./demos.js?v=526835b55f";
-import { CONTACTO, MEDICION, LINK_DEMOS, RUTA_LIBS } from "./config.js?v=526835b55f";
+import { DEMOS, TRABAJOS } from "./demos.js?v=c5558ab858";
+import { CONTACTO, MEDICION, LINK_DEMOS, RUTA_LIBS } from "./config.js?v=c5558ab858";
 
 const $ = (selector, raiz = document) => raiz.querySelector(selector);
 const $$ = (selector, raiz = document) => [...raiz.querySelectorAll(selector)];
@@ -270,6 +270,30 @@ if (typeof ventanaDetalle.showModal === "function") {
 }
 $$(".demo [data-demo]").forEach((a) => a.addEventListener("click", () => contar("probar", a.dataset.demo)));
 
+$$("[data-link-demo]").forEach((a) => {
+    const demo = DEMOS.find((d) => d.id === a.dataset.linkDemo && d.estado === "activa");
+    const link = demo ? linkDe(demo) : null;
+    if (!link) return (a.hidden = true);
+    a.href = link;
+    a.addEventListener("click", () => contar("probar", demo.id));
+});
+
+if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    const marcarAvance = () => {
+        const total = document.documentElement.scrollHeight - innerHeight;
+        document.documentElement.style.setProperty("--avance", total > 0 ? Math.min(1, scrollY / total).toFixed(3) : "0");
+    };
+    addEventListener("scroll", () => requestAnimationFrame(marcarAvance), { passive: true });
+    addEventListener("resize", marcarAvance);
+    marcarAvance();
+}
+
+const opcionesFlujo = $$(".automatiza__opcion");
+opcionesFlujo.forEach((b) => b.addEventListener("click", () => {
+    opcionesFlujo.forEach((o) => o.setAttribute("aria-pressed", String(o === b)));
+    $$(".pizarra__flujo").forEach((p) => (p.hidden = p.dataset.flujo !== b.dataset.flujo));
+}));
+
 // Cantidad de rubros en la portada (sale de la lista)
 $$("[data-contar]").forEach((el) => { el.dataset.contar = visibles.length; el.textContent = visibles.length; });
 
@@ -348,6 +372,9 @@ if ((linkWhatsapp || usuarioInstagram) && typeof ventanaContacto.showModal === "
         if (e.target === ventanaContacto || e.target.closest("[data-cerrar], a[target]")) ventanaContacto.close();
     });
 }
+if (linkWhatsapp) $$("[data-numero]").forEach((el) => (el.textContent = CONTACTO.whatsapp.replace(/^549(\d{3})(\d{3})(\d{4})$/, "$1 $2 $3")));
+if (usuarioInstagram) $$("[data-usuario]").forEach((el) => (el.textContent = `@${usuarioInstagram}`));
+$$("[data-dominio]").forEach((el) => (el.textContent = location.hostname));
 $$("[data-anio]").forEach((el) => (el.textContent = new Date().getFullYear()));
 
 // --- Animaciones al bajar ---
@@ -385,6 +412,25 @@ if ("IntersectionObserver" in window) {
     $$(".demo").forEach((el) => el.classList.add("en-pantalla"));
 }
 setTimeout(() => $$("[data-contar]").forEach(contarHasta), 3100);
+
+const filaDemos = $("#lista-demos");
+const mover = quieto ? "instant" : "smooth";
+$$("[data-flecha]").forEach((b) => b.addEventListener("click", () => filaDemos.scrollBy({ left: Number(b.dataset.flecha) * filaDemos.clientWidth, behavior: mover })));
+document.addEventListener("click", (e) => {
+    const atajo = e.target.closest(".atajo");
+    const tarjeta = atajo && document.getElementById(atajo.hash.slice(1));
+    if (!tarjeta) return;
+    e.preventDefault();
+    const tarjetas = [...filaDemos.children];
+    tarjetas.forEach((t) => (t.style.order = ""));
+    if (tarjeta === tarjetas[0]) tarjetas.at(-1).style.order = "-1";
+    if (tarjeta === tarjetas.at(-1)) tarjetas[0].style.order = "1";
+    const caja = tarjeta.getBoundingClientRect();
+    const fila = filaDemos.getBoundingClientRect();
+    filaDemos.scrollTo({ left: filaDemos.scrollLeft + caja.left + caja.width / 2 - fila.left - fila.width / 2, behavior: mover });
+    scrollTo({ top: scrollY + caja.top - 76, behavior: mover });
+    history.replaceState(null, "", atajo.hash);
+});
 
 // --- El globo de "Somos un equipo…" (cobe 2.0.1, MIT, ~13 KB, en kit\libs\): se baja recién cuando está por llegar a
 // la pantalla y gira despacio solo mientras se ve; con "reducir movimiento", quieto. Un punto en Argentina (Sazzo es

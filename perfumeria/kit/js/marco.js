@@ -8,31 +8,26 @@
 //       alReiniciar                                   → "Empezar de cero" (ya confirmado)
 //   });
 // Después la demo muestra cada pantalla adentro de `contenido` con rutas.js → mostrarRuta.
-// Botones fijos (barrita sobre el menú): "Probala con tus colores", "Ver otras demos" y "Quiero esto para mi negocio".
-// La primera vez que se abre cada demo, un globito señala la paleta (colores.js → mostrarGlobitoColores).
-// En la compu (desde 1000 px) el menú va al costado y la barrita de Sazzo sube a la cabecera; en celulares chicos la
-// barrita se esconde al bajar la pantalla y vuelve al subir (así queda más lugar para la demo).
+// En el celu, el pie (.pie-celu): la fila de Sazzo ("Ver en detalle", "Otras demos", "Quiero esto") y el menú.
+// En la compu (desde 1000 px) el menú va al costado y la fila de Sazzo sube a la cabecera.
 // Festejo: cuando aparece una confirmación (.hecho: turno reservado, venta cobrada, orden creada…), el ✓ entra con un
 // rebote, salen chispitas del color de la demo y el celular vibra cortito (Android). Quieto con "reducir movimiento".
 // ============================================
-import { $, esc, iniciales, nombreCompleto } from "./ui.js?v=2bd9bdbf19";
-import { logoSazzo, nombreDemo } from "./marca.js?v=2bd9bdbf19";
-import { interruptorTema, activarInterruptorTema } from "./apariencia.js?v=2bd9bdbf19";
-import { linkOtrasDemos, linkQuieroEsto } from "./enlaces.js?v=2bd9bdbf19";
-import { abrirColores, mostrarGlobitoColores, leerNombre } from "./colores.js?v=2bd9bdbf19";
-import { contar } from "./visita.js?v=2bd9bdbf19";
-import { pintarAvisos } from "./avisos.js?v=2bd9bdbf19";
-import { revisarDetalle, htmlBotonDetalle, activarDetalle } from "./detalle.js?v=2bd9bdbf19";
+import { $, $$, esc, iniciales } from "./ui.js?v=f04a42026d";
+import { logoSazzo, nombreDemo } from "./marca.js?v=f04a42026d";
+import { interruptorTema, activarInterruptorTema } from "./apariencia.js?v=f04a42026d";
+import { linkOtrasDemos, linkQuieroEsto } from "./enlaces.js?v=f04a42026d";
+import { abrirColores, leerNombre } from "./colores.js?v=f04a42026d";
+import { contar } from "./visita.js?v=f04a42026d";
+import { pintarAvisos } from "./avisos.js?v=f04a42026d";
+import { revisarDetalle, htmlBotonDetalle, activarDetalle } from "./detalle.js?v=f04a42026d";
 
 /** La barrita de Sazzo: colores, otras demos y "Quiero esto" (los textos largos solo si hay lugar). */
 export function htmlBarraSazzo(marca, opciones, conDetalle = false) {
     const quiero = linkQuieroEsto(marca, opciones);
     return `
         <div class="barra-sazzo" role="group" aria-label="Sazzo">
-            <button class="barra-sazzo__colores" type="button" data-colores title="Probala con tus colores" aria-label="Probala con tus colores">
-                <i class="ti ti-palette" aria-hidden="true"></i>
-            </button>
-            ${conDetalle ? htmlBotonDetalle("barra-sazzo__detalle", "Detalle") : ""}
+            ${conDetalle ? htmlBotonDetalle("barra-sazzo__detalle") : ""}
             <a class="barra-sazzo__otras" href="${esc(linkOtrasDemos(opciones))}" data-otras-demos title="Ver otras demos">
                 <i class="ti ti-layout-grid" aria-hidden="true"></i><span>Otras demos</span>
             </a>
@@ -41,6 +36,9 @@ export function htmlBarraSazzo(marca, opciones, conDetalle = false) {
             </a>
         </div>`;
 }
+
+export const htmlBotonColores = () =>
+    `<button class="boton-icono cabecera__colores" type="button" data-colores title="Probala con tus colores" aria-label="Probala con tus colores"><i class="ti ti-palette" aria-hidden="true"></i></button>`;
 
 /** Debajo del nombre de la demo: el nombre que escribió el dueño ("Probala con tu nombre") o, si no, el lema. */
 function htmlNombreNegocio(marca) {
@@ -54,58 +52,73 @@ export function htmlMarco({ marca, usuario, menu = [], cambiarPersona = true, de
         <header class="cabecera">
             <div class="cabecera__lado">
                 ${interruptorTema()}
+                ${htmlBotonColores()}
             </div>
             <a class="cabecera__marca" href="#/inicio" title="Ir al inicio">${logoSazzo()}<span>${nombreDemo(marca)}${htmlNombreNegocio(marca)}</span></a>
-            <div class="cabecera__usuario">
-                <span class="cabecera__cuenta">
-                    <span class="cabecera__avatar" aria-hidden="true">${esc(iniciales(usuario))}</span>
-                    <span class="cabecera__nombre">${esc(nombreCompleto(usuario))}<small>${esc(usuario.rolTexto ?? usuario.rol ?? "")}</small></span>
-                </span>
-                ${cambiarPersona ? `
-                <button class="boton-icono" id="cambiar-persona" type="button" title="Cambiar de persona" aria-label="Cambiar de persona">
-                    <i class="ti ti-switch-horizontal"></i>
-                </button>` : ""}
-            </div>
+            <div class="cabecera__fin"></div>
         </header>
-        <p class="banda-prueba">
-            <span><i class="ti ti-flask" aria-hidden="true"></i> Modo prueba: datos inventados<span class="banda-prueba__mas">, guardados solo en este navegador</span>.</span>
-            <button class="boton-link" id="reiniciar" type="button">Empezar de cero</button>
-        </p>
+        <div class="banda-prueba">
+            <p class="banda-prueba__persona">
+                <span class="banda-prueba__avatar" aria-hidden="true">${esc(iniciales(usuario))}</span>
+                <span>Estás probando como <b>${esc(usuario.nombre ?? "")}</b>${usuario.rolTexto ?? usuario.rol ? ` · <span class="banda-prueba__rol">${esc(usuario.rolTexto ?? usuario.rol)}</span>` : ""}</span>
+            </p>
+            ${cambiarPersona ? `
+            <button class="banda-prueba__cambiar" id="cambiar-persona" type="button">
+                <i class="ti ti-switch-horizontal" aria-hidden="true"></i><span>Cambiar persona</span>
+            </button>` : ""}
+            <p class="banda-prueba__modo">
+                <span><i class="ti ti-flask" aria-hidden="true"></i> Modo prueba: datos inventados<span class="banda-prueba__mas">, guardados solo en este navegador</span>.</span>
+                <button class="boton-link" id="reiniciar" type="button">Empezar de cero</button>
+            </p>
+        </div>
         <main id="contenido" class="contenido" tabindex="-1"></main>
         <footer class="pie-app"></footer>
-        ${htmlBarraSazzo(marca, undefined, !!revisarDetalle(detalle))}
-        ${menu.length ? `
-        <nav class="menu" aria-label="Secciones">
-            ${menu.map((i) => `
-            <a href="#${esc(i.ruta)}" class="menu__item" data-ruta="${esc(i.ruta)}">
-                <i class="ti ${esc(i.icono)}" aria-hidden="true"></i><span>${esc(i.texto)}</span>
-            </a>`).join("")}
-        </nav>` : ""}`;
+        <div class="pie-celu">
+            ${htmlBarraSazzo(marca, undefined, !!revisarDetalle(detalle))}
+            ${menu.length ? `
+            <nav class="menu" aria-label="Secciones">
+                ${menu.map((i) => `
+                <a href="#${esc(i.ruta)}" class="menu__item" data-ruta="${esc(i.ruta)}">
+                    <i class="ti ${esc(i.icono)}" aria-hidden="true"></i><span>${esc(i.texto)}</span>
+                </a>`).join("")}
+            </nav>` : ""}
+        </div>`;
 }
 
 /** Conecta los botones de Sazzo (barrita del marco o pie del ingreso) a la medición y a los colores. */
 export function activarBotonesSazzo(raiz, marca, detalle = null) {
-    $("[data-colores]", raiz)?.addEventListener("click", () => abrirColores(marca.prefijo, { alElegir: () => contar("colores", marca.id) }));
+    $$("[data-colores]", raiz).forEach((b) => b.addEventListener("click", () => abrirColores(marca.prefijo, { alElegir: () => contar("colores", marca.id) })));
     activarDetalle(raiz, marca, detalle);
-    $("[data-otras-demos]", raiz)?.addEventListener("click", () => contar("otras-demos", marca.id));
-    $("[data-quiero-esto]", raiz)?.addEventListener("click", () => contar("quiero-esto", marca.id));
+    $$("[data-otras-demos]", raiz).forEach((b) => b.addEventListener("click", () => contar("otras-demos", marca.id)));
+    $$("[data-quiero-esto]", raiz).forEach((b) => b.addEventListener("click", () => contar("quiero-esto", marca.id)));
+}
+
+let medidorPie = null;
+
+export function medirPie(raiz) {
+    medidorPie?.disconnect();
+    const pie = $(".pie-celu", raiz);
+    if (!pie) return;
+    const medir = () => document.documentElement.style.setProperty("--alto-pie", `${pie.offsetHeight}px`);
+    medir();
+    if (typeof ResizeObserver === "undefined") return;
+    medidorPie = new ResizeObserver(medir);
+    medidorPie.observe(pie);
 }
 
 const ESCRITORIO = "(min-width: 1000px)"; // igual que $escritorio en los estilos
 const ubicados = new WeakSet();
 const escuchasDelAncho = []; // guardadas: algún navegador podría soltar una escucha que nadie retiene
 
-/** La barrita de Sazzo (y su globito): en la compu, en la cabecera al lado del tema; en el celular, abajo. */
+/** La barrita de Sazzo: en la compu, en la cabecera al lado del tema; en el celular, arriba del menú. */
 export function ubicarBarraSazzo(app) {
     const barra = $(".barra-sazzo", app);
-    const cabecera = $(".cabecera__lado", app);
+    const cabecera = $(".cabecera__fin", app);
     if (!barra || !cabecera) return;
-    const globito = $(".globito-colores", app);
     if (matchMedia(ESCRITORIO).matches) {
-        cabecera.append(...[globito, barra].filter(Boolean));
+        cabecera.append(barra);
     } else if (barra.parentElement === cabecera) {
-        const pie = $(".pie-app", app);
-        pie.after(...[globito, barra].filter(Boolean));
+        $(".pie-celu", app).prepend(barra);
     }
 }
 
@@ -115,22 +128,6 @@ function seguirElAncho(app) {
     const ancho = matchMedia(ESCRITORIO);
     ancho.addEventListener?.("change", () => ubicarBarraSazzo(app));
     escuchasDelAncho.push(ancho);
-}
-
-// En celulares chicos: al bajar la pantalla se esconde la barrita; al subir, arriba de todo o al llegar al final (donde
-// conviene "Quiero esto") vuelve
-let escuchandoScroll = false;
-function esconderBarraAlBajar() {
-    if (escuchandoScroll) return;
-    escuchandoScroll = true;
-    let antes = scrollY;
-    addEventListener("scroll", () => {
-        const ahora = scrollY;
-        const alFinal = innerHeight + ahora >= document.documentElement.scrollHeight - 60;
-        if (Math.abs(ahora - antes) < 8 && !alFinal) return;
-        document.body.classList.toggle("barra-escondida", ahora > antes && ahora > 80 && !alFinal);
-        antes = ahora;
-    }, { passive: true });
 }
 
 // ---------- Listas: lo nuevo o lo que cambió se ilumina un instante (sin tocar las demos) ----------
@@ -226,11 +223,9 @@ export function pintarMarco(app, { marca, usuario, menu = [], alCambiarPersona, 
     app.classList.toggle("sin-menu", !menu.length);
     activarInterruptorTema();
     activarBotonesSazzo(app, marca, detalle);
-    mostrarGlobitoColores(app, marca.prefijo);
     ubicarBarraSazzo(app);
     seguirElAncho(app);
-    esconderBarraAlBajar();
-    document.body.classList.remove("barra-escondida");
+    medirPie(app);
     festejarConfirmaciones(app);
     iluminarCambiosDeListas(app);
     // Para quien usa teclado: el primer Tab ofrece saltar la cabecera e ir directo al contenido

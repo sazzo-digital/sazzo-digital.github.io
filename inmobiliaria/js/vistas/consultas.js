@@ -3,13 +3,14 @@
 // atender primero (visitas pedidas desde la página, sin contestar, sin seguimiento), la ficha de cada consulta
 // (confirmar la visita, mandar la ficha en PDF y el mensaje, ofrecer otras propiedades, notas) y "Anotar consulta".
 // ============================================
-import { esc, aviso, vacio, mensajeDe } from "../../kit/js/ui.js?v=9ba5fbd9c2";
-import { aHora } from "../../kit/js/turnos.js?v=9ba5fbd9c2";
-import { TOPES, TIPOS, ZONAS, OPERACIONES, ORIGENES, ESTADOS_CONSULTA } from "../datos.js?v=9ba5fbd9c2";
-import { bajarFicha } from "./propiedades.js?v=9ba5fbd9c2";
+import { esc, aviso, vacio, mensajeDe } from "../../kit/js/ui.js?v=0ca3fb45de";
+import { aHora } from "../../kit/js/turnos.js?v=0ca3fb45de";
+import { TOPES, TIPOS, ZONAS, OPERACIONES, ORIGENES, ESTADOS_CONSULTA } from "../datos.js?v=0ca3fb45de";
+import { bajarFicha } from "./propiedades.js?v=0ca3fb45de";
+import { htmlConsigna } from "../../kit/js/consigna.js?v=0ca3fb45de";
 import {
     guia, activarGuias, pastillaConsulta, pastillaVisita, mostrarMensaje, hace, mayuscula, htmlFoto, medidas, hrefPropiedad
-} from "./comunes.js?v=9ba5fbd9c2";
+} from "./comunes.js?v=0ca3fb45de";
 
 let filtroEstado = "abiertas";
 const FILTROS = { abiertas: "Abiertas", nueva: "Nuevas", agendada: "Con visita", todas: "Todas" };
@@ -38,9 +39,8 @@ export function vistaConsultas(cont, { usuario, datos, irA }) {
                 <span><b>${esc(v.consultaNombre)} pidió una visita</b><small>${esc(v.propiedad)} · ${esc(mayuscula(v.fechaNombre))} ${esc(v.hora)} · desde la página</small></span>
                 <a class="boton boton--chico" href="#/consultas/${esc(v.consultaId)}">Ver</a>
             </li>`).join("")}</ul>` : usuario.rol === "agente" && !todas.some((c) => c.pedida) ? `
-            <p class="nota pista"><i class="ti ti-hand-finger"></i><span>Probá: pedí una visita como Valeria y mirá cómo te llega acá.</span></p>
-            ${guia("u-cliente", "/inicio", "Pedí una visita como Valeria")}` : `
-            <p class="nota pista"><i class="ti ti-hand-finger"></i><span>Probá: abrí la de arriba, confirmá la visita y mandale la ficha.</span></p>`}
+            ${htmlConsigna({ paso: 1, total: 3, accion: "Pedí una visita como Valeria.", resultado: "Te llega acá, con el día y la hora.", guia: guia("u-cliente", "/inicio", "Pedí una visita como Valeria") })}` : `
+            ${htmlConsigna({ paso: 2, total: 3, accion: "Abrí la de arriba, confirmá la visita y mandale la ficha.", resultado: "Le llega la ficha en PDF, con fotos y mapa." })}`}
         <div class="chips" role="tablist" aria-label="Qué consultas ver">${Object.entries(FILTROS).map(([k, v]) => `
             <button class="chip${k === filtroEstado ? " activo" : ""}" type="button" role="tab" aria-selected="${k === filtroEstado}" data-filtro="${esc(k)}">${esc(v)} <b>${esc(cuantas(k))}</b></button>`).join("")}
         </div>
@@ -101,7 +101,7 @@ export function vistaConsulta(cont, { usuario, datos, params: [id], irA }) {
                 <button class="boton boton--secundario" type="button" data-pdf="${esc(v.propiedadId)}"><i class="ti ti-file-type-pdf"></i> Ficha en PDF</button>
                 <button class="boton boton--secundario boton--chico" type="button" data-cancelar="${esc(v.id)}"><i class="ti ti-x"></i> Cancelar</button>`}
             </div>
-            ${esValeria && !yaPaso ? `<div class="guias">${guia("u-cliente", "/mis-visitas", "Mirá cómo lo ve Valeria")}${guia("u-duena", "/inicio", "Pasá a Graciela: los alquileres de este mes")}</div>` : ""}
+            ${esValeria && !yaPaso ? htmlConsigna({ paso: 2, total: 3, accion: "Confirmá la visita.", hecho: "visita confirmada", guia: `<div class="guias">${guia("u-cliente", "/mis-visitas", "Mirá cómo lo ve Valeria")}${guia("u-duena", "/inicio", "Pasá a Graciela: los alquileres de este mes")}</div>` }) : ""}
         </section>`;
     }
 

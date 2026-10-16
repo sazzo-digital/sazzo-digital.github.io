@@ -6,12 +6,12 @@
 //   "Cargar un corte" y la "Pizarra para la tele".
 // También acá: las etiquetas de ejemplo de la balanza (para probar el escáner sin balanza).
 // ============================================
-import { esc, aviso, vacio, mensajeDe } from "../../kit/js/ui.js?v=8f8507cb31";
-import { ANIMALES, TOPES, nombreAnimal, pesos, kilos, armarEtiqueta } from "../datos.js?v=8f8507cb31";
-import { NEGOCIO } from "../marca.js?v=8f8507cb31";
-import { svgEAN } from "../codigo-barras.js?v=8f8507cb31";
-import { htmlCopiable, activarCopiables } from "../../kit/js/celular.js?v=8f8507cb31";
-import { pastillaStock, precioDe, campoKg, kgEnCampo, cuantoHay } from "./comunes.js?v=8f8507cb31";
+import { esc, aviso, vacio, mensajeDe } from "../../kit/js/ui.js?v=d0fa7e2aa0";
+import { ANIMALES, TOPES, nombreAnimal, pesos, kilos, armarEtiqueta } from "../datos.js?v=d0fa7e2aa0";
+import { NEGOCIO } from "../marca.js?v=d0fa7e2aa0";
+import { svgEAN } from "../codigo-barras.js?v=d0fa7e2aa0";
+import { htmlCopiable, activarCopiables } from "../../kit/js/celular.js?v=d0fa7e2aa0";
+import { pastillaStock, precioDe, campoKg, kgEnCampo, cuantoHay } from "./comunes.js?v=d0fa7e2aa0";
 
 const RAPIDOS = [5, 8, 10, 15];
 let textoBuscado = ""; // el buscador recuerda lo escrito mientras se navega
@@ -172,7 +172,7 @@ export function vistaAumento(cont, { usuario, datos }) {
     cont.innerHTML = `
         <a class="volver" href="#/stock"><i class="ti ti-arrow-left"></i> Precios y stock</a>
         <h1 class="titulo">Subió la hacienda</h1>
-        <p class="nota pista"><i class="ti ti-hand-finger"></i> Te subió el frigorífico: elegí qué subió y cuánto. Todos los precios de ese animal suben juntos, redondeados.</p>
+        <p class="nota"><i class="ti ti-trending-up"></i> Te subió el frigorífico: elegí qué subió y cuánto. Todos los precios de ese animal suben juntos, redondeados.</p>
         <div class="bloque">
             <p class="rotulo-chico">¿Qué subió?</p>
             <div class="chips">${ANIMALES.map((x) => `<button class="chip" type="button" data-animal="${esc(x.id)}"><i class="ti ${esc(x.icono)}" aria-hidden="true"></i>${esc(x.nombre)}</button>`).join("")}</div>
@@ -273,7 +273,7 @@ export function vistaEtiquetas(cont, { datos }) {
     cont.innerHTML = `
         <a class="volver" href="#/stock"><i class="ti ti-arrow-left"></i> Precios y stock</a>
         <h1 class="titulo">Etiquetas de ejemplo</h1>
-        <p class="nota pista"><i class="ti ti-hand-finger"></i> Como las que imprime la balanza: abrilas en otra pantalla (o imprimilas) y, en Vender, tocá la cámara y apuntá al código. El corte entra con su peso. Sin cámara: copiá el código y pegalo en el buscador de Vender.</p>
+        <p class="nota"><i class="ti ti-barcode"></i> Como las que imprime la balanza: abrilas en otra pantalla (o imprimilas) y, en Vender, tocá la cámara y apuntá al código. El corte entra con su peso. Sin cámara: copiá el código y pegalo en el buscador de Vender.</p>
         <div class="etiquetas">${etiquetas.map(({ a, gramos, codigo }) => `
             <article class="etiqueta-balanza">
                 <p class="etiqueta-balanza__negocio">${esc(NEGOCIO)}</p>

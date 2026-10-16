@@ -4,12 +4,13 @@
 // "Anotar turno" en un casillero libre (para cuando llaman por teléfono).
 // Los turnos que reservó un jugador y Gustavo todavía no miró aparecen arriba y marcados "Nuevo".
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=02e370389b";
-import { mantenerPantallaPrendida } from "../../kit/js/celular.js?v=02e370389b";
-import { aHora } from "../../kit/js/turnos.js?v=02e370389b";
-import { TOPES, CANCHAS, TIPOS, pesos, nombreFecha, horarioDe } from "../datos.js?v=02e370389b";
-import { pastillaSena, pastillaEstado, chipsDias } from "./comunes.js?v=02e370389b";
-import { buscarPersona } from "../marca.js?v=02e370389b";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=21e7a89345";
+import { mantenerPantallaPrendida } from "../../kit/js/celular.js?v=21e7a89345";
+import { aHora } from "../../kit/js/turnos.js?v=21e7a89345";
+import { TOPES, CANCHAS, TIPOS, pesos, nombreFecha, horarioDe } from "../datos.js?v=21e7a89345";
+import { pastillaSena, pastillaEstado, chipsDias } from "./comunes.js?v=21e7a89345";
+import { buscarPersona, MARCA } from "../marca.js?v=21e7a89345";
+import { htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=21e7a89345";
 
 const PASO = 30; // la grilla va de media hora en media hora (entran los turnos de 60 y los de 90 min)
 
@@ -41,7 +42,8 @@ export function vistaGrilla(cont, { usuario, datos, consulta }) {
                 <i class="ti ti-bell-ringing" aria-hidden="true"></i>
                 <span><b>${esc(buscarPersona(t.jugadorId)?.nombre ?? "Un jugador")} reservó ${esc(t.cancha)} · ${esc(nombreFecha(t.fecha))} ${esc(t.hora)}</b><small>${esc(t.grupo)} · ${esc(t.tipo)} · seña pagada</small></span>
                 <span class="etiqueta etiqueta--nuevo">Nuevo</span>
-            </a></li>`).join("")}</ul>` : ""}
+            </a></li>`).join("")}</ul>
+        ${htmlConsignaFinal(MARCA)}` : ""}
         ${chipsDias(dias, fecha)}
         <div class="numeros-grilla">
             <div><span>Ocupados</span><b>${esc(g.resumen.ocupados)}<small> de ${esc(g.resumen.total)}</small></b></div>
@@ -74,6 +76,7 @@ export function vistaGrilla(cont, { usuario, datos, consulta }) {
         </ul>`;
 
     cont.querySelectorAll("[data-dia]").forEach((b) => b.addEventListener("click", () => (location.hash = `#/inicio?fecha=${b.dataset.dia}`)));
+    activarConsigna(cont, MARCA);
     // Que el primer turno nuevo (o la hora de ahora) quede a la vista en la grilla
     cont.querySelector(".turno--nuevo")?.scrollIntoView({ block: "nearest", inline: "center" });
 }

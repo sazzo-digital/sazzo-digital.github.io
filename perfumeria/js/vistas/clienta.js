@@ -3,11 +3,12 @@
 // "Recomendame uno"), cada perfume con sus notas y presentaciones, "Tu pedido" (el carrito) y "Mis pedidos".
 // El pedido no pide ningún dato: Julieta ya entró como ella. Retiro en el local.
 // ============================================
-import { esc, aviso, vacio, fechaCorta, mensajeDe } from "../../kit/js/ui.js?v=2bd9bdbf19";
-import { verEn3D } from "../../kit/js/modelo3d.js?v=2bd9bdbf19";
-import { FAMILIAS, PARA, PRESENTACIONES, TOPES, pesos } from "../datos.js?v=2bd9bdbf19";
-import { NEGOCIO } from "../marca.js?v=2bd9bdbf19";
-import { frasco, carrito, itemsDelCarrito, unidadesEnCarrito, guia, activarGuias, pastillaPedido } from "./comunes.js?v=2bd9bdbf19";
+import { esc, aviso, vacio, fechaCorta, mensajeDe } from "../../kit/js/ui.js?v=f04a42026d";
+import { verEn3D } from "../../kit/js/modelo3d.js?v=f04a42026d";
+import { FAMILIAS, PARA, PRESENTACIONES, TOPES, pesos } from "../datos.js?v=f04a42026d";
+import { NEGOCIO } from "../marca.js?v=f04a42026d";
+import { frasco, carrito, itemsDelCarrito, unidadesEnCarrito, guia, activarGuias, pastillaPedido } from "./comunes.js?v=f04a42026d";
+import { htmlConsigna } from "../../kit/js/consigna.js?v=f04a42026d";
 
 let familia = null;
 let para = null;
@@ -42,6 +43,7 @@ export function vistaCatalogo(cont, { datos }) {
             <span class="negocio"><i class="ti ti-sparkles" aria-hidden="true"></i>${esc(NEGOCIO)}</span>
         </div>
         ${barraPedido(datos)}
+        ${htmlConsigna({ paso: 1, total: 3, accion: "Tocá “Recomendame uno”, elegí un perfume y mandá el pedido.", resultado: "Le llega a Carolina para prepararlo." })}
         <details class="recomendar bloque"${unidadesEnCarrito() ? "" : " open"}>
             <summary><i class="ti ti-wand"></i> Recomendame uno</summary>
             <form class="recomendar__form" novalidate>
@@ -194,7 +196,7 @@ export function vistaPedido(cont, { usuario, datos, irA }) {
                     <p>Pedido N° ${esc(o.numero)} · ${esc(pesos(o.total))}</p>
                     <p class="nota">Carolina lo prepara y te avisa cuando esté listo para retirar.</p>
                 </div>
-                ${guia("u-duena", "/inicio", "Mirá lo que le llega a Carolina")}
+                ${htmlConsigna({ paso: 1, total: 3, accion: "Mandá un pedido.", hecho: "pedido enviado", guia: guia("u-duena", "/inicio", "Mirá lo que le llega a Carolina") })}
                 <a class="boton boton--secundario boton--ancho" href="#/mis-pedidos"><i class="ti ti-list"></i> Mis pedidos</a>`;
             activarGuias(cont, irA);
             window.scrollTo(0, 0);

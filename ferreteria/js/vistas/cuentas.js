@@ -3,10 +3,10 @@
 // no paga y cuánto del tope usó. En la ficha: el recordatorio armado para mandarle, anotar un pago (todo o una parte),
 // el tope (lo cambia el dueño) y qué se llevó en cada compra. El dueño abre cuentas nuevas.
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=86c054c83c";
-import { mostrarMensaje } from "../../kit/js/mensaje.js?v=86c054c83c";
-import { TOPES, TOPE_CUENTA_NUEVA, pesos } from "../datos.js?v=86c054c83c";
-import { barraTope, haceDias, diasDesde, cuando } from "./comunes.js?v=86c054c83c";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=8ec449d814";
+import { mostrarMensaje } from "../../kit/js/mensaje.js?v=8ec449d814";
+import { TOPES, TOPE_CUENTA_NUEVA, pesos } from "../datos.js?v=8ec449d814";
+import { barraTope, haceDias, diasDesde, cuando } from "./comunes.js?v=8ec449d814";
 
 const DIAS_ATRASADO = 30; // desde cuántos días sin pagar se marca
 
@@ -22,7 +22,7 @@ export function vistaCuentas(cont, { usuario, datos }) {
             <span class="panel__numero">${esc(pesos(total))}</span>
             <small>${cuentas.filter((c) => c.deuda > 0).length} de ${cuentas.length} cuentas</small>
         </div>
-        ${atrasada ? `<p class="nota pista"><i class="ti ti-hand-finger"></i> ${esc(atrasada.nombre.split(" ")[0])} no paga hace ${esc(diasDesde(atrasada.desde))} días y está cerca del tope: entrá y mandale el recordatorio armado.</p>` : ""}
+        ${atrasada ? `<p class="nota"><i class="ti ti-alert-triangle"></i> ${esc(atrasada.nombre.split(" ")[0])} no paga hace ${esc(diasDesde(atrasada.desde))} días y está cerca del tope: entrá y mandale el recordatorio armado.</p>` : ""}
         ${cuentas.length ? `<ul class="tarjetas">${cuentas.map((c) => {
             const dias = diasDesde(c.desde);
             return `

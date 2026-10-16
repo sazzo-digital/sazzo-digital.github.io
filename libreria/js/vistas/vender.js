@@ -5,11 +5,11 @@
 // transferencia o tarjeta. Código que no está → "¿Lo cargás?" y queda listo para vender.
 // En la compu, dos columnas (artículos | ticket); en el celular, el ticket abajo con una barrita arriba que lleva a él.
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=da3c504853";
-import { TOPES, MEDIOS, RUBROS, DESCUENTO_MAYOR, pesos, precioMayor, esISBN } from "../datos.js?v=da3c504853";
-import { NEGOCIO } from "../marca.js?v=da3c504853";
-import { puedeEscanear, escanear } from "../../kit/js/escaner.js?v=da3c504853";
-import { EVENTO_REINICIO } from "../../kit/js/guardado.js?v=da3c504853";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=c96e24d926";
+import { TOPES, MEDIOS, RUBROS, DESCUENTO_MAYOR, pesos, precioMayor, esISBN } from "../datos.js?v=c96e24d926";
+import { NEGOCIO } from "../marca.js?v=c96e24d926";
+import { puedeEscanear, escanear } from "../../kit/js/escaner.js?v=c96e24d926";
+import { EVENTO_REINICIO } from "../../kit/js/guardado.js?v=c96e24d926";
 
 // El ticket en curso queda en memoria mientras se navega (se vacía al cobrar)
 export const ticket = new Map(); // productoId → cantidad
@@ -286,6 +286,6 @@ export function vistaVender(cont, { usuario, datos }) {
     pintarProductos();
     pintarTicket();
     if (!ticket.size) {
-        cont.querySelector(".productos").insertAdjacentHTML("afterbegin", `<p class="nota pista"><i class="ti ti-hand-finger"></i> Probá: buscá “birome”, llevá 12 lapiceras azules (sale el precio por mayor) y sumá 20 fotocopias.</p>`);
+        cont.querySelector(".productos").insertAdjacentHTML("afterbegin", `<p class="nota"><i class="ti ti-bulb"></i> Probá: buscá “birome”, llevá 12 lapiceras azules (sale el precio por mayor) y sumá 20 fotocopias.</p>`);
     }
 }

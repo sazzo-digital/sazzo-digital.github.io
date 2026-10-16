@@ -3,11 +3,12 @@
 // grilla), la comanda de una mesa (al enviar se separa solo lo de la cocina y lo de la barra), el cobro dividiendo la
 // cuenta (todo junto, en partes iguales o por lo que consumió cada uno, cada parte con su medio de pago) y la caja.
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=a86e661e0a";
-import { CATEGORIAS, MEDIOS, TOPES, carta, dividir, pesos } from "../datos.js?v=a86e661e0a";
-import { MARCA, NEGOCIO } from "../marca.js?v=a86e661e0a";
-import { htmlBotonSonido, activarBotonSonido, ding } from "../../kit/js/celular.js?v=a86e661e0a";
-import { ticket, guia, activarGuias, haceMin, hora } from "./comunes.js?v=a86e661e0a";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=633ebcf9e8";
+import { CATEGORIAS, MEDIOS, TOPES, carta, dividir, pesos } from "../datos.js?v=633ebcf9e8";
+import { MARCA, NEGOCIO } from "../marca.js?v=633ebcf9e8";
+import { htmlBotonSonido, activarBotonSonido, ding } from "../../kit/js/celular.js?v=633ebcf9e8";
+import { ticket, guia, activarGuias, haceMin, hora } from "./comunes.js?v=633ebcf9e8";
+import { htmlConsigna, htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=633ebcf9e8";
 
 const ESTADO_MESA = { libre: "Libre", abierta: "Abierta", cobrando: "Cobrando" };
 
@@ -31,7 +32,7 @@ export function vistaPlano(cont, { usuario, datos, irA }) {
             <h1 class="titulo">Salón</h1>
             <span class="negocio"><i class="ti ti-building-store" aria-hidden="true"></i>${esc(NEGOCIO)}</span>
         </div>
-        <p class="nota pista"><i class="ti ti-hand-finger"></i> <span>Probá: tocá la <b>Mesa 4</b>, abrila y pedí dos muzzarellas, un fernet y dos Coca.</span></p>
+        ${htmlConsigna({ paso: 1, total: 3, accion: "Tocá la Mesa 4, abrila, pedí dos muzzarellas, un fernet y dos Coca, y mandalo.", resultado: "Se separa solo lo de la cocina y lo de la barra." })}
         <div class="tira">
             <span><b>${esc(p.resumen.ocupadas)}</b> de ${esc(p.resumen.total)} ocupadas</span>
             <span><b>${esc(p.resumen.personas)}</b> personas</span>
@@ -96,8 +97,9 @@ export function vistaMesa(cont, { usuario, datos, irA, params: [id] }, enviado =
         <div class="enviado">
             <p class="enviado__titulo"><i class="ti ti-send"></i> Mandado. Se separó solo:</p>
             <div class="tickets">${enviado.cocina ? ticket(enviado.cocina) : ""}${enviado.barra ? ticket(enviado.barra) : ""}</div>
-            ${enviado.cocina ? guia("u-cocina", "/inicio", "Mirá lo que le llega a la cocina") : ""}
+            ${enviado.cocina ? htmlConsigna({ paso: 1, total: 3, accion: "Mandá el pedido.", hecho: "se separó solo, cocina y barra", guia: guia("u-cocina", "/inicio", "Mirá lo que le llega a la cocina") }) : ""}
         </div>` : ""}
+        ${m.comidaLista && !enviado ? htmlConsigna({ paso: 3, total: 3, accion: "Tocá “Cobrar” y dividí la cuenta.", resultado: "Cada parte con su medio de pago, y la caja lo suma." }) : ""}
         <div class="comanda">
             <section class="carta">
                 <div class="chips" role="tablist" aria-label="Categoría">${Object.entries(CATEGORIAS).map(([k, c]) => `
@@ -259,8 +261,10 @@ export function vistaCobro(cont, { usuario, datos, params: [id] }) {
                         <ul class="resumen-cobro">${cobro.partes.map((p, i) => `<li><span>${cobro.partes.length > 1 ? `Persona ${i + 1}` : "Toda la mesa"}</span><b>${esc(pesos(p.monto))}</b><small>${esc(MEDIOS[p.medio])}</small></li>`).join("")}</ul>
                         <p class="nota"><i class="ti ti-armchair"></i> La mesa quedó libre.</p>
                     </div>
+                    ${htmlConsignaFinal(MARCA)}
                     <a class="boton boton--ancho" href="#/caja"><i class="ti ti-cash-register"></i> Mirá la caja del turno</a>
                     <a class="boton boton--secundario boton--ancho" href="#/inicio"><i class="ti ti-layout-grid"></i> Volver al salón</a>`;
+                activarConsigna(cont, MARCA);
                 window.scrollTo(0, 0);
             } catch (err) {
                 aviso(err, "error");

@@ -2,11 +2,12 @@
 // Pantallas del cliente (Matías), pensadas para el celular: "Sacá tu turno" (servicio, barbero o "el que esté
 // libre", día y hora libre: sin cargar ningún dato) y "Mis turnos" (con Cancelar).
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=d08c0e2b96";
-import { aHora } from "../../kit/js/turnos.js?v=d08c0e2b96";
-import { SERVICIOS, BARBEROS, pesos, nombreFecha } from "../datos.js?v=d08c0e2b96";
-import { NEGOCIO } from "../marca.js?v=d08c0e2b96";
-import { guia, activarGuias, pastillaEstado, chipsDias } from "./comunes.js?v=d08c0e2b96";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=cf8a4b352a";
+import { aHora } from "../../kit/js/turnos.js?v=cf8a4b352a";
+import { SERVICIOS, BARBEROS, pesos, nombreFecha } from "../datos.js?v=cf8a4b352a";
+import { NEGOCIO } from "../marca.js?v=cf8a4b352a";
+import { guia, activarGuias, pastillaEstado, chipsDias } from "./comunes.js?v=cf8a4b352a";
+import { htmlConsigna } from "../../kit/js/consigna.js?v=cf8a4b352a";
 
 // Lo elegido queda mientras se navega
 let servicioId = "corte";
@@ -62,7 +63,7 @@ export function vistaSacarTurno(cont, { usuario, datos, irA }) {
                 <p>Te esperamos <b>${esc(nombreFecha(t.fecha))} ${esc(t.hora)}</b> con ${esc(t.barbero)}.</p>
                 <p class="nota">${esc(t.servicio)} · ${esc(pesos(t.precio))}</p>
             </div>
-            ${guia("u-barbero", `/inicio?fecha=${t.fecha}`, "Mirá cómo lo ve Leo")}
+            ${htmlConsigna({ paso: 1, total: 3, accion: "Sacá un turno.", hecho: "turno sacado", guia: guia("u-barbero", `/inicio?fecha=${t.fecha}`, "Mirá cómo lo ve Leo") })}
             <a class="boton boton--secundario boton--ancho" href="#/turnos"><i class="ti ti-calendar"></i> Mis turnos</a>`;
         activarGuias(cont, irA);
         window.scrollTo(0, 0);
@@ -73,7 +74,7 @@ export function vistaSacarTurno(cont, { usuario, datos, irA }) {
             <h1 class="titulo">Sacá tu turno</h1>
             <span class="negocio"><i class="ti ti-scissors" aria-hidden="true"></i>${esc(NEGOCIO)}</span>
         </div>
-        <p class="nota pista"><i class="ti ti-hand-finger"></i> Probá: elegí "Corte y barba", con Leo, y una hora. Después mirá cómo le llega.</p>
+        ${htmlConsigna({ paso: 1, total: 3, accion: "Elegí “Corte y barba”, con Leo, y una hora.", resultado: "Te queda el turno y Leo lo ve en su agenda." })}
         <p class="rotulo-chico">Servicio</p>
         <div class="servicios">${SERVICIOS.map((s) => `
             <button class="servicio" type="button" data-servicio="${esc(s.id)}">

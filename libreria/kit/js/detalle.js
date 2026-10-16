@@ -1,6 +1,8 @@
-import { esc } from "./ui.js?v=da3c504853";
-import { nombreDemo } from "./marca.js?v=da3c504853";
-import { contar } from "./visita.js?v=da3c504853";
+import { esc } from "./ui.js?v=c96e24d926";
+import { nombreDemo } from "./marca.js?v=c96e24d926";
+import { contar } from "./visita.js?v=c96e24d926";
+import { abrirColores } from "./colores.js?v=c96e24d926";
+import { htmlBotonInstalar } from "./instalar.js?v=c96e24d926";
 
 export const TOPE_DETALLE = { hace: 5, extra: 6, tambien: 8, letras: 120, titulo: 50 };
 
@@ -61,9 +63,15 @@ export function abrirDetalle(marca, detalle) {
                 <button class="boton-icono" value="cerrar" aria-label="Cerrar"><i class="ti ti-x"></i></button>
             </div>
             ${htmlDetalle(detalle)}
+            <button class="boton boton--secundario boton--ancho" type="button" data-colores-detalle><i class="ti ti-palette" aria-hidden="true"></i> Probala con tus colores</button>
+            ${htmlBotonInstalar()}
             <button class="boton boton--ancho" value="cerrar">Volver a la demo</button>
         </form>`;
     document.body.append(hoja);
+    hoja.querySelector("[data-colores-detalle]").addEventListener("click", () => {
+        hoja.close();
+        abrirColores(marca.prefijo, { alElegir: () => contar("colores", marca.id) });
+    });
     hoja.addEventListener("close", () => hoja.remove());
     hoja.addEventListener("click", (e) => {
         if (e.target === hoja) hoja.close();
