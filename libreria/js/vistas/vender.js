@@ -5,11 +5,11 @@
 // transferencia o tarjeta. Código que no está → "¿Lo cargás?" y queda listo para vender.
 // En la compu, dos columnas (artículos | ticket); en el celular, el ticket abajo con una barrita arriba que lleva a él.
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=52dd7a0994";
-import { TOPES, MEDIOS, RUBROS, DESCUENTO_MAYOR, pesos, precioMayor, esISBN } from "../datos.js?v=52dd7a0994";
-import { NEGOCIO } from "../marca.js?v=52dd7a0994";
-import { puedeEscanear, escanear } from "../../kit/js/escaner.js?v=52dd7a0994";
-import { EVENTO_REINICIO } from "../../kit/js/guardado.js?v=52dd7a0994";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=881a64c8a3";
+import { TOPES, MEDIOS, RUBROS, DESCUENTO_MAYOR, pesos, precioMayor, esISBN } from "../datos.js?v=881a64c8a3";
+import { NEGOCIO } from "../marca.js?v=881a64c8a3";
+import { puedeEscanear, escanear } from "../../kit/js/escaner.js?v=881a64c8a3";
+import { EVENTO_REINICIO } from "../../kit/js/guardado.js?v=881a64c8a3";
 
 // El ticket en curso queda en memoria mientras se navega (se vacía al cobrar)
 export const ticket = new Map(); // productoId → cantidad

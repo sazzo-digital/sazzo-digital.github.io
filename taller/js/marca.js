@@ -2,8 +2,8 @@
 // Marca, personas y "también puede tener" de Sazzo Taller (diseñada el 08/10/2026).
 // Las personas son los roles reales del rubro (nombres inventados): el dueño y un mecánico.
 // ============================================
-import { revisarMarca } from "../kit/js/marca.js?v=540eb283bb";
-import { negocioDe } from "../kit/js/colores.js?v=540eb283bb";
+import { revisarMarca } from "../kit/js/marca.js?v=1044f9b834";
+import { negocioDe } from "../kit/js/colores.js?v=1044f9b834";
 
 export const MARCA = revisarMarca({
     id: "taller",

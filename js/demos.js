@@ -87,6 +87,7 @@ export const DEMOS = [
         acento: "#F87171",
         pantalla: ["Mesa 4 · a la cocina", "Cocina · 2 Muzzarella · listo", "Cobrado entre 3"],
         dispositivo: "celu",
+        etiqueta: "Demo para el celu · el Restix completo va en la compu del local",
         estado: "activa"
     },
     {

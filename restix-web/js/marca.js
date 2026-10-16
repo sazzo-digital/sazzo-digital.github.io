@@ -3,8 +3,8 @@
 // rehecho con el kit). Las personas son los roles reales del rubro (nombres inventados): la moza, el de la cocina y
 // (desde el 10/10) una clienta que abre la carta con el QR de la mesa.
 // ============================================
-import { revisarMarca } from "../kit/js/marca.js?v=26461d1ee1";
-import { negocioDe } from "../kit/js/colores.js?v=26461d1ee1";
+import { revisarMarca } from "../kit/js/marca.js?v=18c497fa70";
+import { negocioDe } from "../kit/js/colores.js?v=18c497fa70";
 
 export const MARCA = revisarMarca({
     id: "restix-web",
@@ -12,7 +12,8 @@ export const MARCA = revisarMarca({
     nombre: "Restix Sazzo",
     lema: "Salón · Cocina · Caja",
     descripcion: "Para bares y restaurantes: el plano de mesas, la comanda que llega sola a la cocina y a la barra, y el cobro dividiendo la cuenta.",
-    wow: "Tomá un pedido como Lara y mirá cómo llega solo a la cocina de Beto."
+    wow: "Tomá un pedido como Lara y mirá cómo llega solo a la cocina de Beto.",
+    completa: "Esto es una muestra para el celu. El Restix completo se instala en la compu del local y además imprime las comandas, lleva el stock, arma los resúmenes del mes y anda aunque se corte internet."
 });
 
 export const PERSONAS = [

@@ -2,10 +2,10 @@
 // La cocina (Beto; la moza también la puede mirar): los pedidos que llegan, lo más viejo primero, con cuánto hace que
 // esperan (en rojo si pasan los 15 minutos). "Listo" lo saca y la mesa ve "comida lista".
 // ============================================
-import { esc, aviso } from "../../kit/js/ui.js?v=26461d1ee1";
-import { mantenerPantallaPrendida, htmlBotonVoz, activarBotonVoz, decir } from "../../kit/js/celular.js?v=26461d1ee1";
-import { MARCA } from "../marca.js?v=26461d1ee1";
-import { ticket, guia, activarGuias, haceMin, hora } from "./comunes.js?v=26461d1ee1";
+import { esc, aviso } from "../../kit/js/ui.js?v=18c497fa70";
+import { mantenerPantallaPrendida, htmlBotonVoz, activarBotonVoz, decir } from "../../kit/js/celular.js?v=18c497fa70";
+import { MARCA } from "../marca.js?v=18c497fa70";
+import { ticket, guia, activarGuias, haceMin, hora } from "./comunes.js?v=18c497fa70";
 
 const DEMORA_MIN = 15;
 const leidas = new Set(); // los pedidos que ya se leyeron en voz alta (una vez cada uno)

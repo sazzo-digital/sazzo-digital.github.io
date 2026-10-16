@@ -7,12 +7,12 @@
 // Código que no está → "¿Lo cargás?" y queda listo para vender.
 // En la compu, dos columnas (artículos | ticket); en el celular, el ticket abajo con una barrita arriba que lleva a él.
 // ============================================
-import { esc, aviso, vacio, fechaHora } from "../../kit/js/ui.js?v=0461255cc4";
-import { puedeEscanear, escanear } from "../../kit/js/escaner.js?v=0461255cc4";
-import { TOPES, MEDIOS, RUBROS, UNIDADES, DESCUENTO_MAYOR, pesos, precioMayor, precioConUnidad, cantidadTexto, numeroCantidad, redondearCantidad } from "../datos.js?v=0461255cc4";
-import { NEGOCIO } from "../marca.js?v=0461255cc4";
-import { pintarCobro, etiquetaUnidad } from "./comunes.js?v=0461255cc4";
-import { EVENTO_REINICIO } from "../../kit/js/guardado.js?v=0461255cc4";
+import { esc, aviso, vacio, fechaHora } from "../../kit/js/ui.js?v=01b2a0dc1f";
+import { puedeEscanear, escanear } from "../../kit/js/escaner.js?v=01b2a0dc1f";
+import { TOPES, MEDIOS, RUBROS, UNIDADES, DESCUENTO_MAYOR, pesos, precioMayor, precioConUnidad, cantidadTexto, numeroCantidad, redondearCantidad } from "../datos.js?v=01b2a0dc1f";
+import { NEGOCIO } from "../marca.js?v=01b2a0dc1f";
+import { pintarCobro, etiquetaUnidad } from "./comunes.js?v=01b2a0dc1f";
+import { EVENTO_REINICIO } from "../../kit/js/guardado.js?v=01b2a0dc1f";
 
 // El ticket en curso queda en memoria mientras se navega (se vacía al cobrar)
 export const ticket = new Map(); // productoId → cantidad

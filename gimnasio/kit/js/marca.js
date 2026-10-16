@@ -10,11 +10,11 @@
 //       nombre: "Restix Sazzo"                            → opcional (si no, "Sazzo " + rubro)
 //   });
 // ============================================
-import { esc } from "./ui.js?v=023f950ac9";
-import { sinPasarse } from "./topes.js?v=023f950ac9";
+import { esc } from "./ui.js?v=64c671c71d";
+import { sinPasarse } from "./topes.js?v=64c671c71d";
 
 /** Controla la marca de una demo (que no falte nada ni sea larguísima) y completa el nombre. */
-export function revisarMarca({ id, rubro, lema = "", descripcion = "", nombre, wow = "" } = {}) {
+export function revisarMarca({ id, rubro, lema = "", descripcion = "", nombre, wow = "", completa = "" } = {}) {
     if (!/^[a-z0-9]+(-[a-z0-9]+)*$/.test(id ?? "") || id.length > 30) {
         throw new Error(`El id de la demo tiene que ser su carpeta, en minúsculas y sin espacios (ej: "kiosco"). Llegó: ${JSON.stringify(id)}.`);
     }
@@ -28,7 +28,8 @@ export function revisarMarca({ id, rubro, lema = "", descripcion = "", nombre, w
         descripcion: sinPasarse(descripcion, 400, "la descripción de la marca"),
         nombre: sinPasarse(nombre ?? `Sazzo ${r}`, 30, "el nombre de la marca"),
         // El momento wow en una línea, arriba de "Probala como…" ("Sacá un turno como Matías y…")
-        wow: sinPasarse(wow, 120, "la línea del momento wow")
+        wow: sinPasarse(wow, 120, "la línea del momento wow"),
+        completa: sinPasarse(completa, 240, "el cartel de la versión completa")
     });
 }
 

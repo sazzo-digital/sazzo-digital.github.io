@@ -3,11 +3,11 @@
 // quién te debe y a quién le debés, y lo último que se facturó. Arriba, el paso del recorrido de cada persona
 // (Silvina arranca facturando; Hernán y Patricia, mirando).
 // ============================================
-import { esc } from "../../kit/js/ui.js?v=a996ce2352";
-import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=a996ce2352";
-import { pesos, pesosRedondo, nombrePeriodo, periodoActual, correrPeriodo, signo, numeroComprobante } from "../reglas.js?v=a996ce2352";
-import { buscarPersona } from "../marca.js?v=a996ce2352";
-import { logoEmpresa, haceDias, pastillaTipo, diaMes, fechaCorta } from "./comunes.js?v=a996ce2352";
+import { esc } from "../../kit/js/ui.js?v=ae811f4d87";
+import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=ae811f4d87";
+import { pesos, pesosRedondo, nombrePeriodo, periodoActual, correrPeriodo, signo, numeroComprobante } from "../reglas.js?v=ae811f4d87";
+import { buscarPersona } from "../marca.js?v=ae811f4d87";
+import { logoEmpresa, haceDias, pastillaTipo, diaMes, fechaCorta } from "./comunes.js?v=ae811f4d87";
 
 export function vistaInicio(cont, { usuario, datos, irA }) {
     const e = datos.leerEmpresa();

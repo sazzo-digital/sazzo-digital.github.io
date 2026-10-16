@@ -3,10 +3,10 @@
 // quién está entrenando, quién terminó y qué día de la rutina le toca), los avisos (récords de hoy y ayer, y los que
 // vienen pero hace rato que no anotan lo que hacen) y un buscador para llegar a la ficha de cualquiera de sus alumnos.
 // ============================================
-import { esc, vacio } from "../../kit/js/ui.js?v=023f950ac9";
-import { kilos } from "../datos.js?v=023f950ac9";
-import { NEGOCIO } from "../marca.js?v=023f950ac9";
-import { pastilla, cara } from "./comunes.js?v=023f950ac9";
+import { esc, vacio } from "../../kit/js/ui.js?v=64c671c71d";
+import { kilos } from "../datos.js?v=64c671c71d";
+import { NEGOCIO } from "../marca.js?v=64c671c71d";
+import { pastilla, cara } from "./comunes.js?v=64c671c71d";
 
 let texto = ""; // lo buscado queda mientras se navega
 

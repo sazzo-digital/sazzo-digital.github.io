@@ -1362,6 +1362,40 @@ body.guardando .boton:not(.boton--secundario) {
   font-size: 1.15rem;
   color: var(--primario);
 }
+.ingreso__completa {
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--borde-fuerte);
+  border-left: 3px solid var(--primario);
+  border-radius: 12px;
+  background: var(--superficie);
+  font-size: 0.9rem;
+  line-height: 1.45;
+  color: var(--texto);
+}
+.ingreso__completa > .ti,
+.ingreso__completa summary > .ti {
+  float: left;
+  margin: 0.1rem 0.5rem 0 0;
+  font-size: 1.2rem;
+  color: var(--primario);
+}
+.ingreso__completa summary {
+  cursor: pointer;
+  list-style: none;
+}
+.ingreso__completa summary::-webkit-details-marker {
+  display: none;
+}
+.ingreso__completa .acerca__tambien {
+  margin-top: 0.7rem;
+}
+.ingreso__ver {
+  display: inline-block;
+  font-weight: 700;
+  color: var(--primario);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
 .ingreso__nota {
   display: block;
   text-align: center;

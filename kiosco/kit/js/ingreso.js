@@ -7,16 +7,27 @@
 // trae `wow`, esa línea va arriba de las personas: le dice a quien llega de Instagram qué va a pasar.
 // y qué hacer al elegir una (alElegir(id): guardar la sesión y arrancar la demo).
 // ============================================
-import { $, $$, esc, iniciales, mensajeDe } from "./ui.js?v=e10b43c439";
-import { logoSazzo, nombreDemo } from "./marca.js?v=e10b43c439";
-import { pieAcerca } from "./acerca.js?v=e10b43c439";
-import { linkOtrasDemos, linkQuieroEsto } from "./enlaces.js?v=e10b43c439";
-import { activarBotonesSazzo } from "./marco.js?v=e10b43c439";
-import { contar, contarPantalla } from "./visita.js?v=e10b43c439";
-import { soltarPantalla } from "./rutas.js?v=e10b43c439";
+import { $, $$, esc, iniciales, mensajeDe } from "./ui.js?v=1e47ba62db";
+import { logoSazzo, nombreDemo } from "./marca.js?v=1e47ba62db";
+import { pieAcerca, htmlTambien } from "./acerca.js?v=1e47ba62db";
+import { linkOtrasDemos, linkQuieroEsto } from "./enlaces.js?v=1e47ba62db";
+import { activarBotonesSazzo } from "./marco.js?v=1e47ba62db";
+import { contar, contarPantalla } from "./visita.js?v=1e47ba62db";
+import { soltarPantalla } from "./rutas.js?v=1e47ba62db";
 
 /** La pantalla entera va en <main>: los lectores de pantalla saltan directo ahí (axe: landmark-one-main). */
-export function htmlIngreso({ marca, personas }) {
+function htmlCompleta(marca, tambien) {
+    if (!marca.completa) return "";
+    const icono = `<i class="ti ti-building-store" aria-hidden="true"></i>`;
+    if (!tambien.length) return `<p class="ingreso__completa">${icono}<span>${esc(marca.completa)}</span></p>`;
+    return `
+            <details class="ingreso__completa">
+                <summary>${icono}<span>${esc(marca.completa)} <span class="ingreso__ver">Ver todo lo que tiene</span></span></summary>
+                ${htmlTambien(tambien)}
+            </details>`;
+}
+
+export function htmlIngreso({ marca, personas, tambien = [] }) {
     const quiero = linkQuieroEsto(marca);
     // La de "Empezá por acá" primero (si hay varias marcadas, cuenta la primera)
     const recomendada = personas.find((p) => p.empezar);
@@ -42,6 +53,7 @@ export function htmlIngreso({ marca, personas }) {
                 </div>
                 <p class="formulario__error" role="alert" hidden></p>
             </div>
+            ${htmlCompleta(marca, tambien)}
             <p class="nota ingreso__nota"><i class="ti ti-flask" aria-hidden="true"></i> Modo prueba: datos inventados, guardados solo en este navegador. No te pedimos ningún dato.</p>
             <div class="ingreso__sazzo">
                 <a class="boton boton--secundario" href="${esc(linkOtrasDemos())}" data-otras-demos><i class="ti ti-layout-grid"></i> Ver otras demos</a>
@@ -52,26 +64,26 @@ export function htmlIngreso({ marca, personas }) {
 }
 
 /** Una sola persona (comercio de una persona): entra directo, sin pantalla de elegir. Si falla, muestra la pantalla con el error. */
-export async function vistaIngreso(cont, { marca, personas, alElegir }) {
+export async function vistaIngreso(cont, { marca, personas, alElegir, tambien = [] }) {
     if (personas.length === 1) {
         try {
             await alElegir(personas[0].id);
             contarEntrada(marca, personas[0]);
             return;
         } catch (e) {
-            mostrarIngreso(cont, { marca, personas, alElegir });
+            mostrarIngreso(cont, { marca, personas, alElegir, tambien });
             const error = $(".formulario__error", cont);
             error.textContent = mensajeDe(e);
             error.hidden = false;
             return;
         }
     }
-    mostrarIngreso(cont, { marca, personas, alElegir });
+    mostrarIngreso(cont, { marca, personas, alElegir, tambien });
 }
 
-function mostrarIngreso(cont, { marca, personas, alElegir }) {
+function mostrarIngreso(cont, { marca, personas, alElegir, tambien }) {
     soltarPantalla();
-    cont.innerHTML = htmlIngreso({ marca, personas });
+    cont.innerHTML = htmlIngreso({ marca, personas, tambien });
     cont.classList?.remove("sin-menu");
     // Si el foco quedó en ningún lado (tocó "Cambiar de persona", que ya no está), va a la primera persona
     const foco = document.activeElement;

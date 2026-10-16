@@ -3,18 +3,18 @@
 // Lara (moza) ve el salón, la cocina (solo mirar) y la caja; Beto, la cocina; Flor (cliente), la carta del QR.
 // irA() cambia de persona sin pasar por "Probala como…" (botón del recorrido: "Mirá lo que le llega a la cocina →").
 // ============================================
-import { $, conFundido } from "../kit/js/ui.js?v=26461d1ee1";
-import { iniciarDemo } from "../kit/js/arranque.js?v=26461d1ee1";
-import { vistaIngreso } from "../kit/js/ingreso.js?v=26461d1ee1";
-import { pintarMarco } from "../kit/js/marco.js?v=26461d1ee1";
-import { mostrarRuta } from "../kit/js/rutas.js?v=26461d1ee1";
-import { vistaAcerca } from "../kit/js/acerca.js?v=26461d1ee1";
-import { MARCA, PERSONAS, TAMBIEN, buscarPersona } from "./marca.js?v=26461d1ee1";
-import { aparte } from "../kit/js/aparte.js?v=26461d1ee1";
-import { leerSesionGuardada } from "../kit/js/guardado.js?v=26461d1ee1";
+import { $, conFundido } from "../kit/js/ui.js?v=18c497fa70";
+import { iniciarDemo } from "../kit/js/arranque.js?v=18c497fa70";
+import { vistaIngreso } from "../kit/js/ingreso.js?v=18c497fa70";
+import { pintarMarco } from "../kit/js/marco.js?v=18c497fa70";
+import { mostrarRuta } from "../kit/js/rutas.js?v=18c497fa70";
+import { vistaAcerca } from "../kit/js/acerca.js?v=18c497fa70";
+import { MARCA, PERSONAS, TAMBIEN, buscarPersona } from "./marca.js?v=18c497fa70";
+import { aparte } from "../kit/js/aparte.js?v=18c497fa70";
+import { leerSesionGuardada } from "../kit/js/guardado.js?v=18c497fa70";
 
 // Los datos de ejemplo y las pantallas se bajan aparte (al terminar de cargar): "Probala como…" aparece sin esperarlos
-const pantallas = aparte(() => import("./pantallas.js?v=26461d1ee1"));
+const pantallas = aparte(() => import("./pantallas.js?v=18c497fa70"));
 const { vistaInicio, vistaMesa, vistaCobro, vistaCaja, vistaCocina, avisosDe } = pantallas.funciones;
 
 iniciarDemo(MARCA);
@@ -54,6 +54,7 @@ function ingresar() {
     vistaIngreso(app, {
         marca: MARCA,
         personas: PERSONAS,
+        tambien: TAMBIEN,
         alElegir: (id) => {
             guardarSesion(id);
             history.replaceState(null, "", "#/inicio");

@@ -2,8 +2,8 @@
 // Catálogo de Sazzo: arma las tarjetas de demos (desde demos.js), las animaciones al bajar, los botones de
 // contacto (desde config.js), guarda de dónde vino la visita (?o=papel / ?o=ig) y avisa a la medición.
 // ============================================
-import { DEMOS } from "./demos.js?v=624513662e";
-import { CONTACTO, MEDICION, LINK_DEMOS, RUTA_LIBS } from "./config.js?v=624513662e";
+import { DEMOS } from "./demos.js?v=b836aff244";
+import { CONTACTO, MEDICION, LINK_DEMOS, RUTA_LIBS } from "./config.js?v=b836aff244";
 
 const $ = (selector, raiz = document) => raiz.querySelector(selector);
 const $$ = (selector, raiz = document) => [...raiz.querySelectorAll(selector)];
@@ -100,7 +100,12 @@ const ETIQUETA = {
     compu: '<svg class="icono" aria-hidden="true"><use href="#i-compu"/></svg> En la compu se ve mejor'
 };
 // Todas las demos traen "Probala con tus colores" y claro/oscuro (del kit)
-const ETIQUETA_COLORES = '<span class="demo__etiqueta"><svg class="icono" aria-hidden="true"><use href="#i-paleta"/></svg> Probala con tus colores</span>';
+function etiquetaDe(demo) {
+    if (!demo.etiqueta) return ETIQUETA[demo.dispositivo] ?? "";
+    const icono = demo.dispositivo === "compu" ? "i-compu" : "i-celu";
+    return `<svg class="icono" aria-hidden="true"><use href="#${icono}"/></svg> ${esc(demo.etiqueta)}`;
+}
+const ETIQUETA_COLORES ='<span class="demo__etiqueta"><svg class="icono" aria-hidden="true"><use href="#i-paleta"/></svg> Probala con tus colores</span>';
 
 /** El link a una demo: su carpeta (o su id) en LINK_DEMOS. Solo letras, números y guiones (si no, sin link). */
 function linkDe(demo) {
@@ -128,7 +133,7 @@ function tarjeta(demo) {
                 <p class="demo__pregunta">${esc(demo.pregunta)}</p>
                 <div class="demo__pie">
                     ${boton}
-                    <span class="demo__etiqueta">${ETIQUETA[demo.dispositivo] ?? ""}</span>
+                    <span class="demo__etiqueta">${etiquetaDe(demo)}</span>
                     ${ETIQUETA_COLORES}
                 </div>
             </div>

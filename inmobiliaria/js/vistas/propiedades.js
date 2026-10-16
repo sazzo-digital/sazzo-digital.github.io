@@ -3,18 +3,18 @@
 // el mapa, nunca la dirección; Valeria pide la visita, la inmobiliaria ve quiénes buscan algo así y baja el PDF) y
 // "Cargar propiedad" (con fotos sacadas con el celu, que no se suben a ningún lado).
 // ============================================
-import { esc, aviso, vacio, mensajeDe, fechaCorta } from "../../kit/js/ui.js?v=382e4254cc";
-import { fechaLocalISO, diaLocalDe } from "../../kit/js/fechas.js?v=382e4254cc";
-import { mostrarMapa } from "../../kit/js/mapa.js?v=382e4254cc";
-import { armarPdf, pdfListo, fotoParaPdf } from "../../kit/js/pdf.js?v=382e4254cc";
-import { TOPES, TIPOS, ZONAS, OPERACIONES, CARACTERISTICAS, RADIO_ZONA, pesos, dolares } from "../datos.js?v=382e4254cc";
-import { NEGOCIO } from "../marca.js?v=382e4254cc";
-import { fotosDe, urlRecorrido, achicarFoto, guardarFotosEnMemoria, revisarArchivoFoto } from "../fotos.js?v=382e4254cc";
-import { abrirRecorrido } from "../visor360.js?v=382e4254cc";
+import { esc, aviso, vacio, mensajeDe, fechaCorta } from "../../kit/js/ui.js?v=a90ec74163";
+import { fechaLocalISO, diaLocalDe } from "../../kit/js/fechas.js?v=a90ec74163";
+import { mostrarMapa } from "../../kit/js/mapa.js?v=a90ec74163";
+import { armarPdf, pdfListo, fotoParaPdf } from "../../kit/js/pdf.js?v=a90ec74163";
+import { TOPES, TIPOS, ZONAS, OPERACIONES, CARACTERISTICAS, RADIO_ZONA, pesos, dolares } from "../datos.js?v=a90ec74163";
+import { NEGOCIO } from "../marca.js?v=a90ec74163";
+import { fotosDe, urlRecorrido, achicarFoto, guardarFotosEnMemoria, revisarArchivoFoto } from "../fotos.js?v=a90ec74163";
+import { abrirRecorrido } from "../visor360.js?v=a90ec74163";
 import {
     guia, activarGuias, tarjetaPropiedad, htmlFoto, medidas, hrefPropiedad, pastillaPropiedad, pastillaVisita,
     pastillaConsulta, mostrarMensaje, mayuscula
-} from "./comunes.js?v=382e4254cc";
+} from "./comunes.js?v=a90ec74163";
 
 // Lo elegido en los filtros queda mientras se navega
 const filtro = { operacion: null, ambientes: null, hasta: null, mapa: false };

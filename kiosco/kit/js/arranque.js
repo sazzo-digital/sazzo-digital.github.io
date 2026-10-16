@@ -7,10 +7,10 @@
 // 5. Si algo se rompe (un error que nadie atajó), lo avisa al registro de visitas (sin nada personal).
 // 6. El teclado del celu en los formularios: "Siguiente"/"Listo" en Enter y sin autocompletar datos (kit/teclado.js).
 // ============================================
-import { leerLink, contar, contarPantalla, vigilarErrores, medirVelocidad } from "./visita.js?v=e10b43c439";
-import { recuperarColor } from "./colores.js?v=e10b43c439";
-import { avisarSiEsNavegadorDeOtraApp } from "./navegador.js?v=e10b43c439";
-import { prepararTeclado } from "./teclado.js?v=e10b43c439";
+import { leerLink, contar, contarPantalla, vigilarErrores, medirVelocidad } from "./visita.js?v=1e47ba62db";
+import { recuperarColor } from "./colores.js?v=1e47ba62db";
+import { avisarSiEsNavegadorDeOtraApp } from "./navegador.js?v=1e47ba62db";
+import { prepararTeclado } from "./teclado.js?v=1e47ba62db";
 
 export function iniciarDemo(marca) {
     leerLink();
