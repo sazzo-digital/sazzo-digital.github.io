@@ -2,8 +2,8 @@
 // Marca, personas y "también puede tener" de Sazzo Canchas (diseñada el 08/10/2026).
 // Las personas son los roles reales del rubro (nombres inventados): el dueño del complejo y un jugador.
 // ============================================
-import { revisarMarca } from "../kit/js/marca.js?v=a594f3020b";
-import { negocioDe } from "../kit/js/colores.js?v=a594f3020b";
+import { revisarMarca } from "../kit/js/marca.js?v=02e370389b";
+import { negocioDe } from "../kit/js/colores.js?v=02e370389b";
 
 export const MARCA = revisarMarca({
     id: "canchas",
@@ -40,12 +40,20 @@ export const buscarPersona = (id) => PERSONAS.find((p) => p.id === id) ?? null;
 export const NEGOCIO = negocioDe(MARCA.prefijo, "Complejo El Potrero"); // nombre de ejemplo (arriba sigue diciendo Sazzo Canchas)
 // (si el dueño escribió el nombre de su negocio en "Probala con tus colores", va ese: kit/colores.js)
 
-// "Acerca de": lo que la versión real puede sumar y la demo deja afuera para que se recorra en 1 minuto
-export const TAMBIEN = [
-    "Que el turno le llegue al dueño en su celular, al instante",
-    "Seña con Mercado Pago o transferencia, de verdad",
-    "Botón para avisarle al grupo por WhatsApp",
-    "Cantina: sumar bebidas al turno",
-    "Torneos, \"falta uno\" y avisos por lluvia",
-    "Varios complejos, con su usuario cada uno"
-];
+export const DETALLE = {
+    hace: [
+        "Fútbol 5, Fútbol 7 y pádel, cada una con su duración y su seña",
+        "El dueño anota desde la grilla los turnos que llegan por teléfono",
+        "Marcar si llegaron o faltaron, y cobrar la seña",
+        "Liberar un turno fijo solo por esta semana",
+        "El jugador ve sus turnos y puede cancelar o volver a reservar"
+    ],
+    tambien: [
+        "Que el turno le llegue al dueño en su celular, al instante",
+        "Seña con Mercado Pago o transferencia, de verdad",
+        "Botón para avisarle al grupo por WhatsApp",
+        "Cantina: sumar bebidas al turno",
+        "Torneos, \"falta uno\" y avisos por lluvia",
+        "Varios complejos, con su usuario cada uno"
+    ]
+};

@@ -2,8 +2,8 @@
 // Marca, personas y "también puede tener" de Sazzo Barbería (diseñada el 08/10/2026).
 // Las personas son los roles reales del rubro (nombres inventados): el barbero (y dueño) y un cliente.
 // ============================================
-import { revisarMarca } from "../kit/js/marca.js?v=fa29a3e30b";
-import { negocioDe } from "../kit/js/colores.js?v=fa29a3e30b";
+import { revisarMarca } from "../kit/js/marca.js?v=d08c0e2b96";
+import { negocioDe } from "../kit/js/colores.js?v=d08c0e2b96";
 
 export const MARCA = revisarMarca({
     id: "barberia",
@@ -40,12 +40,20 @@ export const buscarPersona = (id) => PERSONAS.find((p) => p.id === id) ?? null;
 export const NEGOCIO = negocioDe(MARCA.prefijo, "Barbería Don Leo"); // nombre de ejemplo (arriba sigue diciendo Sazzo Barbería)
 // (si el dueño escribió el nombre de su negocio en "Probala con tus colores", va ese: kit/colores.js)
 
-// "Acerca de": lo que la versión real puede sumar y la demo deja afuera para que se recorra en 2 minutos
-export const TAMBIEN = [
-    "Recordatorio del turno por WhatsApp, con un toque",
-    "Invitar por WhatsApp a los que no vuelven, con un toque",
-    "Seña al sacar turno y cobro con QR",
-    "Venta de productos y comisión de cada barbero",
-    "Fotos de cada corte en la ficha del cliente",
-    "Varias sucursales, con su usuario cada barbero"
-];
+export const DETALLE = {
+    hace: [
+        "Ficha de cada cliente con sus visitas y notas",
+        "Recordatorio del turno con el mensaje listo para mandar",
+        "Marcar si llegó o faltó al turno",
+        "Anotar un turno en un hueco libre de la agenda",
+        "Buscador de clientes que perdona errores"
+    ],
+    tambien: [
+        "Recordatorio del turno por WhatsApp, con un toque",
+        "Invitar por WhatsApp a los que no vuelven, con un toque",
+        "Seña al sacar turno y cobro con QR",
+        "Venta de productos y comisión de cada barbero",
+        "Fotos de cada corte en la ficha del cliente",
+        "Varias sucursales, con su usuario cada barbero"
+    ]
+};

@@ -3,8 +3,8 @@
 // Las personas son los roles reales del rubro (nombres inventados): el dueño, el empleado del mostrador y un cliente
 // con cuenta corriente que pide presupuestos desde el celular.
 // ============================================
-import { revisarMarca } from "../kit/js/marca.js?v=3124c09b0f";
-import { negocioDe } from "../kit/js/colores.js?v=3124c09b0f";
+import { revisarMarca } from "../kit/js/marca.js?v=86c054c83c";
+import { negocioDe } from "../kit/js/colores.js?v=86c054c83c";
 
 export const MARCA = revisarMarca({
     id: "ferreteria",
@@ -51,13 +51,21 @@ export const buscarPersona = (id) => PERSONAS.find((p) => p.id === id) ?? null;
 export const NEGOCIO = negocioDe(MARCA.prefijo, "Ferretería La Escuadra"); // nombre de ejemplo (arriba sigue diciendo Sazzo Ferretería)
 // (si el dueño escribió el nombre de su negocio en "Probala con tus colores", va ese: kit/colores.js)
 
-// "Acerca de": lo que la versión real puede sumar y la demo deja afuera para que se recorra en 2 minutos
-export const TAMBIEN = [
-    "Mandar el presupuesto por WhatsApp de verdad",
-    "Reconocer la pieza de la foto sola",
-    "Cobro con Mercado Pago o QR, balanza y lector conectados",
-    "Impresora de tickets y presupuestos",
-    "Listas de proveedores que llegan en PDF",
-    "Tienda online con tu stock real y retiro en el local",
-    "Varias cajas, sucursales o depósito, con su usuario cada una"
-];
+export const DETALLE = {
+    hace: [
+        "Presupuesto en PDF que el cliente acepta desde su celu",
+        "Lector de códigos con la cámara para vender rápido",
+        "Pedidos a proveedores con lo que hay que pedir",
+        "La lista del proveedor desde Excel y precios con tu margen por rubro",
+        "Recordatorio para las cuentas corrientes, y la caja con lo que más plata dejó"
+    ],
+    tambien: [
+        "Mandar el presupuesto por WhatsApp de verdad",
+        "Reconocer la pieza de la foto sola",
+        "Cobro con Mercado Pago o QR, balanza y lector conectados",
+        "Impresora de tickets y presupuestos",
+        "Listas de proveedores que llegan en PDF",
+        "Tienda online con tu stock real y retiro en el local",
+        "Varias cajas, sucursales o depósito, con su usuario cada una"
+    ]
+};

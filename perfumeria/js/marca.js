@@ -2,8 +2,8 @@
 // Marca, personas y "también puede tener" de Sazzo Perfumería (diseñada el 08/10/2026).
 // Las personas son los roles reales del rubro (nombres inventados): la dueña y una clienta.
 // ============================================
-import { revisarMarca } from "../kit/js/marca.js?v=f6f04463ca";
-import { negocioDe } from "../kit/js/colores.js?v=f6f04463ca";
+import { revisarMarca } from "../kit/js/marca.js?v=2bd9bdbf19";
+import { negocioDe } from "../kit/js/colores.js?v=2bd9bdbf19";
 
 export const MARCA = revisarMarca({
     id: "perfumeria",
@@ -40,12 +40,20 @@ export const buscarPersona = (id) => PERSONAS.find((p) => p.id === id) ?? null;
 export const NEGOCIO = negocioDe(MARCA.prefijo, "Perfumería Esencia"); // nombre de ejemplo (arriba sigue diciendo Sazzo Perfumería)
 // (si el dueño escribió el nombre de su negocio en "Probala con tus colores", va ese: kit/colores.js)
 
-// "Acerca de": lo que la versión real puede sumar y la demo deja afuera para que se recorra en 2 minutos
-export const TAMBIEN = [
-    "Que el pedido le llegue a la dueña por WhatsApp, con un toque",
-    "Envíos a domicilio y cobro con QR o transferencia",
-    "Cosmética y cuidado personal, con fotos de cada producto",
-    "Venta en el mostrador con lector de códigos",
-    "Vendedoras con su usuario y lo que vendió cada una",
-    "Saludo de cumpleaños que sale solo, el mismo día"
-];
+export const DETALLE = {
+    hace: [
+        "Catálogo con buscador que perdona errores y frascos para ver en 3D",
+        "Frasco de 50 o 100 ml, o decant de 5 o 10 ml",
+        "La clienta sigue su pedido desde \"Mis pedidos\"",
+        "La dueña ve los pedidos nuevos y los preparados para retirar, y marca cuándo se entregó",
+        "Stock de frascos y de botellas madre en ml"
+    ],
+    tambien: [
+        "Que el pedido le llegue a la dueña por WhatsApp, con un toque",
+        "Envíos a domicilio y cobro con QR o transferencia",
+        "Cosmética y cuidado personal, con fotos de cada producto",
+        "Venta en el mostrador con lector de códigos",
+        "Vendedoras con su usuario y lo que vendió cada una",
+        "Saludo de cumpleaños que sale solo, el mismo día"
+    ]
+};

@@ -3,8 +3,8 @@
 // Las personas son los roles reales del rubro (nombres inventados): el dueño, el carnicero del mostrador y una clienta
 // que pide desde el celular.
 // ============================================
-import { revisarMarca } from "../kit/js/marca.js?v=76618fb2cb";
-import { negocioDe } from "../kit/js/colores.js?v=76618fb2cb";
+import { revisarMarca } from "../kit/js/marca.js?v=8f8507cb31";
+import { negocioDe } from "../kit/js/colores.js?v=8f8507cb31";
 
 export const MARCA = revisarMarca({
     id: "carniceria",
@@ -50,13 +50,21 @@ export const buscarPersona = (id) => PERSONAS.find((p) => p.id === id) ?? null;
 export const NEGOCIO = negocioDe(MARCA.prefijo, "Carnicería La Tranquera"); // nombre de ejemplo (arriba sigue diciendo Sazzo Carnicería)
 // (si el dueño escribió el nombre de su negocio en "Probala con tus colores", va ese: kit/colores.js)
 
-// "Acerca de": lo que la versión real puede sumar y la demo deja afuera para que se recorra en 2 minutos
-export const TAMBIEN = [
-    "Balanza conectada: el peso entra solo, sin escribirlo",
-    "Imprimir las etiquetas y el ticket en la impresora del mostrador",
-    "Cobro con Mercado Pago o QR",
-    "Avisos por WhatsApp cuando el pedido está listo",
-    "Envíos a domicilio con el recorrido del día",
-    "Tienda online con el stock real de cada corte",
-    "Varias cajas o sucursales, con su usuario cada una"
-];
+export const DETALLE = {
+    hace: [
+        "Pizarra de precios para la tele del local, en pantalla completa",
+        "Subió la hacienda: precio sugerido de cada corte con tu margen",
+        "Lector de la etiqueta de la balanza con la cámara",
+        "Desposte en PDF y merma promedio por animal",
+        "Caja del día con lo vendido en kilos y en plata"
+    ],
+    tambien: [
+        "Balanza conectada: el peso entra solo, sin escribirlo",
+        "Imprimir las etiquetas y el ticket en la impresora del mostrador",
+        "Cobro con Mercado Pago o QR",
+        "Avisos por WhatsApp cuando el pedido está listo",
+        "Envíos a domicilio con el recorrido del día",
+        "Tienda online con el stock real de cada corte",
+        "Varias cajas o sucursales, con su usuario cada una"
+    ]
+};

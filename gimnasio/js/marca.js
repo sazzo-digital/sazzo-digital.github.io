@@ -2,8 +2,8 @@
 // Marca, personas y "también puede tener" de Sazzo Gimnasio (propuesta aprobada el 10/10/2026).
 // Las personas son los roles reales del rubro (nombres inventados): la dueña, el profe de musculación y un socio.
 // ============================================
-import { revisarMarca } from "../kit/js/marca.js?v=7fff73397b";
-import { negocioDe } from "../kit/js/colores.js?v=7fff73397b";
+import { revisarMarca } from "../kit/js/marca.js?v=ab7575362c";
+import { negocioDe } from "../kit/js/colores.js?v=ab7575362c";
 
 export const MARCA = revisarMarca({
     id: "gimnasio",
@@ -49,12 +49,20 @@ export const buscarPersona = (id) => PERSONAS.find((p) => p.id === id) ?? null;
 export const NEGOCIO = negocioDe(MARCA.prefijo, "Gimnasio Núcleo"); // nombre de ejemplo (arriba sigue diciendo Sazzo Gimnasio)
 // (si el dueño escribió el nombre de su negocio en "Probala con tus colores", va ese: kit/colores.js)
 
-// "Acerca de": lo que la versión real puede sumar y la demo deja afuera para que se recorra en 2 minutos
-export const TAMBIEN = [
-    "Cobro de la cuota con Mercado Pago o débito automático",
-    "Recordatorio de la cuota por WhatsApp, solo",
-    "Ingreso con QR o molinete en la puerta",
-    "Videos de cada ejercicio en la rutina",
-    "Varias sedes, con su usuario cada profe",
-    "Venta de bebidas y suplementos en el mostrador"
-];
+export const DETALLE = {
+    hace: [
+        "El profe arma rutinas, se las asigna a cada alumno y le deja notas",
+        "Rutina en PDF para imprimir o mandar",
+        "Socio nuevo con apto físico y reglamento firmado con el dedo",
+        "Cómo anda el gimnasio: a qué hora viene la gente y socios por plan de cuota",
+        "El socio avisa que transfirió y la dueña lo confirma; los pagos se pasan a Excel"
+    ],
+    tambien: [
+        "Cobro de la cuota con Mercado Pago o débito automático",
+        "Recordatorio de la cuota por WhatsApp, solo",
+        "Ingreso con QR o molinete en la puerta",
+        "Videos de cada ejercicio en la rutina",
+        "Varias sedes, con su usuario cada profe",
+        "Venta de bebidas y suplementos en el mostrador"
+    ]
+};

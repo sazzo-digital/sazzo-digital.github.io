@@ -3,8 +3,8 @@
 // Las personas son los roles reales de una pyme Responsable Inscripta (nombres inventados): administración, el dueño
 // y la contadora.
 // ============================================
-import { revisarMarca } from "../kit/js/marca.js?v=01834dc122";
-import { negocioDe } from "../kit/js/colores.js?v=01834dc122";
+import { revisarMarca } from "../kit/js/marca.js?v=a74a0ff6b5";
+import { negocioDe } from "../kit/js/colores.js?v=a74a0ff6b5";
 
 export const MARCA = revisarMarca({
     id: "contable",
@@ -50,12 +50,31 @@ export const buscarPersona = (id) => PERSONAS.find((p) => p.id === id) ?? null;
 export const NEGOCIO = negocioDe(MARCA.prefijo, "Distribuidora Los Álamos S.R.L."); // empresa de ejemplo (se cambia en "Tu empresa")
 // (si el dueño escribió el nombre de su negocio en "Probala con tus colores", va ese: kit/colores.js)
 
-// "Acerca de": lo que la versión real puede sumar y la demo deja afuera para que se recorra en 2 minutos
-export const TAMBIEN = [
-    "Conexión real con ARCA: facturas con validez fiscal, CAE y QR de verificación",
-    "Traer las compras desde \"Mis Comprobantes\" de ARCA con el archivo que da ARCA",
-    "Varias empresas a la vez, para un estudio contable o un grupo de empresas",
-    "Sueldos, Ingresos Brutos y convenio multilateral, retenciones y Ganancias",
-    "Conciliación bancaria importando el extracto del banco",
-    "Usuarios con contraseña y permisos para cada persona del equipo"
-];
+export const DETALLE = {
+    hace: [
+        "Factura A, B o C según el cliente, y notas de crédito sobre una factura",
+        "Cuentas corrientes: quién te debe, a quién le debés, cobros y pagos",
+        "Libro IVA Digital (.txt) y libros en Excel para la contadora",
+        "Libro diario, mayor y balance de sumas y saldos que se arman solos",
+        "Tu empresa: razón social, CUIT, logo, colores y qué pantallas se usan"
+    ],
+    extra: {
+        titulo: "Para tu contador, en la versión real",
+        renglones: [
+            "Asientos a mano, con plantillas para amortizaciones, sueldos y ajustes",
+            "Correcciones con contraasiento: nada se borra ni se edita",
+            "Cierre de cada mes: nadie puede cargar nada con fecha de un mes cerrado",
+            "Cierre del ejercicio: refundición de resultados y apertura del año nuevo",
+            "Plan de cuentas a medida y estados contables (situación patrimonial y resultados)",
+            "Libros listos para rubricar y registro de quién cargó cada cosa"
+        ]
+    },
+    tambien: [
+        "Conexión real con ARCA: facturas con validez fiscal, CAE y QR de verificación",
+        "Traer las compras desde \"Mis Comprobantes\" de ARCA con el archivo que da ARCA",
+        "Varias empresas a la vez, para un estudio contable o un grupo de empresas",
+        "Sueldos, Ingresos Brutos y convenio multilateral, retenciones y Ganancias",
+        "Conciliación bancaria importando el extracto del banco",
+        "Usuarios con contraseña y permisos para cada persona del equipo"
+    ]
+};

@@ -6,11 +6,11 @@
 // Todo cuelga de la empresa (db.empresas[]): la demo muestra una sola, pero la forma ya sirve para varias
 // (estudio contable o grupo de empresas, decidido el 09/10).
 // ============================================
-import { NEGOCIO } from "./marca.js?v=01834dc122";
+import { NEGOCIO } from "./marca.js?v=a74a0ff6b5";
 import {
     cuitDeEjemplo, tipoFactura, calcularComprobante, repartirNotaCredito, caeSimulado, COMPROBANTES, NC_DE,
     fechaISO, sumarDias, ultimosPeriodos, ALICUOTAS
-} from "./reglas.js?v=01834dc122";
+} from "./reglas.js?v=a74a0ff6b5";
 
 /** Números "al azar" pero siempre los mismos. */
 function azarFijo(semillaNum) {
@@ -88,6 +88,8 @@ export function semilla(hoy = new Date()) {
     const entre = (a, b) => a + Math.floor(azar() * (b - a + 1));
     const elegir = (lista) => lista[Math.floor(azar() * lista.length)];
     const hoyISO = fechaISO(hoy);
+    const inicioDeHoy = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate()).toISOString();
+    const enHora = (fecha, hora) => (fecha < hoyISO ? `${fecha}T${hora}.000Z` : inicioDeHoy);
     const periodos = ultimosPeriodos(12, hoyISO.slice(0, 7));
     const diaHoy = hoy.getDate();
     const diasDelMes = (p) => new Date(Number(p.slice(0, 4)), Number(p.slice(5, 7)), 0).getDate();
@@ -178,7 +180,7 @@ export function semilla(hoy = new Date()) {
             cae: caeSimulado(empresa.cuit, COMPROBANTES[tipo].codigo, empresa.puntoVenta, numero),
             caeVence: sumarDias(fecha, 10),
             hechoPor: "u-admin",
-            hechoEn: `${fecha}T12:00:00.000Z`,
+            hechoEn: enHora(fecha, "12:00:00"),
             ...extra
         };
         empresa.comprobantes.push(comp);
@@ -186,7 +188,7 @@ export function semilla(hoy = new Date()) {
     };
 
     let numMov = 0;
-    const movimiento = (m) => empresa.movimientos.push({ id: `m-${String(++numMov).padStart(4, "0")}`, hechoPor: "u-admin", hechoEn: `${m.fecha}T15:00:00.000Z`, ...m });
+    const movimiento = (m) => empresa.movimientos.push({ id: `m-${String(++numMov).padStart(4, "0")}`, hechoPor: "u-admin", hechoEn: enHora(m.fecha, "15:00:00"), ...m });
 
     const morosos = new Set(["c-hotel"]); // el hotel no paga hace dos meses: aparece en "quién te debe"
     for (const v of ventas) {
@@ -271,7 +273,7 @@ export function semilla(hoy = new Date()) {
             origen,
             anulada: false,
             hechoPor: "u-admin",
-            hechoEn: `${fecha}T10:00:00.000Z`
+            hechoEn: enHora(fecha, "10:00:00")
         };
     };
 

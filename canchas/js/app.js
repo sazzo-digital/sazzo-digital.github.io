@@ -3,18 +3,18 @@
 // Cada persona tiene su menú: Gustavo (dueño) la grilla y los fijos; Fede (jugador) reservar y sus turnos.
 // irA() cambia de persona sin pasar por "Probala como…" (botón del recorrido: "Mirá cómo lo ve Gustavo →").
 // ============================================
-import { $, conFundido } from "../kit/js/ui.js?v=a594f3020b";
-import { iniciarDemo } from "../kit/js/arranque.js?v=a594f3020b";
-import { vistaIngreso } from "../kit/js/ingreso.js?v=a594f3020b";
-import { pintarMarco } from "../kit/js/marco.js?v=a594f3020b";
-import { mostrarRuta } from "../kit/js/rutas.js?v=a594f3020b";
-import { vistaAcerca } from "../kit/js/acerca.js?v=a594f3020b";
-import { MARCA, PERSONAS, TAMBIEN, buscarPersona } from "./marca.js?v=a594f3020b";
-import { aparte } from "../kit/js/aparte.js?v=a594f3020b";
-import { leerSesionGuardada } from "../kit/js/guardado.js?v=a594f3020b";
+import { $, conFundido } from "../kit/js/ui.js?v=02e370389b";
+import { iniciarDemo } from "../kit/js/arranque.js?v=02e370389b";
+import { vistaIngreso } from "../kit/js/ingreso.js?v=02e370389b";
+import { pintarMarco } from "../kit/js/marco.js?v=02e370389b";
+import { mostrarRuta } from "../kit/js/rutas.js?v=02e370389b";
+import { vistaAcerca } from "../kit/js/acerca.js?v=02e370389b";
+import { MARCA, PERSONAS, DETALLE, buscarPersona } from "./marca.js?v=02e370389b";
+import { aparte } from "../kit/js/aparte.js?v=02e370389b";
+import { leerSesionGuardada } from "../kit/js/guardado.js?v=02e370389b";
 
 // Los datos de ejemplo y las pantallas se bajan aparte (al terminar de cargar): "Probala como…" aparece sin esperarlos
-const pantallas = aparte(() => import("./pantallas.js?v=a594f3020b"));
+const pantallas = aparte(() => import("./pantallas.js?v=02e370389b"));
 const { vistaInicio, vistaMisTurnos, vistaTurno, vistaAnotar, vistaFijos, avisosDe } = pantallas.funciones;
 
 iniciarDemo(MARCA);
@@ -41,7 +41,7 @@ const RUTAS = [
     { patron: /^\/turno\/([\w:-]+)$/, vista: con(vistaTurno), puede: esDueno, menu: "/inicio" },
     { patron: /^\/anotar$/, vista: con(vistaAnotar), puede: esDueno, menu: "/inicio" },
     { patron: /^\/fijos$/, vista: con(vistaFijos), puede: esDueno },
-    { patron: /^\/acerca$/, vista: (cont) => vistaAcerca(cont, { marca: MARCA, tambien: TAMBIEN }) }
+    { patron: /^\/acerca$/, vista: (cont) => vistaAcerca(cont, { marca: MARCA }) }
 ];
 
 const mostrar = () => mostrarRuta({ rutas: RUTAS, contenido, usuario });
@@ -52,6 +52,7 @@ function ingresar() {
     guardarSesion(null);
     vistaIngreso(app, {
         marca: MARCA,
+        detalle: DETALLE,
         personas: PERSONAS,
         alElegir: (id) => {
             guardarSesion(id);
@@ -68,6 +69,7 @@ async function entrar(persona) {
     contenido = pintarMarco(app, {
         avisos: () => avisosDe(datos), // avisos entre roles (vistas/avisos.js, kit/avisos.js)
         marca: MARCA,
+        detalle: DETALLE,
         usuario,
         menu: MENU[usuario.rol],
         alCambiarPersona: ingresar,

@@ -3,10 +3,10 @@
 // cada alquiler con su próximo aumento (el porcentaje del índice de ejemplo o el que ella ponga), los aumentos que
 // ya tuvo, los pagos de los últimos meses y los avisos armados. No es un contrato ni un recibo.
 // ============================================
-import { esc, aviso, mensajeDe, fechaCorta } from "../../kit/js/ui.js?v=4f1a0e3f3f";
-import { diaLocalDe } from "../../kit/js/fechas.js?v=4f1a0e3f3f";
-import { TOPES, INDICE_MENSUAL, AVISO_AUMENTO_DIAS, pesos, porcentajeTexto, diaMes, redondearCien } from "../datos.js?v=4f1a0e3f3f";
-import { mostrarMensaje, mayuscula } from "./comunes.js?v=4f1a0e3f3f";
+import { esc, aviso, mensajeDe, fechaCorta } from "../../kit/js/ui.js?v=9ba5fbd9c2";
+import { diaLocalDe } from "../../kit/js/fechas.js?v=9ba5fbd9c2";
+import { TOPES, INDICE_MENSUAL, AVISO_AUMENTO_DIAS, pesos, porcentajeTexto, diaMes, redondearCien } from "../datos.js?v=9ba5fbd9c2";
+import { mostrarMensaje, mayuscula } from "./comunes.js?v=9ba5fbd9c2";
 
 const pastillasDe = (c) => {
     const lista = [];

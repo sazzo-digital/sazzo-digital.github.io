@@ -6,12 +6,12 @@
 //   "Cargar un corte" y la "Pizarra para la tele".
 // También acá: las etiquetas de ejemplo de la balanza (para probar el escáner sin balanza).
 // ============================================
-import { esc, aviso, vacio, mensajeDe } from "../../kit/js/ui.js?v=76618fb2cb";
-import { ANIMALES, TOPES, nombreAnimal, pesos, kilos, armarEtiqueta } from "../datos.js?v=76618fb2cb";
-import { NEGOCIO } from "../marca.js?v=76618fb2cb";
-import { svgEAN } from "../codigo-barras.js?v=76618fb2cb";
-import { htmlCopiable, activarCopiables } from "../../kit/js/celular.js?v=76618fb2cb";
-import { pastillaStock, precioDe, campoKg, kgEnCampo, cuantoHay } from "./comunes.js?v=76618fb2cb";
+import { esc, aviso, vacio, mensajeDe } from "../../kit/js/ui.js?v=8f8507cb31";
+import { ANIMALES, TOPES, nombreAnimal, pesos, kilos, armarEtiqueta } from "../datos.js?v=8f8507cb31";
+import { NEGOCIO } from "../marca.js?v=8f8507cb31";
+import { svgEAN } from "../codigo-barras.js?v=8f8507cb31";
+import { htmlCopiable, activarCopiables } from "../../kit/js/celular.js?v=8f8507cb31";
+import { pastillaStock, precioDe, campoKg, kgEnCampo, cuantoHay } from "./comunes.js?v=8f8507cb31";
 
 const RAPIDOS = [5, 8, 10, 15];
 let textoBuscado = ""; // el buscador recuerda lo escrito mientras se navega
@@ -74,7 +74,7 @@ export function vistaStock(cont, { usuario, datos, consulta }) {
             ${ANIMALES.map((x) => chip(x.id, x.nombre)).join("")}
         </nav>
         <div class="lista-stock"></div>
-        <p class="nota acerca-link"><i class="ti ti-info-circle"></i> <a href="#/acerca">Acerca de esta demo</a> y lo que puede sumar la versión real.</p>`;
+        <p class="nota acerca-link"><i class="ti ti-info-circle"></i> <a href="#/acerca">Acerca de esta demo</a>.</p>`;
 
     const lugar = cont.querySelector(".lista-stock");
     const q = cont.querySelector("[name=q]");

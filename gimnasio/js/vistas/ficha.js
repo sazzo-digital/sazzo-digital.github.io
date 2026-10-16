@@ -5,12 +5,12 @@
 // - Vane (dueña): la cuota y los pagos (registrar, confirmar el aviso de transferencia, deshacer, recordatorio armado),
 //   el apto físico y el reglamento firmado en pantalla, si viene o no (invitar a volver) y la baja.
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=7fff73397b";
-import { pedirFirma } from "../../kit/js/firma.js?v=7fff73397b";
-import { armarPdf, pdfListo } from "../../kit/js/pdf.js?v=7fff73397b";
-import { NEGOCIO } from "../marca.js?v=7fff73397b";
-import { TOPES, REINVITAR_DIAS, pesos, kilos, cuanto, fechaCorta, nombreFecha } from "../datos.js?v=7fff73397b";
-import { guia, activarGuias, pastilla, pastillaCuota, cara, haceDias, graficoPeso, barrasSemanas, mostrarMensaje } from "./comunes.js?v=7fff73397b";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=ab7575362c";
+import { pedirFirma } from "../../kit/js/firma.js?v=ab7575362c";
+import { armarPdf, pdfListo } from "../../kit/js/pdf.js?v=ab7575362c";
+import { NEGOCIO } from "../marca.js?v=ab7575362c";
+import { TOPES, REINVITAR_DIAS, pesos, kilos, cuanto, fechaCorta, nombreFecha } from "../datos.js?v=ab7575362c";
+import { guia, activarGuias, pastilla, pastillaCuota, cara, haceDias, graficoPeso, barrasSemanas, mostrarMensaje } from "./comunes.js?v=ab7575362c";
 
 let ajustando = null; // "diaId|ejercicioId" del ejercicio que el profe está ajustando
 let medio = "efectivo"; // lo último elegido al registrar un pago

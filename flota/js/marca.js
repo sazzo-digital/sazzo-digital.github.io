@@ -2,7 +2,7 @@
 // Marca, personas y "también puede tener" de Sazzo Flota (diseñada el 08/10/2026).
 // Las personas son los roles reales del rubro (nombres inventados): administradora, mecánico y chofer.
 // ============================================
-import { revisarMarca } from "../kit/js/marca.js?v=dba22bd993";
+import { revisarMarca } from "../kit/js/marca.js?v=f38d8e13f7";
 
 export const MARCA = revisarMarca({
     id: "flota",
@@ -45,12 +45,19 @@ export const PERSONAS = [
 
 export const buscarPersona = (id) => PERSONAS.find((p) => p.id === id) ?? null;
 
-// "Acerca de": lo que la versión real puede sumar y la demo deja afuera para que se recorra en 2 minutos
-export const TAMBIEN = [
-    "Que el aviso del chofer le llegue al mecánico en otro celular, al instante",
-    "Alta y baja de vehículos y de personas, con su usuario cada uno",
-    "Días y horarios de cada chofer, y quién maneja qué vehículo",
-    "Combustible, recorridos y fotos de cada problema",
-    "Reportes por vehículo y por mes, y pasar los datos a Excel",
-    "Cargar la flota desde una planilla"
-];
+export const DETALLE = {
+    hace: [
+        "Estado de cada vehículo según sus problemas: andando, con problema o en el taller",
+        "Mapa con dónde se vio por última vez cada vehículo (de ejemplo)",
+        "Historia de problemas de cada vehículo",
+        "La administradora ve lo que hay para mirar hoy y lo último que pasó"
+    ],
+    tambien: [
+        "Que el aviso del chofer le llegue al mecánico en otro celular, al instante",
+        "Alta y baja de vehículos y de personas, con su usuario cada uno",
+        "Días y horarios de cada chofer, y quién maneja qué vehículo",
+        "Combustible, recorridos y fotos de cada problema",
+        "Reportes por vehículo y por mes, y pasar los datos a Excel",
+        "Cargar la flota desde una planilla"
+    ]
+};

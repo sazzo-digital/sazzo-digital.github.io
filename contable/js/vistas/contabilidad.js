@@ -2,10 +2,10 @@
 // Contabilidad: libro diario (los asientos salen solos de cada factura, compra, cobro y pago), mayor de cada cuenta
 // y balance de sumas y saldos. Solo para mirar: en la demo no hay asientos manuales.
 // ============================================
-import { esc } from "../../kit/js/ui.js?v=01834dc122";
-import { pesos, nombrePeriodo, periodoActual, correrPeriodo } from "../reglas.js?v=01834dc122";
-import { nombreCuenta } from "../contabilidad.js?v=01834dc122";
-import { periodoPedido, htmlSelectorMes, activarSelectorMes, htmlTabla, fechaCorta, diaMes } from "./comunes.js?v=01834dc122";
+import { esc } from "../../kit/js/ui.js?v=a74a0ff6b5";
+import { pesos, nombrePeriodo, periodoActual, correrPeriodo } from "../reglas.js?v=a74a0ff6b5";
+import { nombreCuenta } from "../contabilidad.js?v=a74a0ff6b5";
+import { periodoPedido, htmlSelectorMes, activarSelectorMes, htmlTabla, fechaCorta, diaMes } from "./comunes.js?v=a74a0ff6b5";
 
 const VISTAS = { diario: "Libro diario", mayor: "Mayor", balance: "Balance" };
 const MAX_ASIENTOS = 60; // en pantalla (el resto, cambiando de mes)
@@ -20,7 +20,7 @@ export function vistaContabilidad(cont, { datos, consulta }) {
         </div>
         <div class="fila-filtros">${htmlSelectorMes(periodo)}${ver === "mayor" ? selectorCuenta(datos, consulta) : ""}</div>
         <div class="contabilidad-contenido"></div>
-        <p class="nota"><i class="ti ti-info-circle"></i> Los asientos se arman solos con cada factura, nota de crédito, compra, cobro y pago. En la versión real también se cargan asientos a mano y se cierra el ejercicio.</p>`;
+        <p class="nota"><i class="ti ti-info-circle"></i> Los asientos se arman solos con cada factura, nota de crédito, compra, cobro y pago.</p>`;
     activarSelectorMes(cont, "/contabilidad", `&ver=${ver}${ver === "mayor" ? `&cuenta=${encodeURIComponent(cuentaPedida(datos, consulta))}` : ""}`);
     cont.querySelector("#cuenta")?.addEventListener("change", (e) => {
         location.hash = `#/contabilidad?ver=mayor&p=${periodo}&cuenta=${encodeURIComponent(e.target.value)}`;

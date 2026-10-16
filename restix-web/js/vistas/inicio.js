@@ -2,9 +2,9 @@
 // Inicio de Restix Sazzo: distinto para cada persona.
 // Lara (moza) → el plano del salón · Beto (cocina) → los pedidos de la cocina · Flor (cliente) → la carta del QR.
 // ============================================
-import { vistaPlano } from "./moza.js?v=c8a29a9636";
-import { vistaCocina } from "./cocina.js?v=c8a29a9636";
-import { vistaCarta } from "./cliente.js?v=c8a29a9636";
+import { vistaPlano } from "./moza.js?v=a86e661e0a";
+import { vistaCocina } from "./cocina.js?v=a86e661e0a";
+import { vistaCarta } from "./cliente.js?v=a86e661e0a";
 
 const POR_ROL = { cocina: vistaCocina, cliente: vistaCarta };
 

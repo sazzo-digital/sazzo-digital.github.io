@@ -2,8 +2,8 @@
 // Catálogo de Sazzo: arma las tarjetas de demos (desde demos.js), las animaciones al bajar, los botones de
 // contacto (desde config.js), guarda de dónde vino la visita (?o=papel / ?o=ig) y avisa a la medición.
 // ============================================
-import { DEMOS, TRABAJOS } from "./demos.js?v=46d42e3a4b";
-import { CONTACTO, MEDICION, LINK_DEMOS, RUTA_LIBS } from "./config.js?v=46d42e3a4b";
+import { DEMOS, TRABAJOS } from "./demos.js?v=526835b55f";
+import { CONTACTO, MEDICION, LINK_DEMOS, RUTA_LIBS } from "./config.js?v=526835b55f";
 
 const $ = (selector, raiz = document) => raiz.querySelector(selector);
 const $$ = (selector, raiz = document) => [...raiz.querySelectorAll(selector)];
@@ -67,7 +67,7 @@ function dispositivo(agente = navigator.userAgent) {
     return `${sistema} · ${navegador}`;
 }
 
-const EVENTOS = ["abrio-catalogo", "probar", "escribir", "instagram"];
+const EVENTOS = ["abrio-catalogo", "probar", "escribir", "instagram", "detalle"];
 const esLaPC = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname) || location.protocol === "file:";
 
 /** Avisa al registro de visitas qué pasó (uno de EVENTOS; en "probar", qué demo). */
@@ -137,6 +137,7 @@ function tarjeta(demo) {
                 <p class="demo__rubro">${esc(demo.rubro)}</p>
                 <p class="demo__pregunta">${esc(demo.pregunta)}</p>
                 ${listaTildes(demo.items, "demo__items")}
+                ${demo.detalle ? `<button class="demo__detalle" type="button" data-detalle="${esc(demo.id)}"><svg class="icono" aria-hidden="true"><use href="#i-detalle"/></svg> Ver en detalle</button>` : ""}
                 ${demo.enVivo ? `<p class="demo__vivo"><svg class="icono" aria-hidden="true"><use href="#i-vivo"/></svg><span><strong>En vivo:</strong> ${esc(demo.enVivo)}</span></p>` : ""}
                 <div class="demo__pie">
                     ${boton}
@@ -229,7 +230,45 @@ $("#atajos").innerHTML = visibles
     .filter((d) => /^[a-z0-9]+(-[a-z0-9]+)*$/.test(d.id))
     .map((d) => `<a class="atajo" href="#demo-${esc(d.id)}" style="--acento:${esc(d.acento)}">${esc(d.nombre)}</a>`)
     .join("");
-$$("[data-demo]").forEach((a) => a.addEventListener("click", () => contar("probar", a.dataset.demo)));
+const ventanaDetalle = $("#ventana-detalle");
+
+function bloqueDetalle(titulo, icono, renglones) {
+    if (!renglones?.length) return "";
+    return `
+        <section class="ventana-detalle__bloque">
+            <h3>${esc(titulo)}</h3>
+            <ul>${renglones.map((r) => `<li><svg class="icono" aria-hidden="true"><use href="#${icono}"/></svg><span>${esc(r)}</span></li>`).join("")}</ul>
+        </section>`;
+}
+
+function abrirDetalle(demo) {
+    const d = demo.detalle;
+    const link = demo.estado === "activa" ? linkDe(demo) : null;
+    ventanaDetalle.style.setProperty("--acento", demo.acento);
+    $("#ventana-detalle-titulo").textContent = `${demo.nombre} en detalle`;
+    $(".ventana-detalle__cuerpo", ventanaDetalle).innerHTML = [
+        bloqueDetalle("Lo que también podés probar", "i-tilde", d.hace),
+        d.extra ? bloqueDetalle(d.extra.titulo, "i-tilde", d.extra.renglones) : "",
+        bloqueDetalle("La versión real también puede tener", "i-mas", d.tambien)
+    ].join("");
+    $(".ventana-detalle__pie", ventanaDetalle).innerHTML = link
+        ? `<a class="boton" href="${esc(link)}" data-demo="${esc(demo.id)}">Probala ahora <svg class="icono" aria-hidden="true"><use href="#i-flecha"/></svg></a>`
+        : "";
+    ventanaDetalle.showModal();
+    $(".ventana-detalle__cuerpo", ventanaDetalle).scrollTop = 0;
+    contar("detalle", demo.id);
+}
+
+if (typeof ventanaDetalle.showModal === "function") {
+    $$("[data-detalle]").forEach((b) => b.addEventListener("click", () => abrirDetalle(DEMOS.find((d) => d.id === b.dataset.detalle))));
+    ventanaDetalle.addEventListener("click", (e) => {
+        if (e.target === ventanaDetalle || e.target.closest("[data-cerrar]")) ventanaDetalle.close();
+        if (e.target.closest("[data-demo]")) contar("probar", e.target.closest("[data-demo]").dataset.demo);
+    });
+} else {
+    $$("[data-detalle]").forEach((b) => (b.hidden = true));
+}
+$$(".demo [data-demo]").forEach((a) => a.addEventListener("click", () => contar("probar", a.dataset.demo)));
 
 // Cantidad de rubros en la portada (sale de la lista)
 $$("[data-contar]").forEach((el) => { el.dataset.contar = visibles.length; el.textContent = visibles.length; });

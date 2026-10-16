@@ -3,9 +3,9 @@
 // los pedidos entregados y cuánto tiene que haber en el cajón. "Cerrar caja": contás la plata y te dice si sobra o
 // falta. El dueño ve además la ganancia (venta menos el costo real, que ya trae la merma) y los últimos 7 días.
 // ============================================
-import { esc, aviso, fechaCorta } from "../../kit/js/ui.js?v=76618fb2cb";
-import { FONDO_CAJA, MEDIOS, TOPES, pesos, kilos } from "../datos.js?v=76618fb2cb";
-import { hora } from "./comunes.js?v=76618fb2cb";
+import { esc, aviso, fechaCorta } from "../../kit/js/ui.js?v=8f8507cb31";
+import { FONDO_CAJA, MEDIOS, TOPES, pesos, kilos } from "../datos.js?v=8f8507cb31";
+import { hora } from "./comunes.js?v=8f8507cb31";
 
 const DIAS = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
 const nombreDia = (dia) => {
@@ -96,7 +96,7 @@ export function vistaCaja(cont, { usuario, datos }) {
                     <b>${esc(pesos(d.vendido))}<small>${esc(kilos(d.gramos, 0))} · ganancia ${esc(pesos(d.ganancia))}</small></b>
                 </li>`).join("")}</ul>
         </section>` : `<p class="nota"><i class="ti ti-info-circle"></i> La ganancia y los últimos 7 días los ve Ricardo.</p>`}
-        <p class="nota acerca-link"><i class="ti ti-info-circle"></i> <a href="#/acerca">Acerca de esta demo</a> y lo que puede sumar la versión real.</p>`;
+        <p class="nota acerca-link"><i class="ti ti-info-circle"></i> <a href="#/acerca">Acerca de esta demo</a>.</p>`;
 
     cont.querySelector(".cerrar").addEventListener("submit", (e) => {
         e.preventDefault();

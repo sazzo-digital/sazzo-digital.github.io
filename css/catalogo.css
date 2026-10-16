@@ -312,6 +312,51 @@ a { color: inherit; }
 .demo__vivo .icono { flex: none; width: 1rem; height: 1rem; margin-top: .1rem; color: var(--acento); }
 .demo__vivo strong { color: var(--texto); }
 
+/* 9b3. En detalle */
+.demo__detalle {
+    display: inline-flex; align-items: center; gap: .4rem; min-height: 44px; margin-top: .4rem; padding: .35rem .1rem;
+    border: 0; background: none; color: var(--texto); font: inherit; font-size: .88rem; font-weight: 600;
+    text-decoration: underline; text-decoration-color: var(--acento, var(--verde)); text-underline-offset: 4px; cursor: pointer;
+}
+.demo__detalle .icono { width: 1.05rem; height: 1.05rem; color: var(--acento, var(--verde)); }
+.demo__detalle:hover { color: var(--acento, var(--verde)); }
+.demo__detalle:focus-visible { outline: 3px solid var(--verde); outline-offset: 3px; border-radius: 6px; }
+.ventana-detalle {
+    display: none; flex-direction: column; width: min(32rem, calc(100% - 16px)); max-height: 88dvh;
+    margin: auto auto 8px; padding: 0; border: 1px solid var(--borde); border-radius: calc(var(--radio) + 6px);
+    background: var(--superficie); color: var(--texto); box-shadow: var(--sombra);
+}
+.ventana-detalle[open] { display: flex; animation: ventana-sube .3s cubic-bezier(.22,.9,.24,1); }
+.ventana-detalle::backdrop { background: rgb(0 0 0 / 55%); backdrop-filter: blur(3px); }
+.ventana-detalle__barra {
+    display: flex; align-items: center; justify-content: space-between; gap: .8rem; padding: .9rem .8rem .8rem 1.3rem;
+    border-bottom: 1px solid var(--borde);
+}
+.ventana-detalle__barra h2 { font-size: 1.25rem; }
+.ventana-detalle__cerrar {
+    flex: none; display: grid; place-items: center; width: 44px; height: 44px;
+    border: 0; border-radius: 50%; background: transparent; color: var(--texto-suave); cursor: pointer;
+}
+.ventana-detalle__cerrar .icono { width: 22px; height: 22px; }
+.ventana-detalle__cerrar:hover { color: var(--texto); background: var(--superficie-2); }
+.ventana-detalle__cerrar:focus-visible { outline: 3px solid var(--verde); outline-offset: 2px; }
+.ventana-detalle__cuerpo { display: grid; gap: 1.2rem; padding: 1.1rem 1.3rem; overflow-y: auto; overscroll-behavior: contain; }
+.ventana-detalle__bloque h3 {
+    margin-bottom: .55rem; font: 500 .76rem var(--fuente-numeros); letter-spacing: .08em; text-transform: uppercase; color: var(--texto-suave);
+}
+.ventana-detalle__bloque ul { list-style: none; padding: 0; margin: 0; display: grid; gap: .5rem; }
+.ventana-detalle__bloque li { display: flex; gap: .5rem; align-items: flex-start; font-size: .94rem; line-height: 1.4; }
+.ventana-detalle__bloque .icono { flex: none; width: 1rem; height: 1rem; margin-top: .15rem; color: var(--acento, var(--verde)); stroke-width: 2.6; }
+.ventana-detalle__pie:not(:empty) { padding: .9rem 1.3rem 1.1rem; border-top: 1px solid var(--borde); }
+.ventana-detalle__pie .boton { width: 100%; justify-content: center; }
+@media (min-width: 700px) {
+    .ventana-detalle { margin: auto; max-height: calc(100dvh - 48px); }
+    .ventana-detalle[open] { animation: ventana-entra .25s ease-out; }
+}
+@keyframes ventana-sube { from { opacity: 0; transform: translateY(32px); } }
+@media (prefers-reduced-motion: reduce) { .ventana-detalle[open] { animation: none; } }
+:root[data-tema="claro"] :is(.ventana-detalle__bloque, .demo__detalle, .demo__vivo, .tildes) .icono { color: color-mix(in srgb, var(--acento, var(--verde)) 45%, var(--texto)); }
+
 /* 9c. Ítems con tilde */
 .tildes { list-style: none; padding: 0; margin: .7rem 0 0; display: grid; gap: .35rem; }
 .tildes li { display: flex; gap: .45rem; align-items: flex-start; font-size: .9rem; line-height: 1.35; color: var(--texto-suave); }

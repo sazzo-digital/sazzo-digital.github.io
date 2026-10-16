@@ -4,18 +4,18 @@
 // hoy y las rutinas; Vane (dueña) los socios con sus cuotas y cómo anda el gimnasio.
 // irA() cambia de persona sin pasar por "Probala como…" (botón del recorrido: "Mirá cómo lo ve Mauro →").
 // ============================================
-import { $, conFundido } from "../kit/js/ui.js?v=7fff73397b";
-import { iniciarDemo } from "../kit/js/arranque.js?v=7fff73397b";
-import { vistaIngreso } from "../kit/js/ingreso.js?v=7fff73397b";
-import { pintarMarco } from "../kit/js/marco.js?v=7fff73397b";
-import { mostrarRuta } from "../kit/js/rutas.js?v=7fff73397b";
-import { vistaAcerca } from "../kit/js/acerca.js?v=7fff73397b";
-import { MARCA, PERSONAS, TAMBIEN, buscarPersona } from "./marca.js?v=7fff73397b";
-import { aparte } from "../kit/js/aparte.js?v=7fff73397b";
-import { leerSesionGuardada } from "../kit/js/guardado.js?v=7fff73397b";
+import { $, conFundido } from "../kit/js/ui.js?v=ab7575362c";
+import { iniciarDemo } from "../kit/js/arranque.js?v=ab7575362c";
+import { vistaIngreso } from "../kit/js/ingreso.js?v=ab7575362c";
+import { pintarMarco } from "../kit/js/marco.js?v=ab7575362c";
+import { mostrarRuta } from "../kit/js/rutas.js?v=ab7575362c";
+import { vistaAcerca } from "../kit/js/acerca.js?v=ab7575362c";
+import { MARCA, PERSONAS, DETALLE, buscarPersona } from "./marca.js?v=ab7575362c";
+import { aparte } from "../kit/js/aparte.js?v=ab7575362c";
+import { leerSesionGuardada } from "../kit/js/guardado.js?v=ab7575362c";
 
 // Los datos de ejemplo y las pantallas se bajan aparte (al terminar de cargar): "Probala como…" aparece sin esperarlos
-const pantallas = aparte(() => import("./pantallas.js?v=7fff73397b"));
+const pantallas = aparte(() => import("./pantallas.js?v=ab7575362c"));
 const { vistaHoy, vistaSemana, vistaCuota, vistaGimnasioHoy, vistaPlanes, vistaPlan, vistaFicha, vistaSocios, vistaAlta, vistaGimnasio, avisosDe } = pantallas.funciones;
 
 iniciarDemo(MARCA);
@@ -48,7 +48,7 @@ const RUTAS = [
     { patron: /^\/planes$/, vista: con(vistaPlanes), puede: es("profe") },
     { patron: /^\/planes\/([\w-]+)$/, vista: con(vistaPlan), puede: es("profe"), menu: "/planes" },
     { patron: /^\/gimnasio$/, vista: con(vistaGimnasio), puede: es("duena"), ancho: true },
-    { patron: /^\/acerca$/, vista: (cont) => vistaAcerca(cont, { marca: MARCA, tambien: TAMBIEN }) }
+    { patron: /^\/acerca$/, vista: (cont) => vistaAcerca(cont, { marca: MARCA }) }
 ];
 
 const mostrar = () => mostrarRuta({ rutas: RUTAS, contenido, usuario });
@@ -59,6 +59,7 @@ function ingresar() {
     guardarSesion(null);
     vistaIngreso(app, {
         marca: MARCA,
+        detalle: DETALLE,
         personas: PERSONAS,
         alElegir: (id) => {
             guardarSesion(id);
@@ -75,6 +76,7 @@ async function entrar(persona) {
     contenido = pintarMarco(app, {
         avisos: () => avisosDe(datos), // avisos entre roles (vistas/avisos.js, kit/avisos.js)
         marca: MARCA,
+        detalle: DETALLE,
         usuario,
         menu: MENU[usuario.rol],
         alCambiarPersona: ingresar,

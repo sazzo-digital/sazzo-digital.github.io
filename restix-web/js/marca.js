@@ -3,8 +3,8 @@
 // rehecho con el kit). Las personas son los roles reales del rubro (nombres inventados): la moza, el de la cocina y
 // (desde el 10/10) una clienta que abre la carta con el QR de la mesa.
 // ============================================
-import { revisarMarca } from "../kit/js/marca.js?v=c8a29a9636";
-import { negocioDe } from "../kit/js/colores.js?v=c8a29a9636";
+import { revisarMarca } from "../kit/js/marca.js?v=a86e661e0a";
+import { negocioDe } from "../kit/js/colores.js?v=a86e661e0a";
 
 export const MARCA = revisarMarca({
     id: "restix-web",
@@ -54,12 +54,18 @@ export const MESA_CLIENTE = "Mesa 4"; // donde se sentó Flor (la misma de la pi
 export const NEGOCIO = negocioDe(MARCA.prefijo, "Bar El Farol"); // nombre de ejemplo (arriba sigue diciendo Restix Sazzo)
 // (si el dueño escribió el nombre de su negocio en "Probala con tus colores", va ese: kit/colores.js)
 
-// "Acerca de": lo que la versión real (Restix) tiene y la demo deja afuera para que se recorra en 2 minutos
-export const TAMBIEN = [
-    "Imprimir la comanda en la cocina y en la barra, sola",
-    "Cambiar la carta y los precios cuando quieras",
-    "Stock de barriles y bebidas que se descuenta con cada pinta",
-    "Resúmenes del mes: lo más vendido y cuánto entró",
-    "Pedidos Ya y delivery en la misma pantalla",
-    "Funciona en la compu del local, aunque se corte internet"
-];
+export const DETALLE = {
+    hace: [
+        "Cobro dividiendo la cuenta en partes iguales",
+        "La cocina marca \"Listo\" y la moza se entera",
+        "Caja del turno con los cobros y el cierre de caja"
+    ],
+    tambien: [
+        "Imprimir la comanda en la cocina y en la barra, sola",
+        "Cambiar la carta y los precios cuando quieras",
+        "Stock de barriles y bebidas que se descuenta con cada pinta",
+        "Resúmenes del mes: lo más vendido y cuánto entró",
+        "Pedidos Ya y delivery en la misma pantalla",
+        "Funciona en la compu del local, aunque se corte internet"
+    ]
+};

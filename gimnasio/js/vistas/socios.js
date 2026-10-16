@@ -3,11 +3,11 @@
 // filtros que importan (cuota vencida, vence esta semana, avisaron que pagaron, no vienen hace +3 semanas, sin apto,
 // bajas) con la acción de cada uno a mano (recordatorio, confirmar, invitar), el buscador, Excel y el alta.
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=7fff73397b";
-import { bajarExcel } from "../../kit/js/archivos.js?v=7fff73397b";
-import { NEGOCIO } from "../marca.js?v=7fff73397b";
-import { PLANES_CUOTA, HORAS, DIAS_CORTOS, ORDEN_SEMANA, TOPES, REAVISAR_DIAS, REINVITAR_DIAS, pesos, fechaCorta } from "../datos.js?v=7fff73397b";
-import { guia, activarGuias, pastilla, pastillaCuota, cara, haceDias, mostrarMensaje } from "./comunes.js?v=7fff73397b";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=ab7575362c";
+import { bajarExcel } from "../../kit/js/archivos.js?v=ab7575362c";
+import { NEGOCIO } from "../marca.js?v=ab7575362c";
+import { PLANES_CUOTA, HORAS, DIAS_CORTOS, ORDEN_SEMANA, TOPES, REAVISAR_DIAS, REINVITAR_DIAS, pesos, fechaCorta } from "../datos.js?v=ab7575362c";
+import { guia, activarGuias, pastilla, pastillaCuota, cara, haceDias, mostrarMensaje } from "./comunes.js?v=ab7575362c";
 
 let filtro = "pronto"; // de entrada, los que vencen esta semana: lo primero que mira la dueña
 let texto = "";

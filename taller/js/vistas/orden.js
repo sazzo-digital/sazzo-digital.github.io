@@ -4,14 +4,14 @@
 // El mecánico carga lo que encontró y los repuestos, sin ver precios. Y el presupuesto (dueño): para imprimir, con la
 // firma del cliente en pantalla y en PDF para mandarlo por WhatsApp.
 // ============================================
-import { esc, aviso, fechaCorta, fechaHora } from "../../kit/js/ui.js?v=c722de930b";
-import { fechaLocalISO } from "../../kit/js/fechas.js?v=c722de930b";
-import { pedirFirma, esFirma } from "../../kit/js/firma.js?v=c722de930b";
-import { htmlBotonDictar, activarDictado } from "../../kit/js/dictado.js?v=c722de930b";
-import { armarPdf, pdfListo } from "../../kit/js/pdf.js?v=c722de930b";
-import { ESTADOS, REPUESTOS, MANO_DE_OBRA, TOPES, pesos } from "../datos.js?v=c722de930b";
-import { NEGOCIO } from "../marca.js?v=c722de930b";
-import { guia, activarGuias, chapa, pastillaEstado, textoPromesa, mostrarMensaje } from "./comunes.js?v=c722de930b";
+import { esc, aviso, fechaCorta, fechaHora } from "../../kit/js/ui.js?v=4788997dbc";
+import { fechaLocalISO } from "../../kit/js/fechas.js?v=4788997dbc";
+import { pedirFirma, esFirma } from "../../kit/js/firma.js?v=4788997dbc";
+import { htmlBotonDictar, activarDictado } from "../../kit/js/dictado.js?v=4788997dbc";
+import { armarPdf, pdfListo } from "../../kit/js/pdf.js?v=4788997dbc";
+import { ESTADOS, REPUESTOS, MANO_DE_OBRA, TOPES, pesos } from "../datos.js?v=4788997dbc";
+import { NEGOCIO } from "../marca.js?v=4788997dbc";
+import { guia, activarGuias, chapa, pastillaEstado, textoPromesa, mostrarMensaje } from "./comunes.js?v=4788997dbc";
 
 export function vistaOrden(cont, { usuario, datos, irA, params: [id] }) {
     const o = datos.orden(id, usuario);

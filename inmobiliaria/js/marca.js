@@ -3,8 +3,8 @@
 // Las personas son los roles reales del rubro (nombres inventados): la dueña (martillera), el agente que atiende
 // consultas y visitas, y una chica que busca alquilar y pide la visita desde el celular.
 // ============================================
-import { revisarMarca } from "../kit/js/marca.js?v=4f1a0e3f3f";
-import { negocioDe } from "../kit/js/colores.js?v=4f1a0e3f3f";
+import { revisarMarca } from "../kit/js/marca.js?v=9ba5fbd9c2";
+import { negocioDe } from "../kit/js/colores.js?v=9ba5fbd9c2";
 
 export const MARCA = revisarMarca({
     id: "inmobiliaria",
@@ -50,13 +50,21 @@ export const buscarPersona = (id) => PERSONAS.find((p) => p.id === id) ?? null;
 export const NEGOCIO = negocioDe(MARCA.prefijo, "Inmobiliaria Puerta Abierta"); // nombre de ejemplo (arriba sigue diciendo Sazzo Inmobiliaria)
 // (si el dueño escribió el nombre de su negocio en "Probala con tus colores", va ese: kit/colores.js)
 
-// "Acerca de": lo que la versión real puede sumar y la demo deja afuera para que se recorra en 2 minutos
-export const TAMBIEN = [
-    "Publicar solo en los portales y traer sus consultas a una sola lista",
-    "El índice oficial de cada mes, sin cargarlo a mano",
-    "Liquidación al propietario y recibos de alquiler",
-    "Contratos con firma digital",
-    "Cobro del alquiler con Mercado Pago o transferencia, y avisos por WhatsApp",
-    "Agenda de visitas en el calendario de cada agente",
-    "Tasaciones y varias sucursales, con su usuario cada una"
-];
+export const DETALLE = {
+    hace: [
+        "Consultas de WhatsApp, del portal y del cartel en una lista, con quiénes buscan algo así",
+        "Ficha de la propiedad en PDF y mapa de la zona",
+        "Confirmar la visita y mandar la ficha con un mensaje listo",
+        "Pagos del alquiler con recordatorio para el que no pagó",
+        "Antes de que venza, preguntarle al inquilino si renueva"
+    ],
+    tambien: [
+        "Publicar solo en los portales y traer sus consultas a una sola lista",
+        "El índice oficial de cada mes, sin cargarlo a mano",
+        "Liquidación al propietario y recibos de alquiler",
+        "Contratos con firma digital",
+        "Cobro del alquiler con Mercado Pago o transferencia, y avisos por WhatsApp",
+        "Agenda de visitas en el calendario de cada agente",
+        "Tasaciones y varias sucursales, con su usuario cada una"
+    ]
+};

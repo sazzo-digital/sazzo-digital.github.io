@@ -7,27 +7,22 @@
 // trae `wow`, esa línea va arriba de las personas: le dice a quien llega de Instagram qué va a pasar.
 // y qué hacer al elegir una (alElegir(id): guardar la sesión y arrancar la demo).
 // ============================================
-import { $, $$, esc, iniciales, mensajeDe } from "./ui.js?v=01834dc122";
-import { logoSazzo, nombreDemo } from "./marca.js?v=01834dc122";
-import { pieAcerca, htmlTambien } from "./acerca.js?v=01834dc122";
-import { linkOtrasDemos, linkQuieroEsto } from "./enlaces.js?v=01834dc122";
-import { activarBotonesSazzo } from "./marco.js?v=01834dc122";
-import { contar, contarPantalla } from "./visita.js?v=01834dc122";
-import { soltarPantalla } from "./rutas.js?v=01834dc122";
+import { $, $$, esc, iniciales, mensajeDe } from "./ui.js?v=a74a0ff6b5";
+import { logoSazzo, nombreDemo } from "./marca.js?v=a74a0ff6b5";
+import { pieAcerca } from "./acerca.js?v=a74a0ff6b5";
+import { linkOtrasDemos, linkQuieroEsto } from "./enlaces.js?v=a74a0ff6b5";
+import { activarBotonesSazzo } from "./marco.js?v=a74a0ff6b5";
+import { revisarDetalle, htmlBotonDetalle } from "./detalle.js?v=a74a0ff6b5";
+import { contar, contarPantalla } from "./visita.js?v=a74a0ff6b5";
+import { soltarPantalla } from "./rutas.js?v=a74a0ff6b5";
 
-/** La pantalla entera va en <main>: los lectores de pantalla saltan directo ahí (axe: landmark-one-main). */
-function htmlCompleta(marca, tambien) {
+function htmlCompleta(marca) {
     if (!marca.completa) return "";
-    const icono = `<i class="ti ti-building-store" aria-hidden="true"></i>`;
-    if (!tambien.length) return `<p class="ingreso__completa">${icono}<span>${esc(marca.completa)}</span></p>`;
-    return `
-            <details class="ingreso__completa">
-                <summary>${icono}<span>${esc(marca.completa)} <span class="ingreso__ver">Ver todo lo que tiene</span></span></summary>
-                ${htmlTambien(tambien)}
-            </details>`;
+    return `<p class="ingreso__completa"><i class="ti ti-building-store" aria-hidden="true"></i><span>${esc(marca.completa)}</span></p>`;
 }
 
-export function htmlIngreso({ marca, personas, tambien = [] }) {
+/** La pantalla entera va en <main>: los lectores de pantalla saltan directo ahí (axe: landmark-one-main). */
+export function htmlIngreso({ marca, personas, detalle = null }) {
     const quiero = linkQuieroEsto(marca);
     // La de "Empezá por acá" primero (si hay varias marcadas, cuenta la primera)
     const recomendada = personas.find((p) => p.empezar);
@@ -53,7 +48,8 @@ export function htmlIngreso({ marca, personas, tambien = [] }) {
                 </div>
                 <p class="formulario__error" role="alert" hidden></p>
             </div>
-            ${htmlCompleta(marca, tambien)}
+            ${htmlCompleta(marca)}
+            ${revisarDetalle(detalle) ? htmlBotonDetalle("boton boton--secundario boton--ancho ingreso__detalle") : ""}
             <p class="nota ingreso__nota"><i class="ti ti-flask" aria-hidden="true"></i> Modo prueba: datos inventados, guardados solo en este navegador. No te pedimos ningún dato.</p>
             <div class="ingreso__sazzo">
                 <a class="boton boton--secundario" href="${esc(linkOtrasDemos())}" data-otras-demos><i class="ti ti-layout-grid"></i> Ver otras demos</a>
@@ -64,31 +60,31 @@ export function htmlIngreso({ marca, personas, tambien = [] }) {
 }
 
 /** Una sola persona (comercio de una persona): entra directo, sin pantalla de elegir. Si falla, muestra la pantalla con el error. */
-export async function vistaIngreso(cont, { marca, personas, alElegir, tambien = [] }) {
+export async function vistaIngreso(cont, { marca, personas, alElegir, detalle = null }) {
     if (personas.length === 1) {
         try {
             await alElegir(personas[0].id);
             contarEntrada(marca, personas[0]);
             return;
         } catch (e) {
-            mostrarIngreso(cont, { marca, personas, alElegir, tambien });
+            mostrarIngreso(cont, { marca, personas, alElegir, detalle });
             const error = $(".formulario__error", cont);
             error.textContent = mensajeDe(e);
             error.hidden = false;
             return;
         }
     }
-    mostrarIngreso(cont, { marca, personas, alElegir, tambien });
+    mostrarIngreso(cont, { marca, personas, alElegir, detalle });
 }
 
-function mostrarIngreso(cont, { marca, personas, alElegir, tambien }) {
+function mostrarIngreso(cont, { marca, personas, alElegir, detalle }) {
     soltarPantalla();
-    cont.innerHTML = htmlIngreso({ marca, personas, tambien });
+    cont.innerHTML = htmlIngreso({ marca, personas, detalle });
     cont.classList?.remove("sin-menu");
     // Si el foco quedó en ningún lado (tocó "Cambiar de persona", que ya no está), va a la primera persona
     const foco = document.activeElement;
     if (!foco || foco === document.body || !foco.isConnected) $("[data-persona]", cont)?.focus({ preventScroll: true });
-    activarBotonesSazzo(cont, marca);
+    activarBotonesSazzo(cont, marca, detalle);
     const error = $(".formulario__error", cont);
     $$("[data-persona]", cont).forEach((b) =>
         b.addEventListener("click", async () => {

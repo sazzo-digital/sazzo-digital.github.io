@@ -2,8 +2,8 @@
 // Marca, personas y "también puede tener" de Sazzo Kiosco (diseñada el 08/10/2026).
 // Las personas son los roles reales del rubro (nombres inventados): el dueño y la empleada.
 // ============================================
-import { revisarMarca } from "../kit/js/marca.js?v=25cdac245a";
-import { negocioDe } from "../kit/js/colores.js?v=25cdac245a";
+import { revisarMarca } from "../kit/js/marca.js?v=9d8300a5a6";
+import { negocioDe } from "../kit/js/colores.js?v=9d8300a5a6";
 
 export const MARCA = revisarMarca({
     id: "kiosco",
@@ -40,12 +40,19 @@ export const buscarPersona = (id) => PERSONAS.find((p) => p.id === id) ?? null;
 export const NEGOCIO = negocioDe(MARCA.prefijo, "Kiosco La Esquina"); // nombre de ejemplo (arriba sigue diciendo Sazzo Kiosco)
 // (si el dueño escribió el nombre de su negocio en "Probala con tus colores", va ese: kit/colores.js)
 
-// "Acerca de": lo que la versión real puede sumar y la demo deja afuera para que se recorra en 2 minutos
-export const TAMBIEN = [
-    "Cargar la lista de precios del proveedor desde Excel",
-    "Cobro con Mercado Pago o QR, y lector de códigos o balanza",
-    "Que la caja y el stock se vean en el celular del dueño, al instante",
-    "Varias cajas o sucursales, con su usuario cada una",
-    "Pedido al proveedor armado solo con lo que hay que pedir",
-    "Recargas, servicios y lo que cobre tu kiosco"
-];
+export const DETALLE = {
+    hace: [
+        "Lector de códigos con la cámara del celu: el producto se suma solo al ticket",
+        "Stock por proveedor, con el filtro \"Hay que pedir\" para lo que se está terminando",
+        "La lista del proveedor desde un Excel, y el stock y las ventas para bajar a Excel",
+        "Caja del día: lo más vendido, las últimas ventas, los últimos 7 días y el cierre",
+        "Ruleta de premios de ejemplo, para una promo del kiosco"
+    ],
+    tambien: [
+        "Cobro con Mercado Pago o QR, y lector de códigos o balanza",
+        "Que la caja y el stock se vean en el celular del dueño, al instante",
+        "Varias cajas o sucursales, con su usuario cada una",
+        "Pedido al proveedor armado solo con lo que hay que pedir",
+        "Recargas, servicios y lo que cobre tu kiosco"
+    ]
+};

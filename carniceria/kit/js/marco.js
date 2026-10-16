@@ -15,22 +15,24 @@
 // Festejo: cuando aparece una confirmación (.hecho: turno reservado, venta cobrada, orden creada…), el ✓ entra con un
 // rebote, salen chispitas del color de la demo y el celular vibra cortito (Android). Quieto con "reducir movimiento".
 // ============================================
-import { $, esc, iniciales, nombreCompleto } from "./ui.js?v=76618fb2cb";
-import { logoSazzo, nombreDemo } from "./marca.js?v=76618fb2cb";
-import { interruptorTema, activarInterruptorTema } from "./apariencia.js?v=76618fb2cb";
-import { linkOtrasDemos, linkQuieroEsto } from "./enlaces.js?v=76618fb2cb";
-import { abrirColores, mostrarGlobitoColores, leerNombre } from "./colores.js?v=76618fb2cb";
-import { contar } from "./visita.js?v=76618fb2cb";
-import { pintarAvisos } from "./avisos.js?v=76618fb2cb";
+import { $, esc, iniciales, nombreCompleto } from "./ui.js?v=8f8507cb31";
+import { logoSazzo, nombreDemo } from "./marca.js?v=8f8507cb31";
+import { interruptorTema, activarInterruptorTema } from "./apariencia.js?v=8f8507cb31";
+import { linkOtrasDemos, linkQuieroEsto } from "./enlaces.js?v=8f8507cb31";
+import { abrirColores, mostrarGlobitoColores, leerNombre } from "./colores.js?v=8f8507cb31";
+import { contar } from "./visita.js?v=8f8507cb31";
+import { pintarAvisos } from "./avisos.js?v=8f8507cb31";
+import { revisarDetalle, htmlBotonDetalle, activarDetalle } from "./detalle.js?v=8f8507cb31";
 
 /** La barrita de Sazzo: colores, otras demos y "Quiero esto" (los textos largos solo si hay lugar). */
-export function htmlBarraSazzo(marca, opciones) {
+export function htmlBarraSazzo(marca, opciones, conDetalle = false) {
     const quiero = linkQuieroEsto(marca, opciones);
     return `
         <div class="barra-sazzo" role="group" aria-label="Sazzo">
             <button class="barra-sazzo__colores" type="button" data-colores title="Probala con tus colores" aria-label="Probala con tus colores">
                 <i class="ti ti-palette" aria-hidden="true"></i>
             </button>
+            ${conDetalle ? htmlBotonDetalle("barra-sazzo__detalle", "Detalle") : ""}
             <a class="barra-sazzo__otras" href="${esc(linkOtrasDemos(opciones))}" data-otras-demos title="Ver otras demos">
                 <i class="ti ti-layout-grid" aria-hidden="true"></i><span>Otras demos</span>
             </a>
@@ -46,7 +48,7 @@ function htmlNombreNegocio(marca) {
     return `<small data-nombre-negocio data-lema="${esc(marca.lema ?? "")}"${texto ? "" : " hidden"}>${esc(texto)}</small>`;
 }
 
-export function htmlMarco({ marca, usuario, menu = [], cambiarPersona = true }) {
+export function htmlMarco({ marca, usuario, menu = [], cambiarPersona = true, detalle = null }) {
     return `
         <button class="saltar" id="saltar" type="button">Saltar al contenido</button>
         <header class="cabecera">
@@ -71,7 +73,7 @@ export function htmlMarco({ marca, usuario, menu = [], cambiarPersona = true }) 
         </p>
         <main id="contenido" class="contenido" tabindex="-1"></main>
         <footer class="pie-app"></footer>
-        ${htmlBarraSazzo(marca)}
+        ${htmlBarraSazzo(marca, undefined, !!revisarDetalle(detalle))}
         ${menu.length ? `
         <nav class="menu" aria-label="Secciones">
             ${menu.map((i) => `
@@ -82,8 +84,9 @@ export function htmlMarco({ marca, usuario, menu = [], cambiarPersona = true }) 
 }
 
 /** Conecta los botones de Sazzo (barrita del marco o pie del ingreso) a la medición y a los colores. */
-export function activarBotonesSazzo(raiz, marca) {
+export function activarBotonesSazzo(raiz, marca, detalle = null) {
     $("[data-colores]", raiz)?.addEventListener("click", () => abrirColores(marca.prefijo, { alElegir: () => contar("colores", marca.id) }));
+    activarDetalle(raiz, marca, detalle);
     $("[data-otras-demos]", raiz)?.addEventListener("click", () => contar("otras-demos", marca.id));
     $("[data-quiero-esto]", raiz)?.addEventListener("click", () => contar("quiero-esto", marca.id));
 }
@@ -216,13 +219,13 @@ if (typeof document !== "undefined") {
  * Dibuja el marco adentro de `app`, conecta sus botones y devuelve el lugar donde van las pantallas.
  * `avisos` (opcional): () => los hechos de la demo para los avisos entre roles (kit/avisos.js).
  */
-export function pintarMarco(app, { marca, usuario, menu = [], alCambiarPersona, alReiniciar, avisos }) {
+export function pintarMarco(app, { marca, usuario, menu = [], alCambiarPersona, alReiniciar, avisos, detalle = null }) {
     avisosDelMarco = typeof avisos === "function" ? { app, prefijo: marca.prefijo, usuario, avisos } : null;
     // Sin a quién cambiar (comercio de una sola persona), no hay botón de cambiar de persona
-    app.innerHTML = htmlMarco({ marca, usuario, menu, cambiarPersona: !!alCambiarPersona });
+    app.innerHTML = htmlMarco({ marca, usuario, menu, cambiarPersona: !!alCambiarPersona, detalle });
     app.classList.toggle("sin-menu", !menu.length);
     activarInterruptorTema();
-    activarBotonesSazzo(app, marca);
+    activarBotonesSazzo(app, marca, detalle);
     mostrarGlobitoColores(app, marca.prefijo);
     ubicarBarraSazzo(app);
     seguirElAncho(app);
