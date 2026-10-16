@@ -2,8 +2,8 @@
 // Catálogo de Sazzo: arma las tarjetas de demos (desde demos.js), las animaciones al bajar, los botones de
 // contacto (desde config.js), guarda de dónde vino la visita (?o=papel / ?o=ig) y avisa a la medición.
 // ============================================
-import { DEMOS, TRABAJOS } from "./demos.js?v=c5558ab858";
-import { CONTACTO, MEDICION, LINK_DEMOS, RUTA_LIBS } from "./config.js?v=c5558ab858";
+import { DEMOS, TRABAJOS } from "./demos.js?v=095c77a65a";
+import { CONTACTO, MEDICION, LINK_DEMOS, RUTA_LIBS } from "./config.js?v=095c77a65a";
 
 const $ = (selector, raiz = document) => raiz.querySelector(selector);
 const $$ = (selector, raiz = document) => [...raiz.querySelectorAll(selector)];
@@ -428,7 +428,8 @@ document.addEventListener("click", (e) => {
     const caja = tarjeta.getBoundingClientRect();
     const fila = filaDemos.getBoundingClientRect();
     filaDemos.scrollTo({ left: filaDemos.scrollLeft + caja.left + caja.width / 2 - fila.left - fila.width / 2, behavior: mover });
-    scrollTo({ top: scrollY + caja.top - 76, behavior: mover });
+    const margen = Math.max(0, (innerHeight - 76 - caja.height) / 2);
+    scrollTo({ top: scrollY + fila.top + 6 - 76 - margen, behavior: mover });
     history.replaceState(null, "", atajo.hash);
 });
 
