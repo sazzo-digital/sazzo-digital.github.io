@@ -3,12 +3,13 @@
 // filtros que importan (cuota vencida, vence esta semana, avisaron que pagaron, no vienen hace +3 semanas, sin apto,
 // bajas) con la acción de cada uno a mano (recordatorio, confirmar, invitar), el buscador, Excel y el alta.
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=289ec4bb58";
-import { bajarExcel } from "../../kit/js/archivos.js?v=289ec4bb58";
-import { NEGOCIO } from "../marca.js?v=289ec4bb58";
-import { PLANES_CUOTA, HORAS, DIAS_CORTOS, ORDEN_SEMANA, TOPES, REAVISAR_DIAS, REINVITAR_DIAS, pesos, fechaCorta } from "../datos.js?v=289ec4bb58";
-import { guia, activarGuias, pastilla, pastillaCuota, cara, haceDias, mostrarMensaje } from "./comunes.js?v=289ec4bb58";
-import { htmlConsigna } from "../../kit/js/consigna.js?v=289ec4bb58";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=f31b69dab0";
+import { MEDIOS_PAGO } from "../../kit/js/pagos.js?v=f31b69dab0";
+import { bajarExcel } from "../../kit/js/archivos.js?v=f31b69dab0";
+import { NEGOCIO } from "../marca.js?v=f31b69dab0";
+import { PLANES_CUOTA, HORAS, DIAS_CORTOS, ORDEN_SEMANA, TOPES, REAVISAR_DIAS, REINVITAR_DIAS, pesos, fechaCorta } from "../datos.js?v=f31b69dab0";
+import { guia, activarGuias, pastilla, pastillaCuota, cara, haceDias, mostrarMensaje } from "./comunes.js?v=f31b69dab0";
+import { htmlConsigna } from "../../kit/js/consigna.js?v=f31b69dab0";
 
 let filtro = "pronto"; // de entrada, los que vencen esta semana: lo primero que mira la dueña
 let texto = "";
@@ -200,8 +201,7 @@ export function vistaAlta(cont, { usuario, datos }) {
             <fieldset class="grupo">
                 <legend>Primera cuota</legend>
                 <div class="chips" role="radiogroup" aria-label="Cómo paga la primera cuota">
-                    <button class="chip${medioAlta === "efectivo" ? " activo" : ""}" type="button" role="radio" aria-checked="${medioAlta === "efectivo"}" data-medio="efectivo">Efectivo</button>
-                    <button class="chip${medioAlta === "transferencia" ? " activo" : ""}" type="button" role="radio" aria-checked="${medioAlta === "transferencia"}" data-medio="transferencia">Transferencia</button>
+                    ${Object.entries(MEDIOS_PAGO).map(([id, texto]) => `<button class="chip${medioAlta === id ? " activo" : ""}" type="button" role="radio" aria-checked="${medioAlta === id}" data-medio="${esc(id)}">${esc(texto)}</button>`).join("")}
                 </div>
             </fieldset>
             <p class="nota"><i class="ti ti-lock" aria-hidden="true"></i><span>Sin teléfono, mail ni documento: es una demo con datos inventados.</span></p>

@@ -3,9 +3,10 @@
 // entregadas) y cuánto tiene que haber en el cajón. "Cerrar caja": contás la plata y te dice si sobra o falta.
 // La dueña ve además la ganancia (venta menos costo) y los últimos 7 días.
 // ============================================
-import { esc, aviso, fechaCorta } from "../../kit/js/ui.js?v=c96e24d926";
-import { FONDO_CAJA, MEDIOS, TOPES, pesos } from "../datos.js?v=c96e24d926";
-import { hora } from "./comunes.js?v=c96e24d926";
+import { esc, aviso, fechaCorta } from "../../kit/js/ui.js?v=d60f8ab62c";
+import { FONDO_CAJA, MEDIOS, TOPES, pesos } from "../datos.js?v=d60f8ab62c";
+import { textoMedio } from "../../kit/js/pagos.js?v=d60f8ab62c";
+import { hora } from "./comunes.js?v=d60f8ab62c";
 
 const DIAS = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
 const nombreDia = (dia) => {
@@ -43,15 +44,15 @@ export function vistaCaja(cont, { usuario, datos }) {
             <div class="numero-caja"><span>Vendido hoy</span><b>${esc(pesos(c.vendido))}</b><small>${esc(c.cantidad)} ventas${c.listasEntregadas ? ` · ${esc(c.listasEntregadas)} ${c.listasEntregadas === 1 ? "lista" : "listas"}` : ""}</small></div>
             ${duena ? `<div class="numero-caja numero-caja--ganancia"><span>Ganancia</span><b>${esc(pesos(c.ganancia))}</b><small>${esc(pct(c.ganancia, c.vendido))} % de lo vendido</small></div>` : ""}
             <div class="numero-caja"><span>Efectivo</span><b>${esc(pesos(c.porMedio.efectivo))}</b></div>
-            <div class="numero-caja"><span>Transferencia</span><b>${esc(pesos(c.porMedio.transferencia))}</b></div>
-            <div class="numero-caja"><span>Tarjeta</span><b>${esc(pesos(c.porMedio.tarjeta))}</b></div>
+            <div class="numero-caja"><span>Transferencia y QR</span><b>${esc(pesos(c.porMedio.transferencia + c.porMedio.qr))}</b></div>
+            <div class="numero-caja"><span>Débito y crédito</span><b>${esc(pesos(c.porMedio.debito + c.porMedio.credito))}</b><small>débito ${esc(pesos(c.porMedio.debito))} · crédito ${esc(pesos(c.porMedio.credito))}</small></div>
         </div>
         <div class="tablero-caja">
             <section class="bloque">
                 <h2 class="subtitulo"><i class="ti ti-receipt"></i> Últimas ventas</h2>
                 ${c.ultimas.length ? `<ul class="movimientos">${c.ultimas.map((v) => `
                     <li class="movimiento">
-                        <span><b>${v.pedidoId ? '<i class="ti ti-school" aria-hidden="true"></i> Lista escolar · ' : ""}${esc(v.items.map((i) => `${i.cantidad > 1 ? `${i.cantidad} ` : ""}${i.nombre}`).join(", "))}</b><small>${esc(hora(v.fecha))} · ${esc(MEDIOS[v.medio])} · ${esc(v.por)}</small></span>
+                        <span><b>${v.pedidoId ? '<i class="ti ti-school" aria-hidden="true"></i> Lista escolar · ' : ""}${esc(v.items.map((i) => `${i.cantidad > 1 ? `${i.cantidad} ` : ""}${i.nombre}`).join(", "))}</b><small>${esc(hora(v.fecha))} · ${esc(textoMedio(v, MEDIOS))} · ${esc(v.por)}</small></span>
                         <b class="monto">${esc(pesos(v.total))}</b>
                     </li>`).join("")}</ul>` : `<p class="nota">Todavía no hubo ventas hoy.</p>`}
             </section>

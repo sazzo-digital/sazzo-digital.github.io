@@ -4,7 +4,7 @@
 //   sazzo-origen  ?o=papel, ?o=ig, ?o=wa o ?o=ig-kiosco (lo guarda el catálogo o la demo, si el link trae ?o=).
 //                 Vale para esa visita: 12 horas desde que llegó con el link (si vuelve otro día sin link, es "directo").
 //   sazzo-equipo  número al azar de este navegador (distingue "volvió" de "otra persona"; no identifica a nadie)
-//   sazzo-yo      ?yo=1 marca los equipos de Sazzo para que no cuenten (?yo=0 lo desmarca)
+//   sazzo-yo      ?yo=1 marca los equipos de Sazzo: mandan con prueba "yo" y van aparte (?yo=0 lo desmarca)
 // Nada de esto cambia lo que se ve en pantalla. Nunca se manda nombre, teléfono, mail, ubicación ni lo que se carga
 // en la demo: solo qué pasó (de una lista fija), en qué demo, la persona de ejemplo, la pantalla, el origen, el
 // tipo de equipo y el navegador. Si algo se rompe en el celular de alguien, se manda "error" con la pantalla y el
@@ -12,7 +12,7 @@
 // La dirección de la planilla la pone el script de armar el sitio (medicion\direccion.txt). En la PC (localhost)
 // nunca se manda nada.
 // ============================================
-import { MEDICION } from "./config.js?v=f04a42026d";
+import { MEDICION } from "./config.js?v=8faf6088f2";
 
 const ORIGEN_VALIDO = /^[a-z0-9-]{1,30}$/; // igual que el catálogo
 export const EVENTOS = ["abrio-demo", "entro", "pantalla", "quiero-esto", "otras-demos", "colores", "error", "velocidad", "detalle"];
@@ -110,8 +110,11 @@ let ultimaPantalla = null;
 /**
  * Avisa al registro de visitas qué pasó: que (uno de EVENTOS) en la demo (su id, ej: "kiosco").
  * Campos fijos y con tope. Devuelve el evento armado (o null si `que` no es de la lista).
- * Solo manda si hay dirección de planilla, no es la PC y este equipo no está marcado con ?yo=1.
+ * Solo manda si hay dirección de planilla y no es la PC. Los equipos marcados con ?yo=1 y los programas automáticos
+ * van marcados con "prueba" (la planilla los anota aparte, en "Pruebas").
  */
+export const pruebaDe = () => (typeof navigator !== "undefined" && navigator.webdriver ? "robot" : leer("sazzo-yo") === "1" ? "yo" : "");
+
 export function contar(que, demo, { persona, pantalla = "", medicion = MEDICION, mandar = mandarAPlanilla, enLaPC = esLaPC() } = {}) {
     if (!EVENTOS.includes(que)) return null;
     if (que === "entro") {
@@ -127,10 +130,11 @@ export function contar(que, demo, { persona, pantalla = "", medicion = MEDICION,
         equipo: equipo(),
         sesion,
         dispositivo: dispositivo().slice(0, 60),
-        cuando: Date.now()
+        cuando: Date.now(),
+        ...(pruebaDe() ? { prueba: pruebaDe() } : {})
     };
     const direccion = String(medicion?.direccion ?? "");
-    const activa = direccion.startsWith("https://script.google.com/macros/") && !enLaPC && leer("sazzo-yo") !== "1";
+    const activa = direccion.startsWith("https://script.google.com/macros/") && !enLaPC;
     if (activa) {
         cuandoSeMuestre(() => {
             evento.cuando = Date.now();
@@ -175,6 +179,8 @@ export function contarError(demo, mensaje, opciones) {
     return contar("error", demo, { ...opciones, pantalla });
 }
 
+export const PUENTE_DE_OTRA_APP = /error invoking|java object is gone/i;
+
 /**
  * Escucha los errores que nadie atajó (los que rompen algo) y los cuenta. También los que pasaron antes de que la demo
  * arrancara (tema.js los guarda en window.__sazzoErrores). "Script error." no se cuenta: es de otro sitio (por ejemplo
@@ -183,7 +189,7 @@ export function contarError(demo, mensaje, opciones) {
 export function vigilarErrores(demo) {
     demoActual = demo;
     const contarSiDice = (mensaje) => {
-        if (mensaje && mensaje !== "Script error.") contarError(demo, mensaje);
+        if (mensaje && mensaje !== "Script error." && !PUENTE_DE_OTRA_APP.test(mensaje)) contarError(demo, mensaje);
     };
     const antes = typeof window !== "undefined" && Array.isArray(window.__sazzoErrores) ? window.__sazzoErrores : [];
     if (typeof window !== "undefined") window.__sazzoErrores = null; // desde acá avisa esta función

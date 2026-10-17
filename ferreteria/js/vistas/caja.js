@@ -4,9 +4,10 @@
 // las últimas ventas y cuánto tiene que haber en el cajón. "Cerrar caja": contás la plata y te dice si sobra o falta.
 // El dueño ve además la ganancia (venta menos costo) y los últimos 7 días.
 // ============================================
-import { esc, aviso, fechaCorta } from "../../kit/js/ui.js?v=8ec449d814";
-import { FONDO_CAJA, MEDIOS, TOPES, pesos, cantidadTexto } from "../datos.js?v=8ec449d814";
-import { hora } from "./comunes.js?v=8ec449d814";
+import { esc, aviso, fechaCorta } from "../../kit/js/ui.js?v=9904c28649";
+import { FONDO_CAJA, MEDIOS, TOPES, pesos, cantidadTexto } from "../datos.js?v=9904c28649";
+import { textoMedio } from "../../kit/js/pagos.js?v=9904c28649";
+import { hora } from "./comunes.js?v=9904c28649";
 
 const DIAS = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
 const nombreDia = (dia) => {
@@ -46,8 +47,8 @@ export function vistaCaja(cont, { usuario, datos }) {
             <div class="numero-caja"><span>Vendido hoy</span><b>${esc(pesos(c.vendido))}</b><small>${esc(c.cantidad)} ventas${c.presupuestosVendidos ? ` · ${esc(c.presupuestosVendidos)} ${c.presupuestosVendidos === 1 ? "presupuesto" : "presupuestos"}` : ""}</small></div>
             ${dueno ? `<div class="numero-caja numero-caja--ganancia"><span>Ganancia</span><b>${esc(pesos(c.ganancia))}</b><small>${esc(pct(c.ganancia, c.vendido))} % de lo vendido</small></div>` : ""}
             <div class="numero-caja"><span>Efectivo</span><b>${esc(pesos(c.porMedio.efectivo))}</b></div>
-            <div class="numero-caja"><span>Transferencia</span><b>${esc(pesos(c.porMedio.transferencia))}</b></div>
-            <div class="numero-caja"><span>Tarjeta</span><b>${esc(pesos(c.porMedio.tarjeta))}</b></div>
+            <div class="numero-caja"><span>Transferencia y QR</span><b>${esc(pesos(c.porMedio.transferencia + c.porMedio.qr))}</b></div>
+            <div class="numero-caja"><span>Débito y crédito</span><b>${esc(pesos(c.porMedio.debito + c.porMedio.credito))}</b><small>débito ${esc(pesos(c.porMedio.debito))} · crédito ${esc(pesos(c.porMedio.credito))}</small></div>
             <div class="numero-caja"><span>A cuenta</span><b>${esc(pesos(c.porMedio.cuenta))}</b><small>se vendió, todavía no entró</small></div>
             ${cobrado ? `<div class="numero-caja"><span>Pagaron las cuentas</span><b>${esc(pesos(cobrado))}</b><small>${c.cobros.transferencia ? `${esc(pesos(c.cobros.transferencia))} por transferencia` : "en efectivo"}</small></div>` : ""}
         </div>
@@ -56,7 +57,7 @@ export function vistaCaja(cont, { usuario, datos }) {
                 <h2 class="subtitulo"><i class="ti ti-receipt"></i> Últimas ventas</h2>
                 ${c.ultimas.length ? `<ul class="movimientos">${c.ultimas.map((v) => `
                     <li class="movimiento">
-                        <span><b>${v.presupuestoId ? '<i class="ti ti-file-text" aria-hidden="true"></i> Presupuesto · ' : ""}${esc(v.items.map(queLlevo).join(", "))}</b><small>${esc(hora(v.fecha))} · ${esc(MEDIOS[v.medio])}${v.cuenta ? ` (${esc(v.cuenta)})` : ""} · ${esc(v.por)}</small></span>
+                        <span><b>${v.presupuestoId ? '<i class="ti ti-file-text" aria-hidden="true"></i> Presupuesto · ' : ""}${esc(v.items.map(queLlevo).join(", "))}</b><small>${esc(hora(v.fecha))} · ${esc(textoMedio(v, MEDIOS))}${v.cuenta ? ` (${esc(v.cuenta)})` : ""} · ${esc(v.por)}</small></span>
                         <b class="monto">${esc(pesos(v.total))}</b>
                     </li>`).join("")}</ul>` : `<p class="nota">Todavía no hubo ventas hoy.</p>`}
             </section>

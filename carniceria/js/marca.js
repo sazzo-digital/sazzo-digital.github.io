@@ -3,8 +3,8 @@
 // Las personas son los roles reales del rubro (nombres inventados): el dueño, el carnicero del mostrador y una clienta
 // que pide desde el celular.
 // ============================================
-import { revisarMarca } from "../kit/js/marca.js?v=d0fa7e2aa0";
-import { negocioDe } from "../kit/js/colores.js?v=d0fa7e2aa0";
+import { revisarMarca } from "../kit/js/marca.js?v=3e2c528089";
+import { negocioDe } from "../kit/js/colores.js?v=3e2c528089";
 
 export const MARCA = revisarMarca({
     id: "carniceria",
@@ -58,6 +58,13 @@ export const DETALLE = {
         "Desposte en PDF y merma promedio por animal",
         "Caja del día con lo vendido en kilos y en plata"
     ],
+    extra: {
+        titulo: "Para probar ya",
+        renglones: [
+            "Como Darío, en Vender tocá «Poner en la balanza»: el peso aparece en el visor y el precio se calcula solo",
+            "Cobrá con dos medios a la vez: una parte en efectivo y otra con débito"
+        ]
+    },
     tambien: [
         "Balanza conectada: el peso entra solo, sin escribirlo",
         "Imprimir las etiquetas y el ticket en la impresora del mostrador",

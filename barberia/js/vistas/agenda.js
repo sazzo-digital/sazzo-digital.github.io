@@ -3,12 +3,14 @@
 // los dos; en la compu, una columna por barbero) y "+ Turno" (cargar a mano el que pidió por mensaje o entró sin
 // turno). El turno que sacó un cliente desde el celular aparece resaltado hasta que Leo hace algo con él.
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=cf8a4b352a";
-import { aHora } from "../../kit/js/turnos.js?v=cf8a4b352a";
-import { fechaLocalISO } from "../../kit/js/fechas.js?v=cf8a4b352a";
-import { SERVICIOS, BARBEROS, TOPES, pesos, nombreFecha } from "../datos.js?v=cf8a4b352a";
-import { pastillaEstado, chipsDias, mostrarMensaje } from "./comunes.js?v=cf8a4b352a";
-import { htmlConsigna } from "../../kit/js/consigna.js?v=cf8a4b352a";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=6941c0942f";
+import { aHora } from "../../kit/js/turnos.js?v=6941c0942f";
+import { fechaLocalISO } from "../../kit/js/fechas.js?v=6941c0942f";
+import { SERVICIOS, BARBEROS, TOPES, HORARIO, pesos, nombreFecha, grillaDelDia, textoLibre } from "../datos.js?v=6941c0942f";
+import { pastillaEstado, chipsDias, mostrarMensaje } from "./comunes.js?v=6941c0942f";
+import { htmlConsigna } from "../../kit/js/consigna.js?v=6941c0942f";
+import { htmlBotonTV, abrirModoTV } from "../../kit/js/modo-tv.js?v=6941c0942f";
+import { NEGOCIO } from "../marca.js?v=6941c0942f";
 
 let ver = "todos"; // "todos" o el id de un barbero
 
@@ -22,7 +24,10 @@ export function vistaAgenda(cont, { usuario, datos, consulta }) {
     const salteoHoy = !pedida && fecha !== fechaLocalISO(0) && abiertos[0]?.fecha === fechaLocalISO(0);
     const a = datos.agenda(fecha);
     const nuevos = datos.nuevos();
-    const columnas = a.columnas.filter((c) => ver === "todos" || c.id === ver);
+    const enCompu = matchMedia("(min-width: 1000px)").matches;
+    const activo = ver === "todos" && !enCompu ? BARBEROS[0].id : ver;
+    const columnas = a.columnas.filter((c) => activo === "todos" || c.id === activo);
+    const ahoraMinuto = fecha === fechaLocalISO(0) ? new Date().getHours() * 60 + new Date().getMinutes() : null;
 
     const renglonTurno = (t) => `
         <li class="renglon renglon--${esc(t.estado)}${t.nuevo ? " renglon--nuevo" : ""}" id="t-${esc(t.id)}">
@@ -39,16 +44,34 @@ export function vistaAgenda(cont, { usuario, datos, consulta }) {
                 </span>` : pastillaEstado(t.estado)}
             </span>
         </li>`;
-    const renglonHueco = (h, barberoId) => `
-        <li class="renglon renglon--libre">
-            <span class="renglon__hora">${esc(aHora(h.desde))}<small>${esc(aHora(h.hasta))}</small></span>
-            <a class="hueco" href="#/nuevo?barbero=${esc(barberoId)}&fecha=${esc(fecha)}&inicio=${h.desde}"><i class="ti ti-plus" aria-hidden="true"></i> Libre: anotar turno</a>
-        </li>`;
+    const bloqueTurno = (t, col, x) => `
+        <div class="agenda-dia__bloque${ahoraMinuto !== null && t.inicio + t.duracion <= ahoraMinuto ? " agenda-dia__bloque--paso" : ""}" style="grid-column:${col};grid-row:${x.fila + 2} / span ${x.alto}">
+            <ul class="renglones">${renglonTurno(t)}</ul>
+        </div>`;
+    const bloqueLibre = (x, col, barberoId) => x.pasada
+        ? `<span class="agenda-dia__pasada" style="grid-column:${col};grid-row:${x.fila + 2} / span ${x.alto}" aria-hidden="true"></span>`
+        : `<a class="hueco agenda-dia__libre" style="grid-column:${col};grid-row:${x.fila + 2} / span ${x.alto}" href="#/nuevo?barbero=${esc(barberoId)}&fecha=${esc(fecha)}&inicio=${x.inicio}"><span>${esc(aHora(x.inicio))}</span> Libre · anotar</a>`;
+    function htmlGrilla() {
+        const grillas = columnas.map((c) => ({ c, g: grillaDelDia(c.turnos, ahoraMinuto) }));
+        const filas = grillas[0]?.g.filas ?? 0;
+        const ahora = grillas[0]?.g.ahora ?? null;
+        return `
+        <div class="agenda-dia" style="--barberos:${grillas.length};--filas:${filas}">
+            ${grillas.map(({ c, g }, k) => `
+            <div class="agenda-dia__cabeza" style="grid-column:${k + 2}">
+                <b><i class="ti ti-user" aria-hidden="true"></i> ${esc(c.nombre)}</b>
+                <small>${esc(c.turnos.length)} ${c.turnos.length === 1 ? "turno" : "turnos"} · ${esc(textoLibre(g.libres))}${g.sigue ? ` · sigue ${esc(g.sigue.cliente)} ${esc(g.sigue.hora)}` : ""}</small>
+            </div>`).join("")}
+            ${Array.from({ length: filas / 2 }, (_, h) => `<span class="agenda-dia__hora" style="grid-row:${h * 2 + 2} / span 2">${esc(aHora(HORARIO.abre + h * 30))}</span>`).join("")}
+            ${ahora !== null ? `<div class="agenda-dia__ahora" style="grid-row:${ahora + 2}"><span>Ahora</span></div>` : ""}
+            ${grillas.map(({ c, g }, k) => g.items.map((x) => (x.libre ? bloqueLibre(x, k + 2, c.id) : bloqueTurno(c.turnos.find((t) => t.id === x.turno.id), k + 2, x))).join("")).join("")}
+        </div>`;
+    }
 
     cont.innerHTML = `
         <div class="titulo-con-accion">
             <h1 class="titulo">Agenda</h1>
-            <a class="boton boton--chico" href="#/nuevo?fecha=${esc(fecha)}"><i class="ti ti-plus"></i> Turno</a>
+            <span class="titulo-con-accion__botones">${htmlBotonTV("Turnero en la tele")}<a class="boton boton--chico" href="#/nuevo?fecha=${esc(fecha)}"><i class="ti ti-plus"></i> Turno</a></span>
         </div>
         ${nuevos.length ? `<ul class="nuevos">${nuevos.map((t) => `
             <li class="nuevo">
@@ -67,26 +90,10 @@ export function vistaAgenda(cont, { usuario, datos, consulta }) {
             <span>Por hacer <b>${esc(pesos(a.resumen.porHacer))}</b></span>
         </div>
         <div class="chips" role="tablist" aria-label="Barbero">
-            <button class="chip${ver === "todos" ? " activo" : ""}" type="button" data-ver="todos">Los dos</button>
-            ${BARBEROS.map((b) => `<button class="chip${ver === b.id ? " activo" : ""}" type="button" data-ver="${esc(b.id)}">${esc(b.nombre)}</button>`).join("")}
+            ${BARBEROS.map((b) => `<button class="chip${activo === b.id ? " activo" : ""}" type="button" data-ver="${esc(b.id)}">${esc(b.nombre)}</button>`).join("")}
+            <button class="chip chip--compu${activo === "todos" ? " activo" : ""}" type="button" data-ver="todos">Los dos</button>
         </div>
-        ${a.cerrado ? vacio("Ese día la barbería está cerrada.", "ti-moon") : `
-        <div class="columnas">${columnas.map((c) => {
-            // Los que ya se atendieron (llegó o faltó), plegados arriba: lo primero que se ve es lo que sigue
-            const hechos = c.turnos.filter((t) => t.estado !== "reservado");
-            const filas = c.turnos.filter((t) => t.estado === "reservado").map((t) => ({ m: t.inicio, html: renglonTurno(t) }))
-                .concat(c.huecos.map((h) => ({ m: h.desde, html: renglonHueco(h, c.id) })));
-            return `
-            <section class="columna">
-                <h2 class="subtitulo"><i class="ti ti-user"></i> ${esc(c.nombre)}</h2>
-                ${hechos.length ? `
-                <details class="hechos">
-                    <summary>Ya atendidos (${hechos.length})</summary>
-                    <ul class="renglones">${hechos.map(renglonTurno).join("")}</ul>
-                </details>` : ""}
-                ${filas.length ? `<ul class="renglones">${filas.sort((x, y) => x.m - y.m).map((f) => f.html).join("")}</ul>` : `<p class="nota">${fecha === fechaLocalISO(0) ? "No queda nada por hoy." : "No queda nada para ese día."}</p>`}
-            </section>`;
-        }).join("")}</div>`}`;
+        ${a.cerrado ? vacio("Ese día la barbería está cerrada.", "ti-moon") : htmlGrilla()}`;
 
     const otraVez = () => vistaAgenda(cont, { usuario, datos, consulta });
     const hacer = (fn, mensaje) => {
@@ -98,6 +105,7 @@ export function vistaAgenda(cont, { usuario, datos, consulta }) {
             aviso(err, "error");
         }
     };
+    cont.querySelector("[data-modo-tv]").addEventListener("click", () => abrirModoTV({ titulo: NEGOCIO, icono: "ti-scissors", armar: () => htmlTurnero(datos.turnero()) }));
     cont.querySelectorAll("[data-dia]").forEach((b) => b.addEventListener("click", () => (location.hash = `#/inicio?fecha=${b.dataset.dia}`)));
     cont.querySelectorAll("[data-ver]").forEach((b) => b.addEventListener("click", () => {
         ver = b.dataset.ver;
@@ -185,4 +193,17 @@ export function vistaNuevoTurno(cont, { usuario, datos, consulta }) {
             aviso(err, "error");
         }
     });
+}
+
+export function htmlTurnero({ abierto, barberos }) {
+    if (!abierto) return `<p class="modo-tv__vacio">Hoy la barbería está cerrada. ¡Te esperamos mañana!</p>`;
+    return `<div class="tv-grilla">${barberos.map((b) => `
+        <section class="tv-tarjeta${b.ahora ? " tv-tarjeta--ahora" : " tv-tarjeta--libre"}">
+            <span class="tv-tarjeta__rotulo">${esc(b.nombre)} · ahora</span>
+            <b class="tv-tarjeta__grande">${b.ahora ? esc(b.ahora.cliente) : "Libre"}</b>
+            <span class="tv-tarjeta__chico">${b.ahora ? `${esc(b.ahora.servicio)} · hasta las ${esc(b.ahora.hasta)}` : "Si no tenés turno, preguntá"}</span>
+            <span class="tv-tarjeta__rotulo">Sigue</span>
+            <span class="tv-tarjeta__chico">${b.sigue ? `<b>${esc(b.sigue.cliente)}</b> · ${esc(b.sigue.hora)} · ${esc(b.sigue.servicio)}` : "Nadie más por ahora"}</span>
+        </section>`).join("")}
+    </div>`;
 }

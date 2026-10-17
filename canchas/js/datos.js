@@ -6,21 +6,46 @@
 // Reglas del kit: exigir() en lo que modifica, topes en todo lo que se carga, nada se borra (se anula o se libera)
 // y se devuelven copias. Si cambia la forma de los datos, subir VERSION_DATOS (se regeneran solos).
 // ============================================
-import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=21e7a89345";
-import { sinPasarse } from "../kit/js/topes.js?v=21e7a89345";
-import { fechaLocalISO } from "../kit/js/fechas.js?v=21e7a89345";
-import { aMinutos, aHora, diaSemana, proximosDias, franjas, fijosDelDia, ocupados, libres, revisarLibre, sePisan } from "../kit/js/turnos.js?v=21e7a89345";
-import { MARCA } from "./marca.js?v=21e7a89345";
+import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=d29cdf6ff2";
+import { sinPasarse } from "../kit/js/topes.js?v=d29cdf6ff2";
+import { fechaLocalISO, diaLocalDe } from "../kit/js/fechas.js?v=d29cdf6ff2";
+import { aMinutos, aHora, diaSemana, proximosDias, franjas, fijosDelDia, ocupados, libres, revisarLibre, sePisan } from "../kit/js/turnos.js?v=d29cdf6ff2";
+import { MARCA } from "./marca.js?v=d29cdf6ff2";
+import { MEDIOS_PAGO, DIVIDIDO, revisarPagos } from "../kit/js/pagos.js?v=d29cdf6ff2";
 
-export const VERSION_DATOS = 2;
+export const VERSION_DATOS = 3;
 
 export const TOPES = {
     grupo: 30, // letras del nombre del grupo
     dias: 7, // se reserva de hoy a 6 días adelante
     activosJugador: 3, // turnos por venir de un mismo jugador
     turnos: 400, // turnos en total (alguien aburrido reservando sin parar)
-    fijos: 40
+    fijos: 40,
+    cantidad: 50,
+    consumos: 40,
+    partes: 22,
+    ventasCantina: 500,
+    pagaCon: 10_000_000
 };
+
+export const CANTINA = [
+    ["agua", "Agua 500 ml", 1_200, 24, "ti-bottle"],
+    ["gaseosa", "Gaseosa 500 ml", 1_800, 18, "ti-bottle"],
+    ["isotonica", "Bebida isotónica", 2_200, 12, "ti-bottle"],
+    ["cerveza", "Cerveza lata", 2_300, 24, "ti-beer"],
+    ["hielo", "Bolsa de hielo", 1_500, 6, "ti-snowflake"],
+    ["sandwich", "Sándwich de miga x3", 3_000, 8, "ti-bread"],
+    ["papas", "Papas fritas", 1_800, 10, "ti-cookie"],
+    ["alfajor", "Alfajor", 1_000, 20, "ti-candy"]
+];
+
+export const MEDIOS = MEDIOS_PAGO;
+
+export function dividir(total, partes) {
+    const base = Math.floor(total / partes);
+    const resto = total - base * partes;
+    return Array.from({ length: partes }, (_, i) => base + (i < resto ? 1 : 0));
+}
 
 export const CANCELAR_HORAS = 12; // cancelando con más anticipación, la seña se devuelve; si no, se pierde
 
@@ -126,7 +151,8 @@ export function semilla() {
     const cancha = CANCHAS[0];
     const libre = libres({ lugarId: cancha.id, fecha, horario: horarioDe(cancha, fecha), turnos, fijos }).at(-2);
     if (libre !== undefined) turnos.push(nuevoTurno(cancha, fecha, libre, { id: "t-fede", grupo: "Los pibes del laburo", jugadorId: "u-jugador", origen: "app" }));
-    return { turnos, fijos };
+    const cantina = CANTINA.map(([id, nombre, precio, stock, icono]) => ({ id, nombre, precio, stock, icono }));
+    return { turnos, fijos, cantina, ventasCantina: [] };
 }
 
 // ---------- Funciones de datos ----------
@@ -241,9 +267,11 @@ export function crearDatos(prefijo = MARCA.prefijo, { reloj = () => new Date() }
         exigir(t.jugadorId === usuario.id, "Ese turno no es tuyo.");
         exigir(!t.anulado && t.estado === "reservado", "Ese turno ya no está activo.");
         exigir(horasHasta(t) > 0, "Ese turno ya empezó.");
+        exigir(!entregadoSinCobrar(t), "Ya te entregaron cosas de la cantina: para cancelar, hablá con el complejo.");
         t.sena = seDevuelve(t) ? "devuelta" : "perdida";
         t.estado = "cancelado";
         t.anulado = true;
+        devolverSinEntregar(t);
         guardado.persistir();
         return armar(t);
     }
@@ -274,7 +302,8 @@ export function crearDatos(prefijo = MARCA.prefijo, { reloj = () => new Date() }
                 total: columnas.reduce((t, c) => t + c.total, 0),
                 senas: todos.reduce((t, x) => t + senaCobrada(x), 0),
                 aCobrar: activos.reduce((t, x) => t + x.precio - senaCobrada(x), 0),
-                pendientes: todos.filter((t) => t.sena === "pendiente").length
+                pendientes: todos.filter((t) => t.sena === "pendiente").length,
+                cantina: cantinaDelDia(fecha)
             },
             nuevos: todos.filter((t) => t.nuevo)
         };
@@ -334,17 +363,31 @@ export function crearDatos(prefijo = MARCA.prefijo, { reloj = () => new Date() }
     function liberar(usuario, id) {
         exigir(esDueno(usuario), "Solo el dueño libera turnos.");
         const { turno: t, fijo, fecha } = buscarTurno(id);
+        exigir(!entregadoSinCobrar(fijo ? fijo.cuentas?.[fecha] : t), "Tiene cosas de la cantina entregadas sin cobrar: cobrá la cuenta antes de liberar el turno.");
         if (fijo) {
             fijo.liberadas = [...new Set([...fijo.liberadas, fecha])];
+            devolverSinEntregar(fijo.cuentas?.[fecha]);
         } else {
             exigir(!t.anulado, "Ese turno ya estaba liberado.");
             t.estado = "liberado";
             t.anulado = true;
             t.visto = true;
             if (t.sena === "pagada") t.sena = "devuelta";
+            devolverSinEntregar(t);
         }
         guardado.persistir();
         return true;
+    }
+
+    const entregadoSinCobrar = (c) => !c?.pago && (c?.consumos ?? []).some((k) => k.entregado);
+
+    function devolverSinEntregar(c) {
+        if (!c?.consumos?.length || c.pago) return;
+        c.consumos.filter((k) => !k.entregado).forEach((k) => {
+            const p = db().cantina.find((x) => x.id === k.productoId);
+            if (p) p.stock += k.cantidad;
+        });
+        c.consumos = c.consumos.filter((k) => k.entregado);
     }
 
     // ----- Turnos fijos -----
@@ -407,10 +450,119 @@ export function crearDatos(prefijo = MARCA.prefijo, { reloj = () => new Date() }
         return listarFijos().find((x) => x.id === f.id);
     }
 
+    const cantina = () => db().cantina.map(copia);
+    const terminado = (t) => horasHasta(t) <= -t.duracion / 60;
+    const senaQueCuenta = (t) => (t.sena === "pagada" ? t.montoSena ?? 0 : 0);
+
+    function lugarCuenta(id, crear = false) {
+        const { turno, fijo, fecha } = buscarTurno(id);
+        if (!fijo) return { c: turno, precio: turno.precio, sena: senaQueCuenta(turno), activo: !turno.anulado && turno.estado !== "faltaron", jugadorId: turno.jugadorId, cuando: turno, turno };
+        if (crear) {
+            fijo.cuentas ??= {};
+            fijo.cuentas[fecha] ??= { consumos: [], pago: null };
+        }
+        return {
+            c: fijo.cuentas?.[fecha] ?? { consumos: [], pago: null }, precio: fijo.precio ?? turno.precio, sena: 0,
+            activo: (fijo.asistencia?.[fecha] ?? "reservado") !== "faltaron", jugadorId: null, cuando: turno, turno: null
+        };
+    }
+
+    function cuenta(id) {
+        const { c: t, precio, sena } = lugarCuenta(id);
+        const consumos = (t.consumos ?? []).map((c) => ({ ...copia(c), subtotal: c.precio * c.cantidad }));
+        const total = precio + consumos.reduce((n, c) => n + c.subtotal, 0);
+        return {
+            id, turno: precio, sena, consumos, total, falta: t.pago ? 0 : total - sena,
+            pago: t.pago ? copia(t.pago) : null, sinEntregar: consumos.filter((c) => !c.entregado).length
+        };
+    }
+
+    function revisarItems(items) {
+        exigir(Array.isArray(items) && items.length, "Elegí algo de la cantina.");
+        exigir(new Set(items.map((i) => i.productoId)).size === items.length, "Cada producto va una sola vez (cambiá la cantidad).");
+        return items.map(({ productoId, cantidad }) => {
+            const p = buscar(db().cantina, productoId, "Ese producto no está en la cantina.");
+            exigir(Number.isInteger(cantidad) && cantidad >= 1 && cantidad <= TOPES.cantidad, `La cantidad de ${p.nombre} va de 1 a ${TOPES.cantidad}.`);
+            exigir(cantidad <= p.stock, p.stock ? `De ${p.nombre} quedan solo ${p.stock}.` : `No queda ${p.nombre}.`);
+            return { p, cantidad };
+        });
+    }
+
+    function sumarACuenta(usuario, id, items) {
+        const lugar = lugarCuenta(id);
+        exigir(esDueno(usuario) || (esJugador(usuario) && lugar.jugadorId === usuario.id), "Solo podés pedir para tu turno.");
+        exigir(lugar.activo, "Ese turno no está activo.");
+        exigir(!lugar.c.pago, "Esa cuenta ya está pagada.");
+        exigir(esDueno(usuario) || !terminado(lugar.cuando), "Ese turno ya terminó.");
+        const t = lugarCuenta(id, true).c;
+        const lista = revisarItems(items);
+        t.consumos ??= [];
+        exigir(t.consumos.length + lista.length <= TOPES.consumos, `Una cuenta puede tener hasta ${TOPES.consumos} renglones.`);
+        lista.forEach(({ p, cantidad }) => {
+            p.stock -= cantidad;
+            t.consumos.push({ id: nuevoId("k"), productoId: p.id, nombre: p.nombre, precio: p.precio, cantidad, por: usuario.nombre, delJugador: esJugador(usuario), cuando: ahora(), entregado: esDueno(usuario) });
+        });
+        guardado.persistir();
+        return cuenta(id);
+    }
+
+    function entregar(usuario, id, consumoId) {
+        exigir(esDueno(usuario), "Solo el dueño marca lo entregado.");
+        const t = lugarCuenta(id).c;
+        const c = buscar(t.consumos ?? [], consumoId, "Ese pedido no está en la cuenta.");
+        c.entregado = true;
+        guardado.persistir();
+        return cuenta(id);
+    }
+
+    function cobrarCuenta(usuario, id, { medio, partes = 1, pagos = null } = {}) {
+        exigir(esDueno(usuario), "Solo el dueño cobra la cuenta.");
+        exigir(MEDIOS[medio] || medio === DIVIDIDO, "Elegí cómo pagan.");
+        exigir(Number.isInteger(partes) && partes >= 1 && partes <= TOPES.partes, `Se divide entre 1 y ${TOPES.partes}.`);
+        const lugar = lugarCuenta(id);
+        exigir(lugar.turno ? !lugar.turno.anulado : lugar.activo, "Ese turno está liberado o cancelado.");
+        exigir(!lugar.c.pago, "Esa cuenta ya está pagada.");
+        const t = lugarCuenta(id, true).c;
+        const { falta } = cuenta(id);
+        const partesPago = medio === DIVIDIDO ? revisarPagos(falta, pagos) : null;
+        t.pago = { total: falta, medio, partes: dividir(falta, partes), cuando: ahora(), por: usuario.nombre, ...(partesPago ? { pagos: partesPago } : {}) };
+        if (lugar.turno?.sena === "pendiente") lugar.turno.sena = "pagada";
+        (t.consumos ?? []).forEach((c) => (c.entregado = true));
+        guardado.persistir();
+        return cuenta(id);
+    }
+
+    function venderCantina(usuario, { items, medio, pagaCon = null, pagos = null } = {}) {
+        exigir(esDueno(usuario), "Solo el dueño vende en la cantina.");
+        exigir(MEDIOS[medio] || medio === DIVIDIDO, "Elegí cómo paga.");
+        exigir(db().ventasCantina.length < TOPES.ventasCantina, `Ya hay ${TOPES.ventasCantina} ventas. Es una demo: tocá "Empezar de cero" arriba.`);
+        const lista = revisarItems(items);
+        const total = lista.reduce((n, { p, cantidad }) => n + p.precio * cantidad, 0);
+        let vuelto = null;
+        if (medio === "efectivo" && pagaCon !== null && pagaCon !== "") {
+            exigir(Number.isInteger(pagaCon) && pagaCon >= total && pagaCon <= TOPES.pagaCon, `Con ${pesos(Number(pagaCon) || 0)} no alcanza: son ${pesos(total)}.`);
+            vuelto = pagaCon - total;
+        }
+        const partesPago = medio === DIVIDIDO ? revisarPagos(total, pagos) : null;
+        lista.forEach(({ p, cantidad }) => (p.stock -= cantidad));
+        const venta = { id: nuevoId("vc"), fecha: ahora(), items: lista.map(({ p, cantidad }) => ({ productoId: p.id, nombre: p.nombre, precio: p.precio, cantidad })), total, medio, vuelto, ...(partesPago ? { pagos: partesPago } : {}) };
+        db().ventasCantina.push(venta);
+        guardado.persistir();
+        return copia(venta);
+    }
+
+    function cantinaDelDia(fecha = hoy()) {
+        const turnos = db().turnos.filter((t) => t.fecha === fecha && t.pago).reduce((n, t) => n + (t.consumos ?? []).reduce((m, c) => m + c.precio * c.cantidad, 0), 0);
+        const deFijos = db().fijos.reduce((n, f) => n + (f.cuentas?.[fecha]?.pago ? f.cuentas[fecha].consumos.reduce((m, c) => m + c.precio * c.cantidad, 0) : 0), 0);
+        const sueltas = db().ventasCantina.filter((v) => diaLocalDe(v.fecha) === fecha).reduce((n, v) => n + v.total, 0);
+        return turnos + deFijos + sueltas;
+    }
+
     return {
         guardado,
         dias, libresDe, reservar, misTurnos, cancelar, seDevuelve: (id) => seDevuelve(buscar(db().turnos, id)),
         grilla, nuevos, turno, marcarVisto, anotar, marcar, cobrarSena, liberar,
-        listarFijos, liberarFijo, volverFijo, nuevoFijo
+        listarFijos, liberarFijo, volverFijo, nuevoFijo,
+        cantina, cuenta, sumarACuenta, entregar, cobrarCuenta, venderCantina, cantinaDelDia
     };
 }

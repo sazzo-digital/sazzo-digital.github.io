@@ -5,11 +5,15 @@
 // transferencia o tarjeta. Código que no está → "¿Lo cargás?" y queda listo para vender.
 // En la compu, dos columnas (artículos | ticket); en el celular, el ticket abajo con una barrita arriba que lleva a él.
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=c96e24d926";
-import { TOPES, MEDIOS, RUBROS, DESCUENTO_MAYOR, pesos, precioMayor, esISBN } from "../datos.js?v=c96e24d926";
-import { NEGOCIO } from "../marca.js?v=c96e24d926";
-import { puedeEscanear, escanear } from "../../kit/js/escaner.js?v=c96e24d926";
-import { EVENTO_REINICIO } from "../../kit/js/guardado.js?v=c96e24d926";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=d60f8ab62c";
+import { TOPES, MEDIOS, RUBROS, DESCUENTO_MAYOR, pesos, precioMayor, esISBN } from "../datos.js?v=d60f8ab62c";
+import { textoMedio } from "../../kit/js/pagos.js?v=d60f8ab62c";
+import { NEGOCIO, MARCA } from "../marca.js?v=d60f8ab62c";
+import { puedeEscanear, escanear } from "../../kit/js/escaner.js?v=d60f8ab62c";
+import { EVENTO_REINICIO } from "../../kit/js/guardado.js?v=d60f8ab62c";
+import { abrirCaja } from "../../kit/js/caja.js?v=d60f8ab62c";
+import { MEDIOS_PAGO, mediosParaCaja } from "../../kit/js/pagos.js?v=d60f8ab62c";
+import { RUBROS as RUBROS_CAJA, precioPara } from "../datos.js?v=d60f8ab62c";
 
 // El ticket en curso queda en memoria mientras se navega (se vacía al cobrar)
 export const ticket = new Map(); // productoId → cantidad
@@ -28,6 +32,7 @@ export function vistaVender(cont, { usuario, datos }) {
             <h1 class="titulo">Vender</h1>
             <span class="negocio"><i class="ti ti-building-store" aria-hidden="true"></i>${esc(NEGOCIO)}</span>
         </div>
+        <button class="boton boton--ancho abrir-caja" type="button" data-abrir-caja><i class="ti ti-scan"></i> Abrir la caja: escaneá y cobrá como en el súper</button>
         <button class="ticket-barra" type="button" hidden></button>
         <div class="caja-venta">
             <section class="productos" aria-label="Artículos">
@@ -197,7 +202,7 @@ export function vistaVender(cont, { usuario, datos }) {
             <div class="hecho">
                 <i class="ti ti-circle-check" aria-hidden="true"></i>
                 <h2 class="titulo">Vendido</h2>
-                <p>${esc(pesos(v.total))} · ${esc(MEDIOS[v.medio])}</p>
+                <p>${esc(pesos(v.total))} · ${esc(textoMedio(v, MEDIOS))}</p>
                 ${v.vuelto !== null ? `<p class="vuelto vuelto--grande">Vuelto: <b>${esc(pesos(v.vuelto))}</b></p>` : ""}
                 <button class="boton boton--secundario" type="button" data-nueva><i class="ti ti-plus"></i> Nueva venta</button>
             </div>
@@ -281,6 +286,24 @@ export function vistaVender(cont, { usuario, datos }) {
         pintarProductos();
     });
     cont.querySelector("[data-camara]")?.addEventListener("click", () => escanear(alBuscar));
+    const paraCaja = (p) => ({ ...p, seccion: p.rubro, icono: RUBROS_CAJA.find((r) => r.id === p.rubro)?.icono ?? "ti-package" });
+    cont.querySelector("[data-abrir-caja]").addEventListener("click", () => abrirCaja({
+        titulo: NEGOCIO,
+        prefijo: MARCA.prefijo,
+        productos: () => datos.listarProductos().filter((p) => !p.servicio).map(paraCaja),
+        secciones: RUBROS_CAJA.filter((r) => datos.listarProductos().some((p) => p.rubro === r.id && !p.servicio)).map((r) => ({ id: r.id, texto: r.nombre })),
+        buscar: (texto) => datos.listarProductos({ texto }).filter((p) => !p.servicio).slice(0, 24).map(paraCaja),
+        buscarCodigo: (codigo) => {
+            const p = datos.porCodigo(codigo);
+            return p && !p.servicio ? paraCaja(p) : null;
+        },
+        medios: mediosParaCaja(MEDIOS_PAGO),
+        billetes: [2_000, 5_000, 10_000, 20_000],
+        imagenQR: (p) => `img/qr/${encodeURIComponent(p.codigo)}.svg`,
+        cobrar: ({ items, medio, pagaCon, pagos }) => datos.vender(usuario, { items, medio, pagaCon, pagos }),
+        precioPara,
+        alCerrar: () => vistaVender(cont, { usuario, datos })
+    }));
 
     pintarRubros();
     pintarProductos();

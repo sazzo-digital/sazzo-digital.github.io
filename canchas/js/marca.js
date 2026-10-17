@@ -2,8 +2,8 @@
 // Marca, personas y "también puede tener" de Sazzo Canchas (diseñada el 08/10/2026).
 // Las personas son los roles reales del rubro (nombres inventados): el dueño del complejo y un jugador.
 // ============================================
-import { revisarMarca } from "../kit/js/marca.js?v=21e7a89345";
-import { negocioDe } from "../kit/js/colores.js?v=21e7a89345";
+import { revisarMarca } from "../kit/js/marca.js?v=d29cdf6ff2";
+import { negocioDe } from "../kit/js/colores.js?v=d29cdf6ff2";
 
 export const MARCA = revisarMarca({
     id: "canchas",
@@ -45,14 +45,22 @@ export const DETALLE = {
         "Fútbol 5, Fútbol 7 y pádel, cada una con su duración y su seña",
         "El dueño anota desde la grilla los turnos que llegan por teléfono",
         "Marcar si llegaron o faltaron, y cobrar la seña",
-        "Liberar un turno fijo solo por esta semana",
+        "Cantina: el jugador pide desde su turno y el dueño cobra la cuenta, dividida entre todos",
         "El jugador ve sus turnos y puede cancelar o volver a reservar"
     ],
+    extra: {
+        titulo: "Para probar ya",
+        renglones: [
+            "Como Fede, pedí aguas o una cerveza a la cantina desde tu turno",
+            "Como Gustavo, mirá el pedido, marcalo entregado y cobrá la cuenta",
+            "Dividí la cuenta entre todos los jugadores, en partes iguales",
+            "La cantina también vende sola, con su caja y su stock"
+        ]
+    },
     tambien: [
         "Que el turno le llegue al dueño en su celular, al instante",
         "Seña con Mercado Pago o transferencia, de verdad",
         "Botón para avisarle al grupo por WhatsApp",
-        "Cantina: sumar bebidas al turno",
         "Torneos, \"falta uno\" y avisos por lluvia",
         "Varios complejos, con su usuario cada uno"
     ]

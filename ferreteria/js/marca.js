@@ -3,8 +3,8 @@
 // Las personas son los roles reales del rubro (nombres inventados): el dueño, el empleado del mostrador y un cliente
 // con cuenta corriente que pide presupuestos desde el celular.
 // ============================================
-import { revisarMarca } from "../kit/js/marca.js?v=8ec449d814";
-import { negocioDe } from "../kit/js/colores.js?v=8ec449d814";
+import { revisarMarca } from "../kit/js/marca.js?v=9904c28649";
+import { negocioDe } from "../kit/js/colores.js?v=9904c28649";
 
 export const MARCA = revisarMarca({
     id: "ferreteria",
@@ -54,11 +54,19 @@ export const NEGOCIO = negocioDe(MARCA.prefijo, "Ferretería La Escuadra"); // n
 export const DETALLE = {
     hace: [
         "Presupuesto en PDF que el cliente acepta desde su celu",
-        "Lector de códigos con la cámara para vender rápido",
+        "Caja como la del súper con lector de códigos, y cobro con dos medios a la vez",
         "Pedidos a proveedores con lo que hay que pedir",
         "La lista del proveedor desde Excel y precios con tu margen por rubro",
         "Recordatorio para las cuentas corrientes, y la caja con lo que más plata dejó"
     ],
+    extra: {
+        titulo: "Para probar ya",
+        renglones: [
+            "Como Marcos, pedí como hablás y sumá la foto de lo que se rompió",
+            "Como Nahuel, entrás directo al pedido: elegís qué es lo de la foto y se lo mandás en 3 toques",
+            "Cuando lo acepta, pasalo a venta: se descuenta del stock y va a su cuenta corriente"
+        ]
+    },
     tambien: [
         "Mandar el presupuesto por WhatsApp de verdad",
         "Reconocer la pieza de la foto sola",

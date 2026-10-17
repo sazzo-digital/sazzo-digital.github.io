@@ -6,17 +6,19 @@
 // peso. Ticket con vuelto, alias para la transferencia, "ding" al cobrar y la vista previa del ticket.
 // En la compu, dos columnas (cortes | ticket); en el celular, el ticket abajo con una barrita arriba que lleva a él.
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=d0fa7e2aa0";
-import { puedeEscanear, escanear } from "../../kit/js/escaner.js?v=d0fa7e2aa0";
-import { mantenerPantallaPrendida, htmlCopiable, activarCopiables, htmlBotonSonido, activarBotonSonido, ding } from "../../kit/js/celular.js?v=d0fa7e2aa0";
-import { TOPES, MEDIOS, ALIAS, ANIMALES, ETIQUETA, pesos, kilos, aGramos, precioPorPeso, gramosPara, leerEtiqueta } from "../datos.js?v=d0fa7e2aa0";
-import { MARCA, NEGOCIO } from "../marca.js?v=d0fa7e2aa0";
-import { campoKg, kgEnCampo, precioDe, hora } from "./comunes.js?v=d0fa7e2aa0";
-import { EVENTO_REINICIO } from "../../kit/js/guardado.js?v=d0fa7e2aa0";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=3e2c528089";
+import { puedeEscanear, escanear } from "../../kit/js/escaner.js?v=3e2c528089";
+import { mantenerPantallaPrendida, htmlCopiable, activarCopiables, htmlBotonSonido, activarBotonSonido, ding } from "../../kit/js/celular.js?v=3e2c528089";
+import { TOPES, MEDIOS, ALIAS, ANIMALES, ETIQUETA, pesos, kilos, aGramos, precioPorPeso, gramosPara, leerEtiqueta } from "../datos.js?v=3e2c528089";
+import { textoMedio, DIVIDIDO, partesIniciales, htmlDosMedios, activarDosMedios } from "../../kit/js/pagos.js?v=3e2c528089";
+import { MARCA, NEGOCIO } from "../marca.js?v=3e2c528089";
+import { campoKg, kgEnCampo, precioDe, hora } from "./comunes.js?v=3e2c528089";
+import { EVENTO_REINICIO } from "../../kit/js/guardado.js?v=3e2c528089";
 
 // El ticket en curso queda en memoria mientras se navega (se vacía al cobrar)
 export const ticket = new Map(); // articuloId → { gramos } o { unidades }
 let medio = "efectivo";
+let partes = null;
 let animal = null; // null = lo que más sale
 let pesando = null; // { id, modo: "kg" | "plata" } mientras se escribe el peso de un corte
 addEventListener(EVENTO_REINICIO, () => {
@@ -26,6 +28,10 @@ addEventListener(EVENTO_REINICIO, () => {
 });
 
 const BILLETES = [10_000, 20_000, 50_000];
+const partesPara = (total) => {
+    if (!partes || partes.total !== total) partes = { total, lista: partesIniciales(total, MEDIOS) };
+    return partes.lista;
+};
 const RAPIDOS_KG = [0.5, 1, 1.5, 2];
 
 export function vistaVender(cont, { usuario, datos }) {
@@ -154,6 +160,12 @@ export function vistaVender(cont, { usuario, datos }) {
                 <label>¿Cuánta plata? ($)
                     <input name="plata" type="number" inputmode="numeric" min="${TOPES.plataMin}" max="${TOPES.plata}" step="1" placeholder="Ej: 8000" required>
                 </label>` : `
+                <div class="pantalla-caja balanza">
+                    <span class="pantalla-caja__ultimo">${esc(a.nombre)} · ${esc(pesos(a.precio))}/kg</span>
+                    <b class="pantalla-caja__total" data-balanza-kg>0,000 kg</b>
+                    <span class="pantalla-caja__cuantos"><span>Balanza</span><span data-balanza-plata></span></span>
+                </div>
+                <button class="boton boton--secundario boton--ancho" type="button" data-pesar><i class="ti ti-scale"></i> Poner en la balanza</button>
                 <label>Peso de la balanza
                     ${campoKg({ nombre: "kg", valor: kgEnCampo(enTicket), requerido: true })}
                 </label>
@@ -165,11 +177,20 @@ export function vistaVender(cont, { usuario, datos }) {
         const campo = f.kg ?? f.plata;
         const cuenta = f.querySelector(".cuenta-peso");
         const gramosDe = () => (plata ? (f.plata.value ? gramosPara(Number(f.plata.value), a.precio) : NaN) : aGramos(f.kg.value));
+        const pantallaKg = f.querySelector("[data-balanza-kg]");
+        const pantallaPlata = f.querySelector("[data-balanza-plata]");
+        const enKg = (g) => `${(g / 1000).toLocaleString("es-AR", { minimumFractionDigits: 3, maximumFractionDigits: 3 })} kg`;
         const mostrar = () => {
             const g = gramosDe();
+            if (pantallaKg) {
+                pantallaKg.textContent = enKg(Number.isInteger(g) ? g : 0);
+                pantallaPlata.textContent = Number.isInteger(g) ? pesos(precioPorPeso(g, a.precio)) : "";
+            }
             if (!campo.value) cuenta.textContent = "";
             else if (plata && !(Number.isInteger(Number(f.plata.value)) && Number(f.plata.value) >= TOPES.plataMin && Number(f.plata.value) <= TOPES.plata)) cuenta.innerHTML = `<span class="falta">Entre ${esc(pesos(TOPES.plataMin))} y ${esc(pesos(TOPES.plata))}.</span>`;
             else if (!Number.isInteger(g)) cuenta.innerHTML = `<span class="falta">Escribí los kilos con hasta 3 decimales (ej: 1,625).</span>`;
+            else if (g < TOPES.gramosMin || g > TOPES.gramos) cuenta.innerHTML = `<span class="falta">El peso tiene que estar entre ${esc(kilos(TOPES.gramosMin))} y ${esc(kilos(TOPES.gramos, 0))}.</span>`;
+            else if (g > a.stock) cuenta.innerHTML = `<span class="falta">${a.stock > 0 ? `De ${esc(a.nombre)} quedan ${esc(kilos(a.stock))}.` : `No queda ${esc(a.nombre)}.`}</span>`;
             else if (plata) cuenta.innerHTML = `Cortá <b>${esc(kilos(g))}</b> · ${esc(pesos(precioPorPeso(g, a.precio)))}`;
             else cuenta.innerHTML = `${esc(kilos(g))} × ${esc(pesos(a.precio))} = <b>${esc(pesos(precioPorPeso(g, a.precio)))}</b>`;
         };
@@ -185,6 +206,24 @@ export function vistaVender(cont, { usuario, datos }) {
             pesando.modo = b.dataset.modo;
             pintarPesar();
         }));
+        f.querySelector("[data-pesar]")?.addEventListener("click", () => {
+            const final = Math.max(TOPES.gramosMin, Math.min(Math.round((700 + Math.random() * 1100) / 5) * 5, Math.floor(a.stock / 5) * 5));
+            const listo = () => {
+                f.kg.value = kgEnCampo(final);
+                mostrar();
+            };
+            if (matchMedia("(prefers-reduced-motion: reduce)").matches) return listo();
+            const inicio = performance.now();
+            const paso = (ahora) => {
+                const t = Math.min((ahora - inicio) / 1100, 1);
+                if (!pantallaKg.isConnected) return;
+                const vaiven = Math.sin(t * 18) * (1 - t) * 160;
+                pantallaKg.textContent = enKg(Math.max(0, Math.round(final * (1 - Math.exp(-t * 5)) + vaiven)));
+                if (t < 1) requestAnimationFrame(paso);
+                else listo();
+            };
+            requestAnimationFrame(paso);
+        });
         f.querySelectorAll("[data-kg]").forEach((b) => b.addEventListener("click", () => {
             f.kg.value = kgEnCampo(Number(b.dataset.kg) * 1000);
             mostrar();
@@ -237,9 +276,10 @@ export function vistaVender(cont, { usuario, datos }) {
             </ul>
             <div class="total"><span>Total${armado.gramos ? ` <small>${esc(kilos(armado.gramos))}</small>` : ""}</span><b>${esc(pesos(armado.total))}</b></div>
             <div class="chips medios" role="radiogroup" aria-label="Cómo paga">
-                ${Object.entries(MEDIOS).map(([id, texto]) => `<button class="chip${medio === id ? " activo" : ""}" type="button" role="radio" aria-checked="${medio === id}" data-medio="${id}">${texto}</button>`).join("")}
+                ${Object.entries({ ...MEDIOS, [DIVIDIDO]: "Dos medios" }).map(([id, texto]) => `<button class="chip${medio === id ? " activo" : ""}" type="button" role="radio" aria-checked="${medio === id}" data-medio="${id}">${texto}</button>`).join("")}
             </div>
             <form class="formulario cobrar" novalidate>
+                ${medio === DIVIDIDO ? htmlDosMedios(partesPara(armado.total), MEDIOS) : ""}
                 ${medio === "efectivo" ? `
                 <label>Paga con (si querés saber el vuelto)
                     <input name="pagaCon" type="number" inputmode="numeric" min="0" max="${TOPES.pagaCon}" step="1" placeholder="Ej: 20000">
@@ -282,6 +322,7 @@ export function vistaVender(cont, { usuario, datos }) {
         const form = lugarTicket.querySelector(".cobrar");
         if (!form) return;
         const pagaCon = form.pagaCon;
+        if (medio === DIVIDIDO) activarDosMedios(form, partes.lista, armado.total);
         const mostrarVuelto = () => {
             const n = Number(pagaCon.value);
             const p = lugarTicket.querySelector(".vuelto");
@@ -297,7 +338,7 @@ export function vistaVender(cont, { usuario, datos }) {
         form.addEventListener("submit", (e) => {
             e.preventDefault();
             try {
-                const v = datos.vender(usuario, { items, medio, pagaCon: pagaCon?.value ? Number(pagaCon.value) : null });
+                const v = datos.vender(usuario, { items, medio, pagaCon: pagaCon?.value ? Number(pagaCon.value) : null, pagos: medio === DIVIDIDO ? partes.lista.map((p) => ({ ...p })) : null });
                 ticket.clear();
                 ding(MARCA.prefijo);
                 vendido(v);
@@ -314,7 +355,7 @@ export function vistaVender(cont, { usuario, datos }) {
             <div class="hecho">
                 <i class="ti ti-circle-check" aria-hidden="true"></i>
                 <h2 class="titulo">Vendido</h2>
-                <p>${esc(pesos(v.total))} · ${esc(MEDIOS[v.medio])}</p>
+                <p>${esc(pesos(v.total))} · ${esc(textoMedio(v, MEDIOS))}</p>
                 ${v.vuelto !== null ? `<p class="vuelto vuelto--grande">Vuelto: <b>${esc(pesos(v.vuelto))}</b></p>` : ""}
                 <div class="acciones">
                     <button class="boton" type="button" data-nueva><i class="ti ti-plus"></i> Nueva venta</button>
@@ -395,7 +436,7 @@ export function htmlTicket(v) {
             <p class="papel-ticket__detalle">${i.venta === "kg" ? `${esc(kilos(i.gramos))} x ${esc(pesos(i.precio))}/kg` : `${esc(i.unidades)} x ${esc(pesos(i.precio))}`}</p>`).join("")}
             <hr>
             <p class="papel-ticket__renglon papel-ticket__total"><span>TOTAL</span><span>${esc(pesos(v.total))}</span></p>
-            <p>${esc(MEDIOS[v.medio])}${v.vuelto !== null && v.vuelto !== undefined ? ` · pagó ${esc(pesos(v.pagaCon))} · vuelto ${esc(pesos(v.vuelto))}` : ""}</p>
+            <p>${esc(textoMedio(v, MEDIOS))}${v.vuelto !== null && v.vuelto !== undefined ? ` · pagó ${esc(pesos(v.pagaCon))} · vuelto ${esc(pesos(v.vuelto))}` : ""}</p>
             <p class="papel-ticket__demo">DEMO · no es un comprobante</p>
         </div>`;
 }

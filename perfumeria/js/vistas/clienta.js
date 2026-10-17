@@ -3,12 +3,12 @@
 // "Recomendame uno"), cada perfume con sus notas y presentaciones, "Tu pedido" (el carrito) y "Mis pedidos".
 // El pedido no pide ningún dato: Julieta ya entró como ella. Retiro en el local.
 // ============================================
-import { esc, aviso, vacio, fechaCorta, mensajeDe } from "../../kit/js/ui.js?v=f04a42026d";
-import { verEn3D } from "../../kit/js/modelo3d.js?v=f04a42026d";
-import { FAMILIAS, PARA, PRESENTACIONES, TOPES, pesos } from "../datos.js?v=f04a42026d";
-import { NEGOCIO } from "../marca.js?v=f04a42026d";
-import { frasco, carrito, itemsDelCarrito, unidadesEnCarrito, guia, activarGuias, pastillaPedido } from "./comunes.js?v=f04a42026d";
-import { htmlConsigna } from "../../kit/js/consigna.js?v=f04a42026d";
+import { esc, aviso, vacio, fechaCorta, mensajeDe } from "../../kit/js/ui.js?v=8faf6088f2";
+import { verEn3D } from "../../kit/js/modelo3d.js?v=8faf6088f2";
+import { FAMILIAS, PARA, PRESENTACIONES, TOPES, pesos, frasco3D, notaFrasco } from "../datos.js?v=8faf6088f2";
+import { NEGOCIO } from "../marca.js?v=8faf6088f2";
+import { frasco, carrito, itemsDelCarrito, unidadesEnCarrito, guia, activarGuias, pastillaPedido } from "./comunes.js?v=8faf6088f2";
+import { htmlConsigna } from "../../kit/js/consigna.js?v=8faf6088f2";
 
 let familia = null;
 let para = null;
@@ -127,7 +127,7 @@ export function vistaPerfume(cont, { datos, usuario, params: [id] }) {
         ${esDuena ? `<p class="nota"><i class="ti ti-info-circle"></i> Botella madre: ${esc(p.ml)} ml · frascos de 50: ${esc(p.stock50)} · de 100: ${esc(p.stock100)}</p>` : ""}`;
     // El frasco en 3D, con el perfume del color de su familia (y "Verlo en tu mesa" donde el celular puede)
     cont.querySelector("[data-3d]")?.addEventListener("click", () =>
-        verEn3D({ titulo: p.nombre, src: "img/frasco.glb", colores: { liquido: p.familiaInfo.color } }).catch((err) => aviso(err, "error"))
+        verEn3D({ titulo: p.nombre, src: frasco3D(p.familia).archivo, colores: { liquido: p.familiaInfo.color }, nota: notaFrasco(frasco3D(p.familia)) }).catch((err) => aviso(err, "error"))
     );
     cont.querySelectorAll("[data-agregar]").forEach((b) => b.addEventListener("click", () => {
         const clave = `${p.id}/${b.dataset.agregar}`;

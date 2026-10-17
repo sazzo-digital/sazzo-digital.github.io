@@ -6,13 +6,14 @@
 // Reglas del kit: exigir() en lo que modifica, topes en todo lo que se carga, nada se borra (se cancela) y se
 // devuelven copias. Si cambia la forma de los datos, subir VERSION_DATOS (se regeneran solos).
 // ============================================
-import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=f04a42026d";
-import { filtrarPorTexto } from "../kit/js/buscar.js?v=f04a42026d";
-import { enteroHasta } from "../kit/js/topes.js?v=f04a42026d";
-import { fechaLocalISO, diaLocalDe } from "../kit/js/fechas.js?v=f04a42026d";
-import { MARCA, NEGOCIO } from "./marca.js?v=f04a42026d";
+import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=8faf6088f2";
+import { filtrarPorTexto } from "../kit/js/buscar.js?v=8faf6088f2";
+import { enteroHasta } from "../kit/js/topes.js?v=8faf6088f2";
+import { fechaLocalISO, diaLocalDe } from "../kit/js/fechas.js?v=8faf6088f2";
+import { MARCA, NEGOCIO } from "./marca.js?v=8faf6088f2";
+import { MEDIOS_PAGO, DIVIDIDO, revisarPagos } from "../kit/js/pagos.js?v=8faf6088f2";
 
-export const VERSION_DATOS = 3;
+export const VERSION_DATOS = 4;
 
 export const TOPES = {
     cantidad: 10, // de una misma presentación en un pedido
@@ -20,8 +21,12 @@ export const TOPES = {
     abiertos: 3, // pedidos sin entregar de una misma clienta
     frascos: 999,
     ml: 5_000, // de una botella madre
-    pedidos: 400
+    pedidos: 400,
+    ventas: 500,
+    pagaCon: 10_000_000
 };
+
+export const MEDIOS = MEDIOS_PAGO;
 
 export const MADRE_POCO_ML = 30; // menos de 30 ml en la botella madre: "hay que pedir"
 
@@ -32,6 +37,16 @@ export const FAMILIAS = {
     amaderado: { texto: "Amaderado", color: "#92400e" },
     fresco: { texto: "Fresco", color: "#0ea5e9" }
 };
+export const FRASCOS_3D = {
+    clasico: { archivo: "img/frasco-clasico.glb", autor: "Mgabrov" },
+    perita: { archivo: "img/frasco-perita.glb", autor: "kessiajc" },
+    atomizador: { archivo: "img/frasco-atomizador.glb", autor: "frannnny" },
+    moderno: { archivo: "img/frasco-moderno.glb", autor: "israfitul" }
+};
+export const FRASCO_DE = { floral: "perita", dulce: "atomizador", citrico: "moderno", amaderado: "clasico", fresco: "moderno" };
+export const frasco3D = (familia) => FRASCOS_3D[FRASCO_DE[familia]] ?? FRASCOS_3D.clasico;
+export const notaFrasco = (f) => `Es de ejemplo: en tu tienda va el 3D de tus productos. Frasco 3D: ${f.autor}, CC BY 4.0.`;
+
 export const PARA = { mujer: "Para ella", hombre: "Para él", unisex: "Para todos" };
 export const MOMENTOS = { dia: "De día", noche: "De noche", ambos: "De día y de noche" };
 
@@ -155,7 +170,7 @@ export function semilla() {
     });
     pedido("c-flor", [renglon(perfumes[4], "d10"), renglon(perfumes[7], "d5")], "preparado", 0);
     pedido("c-romi", [renglon(perfumes[5], "f50")], "nuevo", 0);
-    return { perfumes, clientas, pedidos, numero };
+    return { perfumes, clientas, pedidos, numero, ventas: [] };
 }
 
 // ---------- Funciones de datos ----------
@@ -298,13 +313,7 @@ export function crearDatos(prefijo = MARCA.prefijo) {
                 exigir(r.cantidad <= disponible(p, r.presentacion), `De ${p.nombre} (${pr.texto}) no alcanza para este pedido.`);
             }
         });
-        o.renglones.forEach((r) => {
-            const p = db().perfumes.find((x) => x.id === r.perfumeId);
-            const pr = PRESENTACIONES[r.presentacion];
-            if (pr.decant) p.ml -= pr.ml * r.cantidad;
-            else if (r.presentacion === "f50") p.stock50 -= r.cantidad;
-            else p.stock100 -= r.cantidad;
-        });
+        descontar(o.renglones);
         return pasar(o, "preparado");
     }
 
@@ -328,11 +337,55 @@ export function crearDatos(prefijo = MARCA.prefijo) {
         return { pedido: armarPedido(o), mensaje };
     }
 
-    function entregar(usuario, id) {
+    function descontar(renglones) {
+        renglones.forEach((r) => {
+            const p = db().perfumes.find((x) => x.id === r.perfumeId);
+            const pr = PRESENTACIONES[r.presentacion];
+            if (pr.decant) p.ml -= pr.ml * r.cantidad;
+            else if (r.presentacion === "f50") p.stock50 -= r.cantidad;
+            else p.stock100 -= r.cantidad;
+        });
+    }
+
+    function revisarPago(total, medio, pagaCon, pagos = null) {
+        if (medio === DIVIDIDO) return { medio, total, pagaCon: null, vuelto: null, pagos: revisarPagos(total, pagos) };
+        exigir(MEDIOS[medio], "Elegí cómo paga.");
+        if (medio !== "efectivo" || pagaCon === null || pagaCon === "" || pagaCon === undefined) return { medio, total, pagaCon: null, vuelto: null };
+        exigir(Number.isInteger(pagaCon) && pagaCon >= total && pagaCon <= TOPES.pagaCon, `Con ${pesos(Number(pagaCon) || 0)} no alcanza: son ${pesos(total)}.`);
+        return { medio, total, pagaCon, vuelto: pagaCon - total };
+    }
+
+    function entregar(usuario, id, { medio = null, pagaCon = null, pagos = null } = {}) {
         const o = pedidoDe(usuario, id);
         exigir(o.estado === "preparado", "Primero hay que prepararlo.");
+        if (medio !== null) o.pago = { ...revisarPago(totalDe(o.renglones), medio, pagaCon, pagos), en: ahora() };
         return pasar(o, "entregado");
     }
+
+    function productosCaja() {
+        return db().perfumes.flatMap((p) => Object.entries(PRESENTACIONES).map(([k, pr]) => ({
+            id: `${p.id}/${k}`, nombre: `${p.nombre} · ${pr.texto.replace("Frasco ", "")}`, corto: p.nombre, detalle: pr.texto, precio: p.precios[k],
+            stock: disponible(p, k), icono: pr.decant ? "ti-droplet" : "ti-bottle", presentacion: k
+        })));
+    }
+
+    function venderMostrador(usuario, { items, medio, pagaCon = null, pagos = null } = {}) {
+        exigir(esDuena(usuario), "En el mostrador vende la dueña.");
+        exigir(db().ventas.length < TOPES.ventas, `Ya hay ${TOPES.ventas} ventas. Es una demo: tocá "Empezar de cero" arriba.`);
+        exigir(Array.isArray(items) && items.length, "El ticket está vacío.");
+        const renglones = revisarRenglones(items.map(({ productoId, cantidad }) => {
+            const [perfumeId, presentacion] = String(productoId ?? "").split("/");
+            return { perfumeId, presentacion, cantidad };
+        }));
+        const pago = revisarPago(totalDe(renglones), medio, pagaCon, pagos);
+        descontar(renglones);
+        const venta = { id: nuevoId("vm"), fecha: ahora(), renglones, ...pago };
+        db().ventas.push(venta);
+        guardado.persistir();
+        return copia(venta);
+    }
+
+    const ventasDeHoy = () => db().ventas.filter((v) => diaLocalDe(v.fecha) === fechaLocalISO(0)).map(copia);
 
     /** Cancelar: si ya estaba preparado, el stock vuelve. */
     function cancelar(usuario, id) {
@@ -343,9 +396,9 @@ export function crearDatos(prefijo = MARCA.prefijo) {
                 const p = db().perfumes.find((x) => x.id === r.perfumeId);
                 const pr = PRESENTACIONES[r.presentacion];
                 if (!p) return;
-                if (pr.decant) p.ml = Math.min(TOPES.ml, p.ml + pr.ml * r.cantidad);
-                else if (r.presentacion === "f50") p.stock50 = Math.min(TOPES.frascos, p.stock50 + r.cantidad);
-                else p.stock100 = Math.min(TOPES.frascos, p.stock100 + r.cantidad);
+                if (pr.decant) p.ml += pr.ml * r.cantidad;
+                else if (r.presentacion === "f50") p.stock50 += r.cantidad;
+                else p.stock100 += r.cantidad;
             });
         }
         o.canceladoPor = usuario?.id ?? null; // para el aviso entre roles: a quién se le avisa (vistas/avisos.js)
@@ -423,7 +476,7 @@ export function crearDatos(prefijo = MARCA.prefijo) {
     return {
         guardado,
         listarPerfumes, perfume, recomendar, armarCarrito, mandarPedido, misPedidos,
-        pedidos, preparar, mensajeListo, avisarListo, entregar, cancelar,
+        pedidos, preparar, mensajeListo, avisarListo, entregar, cancelar, productosCaja, venderMostrador, ventasDeHoy,
         stock, corregirStock, clientas, mensajeSaludo, saludar
     };
 }

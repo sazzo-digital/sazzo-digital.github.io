@@ -4,13 +4,14 @@
 // diferencia. "Listo: avisarle" lo separa (se descuenta del stock) y arma el mensaje para WhatsApp; "Cobrar y
 // entregar" lo pasa a la caja; o se anula (lo separado vuelve al stock).
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=d0fa7e2aa0";
-import { mostrarMensaje } from "../../kit/js/mensaje.js?v=d0fa7e2aa0";
-import { htmlCopiable, activarCopiables, ding } from "../../kit/js/celular.js?v=d0fa7e2aa0";
-import { ESTADOS_PEDIDO, MEDIOS, RETIROS, TOPES, ALIAS, pesos, kilos, aGramos, precioPorPeso } from "../datos.js?v=d0fa7e2aa0";
-import { MARCA } from "../marca.js?v=d0fa7e2aa0";
-import { guia, activarGuias, pasos, pastillaEstado, tarjetaPedido, cuando, campoKg, kgEnCampo, loPedido } from "./comunes.js?v=d0fa7e2aa0";
-import { htmlConsigna } from "../../kit/js/consigna.js?v=d0fa7e2aa0";
+import { DIVIDIDO, partesIniciales, htmlDosMedios, activarDosMedios } from "../../kit/js/pagos.js?v=3e2c528089";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=3e2c528089";
+import { mostrarMensaje } from "../../kit/js/mensaje.js?v=3e2c528089";
+import { htmlCopiable, activarCopiables, ding } from "../../kit/js/celular.js?v=3e2c528089";
+import { ESTADOS_PEDIDO, MEDIOS, RETIROS, TOPES, ALIAS, pesos, kilos, aGramos, precioPorPeso } from "../datos.js?v=3e2c528089";
+import { MARCA } from "../marca.js?v=3e2c528089";
+import { guia, activarGuias, pasos, pastillaEstado, tarjetaPedido, cuando, campoKg, kgEnCampo, loPedido } from "./comunes.js?v=3e2c528089";
+import { htmlConsigna } from "../../kit/js/consigna.js?v=3e2c528089";
 
 /** Billetes "redondos" para cobrar un pedido: el próximo múltiplo de $10.000, de $20.000 y $50.000. */
 const billetesPara = (total) => [...new Set([10_000, 20_000, 50_000].map((b) => Math.ceil(Math.max(1, total) / b) * b))].slice(0, 3);
@@ -133,6 +134,7 @@ export function vistaPedido(cont, opciones, recien = null) {
     const empleado = usuario.rol === "empleado";
     const otraVez = (r = null) => vistaPedido(cont, opciones, r);
     let medio = "efectivo";
+    const partes = partesIniciales(pe.total, MEDIOS);
 
     const filaItem = (i) => {
         const pesado = i.venta === "kg" && i.gramos !== null;
@@ -267,7 +269,7 @@ export function vistaPedido(cont, opciones, recien = null) {
         });
         const f = acciones.querySelector(".entregar");
         const pintarPago = () => {
-            f.querySelector(".medios").innerHTML = Object.entries(MEDIOS).map(([m, texto]) =>
+            f.querySelector(".medios").innerHTML = Object.entries({ ...MEDIOS, [DIVIDIDO]: "Dos medios" }).map(([m, texto]) =>
                 `<button class="chip${medio === m ? " activo" : ""}" type="button" role="radio" aria-checked="${medio === m}" data-medio="${m}">${texto}</button>`).join("");
             f.querySelector(".pago-efectivo").innerHTML = medio === "efectivo" ? `
                 <label>Paga con (si querés saber el vuelto)
@@ -275,8 +277,10 @@ export function vistaPedido(cont, opciones, recien = null) {
                 </label>
                 <div class="billetes">${billetesPara(pe.total).map((b) => `<button class="chip" type="button" data-billete="${b}">${esc(pesos(b))}</button>`).join("")}</div>
                 <p class="vuelto" aria-live="polite"></p>`
-                : medio === "transferencia" ? `<p class="alias">Que te transfiera al alias ${htmlCopiable(ALIAS, "Copiar el alias")}</p>` : "";
+                : medio === "transferencia" ? `<p class="alias">Que te transfiera al alias ${htmlCopiable(ALIAS, "Copiar el alias")}</p>`
+                : medio === DIVIDIDO ? htmlDosMedios(partes, MEDIOS) : "";
             activarCopiables(f, "Alias copiado: pasáselo al cliente.");
+            if (medio === DIVIDIDO) activarDosMedios(f, partes, pe.total);
             f.querySelectorAll("[data-medio]").forEach((b) => b.addEventListener("click", () => {
                 medio = b.dataset.medio;
                 pintarPago();
@@ -300,7 +304,7 @@ export function vistaPedido(cont, opciones, recien = null) {
             e.preventDefault();
             const v = f.querySelector("[name=pagaCon]")?.value;
             try {
-                const { venta } = datos.entregarPedido(usuario, pe.id, { medio, pagaCon: v ? Number(v) : null });
+                const { venta } = datos.entregarPedido(usuario, pe.id, { medio, pagaCon: v ? Number(v) : null, pagos: medio === DIVIDIDO ? partes.map((x) => ({ ...x })) : null });
                 ding(MARCA.prefijo);
                 aviso("Pedido entregado y cobrado");
                 vistaPedido(cont, { ...opciones, vuelto: venta.vuelto }, "entregado");

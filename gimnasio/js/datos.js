@@ -9,13 +9,14 @@
 // se devuelven copias. Sin teléfonos, mails ni documentos: nada de datos personales. Pagos de ejemplo, sin tarjetas.
 // Si cambia la forma de los datos, subir VERSION_DATOS (se regeneran solos).
 // ============================================
-import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=289ec4bb58";
-import { filtrarPorTexto } from "../kit/js/buscar.js?v=289ec4bb58";
-import { sinPasarse } from "../kit/js/topes.js?v=289ec4bb58";
-import { fechaLocalISO } from "../kit/js/fechas.js?v=289ec4bb58";
-import { aMinutos, aHora, diaSemana } from "../kit/js/turnos.js?v=289ec4bb58";
-import { esFirma } from "../kit/js/firma.js?v=289ec4bb58";
-import { MARCA, NEGOCIO } from "./marca.js?v=289ec4bb58";
+import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=f31b69dab0";
+import { filtrarPorTexto } from "../kit/js/buscar.js?v=f31b69dab0";
+import { sinPasarse } from "../kit/js/topes.js?v=f31b69dab0";
+import { fechaLocalISO } from "../kit/js/fechas.js?v=f31b69dab0";
+import { aMinutos, aHora, diaSemana } from "../kit/js/turnos.js?v=f31b69dab0";
+import { esFirma } from "../kit/js/firma.js?v=f31b69dab0";
+import { MEDIOS_PAGO, DIVIDIDO, revisarPagos, sumarPorMedio, textoMedio } from "../kit/js/pagos.js?v=f31b69dab0";
+import { MARCA, NEGOCIO } from "./marca.js?v=f31b69dab0";
 
 export const VERSION_DATOS = 1;
 
@@ -649,6 +650,23 @@ export function crearDatos(prefijo = MARCA.prefijo, { reloj = () => new Date() }
         return { asistencia: copia(a), nueva: true };
     }
 
+    function entradaConQR(usuario, codigo) {
+        exigir(esDuena(usuario) || esProfe(usuario), "La entrada la registra la recepción.");
+        const s = db().socios.find((x) => x.id === String(codigo ?? "").trim());
+        exigir(s, "Ese QR no es de un socio de este gimnasio.");
+        const { nueva } = marcarLlegada(s, "qr");
+        let toca = null;
+        try {
+            toca = hoyLeToca(s.id);
+        } catch {
+            toca = null;
+        }
+        return {
+            socio: { id: s.id, nombre: s.nombre, apellido: s.apellido }, nueva, ...estadoCuotaDe(s),
+            dia: toca?.dia?.nombre ?? null, descansa: toca?.descansa ?? false, semana: toca?.semana ?? null
+        };
+    }
+
     /** El entreno de hoy (lo crea al anotar la primera serie, con el día que le toca o el que eligió). */
     function entrenoParaHoy(s, diaId) {
         let e = entrenoDeHoy(s.id);
@@ -891,16 +909,17 @@ export function crearDatos(prefijo = MARCA.prefijo, { reloj = () => new Date() }
         p.confirmadoEn = ahora();
     }
 
-    function registrarPago(usuario, socioId, { medio = "efectivo", monto } = {}) {
+    function registrarPago(usuario, socioId, { medio = "efectivo", monto, pagos = null } = {}) {
         exigir(esDuena(usuario), "Los pagos los registra la dueña.");
         const s = socioCrudo(socioId);
         exigir(!s.baja, `${s.nombre} está dado de baja: reactivalo primero.`);
-        exigir(medio === "efectivo" || medio === "transferencia", "Elegí si pagó en efectivo o por transferencia.");
+        exigir(MEDIOS_PAGO[medio] || medio === DIVIDIDO, "Elegí cómo pagó: efectivo, débito, crédito, transferencia, QR o dos medios.");
         const c = cuotaDe(s);
         const m = monto === undefined || monto === "" ? c.monto : numero(monto, "El monto", { desde: 1, hasta: TOPES.monto });
+        const partes = medio === DIVIDIDO ? revisarPagos(m, pagos) : null;
         exigir(!pagoAvisado(s.id), `${s.nombre} avisó que pagó por transferencia: confirmá ese aviso en vez de cargar otro pago.`);
         guardar("pagos", TOPES.pagos, "pagos");
-        const p = { id: nuevoId("pg"), socioId: s.id, fecha: hoy(), confirmadoEl: null, monto: m, cuotaId: c.id, medio, estado: "", venciaAntes: null, hasta: null, clasesAntes: null, creadoEn: ahora() };
+        const p = { id: nuevoId("pg"), socioId: s.id, fecha: hoy(), confirmadoEl: null, monto: m, cuotaId: c.id, medio, ...(partes ? { pagos: partes } : {}), estado: "", venciaAntes: null, hasta: null, clasesAntes: null, creadoEn: ahora() };
         acreditar(s, p);
         db().pagos.push(p);
         guardado.persistir();
@@ -1068,7 +1087,7 @@ export function crearDatos(prefijo = MARCA.prefijo, { reloj = () => new Date() }
         exigir(c, "Elegí el plan de cuota.");
         if (planId) plan(planId);
         exigir(HORAS.includes(hora), "Elegí a qué hora viene.");
-        exigir(medio === "efectivo" || medio === "transferencia", "Elegí cómo pagó la primera cuota.");
+        exigir(MEDIOS_PAGO[medio], "Elegí cómo pagó la primera cuota.");
         const d = revisarDias(dias);
         exigir(!db().socios.some((s) => nombreDe(s).toLowerCase() === `${n} ${ap}`.trim().toLowerCase()), "Ya hay un socio con ese nombre.");
         guardar("socios", TOPES.socios, "socios");
@@ -1116,11 +1135,12 @@ export function crearDatos(prefijo = MARCA.prefijo, { reloj = () => new Date() }
         const clases = dias().flatMap((d) => clasesDelDia(d.fecha).map((c) => ({ ...c, fecha: d.fecha, nombreFecha: d.nombre })));
         const mes = hoy().slice(0, 7);
         const delMes = db().pagos.filter((p) => p.estado === "confirmado" && p.confirmadoEl?.slice(0, 7) === mes);
-        const suma = (medio) => delMes.filter((p) => p.medio === medio).reduce((t, p) => t + p.monto, 0);
+        const porMedio = sumarPorMedio(delMes.map((p) => ({ ...p, total: p.monto })), MEDIOS_PAGO);
+        const totalMes = delMes.reduce((t, p) => t + p.monto, 0);
         const activos = db().socios.filter((s) => !s.baja);
         return {
             calor, dias: ORDEN_SEMANA.map((d) => DIAS_CORTOS[d]), clases,
-            caja: { efectivo: suma("efectivo"), transferencia: suma("transferencia"), total: suma("efectivo") + suma("transferencia"), pagos: delMes.length },
+            caja: { ...porMedio, sinEfectivo: totalMes - porMedio.efectivo, total: totalMes, pagos: delMes.length },
             porCuota: PLANES_CUOTA.map((c) => ({ texto: c.texto, socios: activos.filter((s) => s.cuotaId === c.id).length }))
         };
     }
@@ -1137,7 +1157,7 @@ export function crearDatos(prefijo = MARCA.prefijo, { reloj = () => new Date() }
         return [
             ["Fecha", "Socio", "Plan de cuota", "Medio", "Monto"],
             ...db().pagos.filter((p) => p.estado === "confirmado" && p.confirmadoEl?.slice(0, 7) === mes).sort((a, b) => a.confirmadoEl.localeCompare(b.confirmadoEl))
-                .map((p) => [fechaCorta(p.confirmadoEl), nombreDe(socioCrudo(p.socioId)), PLANES_CUOTA.find((c) => c.id === p.cuotaId)?.texto ?? "", p.medio === "efectivo" ? "Efectivo" : "Transferencia", { valor: p.monto, formato: "pesos" }])
+                .map((p) => [fechaCorta(p.confirmadoEl), nombreDe(socioCrudo(p.socioId)), PLANES_CUOTA.find((c) => c.id === p.cuotaId)?.texto ?? "", textoMedio(p, MEDIOS_PAGO), { valor: p.monto, formato: "pesos" }])
         ];
     }
 
@@ -1370,7 +1390,7 @@ export function crearDatos(prefijo = MARCA.prefijo, { reloj = () => new Date() }
     return {
         guardado, hoy,
         // socio
-        hoyLeToca, llegue, entrenarOtroDia, anotarSerie, deshacerSerie, terminarEntreno, miSemana, progreso,
+        hoyLeToca, llegue, entradaConQR, entrenarOtroDia, anotarSerie, deshacerSerie, terminarEntreno, miSemana, progreso,
         dias, clasesDelDia, reservar, cancelarReserva, misReservas, miCuota, avisarPago,
         // dueña
         listarSocios, contarFiltros, tablero, socio, registrarPago, confirmarPago, rechazarPago, anularPago, recordatorio,

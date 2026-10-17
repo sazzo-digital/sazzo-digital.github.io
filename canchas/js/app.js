@@ -3,19 +3,19 @@
 // Cada persona tiene su menú: Gustavo (dueño) la grilla y los fijos; Fede (jugador) reservar y sus turnos.
 // irA() cambia de persona sin pasar por "Probala como…" (botón del recorrido: "Mirá cómo lo ve Gustavo →").
 // ============================================
-import { $, conFundido } from "../kit/js/ui.js?v=21e7a89345";
-import { iniciarDemo } from "../kit/js/arranque.js?v=21e7a89345";
-import { vistaIngreso } from "../kit/js/ingreso.js?v=21e7a89345";
-import { pintarMarco } from "../kit/js/marco.js?v=21e7a89345";
-import { mostrarRuta } from "../kit/js/rutas.js?v=21e7a89345";
-import { vistaAcerca } from "../kit/js/acerca.js?v=21e7a89345";
-import { MARCA, PERSONAS, DETALLE, buscarPersona } from "./marca.js?v=21e7a89345";
-import { aparte } from "../kit/js/aparte.js?v=21e7a89345";
-import { leerSesionGuardada } from "../kit/js/guardado.js?v=21e7a89345";
+import { $, conFundido } from "../kit/js/ui.js?v=d29cdf6ff2";
+import { iniciarDemo } from "../kit/js/arranque.js?v=d29cdf6ff2";
+import { vistaIngreso } from "../kit/js/ingreso.js?v=d29cdf6ff2";
+import { pintarMarco } from "../kit/js/marco.js?v=d29cdf6ff2";
+import { mostrarRuta } from "../kit/js/rutas.js?v=d29cdf6ff2";
+import { vistaAcerca } from "../kit/js/acerca.js?v=d29cdf6ff2";
+import { MARCA, PERSONAS, DETALLE, buscarPersona } from "./marca.js?v=d29cdf6ff2";
+import { aparte } from "../kit/js/aparte.js?v=d29cdf6ff2";
+import { leerSesionGuardada } from "../kit/js/guardado.js?v=d29cdf6ff2";
 
 // Los datos de ejemplo y las pantallas se bajan aparte (al terminar de cargar): "Probala como…" aparece sin esperarlos
-const pantallas = aparte(() => import("./pantallas.js?v=21e7a89345"));
-const { vistaInicio, vistaMisTurnos, vistaTurno, vistaAnotar, vistaFijos, avisosDe } = pantallas.funciones;
+const pantallas = aparte(() => import("./pantallas.js?v=d29cdf6ff2"));
+const { vistaInicio, vistaMisTurnos, vistaTurno, vistaAnotar, vistaFijos, vistaCantina, avisosDe } = pantallas.funciones;
 
 iniciarDemo(MARCA);
 let datos = null; // se arma cuando bajan las pantallas
@@ -27,7 +27,7 @@ let contenido = null;
 
 const ACERCA = { ruta: "/acerca", icono: "ti-info-circle", texto: "Acerca de" };
 const MENU = {
-    dueno: [{ ruta: "/inicio", icono: "ti-layout-grid", texto: "Grilla" }, { ruta: "/fijos", icono: "ti-repeat", texto: "Fijos" }, ACERCA],
+    dueno: [{ ruta: "/inicio", icono: "ti-layout-grid", texto: "Grilla" }, { ruta: "/fijos", icono: "ti-repeat", texto: "Fijos" }, { ruta: "/cantina", icono: "ti-cup", texto: "Cantina" }, ACERCA],
     cliente: [{ ruta: "/inicio", icono: "ti-ball-football", texto: "Reservar" }, { ruta: "/turnos", icono: "ti-calendar", texto: "Mis turnos" }, ACERCA]
 };
 
@@ -41,6 +41,7 @@ const RUTAS = [
     { patron: /^\/turno\/([\w:-]+)$/, vista: con(vistaTurno), puede: esDueno, menu: "/inicio" },
     { patron: /^\/anotar$/, vista: con(vistaAnotar), puede: esDueno, menu: "/inicio" },
     { patron: /^\/fijos$/, vista: con(vistaFijos), puede: esDueno },
+    { patron: /^\/cantina$/, vista: con(vistaCantina), puede: esDueno },
     { patron: /^\/acerca$/, vista: (cont) => vistaAcerca(cont, { marca: MARCA }) }
 ];
 

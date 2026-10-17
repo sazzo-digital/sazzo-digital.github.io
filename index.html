@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval' 'sha256-ypxxyBu5TkrSUGL60qU4Dlz1Z6kb3U7PaE2UmoA0vOQ=' 'sha256-/EW64VEnWWKV31TMtBtNWIgXhCcLJJMMjYbbnKKTQKA=' 'inline-speculation-rules'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://tile.openstreetmap.org; font-src 'self'; connect-src 'self' blob: https://script.google.com https://script.googleusercontent.com; worker-src 'self' blob:; media-src 'self' data: blob:; object-src 'none'; base-uri 'self'; form-action 'self'">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Sazzo · Tu mundo digital, en orden</title>
-    <meta name="description" content="Sistemas, páginas web y automatizaciones para negocios. Probá nuestras demos en un toque, sin registrarte.">
+    <title>Sazzo · Sistemas y páginas web para negocios en Neuquén</title>
+    <meta name="description" content="Sistemas para kioscos, canchas, barberías, talleres, restaurantes, perfumerías y más, y páginas web para negocios de Neuquén. Probá la demo de tu rubro en un toque, sin registrarte.">
     <meta name="theme-color" content="#0B1210">
-    <meta property="og:title" content="Sazzo · Tu mundo digital, en orden">
+    <meta property="og:title" content="Sazzo · Sistemas y páginas web para negocios en Neuquén">
     <meta property="og:description" content="Probá nuestras demos para kioscos, canchas, barberías, talleres, perfumerías, restaurantes, flotas, librerías, ferreterías, carnicerías, gimnasios, inmobiliarias y gestión contable.">
     <!-- Vista previa del link (WhatsApp, Instagram, Facebook). https://sazzo.com.ar lo completa armar-catalogo.ps1 con la
          dirección publicada (kit\herramientas\sitio-publicado.txt): estas redes necesitan la dirección completa. -->
@@ -23,8 +23,8 @@
     <link rel="icon" href="img/isotipo.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
     <!-- Letras desde el propio sitio (antes Google Fonts); el script de armar las apunta a la copia compartida -->
-    <link rel="stylesheet" href="letras/letras.css?v=d61373a123">
-    <link rel="stylesheet" href="css/catalogo.css?v=095c77a65a">
+    <link rel="stylesheet" href="letras/letras.css?v=835c157c22">
+    <link rel="stylesheet" href="css/catalogo.css?v=912c3af85b">
     <!-- Si hay JavaScript, las secciones arrancan ocultas y aparecen al bajar (sin JavaScript se ve todo igual) -->
     <script>
         document.documentElement.classList.add("js");
@@ -102,6 +102,7 @@
         <nav class="cabecera__menu" aria-label="Secciones">
             <a href="#demos">Demos</a>
             <a href="#como-funciona">Cómo funciona</a>
+            <a href="#preguntas">Preguntas</a>
             <a href="#contacto">Contacto</a>
         </nav>
         <button class="interruptor-tema" id="tema" type="button" role="switch" aria-checked="true" aria-label="Modo oscuro. Tocá para pasar a claro." title="Modo oscuro. Tocá para pasar a claro.">
@@ -130,8 +131,8 @@
                     <path class="cursor" fill="none" stroke="var(--verde)" stroke-width="7" stroke-linecap="round" d="M231 24 V56"/>
                 </svg>
             </h1>
-            <p class="portada__frase">Tu mundo digital, en orden.</p>
-            <p class="portada__texto">Sistemas, páginas web y automatizaciones para negocios.</p>
+            <p class="portada__frase">Tu negocio en el celu: ventas, stock y turnos, sin papeles.</p>
+            <p class="portada__texto">Sistemas, páginas web y automatizaciones a la medida de tu negocio. Tu mundo digital, en orden.</p>
             <div class="portada__botones">
                 <a class="boton" href="#demos">Probá las demos <svg class="icono" aria-hidden="true"><use href="#i-flecha"/></svg></a>
                 <a class="boton boton--borde" href="#contacto" data-abrir-contacto>Escribinos</a>
@@ -143,6 +144,55 @@
                 <li><strong>0</strong> registros ni datos tuyos</li>
                 <li><strong>1</strong> toque y estás adentro</li>
             </ul>
+        </section>
+
+        <section class="seccion sorpresas" id="sorpresas">
+            <h2 class="seccion__titulo revelar">Mirá lo que hacen</h2>
+            <p class="seccion__bajada revelar">Lo que más sorprende adentro de las demos. Tocá una y probalo.</p>
+            <div class="sorpresas__fila revelar">
+                <a class="sorpresa" href="#demos" data-link-demo="kiosco">
+                    <video class="sorpresa__video" muted loop playsinline preload="none" poster="img/sorpresas/kiosco.jpg" width="600" height="750" aria-hidden="true"><source src="img/sorpresas/kiosco.mp4" type="video/mp4"></video>
+                    <b class="sorpresa__frase">Un kiosco con caja de súper</b>
+                    <span class="sorpresa__texto">Escaneás el QR de cada producto y se suma solo, con el total y el vuelto en grande.</span>
+                    <span class="sorpresa__link">Probalo en Kiosco <svg class="icono" aria-hidden="true"><use href="#i-flecha"/></svg></span>
+                </a>
+                <a class="sorpresa" href="#demos" data-link-demo="barberia">
+                    <video class="sorpresa__video" muted loop playsinline preload="none" poster="img/sorpresas/barberia.jpg" width="600" height="750" aria-hidden="true"><source src="img/sorpresas/barberia.mp4" type="video/mp4"></video>
+                    <b class="sorpresa__frase">Con tu nombre y tus colores</b>
+                    <span class="sorpresa__texto">Adentro de cualquier demo, en «Probala con tus colores», ponés el nombre de tu negocio y tus colores, y ya parece tuya.</span>
+                    <span class="sorpresa__link">Probalo en Barbería <svg class="icono" aria-hidden="true"><use href="#i-flecha"/></svg></span>
+                </a>
+                <a class="sorpresa" href="#demos" data-link-demo="perfumeria">
+                    <video class="sorpresa__video" muted loop playsinline preload="none" poster="img/sorpresas/perfumeria.jpg" width="600" height="750" aria-hidden="true"><source src="img/sorpresas/perfumeria.mp4" type="video/mp4"></video>
+                    <b class="sorpresa__frase">Perfumes en 3D</b>
+                    <span class="sorpresa__texto">Girás el frasco con el dedo, y cada perfume toma el color de su familia.</span>
+                    <span class="sorpresa__link">Probalo en Perfumería <svg class="icono" aria-hidden="true"><use href="#i-flecha"/></svg></span>
+                </a>
+                <a class="sorpresa" href="#demos" data-link-demo="restix">
+                    <video class="sorpresa__video" muted loop playsinline preload="none" poster="img/sorpresas/restix.jpg" width="600" height="750" aria-hidden="true"><source src="img/sorpresas/restix.mp4" type="video/mp4"></video>
+                    <b class="sorpresa__frase">La carta con los platos en 3D</b>
+                    <span class="sorpresa__texto">La pizza y la hamburguesa, escaneadas: las girás antes de pedir.</span>
+                    <span class="sorpresa__link">Probalo en Restix <svg class="icono" aria-hidden="true"><use href="#i-flecha"/></svg></span>
+                </a>
+                <a class="sorpresa" href="#demos" data-link-demo="inmobiliaria">
+                    <video class="sorpresa__video" muted loop playsinline preload="none" poster="img/sorpresas/inmobiliaria.jpg" width="600" height="750" aria-hidden="true"><source src="img/sorpresas/inmobiliaria.mp4" type="video/mp4"></video>
+                    <b class="sorpresa__frase">Departamentos en 360°</b>
+                    <span class="sorpresa__texto">Recorrés cada propiedad desde el celu, como si estuvieras adentro.</span>
+                    <span class="sorpresa__link">Probalo en Inmobiliaria <svg class="icono" aria-hidden="true"><use href="#i-flecha"/></svg></span>
+                </a>
+                <a class="sorpresa" href="#demos" data-link-demo="canchas">
+                    <video class="sorpresa__video" muted loop playsinline preload="none" poster="img/sorpresas/canchas.jpg" width="600" height="750" aria-hidden="true"><source src="img/sorpresas/canchas.mp4" type="video/mp4"></video>
+                    <b class="sorpresa__frase">La cantina, a la cuenta de la cancha</b>
+                    <span class="sorpresa__texto">El equipo pide las bebidas desde su turno y al final se divide entre todos.</span>
+                    <span class="sorpresa__link">Probalo en Canchas <svg class="icono" aria-hidden="true"><use href="#i-flecha"/></svg></span>
+                </a>
+                <a class="sorpresa" href="#demos" data-link-demo="contable">
+                    <video class="sorpresa__video" muted loop playsinline preload="none" poster="img/sorpresas/contable.jpg" width="600" height="750" aria-hidden="true"><source src="img/sorpresas/contable.mp4" type="video/mp4"></video>
+                    <b class="sorpresa__frase">Tu factura sin contadora</b>
+                    <span class="sorpresa__texto">Si sos monotributista: factura C y cuánto te queda del tope de tu categoría.</span>
+                    <span class="sorpresa__link">Probalo en Contable <svg class="icono" aria-hidden="true"><use href="#i-flecha"/></svg></span>
+                </a>
+            </div>
         </section>
 
         <!-- 2. Las demos (las tarjetas las arma js/catalogo.js desde js/demos.js) -->
@@ -161,6 +211,16 @@
                 <button type="button" data-flecha="-1" aria-label="Demos anteriores">←</button>
                 <button type="button" data-flecha="1" aria-label="Más demos">→</button>
             </div>
+        </section>
+
+        <!-- 4. Cómo funciona -->
+        <section class="seccion" id="como-funciona">
+            <h2 class="seccion__titulo revelar">Cómo funciona</h2>
+            <ol class="pasos">
+                <li class="paso revelar"><span class="paso__numero">1</span><h3>Elegís tu rubro</h3><p>Abrís la demo desde el celu o la compu. Sin cuentas ni contraseñas.</p></li>
+                <li class="paso revelar"><span class="paso__numero">2</span><h3>La probás</h3><p>Con datos de ejemplo, como si fuera tu negocio. Lo que cargues queda solo en tu equipo.</p></li>
+                <li class="paso revelar"><span class="paso__numero">3</span><h3>La adaptamos</h3><p>Si te gusta, la armamos a tu medida: tus colores, tu logo, tus pantallas y tu forma de trabajar.</p><a class="paso__link" href="#lo-que-adaptamos">Mirá todo lo que adaptamos <svg class="icono" aria-hidden="true"><use href="#i-flecha"/></svg></a></li>
+            </ol>
         </section>
 
         <!-- 3. Qué hacemos -->
@@ -225,16 +285,6 @@
             <div class="trabajos" id="lista-trabajos"></div>
         </section>
 
-        <!-- 4. Cómo funciona -->
-        <section class="seccion" id="como-funciona">
-            <h2 class="seccion__titulo revelar">Cómo funciona</h2>
-            <ol class="pasos">
-                <li class="paso revelar"><span class="paso__numero">1</span><h3>Elegís tu rubro</h3><p>Abrís la demo desde el celu o la compu. Sin cuentas ni contraseñas.</p></li>
-                <li class="paso revelar"><span class="paso__numero">2</span><h3>La probás</h3><p>Con datos de ejemplo, como si fuera tu negocio. Lo que cargues queda solo en tu equipo.</p></li>
-                <li class="paso revelar"><span class="paso__numero">3</span><h3>La adaptamos</h3><p>Si te gusta, la armamos a tu medida: tus colores, tu logo, tus pantallas y tu forma de trabajar.</p><a class="paso__link" href="#lo-que-adaptamos">Mirá todo lo que adaptamos <svg class="icono" aria-hidden="true"><use href="#i-flecha"/></svg></a></li>
-            </ol>
-        </section>
-
         <!-- 4b. Lo que se adapta (el detalle del paso 3) -->
         <section class="seccion" id="lo-que-adaptamos">
             <h2 class="seccion__titulo revelar">Todo se adapta a tu negocio</h2>
@@ -274,6 +324,43 @@
                 </article>
             </div>
             <p class="adapta__nota revelar"><svg class="icono" aria-hidden="true"><use href="#i-paleta"/></svg> Adentro de cada demo ya podés probarla con tus colores y en claro u oscuro.</p>
+        </section>
+
+        <section class="seccion" id="preguntas">
+            <h2 class="seccion__titulo revelar">Preguntas frecuentes</h2>
+            <p class="seccion__bajada revelar">Lo que más nos preguntan</p>
+            <div class="preguntas revelar">
+                <details class="pregunta">
+                    <summary>¿Qué hace Sazzo?</summary>
+                    <p>Hacemos sistemas y páginas web a la medida de tu negocio: para ordenar ventas, stock, turnos, pedidos o las tareas del equipo, desde el celu o la compu.</p>
+                </details>
+                <details class="pregunta">
+                    <summary>¿Puedo probar algo antes de decidir?</summary>
+                    <p>Sí. En sazzo.com.ar tenés demos para probar en un toque, sin registrarte. Hay una para cada rubro y vamos sumando más.</p>
+                </details>
+                <details class="pregunta">
+                    <summary>¿Tienen una demo de mi rubro?</summary>
+                    <p>Hoy hay demos para kiosco, librería, ferretería, carnicería, perfumería, restaurante, barbería, gimnasio, canchas, taller, inmobiliaria, estudio contable y flotas de vehículos. Si el tuyo no está, te mostramos la que más se parece y la adaptamos a cómo trabajás.</p>
+                </details>
+                <details class="pregunta">
+                    <summary>¿Cómo trabajan?</summary>
+                    <p>Primero charlamos: nos contás cómo trabajás hoy y qué te gustaría ordenar. Después te mostramos una demo parecida a tu negocio para que la pruebes. Lo armamos a tu medida, con tu nombre y tus colores, y vas probando mientras avanza.</p>
+                </details>
+                <details class="pregunta">
+                    <summary>¿Hacen páginas web?</summary>
+                    <p>Sí. Hacemos páginas que se ven bien en el celu, con tus productos, tu horario y un botón para que te escriban directo. También te ayudamos a que te encuentren en Google.</p>
+                </details>
+                <details class="pregunta">
+                    <summary>¿Hay que instalar algo?</summary>
+                    <p>No hace falta bajar nada de la tienda de apps. El sistema se usa desde el celu o la compu, y se puede dejar como una app en la pantalla de inicio. Se actualiza solo.</p>
+                </details>
+                <details class="pregunta">
+                    <summary>¿El sistema es mío?</summary>
+                    <p>Elegís vos. Podemos cuidarlo nosotros y vos solo lo usás, o te lo entregamos funcionando a tu nombre y queda todo tuyo. Lo podés decidir al final, y en las dos formas tus datos son tuyos.</p>
+                </details>
+            </div>
+            <p class="preguntas__otra revelar">¿Otra pregunta? <a class="boton" href="#contacto" data-whatsapp data-solo-con-numero><svg class="icono" aria-hidden="true"><use href="#i-whatsapp"/></svg> Escribinos por WhatsApp</a></p>
+            <script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "¿Qué hace Sazzo?", "acceptedAnswer": {"@type": "Answer", "text": "Hacemos sistemas y páginas web a la medida de tu negocio: para ordenar ventas, stock, turnos, pedidos o las tareas del equipo, desde el celu o la compu."}}, {"@type": "Question", "name": "¿Puedo probar algo antes de decidir?", "acceptedAnswer": {"@type": "Answer", "text": "Sí. En sazzo.com.ar tenés demos para probar en un toque, sin registrarte. Hay una para cada rubro y vamos sumando más."}}, {"@type": "Question", "name": "¿Tienen una demo de mi rubro?", "acceptedAnswer": {"@type": "Answer", "text": "Hoy hay demos para kiosco, librería, ferretería, carnicería, perfumería, restaurante, barbería, gimnasio, canchas, taller, inmobiliaria, estudio contable y flotas de vehículos. Si el tuyo no está, te mostramos la que más se parece y la adaptamos a cómo trabajás."}}, {"@type": "Question", "name": "¿Cómo trabajan?", "acceptedAnswer": {"@type": "Answer", "text": "Primero charlamos: nos contás cómo trabajás hoy y qué te gustaría ordenar. Después te mostramos una demo parecida a tu negocio para que la pruebes. Lo armamos a tu medida, con tu nombre y tus colores, y vas probando mientras avanza."}}, {"@type": "Question", "name": "¿Hacen páginas web?", "acceptedAnswer": {"@type": "Answer", "text": "Sí. Hacemos páginas que se ven bien en el celu, con tus productos, tu horario y un botón para que te escriban directo. También te ayudamos a que te encuentren en Google."}}, {"@type": "Question", "name": "¿Hay que instalar algo?", "acceptedAnswer": {"@type": "Answer", "text": "No hace falta bajar nada de la tienda de apps. El sistema se usa desde el celu o la compu, y se puede dejar como una app en la pantalla de inicio. Se actualiza solo."}}, {"@type": "Question", "name": "¿El sistema es mío?", "acceptedAnswer": {"@type": "Answer", "text": "Elegís vos. Podemos cuidarlo nosotros y vos solo lo usás, o te lo entregamos funcionando a tu nombre y queda todo tuyo. Lo podés decidir al final, y en las dos formas tus datos son tuyos."}}]}</script>
         </section>
 
         <!-- 5. A medida -->
@@ -358,6 +445,7 @@
                 <a href="#que-hacemos">Qué hacemos</a>
                 <a href="#paginas-web">Páginas web</a>
                 <a href="#como-funciona">Cómo funciona</a>
+                <a href="#preguntas">Preguntas frecuentes</a>
                 <a href="#contacto">Contacto</a>
             </nav>
             <div class="pie__lista">
@@ -369,10 +457,10 @@
         </div>
         <div class="pie__legal">
             <span>© <span data-anio>2026</span> Sazzo. Todos los derechos reservados.</span>
-            <span><a href="privacidad.html">Privacidad</a> · Hecho en Argentina</span>
+            <span><a href="privacidad.html">Privacidad</a> · Hecho en Argentina <span class="pie__version">V 1.0 · 17/10/2026</span></span>
         </div>
     </footer>
 
-    <script type="module" src="js/catalogo.js?v=095c77a65a"></script>
+    <script type="module" src="js/catalogo.js?v=912c3af85b"></script>
 </body>
 </html>

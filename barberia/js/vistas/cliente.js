@@ -2,12 +2,12 @@
 // Pantallas del cliente (Matías), pensadas para el celular: "Sacá tu turno" (servicio, barbero o "el que esté
 // libre", día y hora libre: sin cargar ningún dato) y "Mis turnos" (con Cancelar).
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=cf8a4b352a";
-import { aHora } from "../../kit/js/turnos.js?v=cf8a4b352a";
-import { SERVICIOS, BARBEROS, pesos, nombreFecha } from "../datos.js?v=cf8a4b352a";
-import { NEGOCIO } from "../marca.js?v=cf8a4b352a";
-import { guia, activarGuias, pastillaEstado, chipsDias } from "./comunes.js?v=cf8a4b352a";
-import { htmlConsigna } from "../../kit/js/consigna.js?v=cf8a4b352a";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=6941c0942f";
+import { aHora } from "../../kit/js/turnos.js?v=6941c0942f";
+import { SERVICIOS, BARBEROS, pesos, nombreFecha } from "../datos.js?v=6941c0942f";
+import { NEGOCIO } from "../marca.js?v=6941c0942f";
+import { guia, activarGuias, pastillaEstado, chipsDias } from "./comunes.js?v=6941c0942f";
+import { htmlConsigna } from "../../kit/js/consigna.js?v=6941c0942f";
 
 // Lo elegido queda mientras se navega
 let servicioId = "corte";
@@ -20,14 +20,16 @@ export function vistaSacarTurno(cont, { usuario, datos, irA }) {
     let elegido = null;
 
     function pintar() {
-        const libres = datos.libresPara({ servicioId, barberoId, fecha });
+        const horas = datos.horasDelDia({ servicioId, barberoId, fecha });
+        const libres = horas.filter((h) => h.libre);
         const s = SERVICIOS.find((x) => x.id === servicioId);
         cont.querySelectorAll("[data-servicio]").forEach((b) => b.classList.toggle("activo", b.dataset.servicio === servicioId));
         cont.querySelectorAll("[data-barbero]").forEach((b) => b.classList.toggle("activo", b.dataset.barbero === barberoId));
         cont.querySelectorAll("[data-dia]").forEach((b) => b.classList.toggle("activo", b.dataset.dia === fecha));
         cont.querySelector(".horas").innerHTML = libres.length
-            ? `<div class="botones-horas">${libres.map((l) => `
-                <button class="hora${elegido === l.inicio ? " activo" : ""}" type="button" data-hora="${l.inicio}">${esc(aHora(l.inicio))}</button>`).join("")}</div>`
+            ? `<div class="botones-horas">${horas.map((l) => l.libre
+                ? `<button class="hora${elegido === l.inicio ? " activo" : ""}" type="button" data-hora="${l.inicio}">${esc(aHora(l.inicio))}</button>`
+                : `<button class="hora hora--ocupada" type="button" disabled aria-label="${esc(aHora(l.inicio))}, ocupado"><s>${esc(aHora(l.inicio))}</s><small>ocupado</small></button>`).join("")}</div>`
             : vacio(fecha === dias[0].fecha ? "Hoy ya no quedan turnos. Probá otro día." : "No quedan turnos ese día.", "ti-calendar-off");
         cont.querySelectorAll("[data-hora]").forEach((b) => b.addEventListener("click", () => {
             elegido = Number(b.dataset.hora);
@@ -45,10 +47,14 @@ export function vistaSacarTurno(cont, { usuario, datos, irA }) {
                 <p class="nota"><i class="ti ti-cash"></i> ${esc(pesos(s.precio))} · ${esc(s.duracion)} minutos. Se paga en la barbería.</p>
                 <button class="boton boton--ancho boton--grande" type="button" data-sacar><i class="ti ti-calendar-check"></i> Sacar turno</button>
             </div>`;
-        confirmar.querySelector("[data-sacar]").addEventListener("click", () => {
+        const botonSacar = confirmar.querySelector("[data-sacar]");
+        botonSacar.addEventListener("click", () => {
+            if (botonSacar.disabled) return;
+            botonSacar.disabled = true;
             try {
                 listo(datos.sacarTurno(usuario, { servicioId, barberoId, fecha, inicio: elegido }));
             } catch (err) {
+                botonSacar.disabled = false;
                 aviso(err, "error");
             }
         });

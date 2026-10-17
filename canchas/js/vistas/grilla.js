@@ -4,13 +4,14 @@
 // "Anotar turno" en un casillero libre (para cuando llaman por teléfono).
 // Los turnos que reservó un jugador y Gustavo todavía no miró aparecen arriba y marcados "Nuevo".
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=21e7a89345";
-import { mantenerPantallaPrendida } from "../../kit/js/celular.js?v=21e7a89345";
-import { aHora } from "../../kit/js/turnos.js?v=21e7a89345";
-import { TOPES, CANCHAS, TIPOS, pesos, nombreFecha, horarioDe } from "../datos.js?v=21e7a89345";
-import { pastillaSena, pastillaEstado, chipsDias } from "./comunes.js?v=21e7a89345";
-import { buscarPersona, MARCA } from "../marca.js?v=21e7a89345";
-import { htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=21e7a89345";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=d29cdf6ff2";
+import { mantenerPantallaPrendida } from "../../kit/js/celular.js?v=d29cdf6ff2";
+import { aHora } from "../../kit/js/turnos.js?v=d29cdf6ff2";
+import { TOPES, CANCHAS, TIPOS, pesos, nombreFecha, horarioDe } from "../datos.js?v=d29cdf6ff2";
+import { pastillaSena, pastillaEstado, chipsDias } from "./comunes.js?v=d29cdf6ff2";
+import { buscarPersona, MARCA } from "../marca.js?v=d29cdf6ff2";
+import { htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=d29cdf6ff2";
+import { htmlCuenta, pedirCantina, cobrarCuenta } from "./cuenta.js?v=d29cdf6ff2";
 
 const PASO = 30; // la grilla va de media hora en media hora (entran los turnos de 60 y los de 90 min)
 
@@ -49,6 +50,7 @@ export function vistaGrilla(cont, { usuario, datos, consulta }) {
             <div><span>Ocupados</span><b>${esc(g.resumen.ocupados)}<small> de ${esc(g.resumen.total)}</small></b></div>
             <div><span>Señas cobradas</span><b>${esc(pesos(g.resumen.senas))}</b></div>
             <div><span>A cobrar en la cancha</span><b>${esc(pesos(g.resumen.aCobrar))}</b></div>
+            <div><span>Cantina</span><b>${esc(pesos(g.resumen.cantina))}</b></div>
             <div><span>Señas pendientes</span><b>${esc(g.resumen.pendientes)}</b></div>
         </div>
         <div class="grilla-scroll" tabindex="0" aria-label="Grilla de ${esc(g.nombre)}">
@@ -59,7 +61,7 @@ export function vistaGrilla(cont, { usuario, datos, consulta }) {
                 ${g.columnas.map((c, i) => c.turnos.map((t) => `
                     <a class="turno turno--${claseTurno(t)}${t.nuevo ? " turno--nuevo" : ""}" href="#/turno/${esc(t.id)}" style="grid-column:${i + 2};grid-row:${fila(t.inicio)} / span ${t.duracion / PASO}">
                         <b>${esc(t.grupo)}</b>
-                        <small>${esc(t.hora)}${t.esFijo ? " · fijo" : ""}${t.nuevo ? " · nuevo" : ""}</small>
+                        <small>${esc(t.hora)}${t.esFijo ? " · fijo" : ""}${t.nuevo ? " · nuevo" : ""}${(t.esFijo ? t.cuentas?.[t.fecha] : t)?.pago ? " · pagado" : (t.esFijo ? t.cuentas?.[t.fecha] : t)?.consumos?.some((k) => !k.entregado) ? " · pidió" : ""}</small>
                     </a>`).join("") + c.libres.map((m) => `
                     <a class="libre" href="#/anotar?cancha=${esc(c.id)}&fecha=${esc(fecha)}&inicio=${m}" style="grid-column:${i + 2};grid-row:${fila(m)} / span ${c.horario.duracion / PASO}" aria-label="Anotar turno en ${esc(c.nombre)} a las ${esc(aHora(m))}">
                         <i class="ti ti-plus" aria-hidden="true"></i>${esc(aHora(m))}
@@ -86,6 +88,8 @@ export function vistaTurno(cont, { usuario, datos, params: [id] }) {
     if (t.nuevo) t = datos.marcarVisto(usuario, id);
     const volver = `#/inicio?fecha=${t.fecha}`;
     const activo = !t.anulado && (t.estado === "reservado" || t.estado === "llegaron" || t.estado === "faltaron");
+    const conCuenta = !t.anulado && t.estado !== "faltaron";
+    const c = conCuenta ? datos.cuenta(t.id) : null;
     cont.innerHTML = `
         <a class="volver" href="${esc(volver)}"><i class="ti ti-arrow-left"></i> Grilla de ${esc(nombreFecha(t.fecha))}</a>
         <h1 class="titulo">${esc(t.grupo)}</h1>
@@ -102,7 +106,20 @@ export function vistaTurno(cont, { usuario, datos, params: [id] }) {
             <button class="boton boton--secundario" type="button" data-marcar="faltaron"><i class="ti ti-user-x"></i> Faltaron</button>
             ${t.sena === "pendiente" ? `<button class="boton boton--secundario" type="button" data-cobrar><i class="ti ti-cash"></i> Cobrar seña</button>` : ""}
             <button class="boton boton--peligro" type="button" data-liberar><i class="ti ti-lock-open"></i> ${t.esFijo ? "Liberar esta semana" : "Liberar"}</button>
-        </div>` : `<p class="nota"><i class="ti ti-info-circle"></i> Este turno ya no ocupa la cancha.</p>`}`;
+        </div>` : `<p class="nota"><i class="ti ti-info-circle"></i> Este turno ya no ocupa la cancha.</p>`}
+        ${conCuenta ? `
+        <section class="bloque cuenta-dueno">
+            <h2 class="subtitulo"><i class="ti ti-receipt"></i> La cuenta</h2>
+            ${htmlCuenta(c)}
+            ${c.consumos.filter((k) => !k.entregado).map((k) => `
+            <button class="boton boton--chico boton--secundario" type="button" data-entregar="${esc(k.id)}"><i class="ti ti-check"></i> Entregado: ${esc(k.cantidad)} × ${esc(k.nombre)}</button>`).join("")}
+            ${c.pago ? "" : `
+            <div class="acciones">
+                <button class="boton boton--secundario" type="button" data-sumar><i class="ti ti-cup"></i> Sumar de la cantina</button>
+                <button class="boton" type="button" data-cobrar-cuenta><i class="ti ti-cash"></i> Cobrar</button>
+            </div>`}
+            <div class="lugar-cuenta"></div>
+        </section>` : ""}`;
 
     const hacer = (fn, mensaje) => {
         try {
@@ -116,6 +133,30 @@ export function vistaTurno(cont, { usuario, datos, params: [id] }) {
     cont.querySelectorAll("[data-marcar]").forEach((b) => b.addEventListener("click", () =>
         hacer(() => datos.marcar(usuario, id, b.dataset.marcar), b.dataset.marcar === "llegaron" ? "Marcado: llegaron" : "Marcado: faltaron")));
     cont.querySelector("[data-cobrar]")?.addEventListener("click", () => hacer(() => datos.cobrarSena(usuario, id), "Seña cobrada"));
+    const otraVez = () => vistaTurno(cont, { usuario, datos, params: [id] });
+    cont.querySelectorAll("[data-entregar]").forEach((b) => b.addEventListener("click", () => {
+        try {
+            datos.entregar(usuario, id, b.dataset.entregar);
+            aviso("Entregado");
+            otraVez();
+        } catch (err) {
+            aviso(err, "error");
+        }
+    }));
+    cont.querySelector("[data-sumar]")?.addEventListener("click", () => pedirCantina(cont.querySelector(".lugar-cuenta"), {
+        datos, usuario, turnoId: id, textoBoton: "Sumar a la cuenta",
+        alListo: () => {
+            aviso("Sumado a la cuenta");
+            otraVez();
+        }
+    }));
+    cont.querySelector("[data-cobrar-cuenta]")?.addEventListener("click", () => cobrarCuenta(cont.querySelector(".lugar-cuenta"), {
+        datos, usuario, turnoId: id,
+        alListo: () => {
+            aviso("Cuenta cobrada");
+            otraVez();
+        }
+    }));
     cont.querySelector("[data-liberar]")?.addEventListener("click", () => {
         if (!confirm(t.esFijo ? "¿Liberar el fijo solo esta semana? El horario queda libre para otros." : "¿Liberar el turno? El horario queda libre y la seña pagada se devuelve.")) return;
         hacer(() => datos.liberar(usuario, id), "Turno liberado");

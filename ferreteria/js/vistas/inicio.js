@@ -2,9 +2,16 @@
 // Inicio de Sazzo Ferretería: distinto para cada persona.
 // Osvaldo y Nahuel → Vender (en el mostrador lo primero es vender) · Marcos → pedir un presupuesto.
 // ============================================
-import { vistaVender } from "./vender.js?v=8ec449d814";
-import { vistaPedirPresupuesto } from "./cliente.js?v=8ec449d814";
+import { vistaVender } from "./vender.js?v=9904c28649";
+import { vistaPedirPresupuesto } from "./cliente.js?v=9904c28649";
 
 export function vistaInicio(cont, opciones) {
-    return opciones.usuario.rol === "cliente" ? vistaPedirPresupuesto(cont, opciones) : vistaVender(cont, opciones);
+    if (opciones.usuario.rol === "cliente") return vistaPedirPresupuesto(cont, opciones);
+    const nuevo = opciones.datos.novedades(opciones.usuario).find((n) => n.tipo === "nuevo");
+    if (nuevo) {
+        history.replaceState(null, "", `#${nuevo.ruta}`);
+        dispatchEvent(new HashChangeEvent("hashchange"));
+        return;
+    }
+    return vistaVender(cont, opciones);
 }

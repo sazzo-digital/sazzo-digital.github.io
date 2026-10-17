@@ -2,8 +2,8 @@
 // Marca, personas y "también puede tener" de Sazzo Perfumería (diseñada el 08/10/2026).
 // Las personas son los roles reales del rubro (nombres inventados): la dueña y una clienta.
 // ============================================
-import { revisarMarca } from "../kit/js/marca.js?v=f04a42026d";
-import { negocioDe } from "../kit/js/colores.js?v=f04a42026d";
+import { revisarMarca } from "../kit/js/marca.js?v=8faf6088f2";
+import { negocioDe } from "../kit/js/colores.js?v=8faf6088f2";
 
 export const MARCA = revisarMarca({
     id: "perfumeria",
@@ -46,13 +46,21 @@ export const DETALLE = {
         "Frasco de 50 o 100 ml, o decant de 5 o 10 ml",
         "La clienta sigue su pedido desde \"Mis pedidos\"",
         "La dueña ve los pedidos nuevos y los preparados para retirar, y marca cuándo se entregó",
-        "Stock de frascos y de botellas madre en ml"
+        "Venta en el mostrador y cobro del pedido, con el stock de frascos y de la botella madre al día"
     ],
+    extra: {
+        titulo: "Para probar ya",
+        renglones: [
+            "Abrí un perfume y tocá «Verlo en 3D»: frascos escaneados que girás con el dedo",
+            "Cada familia tiene su frasco, y el perfume toma su color",
+            "Como Carolina, cobrá un pedido y entregalo, con el vuelto calculado",
+            "Vendé en el mostrador con la caja: frascos y decants, y el stock baja solo"
+        ]
+    },
     tambien: [
         "Que el pedido le llegue a la dueña por WhatsApp, con un toque",
         "Envíos a domicilio y cobro con QR o transferencia",
         "Cosmética y cuidado personal, con fotos de cada producto",
-        "Venta en el mostrador con lector de códigos",
         "Vendedoras con su usuario y lo que vendió cada una",
         "Saludo de cumpleaños que sale solo, el mismo día"
     ]

@@ -3,12 +3,12 @@
 // grilla), la comanda de una mesa (al enviar se separa solo lo de la cocina y lo de la barra), el cobro dividiendo la
 // cuenta (todo junto, en partes iguales o por lo que consumió cada uno, cada parte con su medio de pago) y la caja.
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=633ebcf9e8";
-import { CATEGORIAS, MEDIOS, TOPES, carta, dividir, pesos } from "../datos.js?v=633ebcf9e8";
-import { MARCA, NEGOCIO } from "../marca.js?v=633ebcf9e8";
-import { htmlBotonSonido, activarBotonSonido, ding } from "../../kit/js/celular.js?v=633ebcf9e8";
-import { ticket, guia, activarGuias, haceMin, hora } from "./comunes.js?v=633ebcf9e8";
-import { htmlConsigna, htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=633ebcf9e8";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=cbb0f3090e";
+import { CATEGORIAS, MEDIOS, TOPES, carta, dividir, pesos } from "../datos.js?v=cbb0f3090e";
+import { MARCA, NEGOCIO } from "../marca.js?v=cbb0f3090e";
+import { htmlBotonSonido, activarBotonSonido, ding } from "../../kit/js/celular.js?v=cbb0f3090e";
+import { ticket, guia, activarGuias, haceMin, hora } from "./comunes.js?v=cbb0f3090e";
+import { htmlConsigna, htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=cbb0f3090e";
 
 const ESTADO_MESA = { libre: "Libre", abierta: "Abierta", cobrando: "Cobrando" };
 
@@ -258,7 +258,7 @@ export function vistaCobro(cont, { usuario, datos, params: [id] }) {
                         <i class="ti ti-circle-check" aria-hidden="true"></i>
                         <h1 class="titulo">Cobrado</h1>
                         <p>${esc(cobro.mesa)} · ${esc(pesos(cobro.total))}</p>
-                        <ul class="resumen-cobro">${cobro.partes.map((p, i) => `<li><span>${cobro.partes.length > 1 ? `Persona ${i + 1}` : "Toda la mesa"}</span><b>${esc(pesos(p.monto))}</b><small>${esc(MEDIOS[p.medio])}</small></li>`).join("")}</ul>
+                        <ul class="resumen-cobro">${cobro.partes.map((p, i) => `<li><span>${cobro.partes.length > 1 ? `Persona ${i + 1}` : "Toda la mesa"}</span><b>${esc(pesos(p.monto))}</b><small>${esc(MEDIOS[p.medio] ?? (p.medio === "tarjeta" ? "Tarjeta" : p.medio))}</small></li>`).join("")}</ul>
                         <p class="nota"><i class="ti ti-armchair"></i> La mesa quedó libre.</p>
                     </div>
                     ${htmlConsignaFinal(MARCA)}

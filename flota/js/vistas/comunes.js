@@ -3,10 +3,10 @@
 // el botón del recorrido ("Mirá lo que le llega a Diego →", del kit).
 // Todo dato que entra a HTML pasa por esc().
 // ============================================
-import { esc, cuandoFue } from "../../kit/js/ui.js?v=842bff8c10";
-import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=842bff8c10";
-import { ESTADOS_VEHICULO, ESTADOS_PROBLEMA, URGENCIAS } from "../datos.js?v=842bff8c10";
-import { buscarPersona } from "../marca.js?v=842bff8c10";
+import { esc, cuandoFue } from "../../kit/js/ui.js?v=41455accc5";
+import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=41455accc5";
+import { ESTADOS_VEHICULO, ESTADOS_PROBLEMA, URGENCIAS } from "../datos.js?v=41455accc5";
+import { buscarPersona } from "../marca.js?v=41455accc5";
 
 /** "recién", "hace 5 minutos", "hace 3 horas" o, si fue antes de ayer, "el lunes 5/10 a las 15:20". */
 export function haceCuanto(iso) {

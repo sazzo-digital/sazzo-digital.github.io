@@ -30,7 +30,8 @@ var MEDICION_ARRANQUE = "https://script.google.com/macros/s/AKfycbxZ7E0BrDFH4V-8
 function avisarQueNoArranco(que) {
     try {
         if (MEDICION_ARRANQUE.indexOf("https://script.google.com/macros/") !== 0 || !window.fetch) return;
-        if (/^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname) || localStorage.getItem("sazzo-yo") === "1") return;
+        if (/^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname)) return;
+        var prueba = navigator.webdriver ? "robot" : localStorage.getItem("sazzo-yo") === "1" ? "yo" : "";
         var carpeta = (location.pathname.match(/([a-z0-9-]+)\/(?:index\.html)?$/) || [])[1];
         if (!carpeta) return;
         var equipo = localStorage.getItem("sazzo-equipo");
@@ -40,9 +41,10 @@ function avisarQueNoArranco(que) {
         }
         var origen = /^([a-z0-9-]{1,30})\|(\d{1,15})$/.exec(localStorage.getItem("sazzo-origen") || "");
         var ua = navigator.userAgent;
-        var sistema = /Android/.test(ua) ? "Android" : /iPhone|iPod/.test(ua) ? "iPhone" : /iPad/.test(ua) ? "iPad"
+        var sistema = /Android/.test(ua) ? "Android" : /iPhone|iPod/.test(ua) ? "iPhone" : /iPad/.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1) ? "iPad"
             : /Windows/.test(ua) ? "PC Windows" : /Mac OS/.test(ua) ? "Mac" : /Linux/.test(ua) ? "Linux" : "Otro";
         var navegador = /WhatsApp/.test(ua) ? "adentro de WhatsApp" : /Instagram|FBAN|FBAV/.test(ua) ? "adentro de Instagram o Facebook"
+            : /EdgA?\//.test(ua) ? "Edge" : navigator.brave ? "Brave"
             : /SamsungBrowser/.test(ua) ? "Samsung Internet" : /Firefox|FxiOS/.test(ua) ? "Firefox"
             : /Chrome|CriOS/.test(ua) ? "Chrome" : /Safari/.test(ua) ? "Safari" : "otro navegador";
         var evento = {
@@ -56,6 +58,7 @@ function avisarQueNoArranco(que) {
             dispositivo: sistema + " · " + navegador,
             cuando: Date.now()
         };
+        if (prueba) evento.prueba = prueba;
         fetch(MEDICION_ARRANQUE, { method: "POST", mode: "no-cors", keepalive: true, headers: { "Content-Type": "text/plain" }, body: JSON.stringify(evento) })["catch"](function () {});
     } catch (e) {
         // sin almacenamiento o sin red: no pasa nada
@@ -78,12 +81,19 @@ function avisarQueNoArranco(que) {
             avisar(VIEJO);
             avisarQueNoArranco("navegador-viejo");
         }
-        // Si a los 15 segundos sigue sin arrancar (señal muy mala o algo falló), que lo diga
-        else setTimeout(function () {
-            if (!document.querySelector("#app .cargando")) return; // ya arrancó
-            avisar("Está tardando más de lo normal. Probá recargar la página o abrirla en Chrome o Safari actualizados.");
-            avisarQueNoArranco("no-arranco");
-        }, 15000);
+        // Si a los 15 segundos (contando solo con la página a la vista) sigue sin arrancar, que lo diga
+        else {
+            var visible = 0;
+            var reloj = setInterval(function () {
+                if (!document.querySelector("#app .cargando")) return clearInterval(reloj);
+                if (document.visibilityState === "hidden") return;
+                visible += 1;
+                if (visible < 15) return;
+                clearInterval(reloj);
+                avisar("Está tardando más de lo normal. Probá recargar la página o abrirla en Chrome o Safari actualizados.");
+                avisarQueNoArranco("no-arranco");
+            }, 1000);
+        }
         if (sinColores && !sinModulos) {
             var barra = document.createElement("p");
             barra.className = "aviso-navegador-viejo";

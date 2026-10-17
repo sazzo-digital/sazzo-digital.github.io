@@ -2,10 +2,10 @@
 // Vehículos (administradora y mecánico): lista con filtro por estado y la ficha de cada uno
 // (estado, chofer de hoy, km y service, papeles con vencimiento e historia de problemas).
 // ============================================
-import { esc, vacio, aviso, fechaCorta } from "../../kit/js/ui.js?v=842bff8c10";
-import { mostrarMapa } from "../../kit/js/mapa.js?v=842bff8c10";
-import { ESTADOS_VEHICULO, TOPES, UBICACIONES, COLOR_ESTADO } from "../datos.js?v=842bff8c10";
-import { haceCuanto, pastillaVehiculo, pastillaProblema, historiaProblema, textoRepuestos } from "./comunes.js?v=842bff8c10";
+import { esc, vacio, aviso, fechaCorta } from "../../kit/js/ui.js?v=41455accc5";
+import { mostrarMapa } from "../../kit/js/mapa.js?v=41455accc5";
+import { ESTADOS_VEHICULO, TOPES, UBICACIONES, COLOR_ESTADO, SERVICE_CADA_KM, cantidadCon } from "../datos.js?v=41455accc5";
+import { haceCuanto, pastillaVehiculo, pastillaProblema, historiaProblema, textoRepuestos } from "./comunes.js?v=41455accc5";
 
 const km = (n) => `${n.toLocaleString("es-AR")} km`;
 
@@ -77,6 +77,8 @@ export function vistaFicha(cont, { usuario, datos, params: [id] }) {
             <div class="datos--${nivelService}"><dt>Próximo service</dt><dd>${esc(km(v.proximoService))}<small>${s.faltan > 0 ? `faltan ${esc(km(s.faltan))}` : `se pasó por ${esc(km(-s.faltan))}`}</small></dd></div>
             ${v.papeles.map((p) => `<div class="datos--${nivelPapel[p.nivel]}"><dt>${esc(p.tipo)}</dt><dd>${esc(fechaCorta(p.vence))}<small>${esc(textoPapel(p))}</small></dd></div>`).join("")}
         </dl>
+        <a class="boton boton--ancho boton--secundario" href="#/service/${esc(v.id)}"><i class="ti ti-tool"></i> Hacer el service</a>
+        ${v.ultimoService ? `<p class="nota"><i class="ti ti-gauge" aria-hidden="true"></i> Último service a los ${esc(km(v.ultimoService.km))}, por ${esc(v.ultimoService.por)}: ${esc(textoRepuestos(v.ultimoService.repuestos))}${v.ultimoService.nota ? ` · ${esc(v.ultimoService.nota)}` : ""}.</p>` : ""}
         <form class="formulario km" novalidate>
             <label>Actualizar kilómetros
                 <span class="km__fila">
@@ -105,6 +107,56 @@ export function vistaFicha(cont, { usuario, datos, params: [id] }) {
             datos.cargarKm(usuario, v.id, valor === "" ? NaN : Number(valor));
             aviso("Kilómetros guardados");
             vistaFicha(cont, { usuario, datos, params: [id] });
+        } catch (err) {
+            aviso(err, "error");
+        }
+    });
+}
+
+export function vistaService(cont, { usuario, datos, params: [id] }) {
+    const v = datos.ficha(id);
+    const repuestos = datos.listarRepuestos();
+    const usados = Object.fromEntries(repuestos.map((r) => [r.id, 0]));
+    const tope = (r) => Math.min(r.cantidad, TOPES.cantidad);
+    cont.innerHTML = `
+        <a class="volver" href="#/vehiculos/${esc(v.id)}"><i class="ti ti-arrow-left"></i> ${esc(v.nombre)}</a>
+        <h1 class="titulo">Service de ${esc(v.nombre)}</h1>
+        <p class="nota"><i class="ti ti-gauge" aria-hidden="true"></i> A los ${esc(km(v.km))}. El próximo queda ${esc(km(SERVICE_CADA_KM[v.tipo] ?? 10_000))} más adelante.</p>
+        <form class="formulario" novalidate>
+            <fieldset class="opciones">
+                <legend>¿Qué usaste? (se descuenta del stock)</legend>
+                <ul class="usados">${repuestos.map((r) => `
+                    <li class="usados__fila${r.cantidad ? "" : " usados__fila--sin"}">
+                        <span>${esc(r.nombre)}<small>${r.cantidad ? `Hay ${esc(cantidadCon(r.cantidad, r.unidad))}` : "No hay"}</small></span>
+                        <span class="contador-uso">
+                            <button class="boton-icono" type="button" data-menos="${esc(r.id)}" aria-label="Uno menos de ${esc(r.nombre)}" disabled><i class="ti ti-minus"></i></button>
+                            <b data-cuantos="${esc(r.id)}">0</b>
+                            <button class="boton-icono" type="button" data-mas="${esc(r.id)}" aria-label="Uno más de ${esc(r.nombre)}"${tope(r) ? "" : " disabled"}><i class="ti ti-plus"></i></button>
+                        </span>
+                    </li>`).join("")}
+                </ul>
+            </fieldset>
+            <label>Nota (si querés)
+                <textarea name="nota" rows="2" maxlength="${TOPES.nota}" placeholder="Ej: cambio de aceite y filtro"></textarea>
+            </label>
+            <button class="boton boton--ancho boton--grande" type="submit"><i class="ti ti-circle-check"></i> Service hecho</button>
+        </form>`;
+    const cambiar = (rid, paso) => {
+        const r = repuestos.find((x) => x.id === rid);
+        usados[rid] = Math.max(0, Math.min(tope(r), usados[rid] + paso));
+        cont.querySelector(`[data-cuantos="${rid}"]`).textContent = usados[rid];
+        cont.querySelector(`[data-menos="${rid}"]`).disabled = usados[rid] === 0;
+        cont.querySelector(`[data-mas="${rid}"]`).disabled = usados[rid] >= tope(r);
+    };
+    cont.querySelectorAll("[data-mas]").forEach((b) => b.addEventListener("click", () => cambiar(b.dataset.mas, 1)));
+    cont.querySelectorAll("[data-menos]").forEach((b) => b.addEventListener("click", () => cambiar(b.dataset.menos, -1)));
+    cont.querySelector("form").addEventListener("submit", (e) => {
+        e.preventDefault();
+        const lista = Object.entries(usados).filter(([, n]) => n > 0).map(([repuestoId, cantidad]) => ({ repuestoId, cantidad }));
+        try {
+            datos.hacerService(usuario, v.id, { repuestos: lista, nota: e.target.nota.value });
+            aviso("Service anotado: se descontó del stock");
+            location.hash = `#/vehiculos/${v.id}`;
         } catch (err) {
             aviso(err, "error");
         }

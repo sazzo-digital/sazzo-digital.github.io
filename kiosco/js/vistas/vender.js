@@ -5,15 +5,17 @@
 // Código que no está → "¿Lo cargás?" y queda listo para vender.
 // En la compu, dos columnas (productos | ticket); en el celular, el ticket abajo con una barrita arriba que lleva a él.
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=85347c5bd0";
-import { puedeEscanear, escanear } from "../../kit/js/escaner.js?v=85347c5bd0";
-import { mantenerPantallaPrendida, htmlCopiable, activarCopiables, htmlBotonSonido, activarBotonSonido, ding } from "../../kit/js/celular.js?v=85347c5bd0";
-import { girarRuleta } from "../../kit/js/ruleta.js?v=85347c5bd0";
-import { TOPES, MEDIOS, PREMIOS, PROMO_DESDE, ganaTirada, pesos } from "../datos.js?v=85347c5bd0";
-import { MARCA, NEGOCIO } from "../marca.js?v=85347c5bd0";
-import { guia, activarGuias } from "./comunes.js?v=85347c5bd0";
-import { htmlConsigna } from "../../kit/js/consigna.js?v=85347c5bd0";
-import { EVENTO_REINICIO } from "../../kit/js/guardado.js?v=85347c5bd0";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=5dc1b11480";
+import { puedeEscanear, escanear } from "../../kit/js/escaner.js?v=5dc1b11480";
+import { mantenerPantallaPrendida, htmlCopiable, activarCopiables, htmlBotonSonido, activarBotonSonido, ding } from "../../kit/js/celular.js?v=5dc1b11480";
+import { girarRuleta } from "../../kit/js/ruleta.js?v=5dc1b11480";
+import { TOPES, MEDIOS, PREMIOS, PROMO_DESDE, SECCIONES, ganaTirada, pesos, seccionDe } from "../datos.js?v=5dc1b11480";
+import { MEDIOS_PAGO, mediosParaCaja } from "../../kit/js/pagos.js?v=5dc1b11480";
+import { MARCA, NEGOCIO } from "../marca.js?v=5dc1b11480";
+import { guia, activarGuias } from "./comunes.js?v=5dc1b11480";
+import { htmlConsigna } from "../../kit/js/consigna.js?v=5dc1b11480";
+import { EVENTO_REINICIO } from "../../kit/js/guardado.js?v=5dc1b11480";
+import { abrirCaja } from "../../kit/js/caja.js?v=5dc1b11480";
 
 // El ticket en curso queda en memoria mientras se navega (se vacía al cobrar)
 export const ticket = new Map(); // productoId → cantidad
@@ -25,8 +27,14 @@ addEventListener(EVENTO_REINICIO, () => {
 
 const BILLETES = [2_000, 5_000, 10_000, 20_000];
 const ALIAS = "la.esquina.kiosco"; // de ejemplo: al cobrar con transferencia se copia con un toque
+const ICONOS = { bebidas: "ti-bottle", alfajores: "ti-cookie", golosinas: "ti-candy", snacks: "ti-paper-bag", almacen: "ti-basket" };
+const conIcono = (p) => {
+    const seccion = seccionDe(p.nombre);
+    return { ...p, seccion, icono: ICONOS[seccion] ?? "ti-package" };
+};
+const MEDIOS_CAJA = mediosParaCaja(MEDIOS_PAGO);
 
-export function vistaVender(cont, { usuario, datos, irA }) {
+export function vistaVender(cont, { usuario, datos, irA, despuesDeCaja = false }) {
     mantenerPantallaPrendida(); // la caja del mostrador: que la pantalla no se apague entre venta y venta
     cont.innerHTML = `
         <div class="titulo-con-accion">
@@ -34,6 +42,7 @@ export function vistaVender(cont, { usuario, datos, irA }) {
             <span class="negocio"><i class="ti ti-building-store" aria-hidden="true"></i>${esc(NEGOCIO)}</span>
             ${htmlBotonSonido(MARCA.prefijo)}
         </div>
+        <button class="boton boton--ancho abrir-caja" type="button" data-abrir-caja><i class="ti ti-scan"></i> Abrir la caja: escaneá y cobrá como en el súper</button>
         <button class="ticket-barra" type="button" hidden></button>
         <div class="caja-venta">
             <section class="productos" aria-label="Productos">
@@ -292,12 +301,35 @@ export function vistaVender(cont, { usuario, datos, irA }) {
         pintarProductos();
     });
     cont.querySelector("[data-camara]")?.addEventListener("click", () => escanear(alBuscar));
+    let vendioEnCaja = false;
+    cont.querySelector("[data-abrir-caja]").addEventListener("click", () => abrirCaja({
+        titulo: NEGOCIO,
+        prefijo: MARCA.prefijo,
+        productos: () => datos.listarProductos().map(conIcono),
+        gondola: () => datos.listarProductos().map(conIcono),
+        secciones: SECCIONES,
+        buscarCodigo: (codigo) => {
+            const p = datos.porCodigo(codigo);
+            return p ? conIcono(p) : null;
+        },
+        medios: MEDIOS_CAJA,
+        billetes: BILLETES,
+        imagenQR: (p) => `img/qr/${encodeURIComponent(p.codigo)}.svg`,
+        cobrar: ({ items, medio: m, pagaCon, pagos }) => {
+            const venta = datos.vender(usuario, { items, medio: m, pagaCon, pagos });
+            vendioEnCaja = true;
+            return venta;
+        },
+        alCerrar: () => vistaVender(cont, { usuario, datos, irA, despuesDeCaja: vendioEnCaja })
+    }));
     activarBotonSonido(cont, MARCA.prefijo); // "ding" al cobrar, apagado de entrada
 
     pintarProductos();
     pintarTicket();
-    if (usuario.rol === "empleada" && !ticket.size) {
-        grilla.insertAdjacentHTML("afterbegin", htmlConsigna({ paso: 1, total: 3, accion: "Tocá “Gaseosa cola 1,5 L” y “Alfajor triple”, y cobrá con $10.000.", resultado: "Te calcula el vuelto solo." }));
+    if (usuario.rol === "empleada" && despuesDeCaja) {
+        grilla.insertAdjacentHTML("afterbegin", htmlConsigna({ paso: 2, total: 3, accion: "Ahora anotá un fiado: leche y pan lactal para Graciela.", resultado: "Queda en su libreta, con su tope." }));
+    } else if (usuario.rol === "empleada" && !ticket.size) {
+        grilla.insertAdjacentHTML("afterbegin", htmlConsigna({ paso: 1, total: 3, accion: "Tocá «Abrir la caja», sumá la gaseosa de 1,5 L y el alfajor triple de la góndola, y cobrá con $ 10.000.", resultado: "Se suma en la pantalla grande y te calcula el vuelto solo." }));
     }
 }
 

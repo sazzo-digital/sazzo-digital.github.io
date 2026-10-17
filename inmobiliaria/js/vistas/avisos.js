@@ -4,8 +4,8 @@
 //   El agente la confirma → a Valeria le salta "¡Te confirmaron la visita!". Si alguno la cancela, el otro se entera.
 // Acá solo se dice qué pasó y a quién le importa; el kit decide qué es nuevo para cada uno.
 // ============================================
-import { fechaCorta } from "../../kit/js/ui.js?v=0ca3fb45de";
-import { aHora } from "../../kit/js/turnos.js?v=0ca3fb45de";
+import { fechaCorta } from "../../kit/js/ui.js?v=17203dc0ea";
+import { aHora } from "../../kit/js/turnos.js?v=17203dc0ea";
 
 export function avisosDe(datos) {
     const db = datos.guardado.db();
@@ -35,7 +35,7 @@ export function avisosDe(datos) {
             avisos.push({
                 id: `visita-${v.id}`, estado: v.estado, para: [laCancelo === cliente ? v.agenteId : cliente], de: laCancelo,
                 titulo: laCancelo === cliente ? `${v.quien} canceló la visita` : "Cancelaron tu visita",
-                linea: propiedad, chico: `Era el ${cuando}`,
+                linea: propiedad, chico: v.motivo ? `Era el ${cuando} · ${v.motivo}` : `Era el ${cuando}`,
                 boton: laCancelo === cliente ? "Ver la agenda" : "Ver mis visitas", ruta: laCancelo === cliente ? "/agenda" : "/mis-visitas",
                 icono: "ti-calendar-x"
             });

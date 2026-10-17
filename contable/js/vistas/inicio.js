@@ -3,12 +3,12 @@
 // quién te debe y a quién le debés, y lo último que se facturó. Arriba, el paso del recorrido de cada persona
 // (Silvina arranca facturando; Hernán y Patricia, mirando).
 // ============================================
-import { esc } from "../../kit/js/ui.js?v=03798c8bfa";
-import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=03798c8bfa";
-import { htmlConsigna } from "../../kit/js/consigna.js?v=03798c8bfa";
-import { pesos, pesosRedondo, nombrePeriodo, periodoActual, correrPeriodo, signo, numeroComprobante } from "../reglas.js?v=03798c8bfa";
-import { buscarPersona } from "../marca.js?v=03798c8bfa";
-import { logoEmpresa, haceDias, pastillaTipo, diaMes, fechaCorta } from "./comunes.js?v=03798c8bfa";
+import { esc } from "../../kit/js/ui.js?v=0edfe6e2d5";
+import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=0edfe6e2d5";
+import { htmlConsigna } from "../../kit/js/consigna.js?v=0edfe6e2d5";
+import { pesos, pesosRedondo, nombrePeriodo, periodoActual, correrPeriodo, signo, numeroComprobante } from "../reglas.js?v=0edfe6e2d5";
+import { buscarPersona } from "../marca.js?v=0edfe6e2d5";
+import { logoEmpresa, haceDias, pastillaTipo, diaMes, fechaCorta } from "./comunes.js?v=0edfe6e2d5";
 
 export function vistaInicio(cont, { usuario, datos, irA }) {
     const e = datos.leerEmpresa();
@@ -49,6 +49,7 @@ export function vistaInicio(cont, { usuario, datos, irA }) {
             </a>
         </div>
 
+        ${e.condicionIva === "MT" ? htmlMonotributo(datos.monotributo()) : ""}
         <div class="columnas">
             <section class="bloque">
                 <h2 class="subtitulo"><i class="ti ti-user-dollar"></i> Quién te debe</h2>
@@ -94,4 +95,24 @@ function haceMasDe(fecha, dias) {
     if (!fecha) return false;
     const [a, m, d] = fecha.split("-").map(Number);
     return (Date.now() - new Date(a, m - 1, d).getTime()) / 864e5 > dias;
+}
+
+function htmlMonotributo(m) {
+    return `
+        <section class="bloque monotributo">
+            <h2 class="subtitulo"><i class="ti ti-receipt-tax"></i> Tu monotributo</h2>
+            <p>Facturaste <b>${esc(pesosRedondo(m.facturado))}</b> en los últimos 12 meses. Tus facturas salen C, sin IVA.</p>
+            ${m.tope ? `
+            <div class="monotributo__barra${m.usado >= 100 ? " monotributo__barra--pasado" : m.usado >= 80 ? " monotributo__barra--cerca" : ""}" role="img" aria-label="${esc(m.usado)}% del tope"><span style="width:${Math.min(100, m.usado)}%"></span></div>
+            <p class="monotributo__texto">${m.quedan > 0 ? `Usaste el ${esc(m.usado)}% del tope de tu categoría: te quedan <b>${esc(pesosRedondo(m.quedan))}</b>.` : `Te pasaste del tope de tu categoría por <b>${esc(pesosRedondo(-m.quedan))}</b>: toca recategorizarte en ARCA.`}</p>`
+            : `<p class="nota"><i class="ti ti-info-circle" aria-hidden="true"></i> <span>Cargá el tope de tu categoría en <a href="#/empresa">Tu empresa</a> y te avisa cuánto te queda.</span></p>`}
+            <details class="monotributo__pasos">
+                <summary>Cómo facturás sin contadora</summary>
+                <ol>
+                    <li>Una sola vez: en ARCA, con tu CUIT y clave fiscal, das de alta un punto de venta de factura electrónica.</li>
+                    <li>En cada venta: hacés la factura C desde acá. En la versión real, ARCA le pone el CAE al momento.</li>
+                    <li>Cada mes mirás este tope: si te pasás, toca recategorizarte.</li>
+                </ol>
+            </details>
+        </section>`;
 }

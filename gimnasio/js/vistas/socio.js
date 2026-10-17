@@ -5,11 +5,12 @@
 // - "Mi cuota": cuándo vence, el pago de ejemplo (alias para copiar y "Ya transferí") y sus pagos anteriores.
 //   Nada de tarjetas ni cobro de verdad: es una demo.
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=289ec4bb58";
-import { htmlCopiable, activarCopiables } from "../../kit/js/celular.js?v=289ec4bb58";
-import { SOCIO_DE, pesos, fechaCorta, nombreFecha } from "../datos.js?v=289ec4bb58";
-import { guia, activarGuias, pastilla, pastillaCuota, chipsDias, graficoPeso, barrasSemanas } from "./comunes.js?v=289ec4bb58";
-import { htmlConsigna } from "../../kit/js/consigna.js?v=289ec4bb58";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=f31b69dab0";
+import { MEDIOS_PAGO, textoMedio } from "../../kit/js/pagos.js?v=f31b69dab0";
+import { htmlCopiable, activarCopiables } from "../../kit/js/celular.js?v=f31b69dab0";
+import { SOCIO_DE, pesos, fechaCorta, nombreFecha } from "../datos.js?v=f31b69dab0";
+import { guia, activarGuias, pastilla, pastillaCuota, chipsDias, graficoPeso, barrasSemanas } from "./comunes.js?v=f31b69dab0";
+import { htmlConsigna } from "../../kit/js/consigna.js?v=f31b69dab0";
 
 let fechaClases = null; // el día elegido en "Clases" queda mientras se navega
 
@@ -126,7 +127,7 @@ export function vistaCuota(cont, { usuario, datos, irA }) {
         ${pagos.length ? `<ul class="tarjetas">${pagos.map((p) => `
             <li class="tarjeta tarjeta--chica">
                 <div class="tarjeta__fila">
-                    <span><b>${esc(fechaCorta(p.confirmadoEl ?? p.fecha))}</b> · ${esc(p.cuota)} · ${p.medio === "efectivo" ? "efectivo" : "transferencia"}</span>
+                    <span><b>${esc(fechaCorta(p.confirmadoEl ?? p.fecha))}</b> · ${esc(p.cuota)} · ${esc(textoMedio(p, MEDIOS_PAGO))}</span>
                     ${p.estado === "avisado" ? pastilla("A confirmar", "alerta") : `<b>${esc(pesos(p.monto))}</b>`}
                 </div>
             </li>`).join("")}</ul>` : vacio("Todavía no hay pagos.", "ti-receipt")}`;

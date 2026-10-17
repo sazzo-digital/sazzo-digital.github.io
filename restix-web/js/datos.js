@@ -6,12 +6,13 @@
 // Reglas del kit: exigir() en lo que modifica, topes en todo lo que se carga y se devuelven copias.
 // Si cambia la forma de los datos, subir VERSION_DATOS (se regeneran solos).
 // ============================================
-import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=633ebcf9e8";
-import { enteroHasta } from "../kit/js/topes.js?v=633ebcf9e8";
-import { fechaLocalISO, diaLocalDe } from "../kit/js/fechas.js?v=633ebcf9e8";
-import { MARCA } from "./marca.js?v=633ebcf9e8";
+import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=cbb0f3090e";
+import { enteroHasta } from "../kit/js/topes.js?v=cbb0f3090e";
+import { fechaLocalISO, diaLocalDe } from "../kit/js/fechas.js?v=cbb0f3090e";
+import { MARCA } from "./marca.js?v=cbb0f3090e";
+import { MEDIOS_PAGO } from "../kit/js/pagos.js?v=cbb0f3090e";
 
-export const VERSION_DATOS = 2;
+export const VERSION_DATOS = 3;
 
 export const TOPES = {
     personas: 20,
@@ -32,7 +33,7 @@ export const SECTORES = {
     barra: "Barra"
 };
 
-export const MEDIOS = { efectivo: "Efectivo", tarjeta: "Tarjeta", qr: "QR / transferencia" };
+export const MEDIOS = MEDIOS_PAGO;
 
 export const CATEGORIAS = {
     pizzas: { texto: "Pizzas", destino: "cocina", icono: "ti-pizza" },
@@ -129,11 +130,11 @@ export function semilla() {
 
     // Lo que ya se cobró hoy en el turno (para que la caja tenga números)
     const cobros = [
-        [180, "Mesa 3", [[24_500, "efectivo"], [24_500, "tarjeta"]]],
+        [180, "Mesa 3", [[24_500, "efectivo"], [24_500, "debito"]]],
         [160, "Barra 1", [[12_000, "qr"]]],
-        [140, "Mesa 6", [[38_400, "tarjeta"]]],
+        [140, "Mesa 6", [[38_400, "credito"]]],
         [120, "Vereda 2", [[9_800, "efectivo"], [9_800, "efectivo"]]],
-        [95, "Mesa 1", [[21_500, "qr"], [21_500, "tarjeta"], [21_500, "efectivo"]]],
+        [95, "Mesa 1", [[21_500, "qr"], [21_500, "transferencia"], [21_500, "efectivo"]]],
         [70, "Mesa 8", [[33_000, "efectivo"]]]
     ].map(([hace, mesa, partes], i) => ({ id: `co-${i + 1}`, mesa, partes: partes.map(([monto, medio]) => ({ monto, medio })), total: partes.reduce((t, [m]) => t + m, 0), en: haceMin(hace), por: "Lara" }));
 
@@ -344,7 +345,7 @@ export function crearDatos(prefijo = MARCA.prefijo) {
         exigir(esMoza(usuario), "La caja la ve la moza.");
         const hoy = fechaLocalISO(0);
         const cobros = db().cobros.filter((c) => diaLocalDe(c.en) === hoy).sort((a, b) => b.en.localeCompare(a.en));
-        const porMedio = { efectivo: 0, tarjeta: 0, qr: 0, pedidosya: 0 };
+        const porMedio = Object.fromEntries([...Object.keys(MEDIOS), "pedidosya"].map((k) => [k, 0]));
         cobros.forEach((c) => c.partes.forEach((p) => (porMedio[p.medio] += p.monto)));
         const total = Object.values(porMedio).reduce((a, b) => a + b, 0);
         const cierre = db().cierres.filter((c) => c.dia === hoy).at(-1) ?? null;

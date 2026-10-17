@@ -15,14 +15,15 @@
 // Reglas del kit: exigir() en lo que modifica, topes en todo lo que se carga, nada se borra y se devuelven copias.
 // Las ventas guardan el precio y el costo del momento. Si cambia la forma de los datos, subir VERSION_DATOS.
 // ============================================
-import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=8ec449d814";
-import { enteroHasta, sinPasarse } from "../kit/js/topes.js?v=8ec449d814";
-import { diaLocalDe, fechaLocalISO } from "../kit/js/fechas.js?v=8ec449d814";
-import { columnasDe, numeroDe, textoParaComparar } from "../kit/js/tablas.js?v=8ec449d814";
-import { filtrarPorTexto, comoSuena } from "../kit/js/buscar.js?v=8ec449d814";
-import { MARCA, NEGOCIO, buscarPersona } from "./marca.js?v=8ec449d814";
+import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=9904c28649";
+import { enteroHasta, sinPasarse } from "../kit/js/topes.js?v=9904c28649";
+import { diaLocalDe, fechaLocalISO } from "../kit/js/fechas.js?v=9904c28649";
+import { columnasDe, numeroDe, textoParaComparar } from "../kit/js/tablas.js?v=9904c28649";
+import { filtrarPorTexto, comoSuena } from "../kit/js/buscar.js?v=9904c28649";
+import { MARCA, NEGOCIO, buscarPersona } from "./marca.js?v=9904c28649";
+import { MEDIOS_PAGO, DIVIDIDO, revisarPagos, sumarPorMedio } from "../kit/js/pagos.js?v=9904c28649";
 
-export const VERSION_DATOS = 1;
+export const VERSION_DATOS = 2;
 
 // ---------- Topes (cada uno con su prueba de valor absurdo) ----------
 export const TOPES = {
@@ -64,7 +65,7 @@ export const COLUMNAS_LISTA = {
 export const FONDO_CAJA = 30_000; // el cambio con el que arranca el cajón cada día
 export const DESCUENTO_MAYOR = 10; // % menos desde la cantidad "por mayor" de cada artículo
 export const VALIDEZ_DIAS = 7; // un presupuesto vale 7 días (los precios cambian seguido)
-export const MEDIOS = { efectivo: "Efectivo", transferencia: "Transferencia", tarjeta: "Tarjeta", cuenta: "A cuenta" };
+export const MEDIOS = { ...MEDIOS_PAGO, cuenta: "A cuenta" };
 export const TOPE_CUENTA_NUEVA = 100_000;
 
 // ---------- Unidades: por unidad, por metro y por kilo ----------
@@ -495,7 +496,7 @@ export function semilla() {
                 items.push(renglonDe(p, cantidadAlAzar(p)));
             }
             const r = azar();
-            const medio = r < 0.45 ? "efectivo" : r < 0.8 ? "transferencia" : "tarjeta";
+            const medio = r < 0.42 ? "efectivo" : r < 0.58 ? "debito" : r < 0.7 ? "credito" : r < 0.86 ? "transferencia" : "qr";
             ventas.push({ id: `v-${dias}-${i}`, fecha: momento(dias, hora), items, total: totalDe(items), medio, clienteId: null, pagaCon: null, vuelto: null, por: azar() < 0.65 ? "Nahuel" : "Osvaldo", presupuestoId: null });
         }
     }
@@ -1000,6 +1001,14 @@ export function crearDatos(prefijo = MARCA.prefijo) {
     /** Lo que sugiere el buscador para un renglón (los 6 más parecidos). */
     const sugerencias = (texto) => (tokensDe(texto).length ? listarProductos({ texto }).slice(0, 6) : []);
 
+    const PARA_LA_FOTO = ["Canilla esférica 1/2\"", "Llave de paso termofusión 1/2\"", "Flexible para canilla 30 cm", "Sifón simple"];
+
+    function sugeridosFoto(presupuestoId) {
+        const pr = buscar(db().presupuestos, presupuestoId, "Ese presupuesto no existe.");
+        return PARA_LA_FOTO.map((n) => db().productos.find((x) => x.nombre === n))
+            .filter((x) => x && !pr.items.some((i) => i.productoId === x.id)).slice(0, 3);
+    }
+
     /** Un renglón entendido → item del presupuesto (con el artículo, si lo encontró). */
     function itemDeLinea(linea, i) {
         const e = entender(linea);
@@ -1149,13 +1158,17 @@ export function crearDatos(prefijo = MARCA.prefijo) {
         exigir(esDelLocal(usuario), "El presupuesto lo arma la ferretería.");
         const pr = buscar(db().presupuestos, presupuestoId, "Ese presupuesto no existe.");
         exigir(pr.estado === "pedido" || pr.estado === "enviado" || pr.estado === "aceptado", "Ese presupuesto ya no se puede cambiar.");
-        if (pr.estado !== "pedido") Object.assign(pr, { estado: "pedido", enviado: null, vence: null, aceptado: null, aceptadoPorCliente: false });
         return pr;
+    }
+
+    function reabrir(pr) {
+        if (pr.estado !== "pedido") Object.assign(pr, { estado: "pedido", enviado: null, vence: null, aceptado: null, aceptadoPorCliente: false });
     }
 
     /** Volver a armar uno ya enviado o aceptado (para corregir algo): vuelve a "para armar" y hay que mandarlo de nuevo. */
     function volverAArmar(usuario, presupuestoId) {
         const pr = presupuestoParaCambiar(usuario, presupuestoId);
+        reabrir(pr);
         guardado.persistir();
         return armarPresupuesto(pr);
     }
@@ -1169,6 +1182,7 @@ export function crearDatos(prefijo = MARCA.prefijo) {
         exigir(!pr.items.some((i) => i.productoId === p.id && i.id !== itemId), `${p.nombre} ya está en el presupuesto: cambiá la cantidad de ese renglón.`);
         const cantidad = cantidadPara(p, item.cantidad);
         Object.assign(item, { productoId: p.id, nombre: p.nombre, unidad: p.unidad, cantidad, precio: precioPara(p, cantidad), costo: p.costo });
+        reabrir(pr);
         guardado.persistir();
         return armarPresupuesto(pr);
     }
@@ -1181,6 +1195,7 @@ export function crearDatos(prefijo = MARCA.prefijo) {
         const p = buscar(db().productos, item.productoId, "Ese artículo no existe.");
         item.cantidad = revisarCantidad(cantidad, p.unidad, `La cantidad de ${p.nombre}`);
         item.precio = precioPara(p, item.cantidad);
+        reabrir(pr);
         guardado.persistir();
         return armarPresupuesto(pr);
     }
@@ -1190,6 +1205,7 @@ export function crearDatos(prefijo = MARCA.prefijo) {
         exigir(pr.items.some((i) => i.id === itemId), "Ese renglón no está en el presupuesto.");
         exigir(pr.items.length > 1, "Es el único renglón: si no va, anulá el presupuesto.");
         pr.items = pr.items.filter((i) => i.id !== itemId);
+        reabrir(pr);
         guardado.persistir();
         return armarPresupuesto(pr);
     }
@@ -1201,6 +1217,7 @@ export function crearDatos(prefijo = MARCA.prefijo) {
         exigir(!pr.items.some((i) => i.productoId === p.id), `${p.nombre} ya está en el presupuesto: cambiá la cantidad de ese renglón.`);
         const c = revisarCantidad(cantidad, p.unidad, `La cantidad de ${p.nombre}`);
         pr.items.push({ id: nuevoId("i"), texto: "", foto: false, productoId: p.id, nombre: p.nombre, unidad: p.unidad, cantidad: c, precio: precioPara(p, c), costo: p.costo });
+        reabrir(pr);
         guardado.persistir();
         return armarPresupuesto(pr);
     }
@@ -1305,13 +1322,15 @@ export function crearDatos(prefijo = MARCA.prefijo) {
     }
 
     /** Cobrar: efectivo (con "paga con" opcional → vuelto), transferencia, tarjeta o a cuenta corriente (con tope). */
-    function vender(usuario, { items, medio, pagaCon = null, clienteId = null, autorizarTope = false } = {}) {
+    function vender(usuario, { items, medio, pagaCon = null, clienteId = null, autorizarTope = false, pagos = null } = {}) {
         exigir(esDelLocal(usuario), "Solo alguien de la ferretería puede vender.");
         revisarTope(db().ventas, TOPES.ventas, "ventas");
-        exigir(MEDIOS[medio], "Elegí cómo paga.");
+        exigir(MEDIOS[medio] || medio === DIVIDIDO, "Elegí cómo paga.");
         const { renglones, total } = armarTicket(items);
-        const pago = revisarPago(usuario, { medio, pagaCon, total, clienteId, autorizarTope });
+        const partes = medio === DIVIDIDO ? revisarPagos(total, pagos, Object.keys(MEDIOS_PAGO)) : null;
+        const pago = partes ? { pagaCon: null, vuelto: null, clienteId: null } : revisarPago(usuario, { medio, pagaCon, total, clienteId, autorizarTope });
         const venta = guardarVenta(usuario, renglones, total, medio, pago);
+        if (partes) venta.pagos = partes;
         guardado.persistir();
         return { ...copia(venta), cuenta: pago.clienteId ? armarCuenta(buscar(db().cuentas, pago.clienteId)) : null };
     }
@@ -1324,8 +1343,7 @@ export function crearDatos(prefijo = MARCA.prefijo) {
     function caja(usuario, dia = fechaLocalISO(0)) {
         exigir(esDelLocal(usuario), "La caja la ve la ferretería.");
         const ventas = delDia(db().ventas, dia);
-        const porMedio = { efectivo: 0, transferencia: 0, tarjeta: 0, cuenta: 0 };
-        ventas.forEach((v) => (porMedio[v.medio] += v.total));
+        const porMedio = sumarPorMedio(ventas, MEDIOS);
         const vendido = Object.values(porMedio).reduce((a, b) => a + b, 0);
         const pagos = db().cuentas.flatMap((c) => c.movimientos.filter((m) => m.tipo === "pago" && diaLocalDe(m.fecha) === dia));
         const cobros = { efectivo: 0, transferencia: 0 };
@@ -1381,7 +1399,7 @@ export function crearDatos(prefijo = MARCA.prefijo) {
         verLista, aplicarLista, listaDeEjemplo,
         pedidosSugeridos, mensajePedido, recibirPedido,
         listarCuentas, cuenta, miCuenta, nuevaCuenta, cambiarTope, cobrarCuenta, mensajeCuenta, revisarTopeCuenta,
-        sugerencias, verRenglones, nuevoPresupuesto, presupuesto, listarPresupuestos, misPresupuestos,
+        sugerencias, sugeridosFoto, verRenglones, nuevoPresupuesto, presupuesto, listarPresupuestos, misPresupuestos,
         novedades, marcarVisto,
         volverAArmar, elegirArticulo, cambiarCantidad, quitarRenglon, sumarArticulo, mensajePresupuesto, enviarPresupuesto, aceptarPresupuesto, venderPresupuesto, anularPresupuesto,
         armarTicket, vender,

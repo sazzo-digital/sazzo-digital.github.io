@@ -3,12 +3,12 @@
 // (se achica en el navegador antes de guardarlo), colores (la ventanita del kit) y qué pantallas se usan.
 // Lo cambian Silvina y Hernán; Patricia lo ve. Nada de esto viene del link: se escribe acá.
 // ============================================
-import { esc, aviso } from "../../kit/js/ui.js?v=03798c8bfa";
-import { abrirColores } from "../../kit/js/colores.js?v=03798c8bfa";
-import { TOPES, MODULOS } from "../datos.js?v=03798c8bfa";
-import { MARCA } from "../marca.js?v=03798c8bfa";
-import { formatoCuit, CONDICIONES, fechaISO } from "../reglas.js?v=03798c8bfa";
-import { logoEmpresa, condicionTexto } from "./comunes.js?v=03798c8bfa";
+import { esc, aviso } from "../../kit/js/ui.js?v=0edfe6e2d5";
+import { abrirColores } from "../../kit/js/colores.js?v=0edfe6e2d5";
+import { TOPES, MODULOS } from "../datos.js?v=0edfe6e2d5";
+import { MARCA } from "../marca.js?v=0edfe6e2d5";
+import { formatoCuit, CONDICIONES, fechaISO } from "../reglas.js?v=0edfe6e2d5";
+import { logoEmpresa, condicionTexto } from "./comunes.js?v=0edfe6e2d5";
 
 const puedeCambiar = (u) => u.rol === "admin" || u.rol === "dueno";
 const LADO_LOGO = 240; // px: el logo se guarda chico (pesa poco y se ve bien en la factura)
@@ -37,6 +37,9 @@ export function vistaEmpresa(cont, { usuario, datos, alCambiarModulos }) {
                     <select name="condicionIva"${des}>${["RI", "MT", "EX"].map((k) => `<option value="${k}"${k === e.condicionIva ? " selected" : ""}>${esc(CONDICIONES[k].texto)}</option>`).join("")}</select>
                 </label>
             </div>
+            <label class="tope-monotributo"${e.condicionIva === "MT" ? "" : " hidden"}>Tope anual de tu categoría de monotributo <small>(lo ves en ARCA; vacío, no se controla)</small>
+                <input name="topeMonotributo" inputmode="decimal" maxlength="20" placeholder="Ej: el de tu categoría" value="${e.topeMonotributo ? esc(String(e.topeMonotributo / 100)) : ""}"${des}>
+            </label>
             <label>Domicilio comercial<input name="domicilio" maxlength="${TOPES.domicilio}" value="${esc(e.domicilio ?? "")}"${des}></label>
             <div class="formulario__fila formulario__fila--3">
                 <label>Punto de venta<input name="puntoVenta" type="number" inputmode="numeric" min="1" max="${TOPES.puntoVenta}" step="1" value="${esc(e.puntoVenta)}"${des}></label>
@@ -75,7 +78,7 @@ export function vistaEmpresa(cont, { usuario, datos, alCambiarModulos }) {
         const error = form.querySelector(".formulario__error");
         error.hidden = true;
         try {
-            const campos = Object.fromEntries(["razonSocial", "fantasia", "cuit", "condicionIva", "domicilio", "puntoVenta", "iibb", "inicioActividades"].map((k) => [k, form[k].value]));
+            const campos = Object.fromEntries(["razonSocial", "fantasia", "cuit", "condicionIva", "topeMonotributo", "domicilio", "puntoVenta", "iibb", "inicioActividades"].map((k) => [k, form[k].value]));
             datos.actualizarEmpresa(campos, usuario);
             aviso("Datos de la empresa guardados.");
             vistaEmpresa(cont, { usuario, datos, alCambiarModulos });
@@ -88,6 +91,7 @@ export function vistaEmpresa(cont, { usuario, datos, alCambiarModulos }) {
     form.addEventListener("input", () => {
         const borrador = { ...e, razonSocial: form.razonSocial.value || e.razonSocial, fantasia: form.fantasia.value, domicilio: form.domicilio.value, condicionIva: form.condicionIva.value };
         cont.querySelector(".cabeza-previa").innerHTML = cabezaPrevia(borrador, form.cuit.value);
+        cont.querySelector(".tope-monotributo").hidden = form.condicionIva.value !== "MT";
     });
 
     cont.querySelector(".subir-logo input")?.addEventListener("change", async (ev) => {

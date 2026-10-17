@@ -4,19 +4,19 @@
 // de agua "DEMO · SIN VALIDEZ FISCAL", el CAE de prueba y el lugar del QR dibujado. Desde ahí, la nota de crédito.
 // Solo administración carga; Hernán y Patricia miran.
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=03798c8bfa";
-import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=03798c8bfa";
-import { htmlConsigna } from "../../kit/js/consigna.js?v=03798c8bfa";
-import { TOPES, CUENTAS, ID_CONSUMIDOR_FINAL } from "../datos.js?v=03798c8bfa";
-import { PRODUCTOS } from "../semilla.js?v=03798c8bfa";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=0edfe6e2d5";
+import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=0edfe6e2d5";
+import { htmlConsigna } from "../../kit/js/consigna.js?v=0edfe6e2d5";
+import { TOPES, CUENTAS, ID_CONSUMIDOR_FINAL } from "../datos.js?v=0edfe6e2d5";
+import { PRODUCTOS } from "../semilla.js?v=0edfe6e2d5";
 import {
     COMPROBANTES, ALICUOTAS, ORDEN_ALICUOTAS, TOPE_CF_IDENTIFICAR, pesos, numeroComprobante, formatoCuit, nombrePeriodo, signo
-} from "../reglas.js?v=03798c8bfa";
-import { buscarPersona } from "../marca.js?v=03798c8bfa";
+} from "../reglas.js?v=0edfe6e2d5";
+import { buscarPersona } from "../marca.js?v=0edfe6e2d5";
 import {
     fechaCorta, diaMes, pastillaTipo, periodoPedido, htmlSelectorMes, activarSelectorMes, documento, condicionTexto,
     logoEmpresa, conEspera, nombreDe
-} from "./comunes.js?v=03798c8bfa";
+} from "./comunes.js?v=0edfe6e2d5";
 
 const puedeCargar = (u) => u.rol === "admin";
 const OPCIONES_ALICUOTA = [...ORDEN_ALICUOTAS, "ex"];
@@ -359,13 +359,16 @@ export function vistaComprobante(cont, { usuario, datos, params: [id], consulta,
 
     const formNc = cont.querySelector(".nota-credito form");
     if (formNc) {
+        let enviandoNc = false;
         formNc.addEventListener("submit", async (ev) => {
             ev.preventDefault();
+            if (enviandoNc) return;
             const err = formNc.querySelector(".formulario__error");
             err.hidden = true;
             const todo = formNc.alcance.value === "todo";
             const devolverEn = formNc.devolver.value || null;
             if (!confirm(todo ? "¿Anular toda la factura con una nota de crédito?" : "¿Hacer la nota de crédito por ese importe?")) return;
+            enviandoNc = true;
             try {
                 const nc = await conEspera("Pidiendo el CAE de la nota de crédito…", () =>
                     datos.emitirNotaCredito({ facturaId: c.id, monto: todo ? null : formNc.monto.value, motivo: formNc.motivo.value, devolverEn }, usuario));
@@ -374,6 +377,8 @@ export function vistaComprobante(cont, { usuario, datos, params: [id], consulta,
             } catch (e2) {
                 err.textContent = e2.message;
                 err.hidden = false;
+            } finally {
+                enviandoNc = false;
             }
         });
         formNc.alcance.forEach?.((r) => r.addEventListener("change", () => {

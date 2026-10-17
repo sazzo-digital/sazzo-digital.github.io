@@ -7,11 +7,11 @@
 // Reglas del kit: exigir() en lo que modifica, topes en todo lo que se carga y se devuelven copias.
 // Si cambia la forma de los datos, subir VERSION_DATOS (se regeneran solos).
 // ============================================
-import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=0579abf08d";
-import { filtrarPorTexto } from "../kit/js/buscar.js?v=0579abf08d";
-import { enteroHasta, sinPasarse } from "../kit/js/topes.js?v=0579abf08d";
-import { fechaLocalISO, esFechaISO, diaLocalDe } from "../kit/js/fechas.js?v=0579abf08d";
-import { MARCA, NEGOCIO } from "./marca.js?v=0579abf08d";
+import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=2426c7e92d";
+import { filtrarPorTexto } from "../kit/js/buscar.js?v=2426c7e92d";
+import { enteroHasta, sinPasarse } from "../kit/js/topes.js?v=2426c7e92d";
+import { fechaLocalISO, esFechaISO, diaLocalDe } from "../kit/js/fechas.js?v=2426c7e92d";
+import { MARCA, NEGOCIO } from "./marca.js?v=2426c7e92d";
 
 export const VERSION_DATOS = 3;
 
@@ -292,6 +292,7 @@ export function crearDatos(prefijo = MARCA.prefijo) {
     function anotar(usuario, id, { encontro, notas } = {}) {
         const o = buscar(db().ordenes, id, "Esa orden no existe.");
         exigirEnLaOrden(usuario, o);
+        exigir(EDITABLES.includes(o.estado), "Esa orden ya no se puede cambiar.");
         if (encontro !== undefined) o.encontro = sinPasarse(encontro, TOPES.texto, "lo que encontró");
         if (notas !== undefined) o.notas = sinPasarse(notas, TOPES.texto, "las notas");
         guardado.persistir();

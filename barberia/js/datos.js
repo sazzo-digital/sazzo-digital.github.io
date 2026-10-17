@@ -6,12 +6,12 @@
 // Reglas del kit: exigir() en lo que modifica, topes en todo lo que se carga, nada se borra (se cancela) y se
 // devuelven copias. Si cambia la forma de los datos, subir VERSION_DATOS (se regeneran solos).
 // ============================================
-import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=cf8a4b352a";
-import { filtrarPorTexto } from "../kit/js/buscar.js?v=cf8a4b352a";
-import { sinPasarse } from "../kit/js/topes.js?v=cf8a4b352a";
-import { fechaLocalISO } from "../kit/js/fechas.js?v=cf8a4b352a";
-import { aMinutos, aHora, diaSemana, proximosDias, ocupados, libres, revisarLibre } from "../kit/js/turnos.js?v=cf8a4b352a";
-import { MARCA } from "./marca.js?v=cf8a4b352a";
+import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=6941c0942f";
+import { filtrarPorTexto } from "../kit/js/buscar.js?v=6941c0942f";
+import { sinPasarse } from "../kit/js/topes.js?v=6941c0942f";
+import { fechaLocalISO } from "../kit/js/fechas.js?v=6941c0942f";
+import { aMinutos, aHora, diaSemana, proximosDias, ocupados, libres, revisarLibre } from "../kit/js/turnos.js?v=6941c0942f";
+import { MARCA } from "./marca.js?v=6941c0942f";
 
 export const VERSION_DATOS = 2;
 
@@ -195,6 +195,35 @@ export function huecos(turnosDelDia, desde = HORARIO.abre) {
     return lista;
 }
 
+export const CELDA = 15;
+
+export function grillaDelDia(turnosDelDia, ahoraMinuto = null) {
+    const total = (HORARIO.cierra - HORARIO.abre) / CELDA;
+    const turnos = turnosDelDia.filter((t) => t.estado !== "cancelado");
+    const inicioDe = (i) => HORARIO.abre + i * CELDA;
+    const ocupada = (i) => turnos.some((t) => t.inicio < inicioDe(i) + CELDA && t.inicio + t.duracion > inicioDe(i));
+    const pasada = (i) => ahoraMinuto !== null && inicioDe(i) < ahoraMinuto;
+    const items = turnos.map((t) => {
+        const fila = Math.floor((t.inicio - HORARIO.abre) / CELDA);
+        return { turno: t, fila, alto: Math.ceil((t.inicio + t.duracion - HORARIO.abre) / CELDA) - fila };
+    });
+    for (let i = 0; i < total; i += 2) {
+        const libres = [i, i + 1].filter((c) => c < total && !ocupada(c));
+        if (libres.length === 2 && pasada(i) === pasada(i + 1)) items.push({ libre: true, inicio: inicioDe(i), fila: i, alto: 2, pasada: pasada(i) });
+        else libres.forEach((c) => items.push({ libre: true, inicio: inicioDe(c), fila: c, alto: 1, pasada: pasada(c) }));
+    }
+    const libresQueVienen = items.filter((x) => x.libre && !x.pasada).reduce((m, x) => m + x.alto * CELDA, 0);
+    const sigue = turnos.filter((t) => t.estado === "reservado" && (ahoraMinuto === null || t.inicio >= ahoraMinuto)).sort((x, y) => x.inicio - y.inicio)[0] ?? null;
+    return { filas: total, items: items.sort((x, y) => x.fila - y.fila), libres: libresQueVienen, sigue, ahora: ahoraMinuto !== null && ahoraMinuto >= HORARIO.abre && ahoraMinuto < HORARIO.cierra ? Math.floor((ahoraMinuto - HORARIO.abre) / CELDA) : null };
+}
+
+export function textoLibre(minutos) {
+    const h = Math.floor(minutos / 60);
+    const m = minutos % 60;
+    if (!minutos) return "sin horas libres";
+    return `${h ? `${h} h` : ""}${h && m ? " " : ""}${m ? `${m} min` : ""} libre${minutos === 60 ? "" : "s"}`;
+}
+
 // ---------- Funciones de datos ----------
 
 /** `prefijo` y `reloj` cambian solo en las pruebas. */
@@ -235,6 +264,18 @@ export function crearDatos(prefijo = MARCA.prefijo, { reloj = () => new Date() }
         return [...porHora].sort((a, b) => a[0] - b[0]).map(([inicio, barberos]) => ({ inicio, barberos }));
     }
 
+    function horasDelDia({ servicioId, barberoId = "cualquiera", fecha }) {
+        if (!abreEse(fecha)) return [];
+        const s = servicio(servicioId);
+        const libresAhora = new Map(libresPara({ servicioId, barberoId, fecha }).map((l) => [l.inicio, l.barberos]));
+        const desde = desdeMinuto(fecha) ?? HORARIO.abre;
+        const lista = [];
+        for (let m = HORARIO.abre; m + s.duracion <= HORARIO.cierra; m += PASO) {
+            if (m >= desde) lista.push({ inicio: m, libre: libresAhora.has(m), barberos: libresAhora.get(m) ?? [] });
+        }
+        return lista;
+    }
+
     function crearTurno({ clienteId, servicioId, barberoId, fecha, inicio }, extra) {
         const s = servicio(servicioId);
         exigir(proximosDias(TOPES.dias).includes(fecha), `Se saca turno de hoy a ${TOPES.dias - 1} días adelante.`);
@@ -262,6 +303,9 @@ export function crearDatos(prefijo = MARCA.prefijo, { reloj = () => new Date() }
         exigir(c, "No te encontramos en la lista de clientes.");
         const porVenir = db().turnos.filter((t) => t.clienteId === c.id && !t.anulado && t.estado === "reservado" && !empezo(t));
         exigir(porVenir.length < TOPES.porVenir, `Ya tenés ${TOPES.porVenir} turnos por venir: es el máximo.`);
+        const dura = SERVICIOS.find((s) => s.id === datosTurno?.servicioId)?.duracion ?? 0;
+        const encima = porVenir.find((t) => t.fecha === datosTurno?.fecha && t.inicio < datosTurno.inicio + dura && datosTurno.inicio < t.inicio + t.duracion);
+        exigir(!encima, `Ya tenés un turno a esa hora (${aHora(encima?.inicio ?? 0)}).`);
         return crearTurno({ ...datosTurno, clienteId: c.id }, { origen: "app", visto: false });
     }
 
@@ -309,6 +353,26 @@ export function crearDatos(prefijo = MARCA.prefijo, { reloj = () => new Date() }
                 hecho: todos.filter((t) => t.estado === "llego").reduce((s, t) => s + t.precio, 0),
                 porHacer: todos.filter((t) => t.estado === "reservado").reduce((s, t) => s + t.precio, 0)
             }
+        };
+    }
+
+    function turnero() {
+        const ahora = minutoActual();
+        const primerNombre = (t) => t.cliente.split(" ")[0];
+        const abierto = abreEse(hoy());
+        return {
+            abierto,
+            barberos: agenda(hoy()).columnas.map((c) => {
+                const vivos = c.turnos.filter((t) => t.estado !== "falto" && t.estado !== "cancelado");
+                const enCurso = vivos.find((t) => t.inicio <= ahora && ahora < t.inicio + t.duracion);
+                const sigue = vivos.find((t) => t.estado === "reservado" && t.inicio > ahora && t !== enCurso);
+                return {
+                    id: c.id, nombre: c.nombre,
+                    ahora: enCurso ? { cliente: primerNombre(enCurso), servicio: enCurso.servicio, hasta: enCurso.hasta } : null,
+                    sigue: sigue ? { cliente: primerNombre(sigue), hora: sigue.hora, servicio: sigue.servicio } : null,
+                    quedan: vivos.filter((t) => t.estado === "reservado" && t.inicio > ahora).length
+                };
+            })
         };
     }
 
@@ -363,7 +427,15 @@ export function crearDatos(prefijo = MARCA.prefijo, { reloj = () => new Date() }
         } else {
             buscar(db().clientes, id, "Ese cliente no existe.");
         }
-        return crearTurno({ clienteId: id, servicioId, barberoId, fecha, inicio }, { origen: "mano", visto: true });
+        try {
+            return crearTurno({ clienteId: id, servicioId, barberoId, fecha, inicio }, { origen: "mano", visto: true });
+        } catch (err) {
+            if (!clienteId) {
+                db().clientes = db().clientes.filter((c) => c.id !== id);
+                guardado.persistir();
+            }
+            throw err;
+        }
     }
 
     // ----- Clientes -----
@@ -439,8 +511,8 @@ export function crearDatos(prefijo = MARCA.prefijo, { reloj = () => new Date() }
 
     return {
         guardado,
-        dias, libresPara, sacarTurno, misTurnos, cancelarTurno,
-        agenda, nuevos, turno, marcarVisto, marcar, liberarTurno, recordatorio, anotarTurno,
+        dias, libresPara, horasDelDia, sacarTurno, misTurnos, cancelarTurno,
+        agenda, turnero, nuevos, turno, marcarVisto, marcar, liberarTurno, recordatorio, anotarTurno,
         listarClientes, cliente, nuevoCliente, guardarFicha, mensajeInvitar, invitar
     };
 }

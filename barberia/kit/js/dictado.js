@@ -6,17 +6,35 @@
 // Ojo: el reconocimiento de voz lo hace el navegador con su servicio (en Chrome, los servidores de Google): por eso
 // arranca solo al tocar el botón, nunca solo, y el navegador pide permiso para el micrófono.
 // ============================================
-import { esc, aviso } from "./ui.js?v=cf8a4b352a";
-import { alSalirDeLaPantalla } from "./rutas.js?v=cf8a4b352a";
+import { esc, aviso } from "./ui.js?v=6941c0942f";
+import { alSalirDeLaPantalla } from "./rutas.js?v=6941c0942f";
 
 const Reconocedor = () => (typeof window !== "undefined" ? window.SpeechRecognition || window.webkitSpeechRecognition : null);
 
 export const puedeDictar = () => Boolean(Reconocedor());
 
+export const AVISO_DICTADO = "Para pasar tu voz a texto, el navegador puede mandar el audio a su servicio de voz (en Chrome, Google; en Safari, Apple). Si es algo privado, mejor escribilo.";
+const CLAVE_AVISO = "sazzo-dictado-avisado";
+
+export function aceptaDictar(preguntar = (t) => confirm(t)) {
+    try {
+        if (localStorage.getItem(CLAVE_AVISO) === "1") return true;
+    } catch {
+        return preguntar(`${AVISO_DICTADO}\n\n¿Dictar igual?`);
+    }
+    if (!preguntar(`${AVISO_DICTADO}\n\n¿Dictar igual?`)) return false;
+    try {
+        localStorage.setItem(CLAVE_AVISO, "1");
+    } catch {
+        return true;
+    }
+    return true;
+}
+
 /** El botón de dictar para el campo `name` (vacío si el navegador no sabe dictar). */
 export function htmlBotonDictar(campo, etiqueta = "Dictar") {
     if (!puedeDictar() || !/^[a-z][a-z0-9-]{0,30}$/i.test(String(campo))) return "";
-    return `<button class="boton boton--chico boton--secundario dictar" type="button" data-dictar="${esc(campo)}" aria-pressed="false"><i class="ti ti-microphone" aria-hidden="true"></i> <span>${esc(etiqueta)}</span></button>`;
+    return `<button class="boton boton--chico boton--secundario dictar" type="button" data-dictar="${esc(campo)}" aria-pressed="false" title="${esc(AVISO_DICTADO)}"><i class="ti ti-microphone" aria-hidden="true"></i> <span>${esc(etiqueta)}</span></button>`;
 }
 
 /** Lo dictado, sumado al texto que ya había (con un espacio) y cortado al largo máximo del campo. */
@@ -54,6 +72,7 @@ export function activarDictado(raiz) {
                 escuchando.stop();
                 return;
             }
+            if (!aceptaDictar()) return;
             const r = new R();
             r.lang = "es-AR";
             r.interimResults = false;

@@ -4,19 +4,19 @@
 // hoy y las rutinas; Vane (dueña) los socios con sus cuotas y cómo anda el gimnasio.
 // irA() cambia de persona sin pasar por "Probala como…" (botón del recorrido: "Mirá cómo lo ve Mauro →").
 // ============================================
-import { $, conFundido } from "../kit/js/ui.js?v=289ec4bb58";
-import { iniciarDemo } from "../kit/js/arranque.js?v=289ec4bb58";
-import { vistaIngreso } from "../kit/js/ingreso.js?v=289ec4bb58";
-import { pintarMarco } from "../kit/js/marco.js?v=289ec4bb58";
-import { mostrarRuta } from "../kit/js/rutas.js?v=289ec4bb58";
-import { vistaAcerca } from "../kit/js/acerca.js?v=289ec4bb58";
-import { MARCA, PERSONAS, DETALLE, buscarPersona } from "./marca.js?v=289ec4bb58";
-import { aparte } from "../kit/js/aparte.js?v=289ec4bb58";
-import { leerSesionGuardada } from "../kit/js/guardado.js?v=289ec4bb58";
+import { $, conFundido } from "../kit/js/ui.js?v=f31b69dab0";
+import { iniciarDemo } from "../kit/js/arranque.js?v=f31b69dab0";
+import { vistaIngreso } from "../kit/js/ingreso.js?v=f31b69dab0";
+import { pintarMarco } from "../kit/js/marco.js?v=f31b69dab0";
+import { mostrarRuta } from "../kit/js/rutas.js?v=f31b69dab0";
+import { vistaAcerca } from "../kit/js/acerca.js?v=f31b69dab0";
+import { MARCA, PERSONAS, DETALLE, buscarPersona } from "./marca.js?v=f31b69dab0";
+import { aparte } from "../kit/js/aparte.js?v=f31b69dab0";
+import { leerSesionGuardada } from "../kit/js/guardado.js?v=f31b69dab0";
 
 // Los datos de ejemplo y las pantallas se bajan aparte (al terminar de cargar): "Probala como…" aparece sin esperarlos
-const pantallas = aparte(() => import("./pantallas.js?v=289ec4bb58"));
-const { vistaHoy, vistaSemana, vistaCuota, vistaGimnasioHoy, vistaPlanes, vistaPlan, vistaFicha, vistaSocios, vistaAlta, vistaGimnasio, avisosDe } = pantallas.funciones;
+const pantallas = aparte(() => import("./pantallas.js?v=f31b69dab0"));
+const { vistaHoy, vistaSemana, vistaCuota, vistaGimnasioHoy, vistaPlanes, vistaPlan, vistaFicha, vistaSocios, vistaAlta, vistaGimnasio, vistaEntrada, avisosDe } = pantallas.funciones;
 
 iniciarDemo(MARCA);
 let datos = null; // se arma cuando bajan las pantallas
@@ -30,7 +30,7 @@ const ACERCA = { ruta: "/acerca", icono: "ti-info-circle", texto: "Acerca de" };
 const MENU = {
     socio: [{ ruta: "/inicio", icono: "ti-barbell", texto: "Hoy" }, { ruta: "/semana", icono: "ti-calendar", texto: "Mi semana" }, { ruta: "/cuota", icono: "ti-cash", texto: "Mi cuota" }, ACERCA],
     profe: [{ ruta: "/inicio", icono: "ti-users", texto: "Hoy" }, { ruta: "/planes", icono: "ti-list-details", texto: "Rutinas" }, ACERCA],
-    duena: [{ ruta: "/inicio", icono: "ti-users", texto: "Socios" }, { ruta: "/gimnasio", icono: "ti-chart-bar", texto: "Gimnasio" }, ACERCA]
+    duena: [{ ruta: "/inicio", icono: "ti-users", texto: "Socios" }, { ruta: "/entrada", icono: "ti-door-enter", texto: "Entrada" }, { ruta: "/gimnasio", icono: "ti-chart-bar", texto: "Gimnasio" }, ACERCA]
 };
 
 const es = (rol) => (u) => u?.rol === rol;
@@ -48,6 +48,7 @@ const RUTAS = [
     { patron: /^\/planes$/, vista: con(vistaPlanes), puede: es("profe") },
     { patron: /^\/planes\/([\w-]+)$/, vista: con(vistaPlan), puede: es("profe"), menu: "/planes" },
     { patron: /^\/gimnasio$/, vista: con(vistaGimnasio), puede: es("duena"), ancho: true },
+    { patron: /^\/entrada$/, vista: con(vistaEntrada), puede: es("duena") },
     { patron: /^\/acerca$/, vista: (cont) => vistaAcerca(cont, { marca: MARCA }) }
 ];
 

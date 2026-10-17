@@ -24,14 +24,23 @@ export const DEMOS = [
         enVivo: "Ramón avisa un problema → al mecánico le llega al instante",
         rubro: "Empresas con vehículos: remiserías, fleteras, distribuidoras",
         pregunta: "¿Te enterás tarde cuando un vehículo tiene un problema?",
-        items: ["El chofer avisa el problema desde el celu", "El mecánico lo toma y lo sigue hasta el arreglo", "Repuestos con aviso de \"queda poco\""],
+        items: ["El chofer avisa el problema desde el celu", "El mecánico lo toma y lo sigue hasta el arreglo", "Stock de repuestos que baja con cada arreglo y cada service"],
         detalle: {
             hace: [
                 "Estado de cada vehículo según sus problemas: andando, con problema o en el taller",
                 "Mapa con dónde se vio por última vez cada vehículo (de ejemplo)",
                 "Historia de problemas de cada vehículo",
-                "La administradora ve lo que hay para mirar hoy y lo último que pasó"
+                "La administradora ve lo que hay para mirar hoy y lo último que pasó",
+                "Stock de repuestos que baja solo con cada arreglo y cada service, más ventas, salidas y entradas"
             ],
+            extra: {
+                titulo: "Para probar ya",
+                renglones: [
+                    "Abrí un vehículo y tocá «Hacer el service»: los repuestos bajan solos",
+                    "En Repuestos anotá lo que entra, lo que vendés o lo que sale",
+                    "Mirá los últimos movimientos: arreglos, services, ventas y entradas"
+                ]
+            },
             tambien: [
                 "Que el aviso del chofer le llegue al mecánico en otro celular, al instante",
                 "Alta y baja de vehículos y de personas, con su usuario cada uno",
@@ -42,7 +51,7 @@ export const DEMOS = [
             ]
         },
         acento: "#34D399",
-        pantalla: ["Utilitario 7 · Frenos · avisó Ramón", "Diego lo tomó · En el taller", "Pastillas · queda poco"],
+        pantalla: ["Utilitario 7 · Frenos · avisó Ramón", "Diego lo tomó · En el taller", "Service · aceite −4 litros"],
         dispositivo: "celu",
         estado: "activa"
     },
@@ -52,15 +61,24 @@ export const DEMOS = [
         enVivo: "Sofía cobra → Rubén lo ve en la caja",
         rubro: "Kioscos, almacenes y dietéticas",
         pregunta: "¿Seguís anotando los fiados en un cuaderno?",
-        items: ["Venta rápida con el vuelto calculado", "Fiados con tope por cliente", "Subís los precios de un proveedor en un toque"],
+        items: ["Caja como en el súper: escaneás el QR y se suma solo", "Fiados con tope por cliente", "Subís los precios de un proveedor en un toque"],
         detalle: {
             hace: [
-                "Lector de códigos con la cámara del celu: el producto se suma solo al ticket",
+                "Caja como en el súper: escaneás el QR de cada producto y se suma solo, con el total grande y el vuelto",
                 "Stock por proveedor, con el filtro \"Hay que pedir\" para lo que se está terminando",
                 "La lista del proveedor desde un Excel, y el stock y las ventas para bajar a Excel",
                 "Caja del día: lo más vendido, las últimas ventas, los últimos 7 días y el cierre",
                 "Ruleta de premios de ejemplo, para una promo del kiosco"
             ],
+            extra: {
+                titulo: "Para probar ya",
+                renglones: [
+                    "Tocá «Abrir la caja» y sumá productos de la góndola: se suman al ticket al toque, como en el súper",
+                    "Con el celu, escaneá los QR de los productos (están en «Ver los QR», para otro celu o para imprimir)",
+                    "Cobrá en efectivo con el vuelto en grande, con débito, crédito, QR o mitad y mitad",
+                    "Atento al stock: avisa «quedan 2» antes de que se termine"
+                ]
+            },
             tambien: [
                 "Cobro con Mercado Pago o QR, y lector de códigos o balanza",
                 "Que la caja y el stock se vean en el celular del dueño, al instante",
@@ -70,7 +88,7 @@ export const DEMOS = [
             ]
         },
         acento: "#F5B83D",
-        pantalla: ["Alfajor triple · vuelto $ 5.300", "Fiado de Graciela · anotado", "Bebidas Norte +15 % · 12 precios"],
+        pantalla: ["Caja · 3 productos · $ 6.300", "Fiado de Graciela · anotado", "Bebidas Norte +15 % · 16 precios"],
         dispositivo: "compu",
         estado: "activa"
     },
@@ -80,26 +98,34 @@ export const DEMOS = [
         enVivo: "Fede reserva → al dueño le salta la reserva",
         rubro: "Canchas de fútbol y pádel",
         pregunta: "¿Los turnos te llegan por WhatsApp y se te pisan?",
-        items: ["Grilla por cancha y por hora", "Turnos fijos semanales", "Reservas desde el celu, con seña"],
+        items: ["Grilla por cancha y por hora", "Reservas desde el celu, con seña", "Cantina: lo que piden se suma a la cuenta del turno"],
         detalle: {
             hace: [
                 "Fútbol 5, Fútbol 7 y pádel, cada una con su duración y su seña",
                 "El dueño anota desde la grilla los turnos que llegan por teléfono",
                 "Marcar si llegaron o faltaron, y cobrar la seña",
-                "Liberar un turno fijo solo por esta semana",
+                "Cantina: el jugador pide desde su turno y el dueño cobra la cuenta, dividida entre todos",
                 "El jugador ve sus turnos y puede cancelar o volver a reservar"
             ],
+            extra: {
+                titulo: "Para probar ya",
+                renglones: [
+                    "Como Fede, pedí aguas o una cerveza a la cantina desde tu turno",
+                    "Como Gustavo, mirá el pedido, marcalo entregado y cobrá la cuenta",
+                    "Dividí la cuenta entre todos los jugadores, en partes iguales",
+                    "La cantina también vende sola, con su caja y su stock"
+                ]
+            },
             tambien: [
                 "Que el turno le llegue al dueño en su celular, al instante",
                 "Seña con Mercado Pago o transferencia, de verdad",
                 "Botón para avisarle al grupo por WhatsApp",
-                "Cantina: sumar bebidas al turno",
                 "Torneos, \"falta uno\" y avisos por lluvia",
                 "Varios complejos, con su usuario cada uno"
             ]
         },
         acento: "#4ADE80",
-        pantalla: ["Fede reservó Cancha 1 · 21 h", "Pádel · 19:30 · Libre", "Turno fijo · Oficina FC"],
+        pantalla: ["Fede reservó Cancha 1 · 21 h", "Cancha 1 pidió 6 aguas", "Cuenta dividida entre 10"],
         dispositivo: "celu",
         estado: "activa"
     },
@@ -109,15 +135,24 @@ export const DEMOS = [
         enVivo: "Matías saca turno → a Leo le aparece en la agenda",
         rubro: "Barberías, peluquerías y estética",
         pregunta: "¿Sabés qué clientes hace un mes que no vienen?",
-        items: ["Turnos desde el celu", "Agenda por barbero", "Clientes que no vuelven, con mensaje para invitarlos"],
+        items: ["Turnos desde el celu", "Agenda de cada barbero, hora por hora", "Clientes que no vuelven, con mensaje para invitarlos"],
         detalle: {
             hace: [
                 "Ficha de cada cliente con sus visitas y notas",
                 "Recordatorio del turno con el mensaje listo para mandar",
                 "Marcar si llegó o faltó al turno",
-                "Anotar un turno en un hueco libre de la agenda",
+                "La agenda de cada barbero hora por hora: un toque en un hueco libre y anotás el turno",
                 "Buscador de clientes que perdona errores"
             ],
+            extra: {
+                titulo: "Para probar ya",
+                renglones: [
+                    "Como Leo, mirá el día entero de cada barbero, hora por hora",
+                    "Tocá un hueco libre y anotá el turno ahí mismo",
+                    "Como Matías, mirá todos los horarios: los ocupados aparecen tachados",
+                    "Tocá «Turnero en la tele»: quién se está cortando y quién sigue, en pantalla completa"
+                ]
+            },
             tambien: [
                 "Recordatorio del turno por WhatsApp, con un toque",
                 "Invitar por WhatsApp a los que no vuelven, con un toque",
@@ -145,11 +180,11 @@ export const DEMOS = [
                 "La orden pasa por aprobado, falta repuesto, terminado y entregado",
                 "Historial de cada auto y de cada cliente",
                 "Mensaje listo para escribirle al cliente",
-                "Anular una orden sin borrarla"
+                "Fotos del antes y después del arreglo, para mostrarle al cliente"
             ],
             tambien: [
                 "Mandar el presupuesto y el \"ya está listo\" por WhatsApp, con un toque",
-                "Fotos del auto al recibirlo y del trabajo hecho",
+                "Sacar las fotos con el celu y que queden guardadas en la orden",
                 "Stock de repuestos que se descuenta solo",
                 "Turnos para traer el auto y cuenta corriente de cada cliente",
                 "Que el cliente vea en qué estado está su auto, desde su celular",
@@ -167,26 +202,34 @@ export const DEMOS = [
         enVivo: "Julieta pide → la dueña lo recibe y le avisa que está listo",
         rubro: "Perfumerías y tiendas de cosmética",
         pregunta: "¿Te piden por mensaje y anotás todo a mano?",
-        items: ["\"Recomendame uno\" según el gusto de la clienta", "Decants que se descuentan de la botella madre", "Cumpleaños del mes, con saludo listo"],
+        items: ["Frascos en 3D que girás con el dedo", "\"Recomendame uno\" según el gusto de la clienta", "Decants que se descuentan de la botella madre"],
         detalle: {
             hace: [
                 "Catálogo con buscador que perdona errores y frascos para ver en 3D",
                 "Frasco de 50 o 100 ml, o decant de 5 o 10 ml",
                 "La clienta sigue su pedido desde \"Mis pedidos\"",
                 "La dueña ve los pedidos nuevos y los preparados para retirar, y marca cuándo se entregó",
-                "Stock de frascos y de botellas madre en ml"
+                "Venta en el mostrador y cobro del pedido, con el stock de frascos y de la botella madre al día"
             ],
+            extra: {
+                titulo: "Para probar ya",
+                renglones: [
+                    "Abrí un perfume y tocá «Verlo en 3D»: frascos escaneados que girás con el dedo",
+                    "Cada familia tiene su frasco, y el perfume toma su color",
+                    "Como Carolina, cobrá un pedido y entregalo, con el vuelto calculado",
+                    "Vendé en el mostrador con la caja: frascos y decants, y el stock baja solo"
+                ]
+            },
             tambien: [
                 "Que el pedido le llegue a la dueña por WhatsApp, con un toque",
                 "Envíos a domicilio y cobro con QR o transferencia",
                 "Cosmética y cuidado personal, con fotos de cada producto",
-                "Venta en el mostrador con lector de códigos",
                 "Vendedoras con su usuario y lo que vendió cada una",
                 "Saludo de cumpleaños que sale solo, el mismo día"
             ]
         },
         acento: "#E879F9",
-        pantalla: ["Pedido de Julieta · 2 perfumes", "Decant 10 ml · quedan 38 ml", "Cumplen este mes · 2"],
+        pantalla: ["Pedido de Julieta · 2 perfumes", "Decant 10 ml · quedan 38 ml", "Mostrador · venta cobrada"],
         dispositivo: "celu",
         estado: "activa"
     },
@@ -202,7 +245,9 @@ export const DEMOS = [
             hace: [
                 "Cobro dividiendo la cuenta en partes iguales",
                 "La cocina marca \"Listo\" y la moza se entera",
-                "Caja del turno con los cobros y el cierre de caja"
+                "Caja del turno con los cobros y el cierre de caja",
+                "Pedidos en la tele: lo que está en preparación y lo que ya salió",
+                "Cobro en efectivo, débito, crédito, transferencia o QR"
             ],
             tambien: [
                 "Imprimir la comanda en la cocina y en la barra, sola",
@@ -225,10 +270,10 @@ export const DEMOS = [
         enVivo: "Silvina factura → el dueño y la contadora lo ven",
         rubro: "Pymes, comercios y profesionales que facturan",
         pregunta: "¿Te enterás del IVA cuando ya lo tenés que pagar?",
-        items: ["Facturas A y B con CAE de prueba", "Compras traídas de ARCA", "IVA del mes y contabilidad completa"],
+        items: ["Facturas A, B y C con CAE de prueba", "Compras traídas de ARCA", "IVA del mes, o tu tope si sos monotributista"],
         detalle: {
             hace: [
-                "Factura A, B o C según el cliente, y notas de crédito sobre una factura",
+                "Factura A, B o C y notas de crédito; si sos monotributista, cuánto te queda del tope de tu categoría",
                 "Cuentas corrientes: quién te debe, a quién le debés, cobros y pagos",
                 "Libro IVA Digital (.txt) y libros en Excel para la contadora",
                 "Libro diario, mayor y balance de sumas y saldos que se arman solos",
@@ -272,7 +317,7 @@ export const DEMOS = [
                 "Pedidos a proveedores armados con lo que falta, y \"Llegó: sumar al stock\"",
                 "La lista del proveedor desde Excel y \"Subió un proveedor\" sin perder tu margen",
                 "Caja del día con la ganancia, lo más vendido y los últimos 7 días",
-                "Venta en el mostrador con buscador que perdona errores"
+                "Caja como la del súper: góndola por rubro, lector de códigos y cobro con dos medios a la vez"
             ],
             tambien: [
                 "Cargar la lista de un colegio desde una foto o un PDF",
@@ -299,11 +344,19 @@ export const DEMOS = [
         detalle: {
             hace: [
                 "Presupuesto en PDF que el cliente acepta desde su celu",
-                "Lector de códigos con la cámara para vender rápido",
+                "Caja como la del súper con lector de códigos, y cobro con dos medios a la vez",
                 "Pedidos a proveedores con lo que hay que pedir",
                 "La lista del proveedor desde Excel y precios con tu margen por rubro",
                 "Recordatorio para las cuentas corrientes, y la caja con lo que más plata dejó"
             ],
+            extra: {
+                titulo: "Para probar ya",
+                renglones: [
+                    "Como Marcos, pedí como hablás y sumá la foto de lo que se rompió",
+                    "Como Nahuel, entrás directo al pedido: elegís qué es lo de la foto y se lo mandás en 3 toques",
+                    "Cuando lo acepta, pasalo a venta: se descuenta del stock y va a su cuenta corriente"
+                ]
+            },
             tambien: [
                 "Mandar el presupuesto por WhatsApp de verdad",
                 "Reconocer la pieza de la foto sola",
@@ -334,6 +387,13 @@ export const DEMOS = [
                 "Desposte en PDF y merma promedio por animal",
                 "Caja del día con lo vendido en kilos y en plata"
             ],
+            extra: {
+                titulo: "Para probar ya",
+                renglones: [
+                    "Como Darío, en Vender tocá «Poner en la balanza»: el peso aparece en el visor y el precio se calcula solo",
+                    "Cobrá con dos medios a la vez: una parte en efectivo y otra con débito"
+                ]
+            },
             tambien: [
                 "Balanza conectada: el peso entra solo, sin escribirlo",
                 "Imprimir las etiquetas y el ticket en la impresora del mostrador",
@@ -364,10 +424,18 @@ export const DEMOS = [
                 "Cómo anda el gimnasio: a qué hora viene la gente y socios por plan de cuota",
                 "El socio avisa que transfirió y la dueña lo confirma; los pagos se pasan a Excel"
             ],
+            extra: {
+                titulo: "Para probar ya",
+                renglones: [
+                    "Como Vane, abrí «Entrada»: el socio muestra su QR y ves al toque si tiene la cuota al día",
+                    "Como Franco, tocá «Mi QR de entrada»: es el que se muestra en la puerta",
+                    "Como Mauro, tocá «Récords en la tele»: los récords del día en pantalla completa"
+                ]
+            },
             tambien: [
                 "Cobro de la cuota con Mercado Pago o débito automático",
                 "Recordatorio de la cuota por WhatsApp, solo",
-                "Ingreso con QR o molinete en la puerta",
+                "Molinete en la puerta que se abre con el QR del socio",
                 "Videos de cada ejercicio en la rutina",
                 "Varias sedes, con su usuario cada profe",
                 "Venta de bebidas y suplementos en el mostrador"

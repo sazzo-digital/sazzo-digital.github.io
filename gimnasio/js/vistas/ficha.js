@@ -5,13 +5,14 @@
 // - Vane (dueña): la cuota y los pagos (registrar, confirmar el aviso de transferencia, deshacer, recordatorio armado),
 //   el apto físico y el reglamento firmado en pantalla, si viene o no (invitar a volver) y la baja.
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=289ec4bb58";
-import { pedirFirma } from "../../kit/js/firma.js?v=289ec4bb58";
-import { armarPdf, pdfListo } from "../../kit/js/pdf.js?v=289ec4bb58";
-import { NEGOCIO, MARCA } from "../marca.js?v=289ec4bb58";
-import { htmlConsigna, htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=289ec4bb58";
-import { TOPES, REINVITAR_DIAS, pesos, kilos, cuanto, fechaCorta, nombreFecha } from "../datos.js?v=289ec4bb58";
-import { guia, activarGuias, pastilla, pastillaCuota, cara, haceDias, graficoPeso, barrasSemanas, mostrarMensaje } from "./comunes.js?v=289ec4bb58";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=f31b69dab0";
+import { MEDIOS_PAGO, DIVIDIDO, textoMedio, partesIniciales, htmlDosMedios, activarDosMedios } from "../../kit/js/pagos.js?v=f31b69dab0";
+import { pedirFirma } from "../../kit/js/firma.js?v=f31b69dab0";
+import { armarPdf, pdfListo } from "../../kit/js/pdf.js?v=f31b69dab0";
+import { NEGOCIO, MARCA } from "../marca.js?v=f31b69dab0";
+import { htmlConsigna, htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=f31b69dab0";
+import { TOPES, REINVITAR_DIAS, pesos, kilos, cuanto, fechaCorta, nombreFecha } from "../datos.js?v=f31b69dab0";
+import { guia, activarGuias, pastilla, pastillaCuota, cara, haceDias, graficoPeso, barrasSemanas, mostrarMensaje } from "./comunes.js?v=f31b69dab0";
 
 let ajustando = null; // "diaId|ejercicioId" del ejercicio que el profe está ajustando
 let medio = "efectivo"; // lo último elegido al registrar un pago
@@ -220,12 +221,12 @@ function htmlDuena(a, datos) {
                 </div>` : a.baja ? "" : `
                 <form class="formulario pago" novalidate>
                     <div class="chips" role="radiogroup" aria-label="Cómo pagó">
-                        <button class="chip${medio === "efectivo" ? " activo" : ""}" type="button" role="radio" aria-checked="${medio === "efectivo"}" data-medio="efectivo">Efectivo</button>
-                        <button class="chip${medio === "transferencia" ? " activo" : ""}" type="button" role="radio" aria-checked="${medio === "transferencia"}" data-medio="transferencia">Transferencia</button>
+                        ${Object.entries({ ...MEDIOS_PAGO, [DIVIDIDO]: "Dos medios" }).map(([id, texto]) => `<button class="chip${medio === id ? " activo" : ""}" type="button" role="radio" aria-checked="${medio === id}" data-medio="${esc(id)}">${esc(texto)}</button>`).join("")}
                     </div>
                     <label>Monto
                         <input name="monto" inputmode="numeric" maxlength="7" value="${esc(a.monto)}">
                     </label>
+                    <div class="pago__dos"></div>
                     <button class="boton" type="submit"><i class="ti ti-cash" aria-hidden="true"></i> Registrar pago</button>
                 </form>`}
                 ${a.baja ? "" : `<button class="boton boton--secundario boton--ancho" type="button" data-recordar><i class="ti ti-message-circle" aria-hidden="true"></i> Mandar recordatorio de la cuota</button>`}
@@ -233,7 +234,7 @@ function htmlDuena(a, datos) {
                 ${a.pagos.length ? `<ul class="tarjetas">${a.pagos.map((p) => `
                     <li class="tarjeta tarjeta--chica">
                         <div class="tarjeta__fila">
-                            <span><b>${esc(fechaCorta(p.confirmadoEl ?? p.fecha))}</b> · ${p.medio === "efectivo" ? "efectivo" : "transferencia"}${p.hasta && p.estado === "confirmado" ? ` · hasta el ${esc(fechaCorta(p.hasta))}` : ""}</span>
+                            <span><b>${esc(fechaCorta(p.confirmadoEl ?? p.fecha))}</b> · ${esc(textoMedio(p, MEDIOS_PAGO))}${p.hasta && p.estado === "confirmado" ? ` · hasta el ${esc(fechaCorta(p.hasta))}` : ""}</span>
                             <span class="acciones">
                                 ${p.estado === "avisado" ? pastilla("A confirmar", "alerta") : p.estado === "anulado" ? pastilla(p.motivo ?? "Anulado", "suave") : `<b>${esc(pesos(p.monto))}</b>`}
                                 ${p.id === a.ultimoPagoId && p.confirmadoEl === datos.hoy() ? `<button class="boton-link" type="button" data-deshacer="${esc(p.id)}"><i class="ti ti-arrow-back-up" aria-hidden="true"></i> Deshacer</button>` : ""}
@@ -284,16 +285,29 @@ function activarDuena(cont, opciones, a) {
             return null;
         }
     };
+    const formPago = cont.querySelector(".pago");
+    let partes = [];
+    const montoPago = () => Number(formPago.monto.value.replace(/\D/g, "")) || 0;
+    const pintarDos = () => {
+        const lugar = formPago?.querySelector(".pago__dos");
+        if (!lugar) return;
+        partes = partesIniciales(montoPago(), MEDIOS_PAGO);
+        lugar.innerHTML = medio === DIVIDIDO ? htmlDosMedios(partes, MEDIOS_PAGO) : "";
+        if (medio === DIVIDIDO) activarDosMedios(lugar, partes, montoPago());
+    };
+    pintarDos();
+    formPago?.monto.addEventListener("input", pintarDos);
     cont.querySelectorAll("[data-medio]").forEach((b) => b.addEventListener("click", () => {
         medio = b.dataset.medio;
         cont.querySelectorAll("[data-medio]").forEach((x) => {
             x.classList.toggle("activo", x === b);
             x.setAttribute("aria-checked", String(x === b));
         });
+        pintarDos();
     }));
-    cont.querySelector(".pago")?.addEventListener("submit", (e) => {
+    formPago?.addEventListener("submit", (e) => {
         e.preventDefault();
-        hacer(() => datos.registrarPago(usuario, a.id, { medio, monto: e.target.monto.value.trim().replace(/\./g, "") }), (p) => `Pago registrado: vence el ${fechaCorta(p.hasta)}`)();
+        hacer(() => datos.registrarPago(usuario, a.id, { medio, monto: e.target.monto.value.trim().replace(/\./g, ""), pagos: medio === DIVIDIDO ? partes.map((x) => ({ ...x })) : null }), (p) => `Pago registrado: vence el ${fechaCorta(p.hasta)}`)();
     });
     cont.querySelector("[data-confirmar]")?.addEventListener("click", hacer(() => datos.confirmarPago(usuario, a.avisoPago.id), (p) => `Confirmado: ${a.nombre} está al día hasta el ${fechaCorta(p.hasta)}`));
     cont.querySelector("[data-rechazar]")?.addEventListener("click", () => {

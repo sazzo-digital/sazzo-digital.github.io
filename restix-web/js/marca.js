@@ -3,8 +3,8 @@
 // rehecho con el kit). Las personas son los roles reales del rubro (nombres inventados): la moza, el de la cocina y
 // (desde el 10/10) una clienta que abre la carta con el QR de la mesa.
 // ============================================
-import { revisarMarca } from "../kit/js/marca.js?v=633ebcf9e8";
-import { negocioDe } from "../kit/js/colores.js?v=633ebcf9e8";
+import { revisarMarca } from "../kit/js/marca.js?v=cbb0f3090e";
+import { negocioDe } from "../kit/js/colores.js?v=cbb0f3090e";
 
 export const MARCA = revisarMarca({
     id: "restix-web",
@@ -58,7 +58,9 @@ export const DETALLE = {
     hace: [
         "Cobro dividiendo la cuenta en partes iguales",
         "La cocina marca \"Listo\" y la moza se entera",
-        "Caja del turno con los cobros y el cierre de caja"
+        "Caja del turno con los cobros y el cierre de caja",
+        "Pedidos en la tele: lo que está en preparación y lo que ya salió",
+        "Cobro en efectivo, débito, crédito, transferencia o QR"
     ],
     tambien: [
         "Imprimir la comanda en la cocina y en la barra, sola",

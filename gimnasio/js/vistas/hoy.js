@@ -4,13 +4,13 @@
 // descanso (con "ding" y vibración al terminar, si prendió el sonido). Si levanta más que nunca: "¡Nuevo récord!".
 // Si hoy descansa, le dice cuándo le toca y puede entrenar igual otro día de su rutina.
 // ============================================
-import { esc, aviso } from "../../kit/js/ui.js?v=289ec4bb58";
-import { alSalirDeLaPantalla } from "../../kit/js/rutas.js?v=289ec4bb58";
-import { mantenerPantallaPrendida, vibrar, ding, htmlBotonSonido, activarBotonSonido } from "../../kit/js/celular.js?v=289ec4bb58";
-import { MARCA, NEGOCIO } from "../marca.js?v=289ec4bb58";
-import { SOCIO_DE, kilos, cuanto } from "../datos.js?v=289ec4bb58";
-import { guia, activarGuias, pastilla, pastillaCuota } from "./comunes.js?v=289ec4bb58";
-import { htmlConsigna } from "../../kit/js/consigna.js?v=289ec4bb58";
+import { esc, aviso } from "../../kit/js/ui.js?v=f31b69dab0";
+import { alSalirDeLaPantalla } from "../../kit/js/rutas.js?v=f31b69dab0";
+import { mantenerPantallaPrendida, vibrar, ding, htmlBotonSonido, activarBotonSonido } from "../../kit/js/celular.js?v=f31b69dab0";
+import { MARCA, NEGOCIO } from "../marca.js?v=f31b69dab0";
+import { SOCIO_DE, kilos, cuanto } from "../datos.js?v=f31b69dab0";
+import { guia, activarGuias, pastilla, pastillaCuota } from "./comunes.js?v=f31b69dab0";
+import { htmlConsigna } from "../../kit/js/consigna.js?v=f31b69dab0";
 
 // Lo que queda mientras se navega: lo escrito en cada ejercicio, el último récord (para festejarlo una vez) y el descanso
 const borrador = {};
@@ -126,6 +126,7 @@ export function vistaHoy(cont, { usuario, datos, irA }) {
             ${h.llego
                 ? `<p class="hoy__llego"><i class="ti ti-circle-check" aria-hidden="true"></i> Llegaste a las ${esc(String(Math.floor(h.llego.minuto / 60)).padStart(2, "0"))}:${esc(String(h.llego.minuto % 60).padStart(2, "0"))}</p>`
                 : `<button class="boton boton--grande boton--ancho" type="button" data-llegue><i class="ti ti-hand-stop" aria-hidden="true"></i> Llegué</button>`}
+            <button class="boton boton--secundario boton--ancho" type="button" data-mi-qr><i class="ti ti-qrcode" aria-hidden="true"></i> Mi QR de entrada</button>
         </section>`;
 
     // Hoy descansa: cuándo le toca y "entrenar igual"
@@ -167,6 +168,30 @@ export function vistaHoy(cont, { usuario, datos, irA }) {
     function activar() {
         activarGuias(cont, irA);
         activarBotonSonido(cont, MARCA.prefijo);
+        cont.querySelector("[data-mi-qr]")?.addEventListener("click", () => {
+            const capa = document.createElement("div");
+            capa.className = "qr-entrada";
+            capa.setAttribute("role", "dialog");
+            capa.setAttribute("aria-label", "Mi QR de entrada");
+            capa.innerHTML = `
+                <div class="qr-entrada__caja">
+                    <img src="img/qr/${encodeURIComponent(h.socioId)}.svg" alt="Tu QR de entrada" width="260" height="260">
+                    <b>${esc(socio.nombre)}</b>
+                    <p class="nota">Mostralo en la recepción: te anota la llegada y ve tu cuota.</p>
+                    <button class="boton boton--ancho" type="button" data-cerrar-qr>Listo</button>
+                </div>`;
+            document.body.append(capa);
+            const teclas = (e) => e.key === "Escape" && cerrar();
+            const cerrar = () => {
+                capa.remove();
+                removeEventListener("hashchange", cerrar);
+                removeEventListener("keydown", teclas);
+            };
+            addEventListener("hashchange", cerrar);
+            addEventListener("keydown", teclas);
+            capa.querySelector("[data-cerrar-qr]").addEventListener("click", cerrar);
+            capa.addEventListener("click", (e) => e.target === capa && cerrar());
+        });
         cont.querySelector("[data-llegue]")?.addEventListener("click", () => {
             try {
                 datos.llegue(usuario);

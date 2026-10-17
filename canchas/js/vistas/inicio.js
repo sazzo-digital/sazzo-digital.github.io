@@ -2,8 +2,8 @@
 // Inicio de Sazzo Canchas: distinto para cada persona.
 // Gustavo (dueño) → la grilla del día · Fede (jugador) → "Reservá tu cancha".
 // ============================================
-import { vistaGrilla } from "./grilla.js?v=21e7a89345";
-import { vistaReservar } from "./jugador.js?v=21e7a89345";
+import { vistaGrilla } from "./grilla.js?v=d29cdf6ff2";
+import { vistaReservar } from "./jugador.js?v=d29cdf6ff2";
 
 export function vistaInicio(cont, opciones) {
     return opciones.usuario.rol === "dueno" ? vistaGrilla(cont, opciones) : vistaReservar(cont, opciones);

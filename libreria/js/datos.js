@@ -10,14 +10,15 @@
 // Las ventas guardan el precio y el costo del momento: si después sube un proveedor, lo vendido no cambia.
 // Si cambia la forma de los datos, subir VERSION_DATOS (se regeneran solos).
 // ============================================
-import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=c96e24d926";
-import { enteroHasta, sinPasarse } from "../kit/js/topes.js?v=c96e24d926";
-import { diaLocalDe, fechaLocalISO } from "../kit/js/fechas.js?v=c96e24d926";
-import { columnasDe, numeroDe, textoParaComparar } from "../kit/js/tablas.js?v=c96e24d926";
-import { filtrarPorTexto, comoSuena } from "../kit/js/buscar.js?v=c96e24d926";
-import { MARCA, NEGOCIO, buscarPersona } from "./marca.js?v=c96e24d926";
+import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=d60f8ab62c";
+import { enteroHasta, sinPasarse } from "../kit/js/topes.js?v=d60f8ab62c";
+import { diaLocalDe, fechaLocalISO } from "../kit/js/fechas.js?v=d60f8ab62c";
+import { columnasDe, numeroDe, textoParaComparar } from "../kit/js/tablas.js?v=d60f8ab62c";
+import { filtrarPorTexto, comoSuena } from "../kit/js/buscar.js?v=d60f8ab62c";
+import { MARCA, NEGOCIO, buscarPersona } from "./marca.js?v=d60f8ab62c";
+import { MEDIOS_PAGO, DIVIDIDO, revisarPagos, sumarPorMedio } from "../kit/js/pagos.js?v=d60f8ab62c";
 
-export const VERSION_DATOS = 2; // 2: los libros con ISBN
+export const VERSION_DATOS = 3; // 2: los libros con ISBN
 
 // ---------- Topes (cada uno con su prueba de valor absurdo) ----------
 export const TOPES = {
@@ -52,7 +53,7 @@ export const COLUMNAS_LISTA = {
 
 export const FONDO_CAJA = 20_000; // el cambio con el que arranca el cajón cada día
 export const DESCUENTO_MAYOR = 10; // % menos desde la cantidad "por mayor" de cada artículo
-export const MEDIOS = { efectivo: "Efectivo", transferencia: "Transferencia", tarjeta: "Tarjeta" };
+export const MEDIOS = { ...MEDIOS_PAGO };
 
 export const RUBROS = [
     { id: "escritura", nombre: "Escritura", icono: "ti-ballpen" },
@@ -358,7 +359,7 @@ export function semilla() {
             }
             const total = totalDe(items);
             const r = azar();
-            const medio = r < 0.5 ? "efectivo" : r < 0.8 ? "transferencia" : "tarjeta";
+            const medio = r < 0.42 ? "efectivo" : r < 0.58 ? "debito" : r < 0.7 ? "credito" : r < 0.86 ? "transferencia" : "qr";
             ventas.push({ id: `v-${dias}-${i}`, fecha: momento(dias, hora), items, total, medio, pagaCon: null, vuelto: null, por: azar() < 0.65 ? "Joaquín" : "Mariela", pedidoId: null });
         }
     }
@@ -880,7 +881,7 @@ export function crearDatos(prefijo = MARCA.prefijo) {
         if (pe.estado === "separada") {
             pe.items.filter((i) => !i.falta).forEach((i) => {
                 const p = db().productos.find((x) => x.id === i.productoId);
-                if (p) p.stock = Math.min(TOPES.stock, p.stock + i.cantidad);
+                if (p) p.stock += i.cantidad;
             });
         }
         Object.assign(pe, { estado: "anulada", anulado: ahora(), anuladoPor: usuario.nombre });
@@ -909,12 +910,12 @@ export function crearDatos(prefijo = MARCA.prefijo) {
     }
 
     /** Cobrar en efectivo (con "paga con" opcional → vuelto), transferencia o tarjeta. */
-    function vender(usuario, { items, medio, pagaCon = null } = {}) {
+    function vender(usuario, { items, medio, pagaCon = null, pagos = null } = {}) {
         exigir(esDelLocal(usuario), "Solo alguien de la librería puede vender.");
         revisarTope(db().ventas, TOPES.ventas, "ventas");
-        exigir(MEDIOS[medio], "Elegí cómo paga.");
+        exigir(MEDIOS[medio] || medio === DIVIDIDO, "Elegí cómo paga.");
         const { renglones, total } = armarTicket(items);
-        const pago = revisarPago(medio, pagaCon, total);
+        const pago = medio === DIVIDIDO ? { pagaCon: null, vuelto: null, pagos: revisarPagos(total, pagos) } : revisarPago(medio, pagaCon, total);
         const venta = {
             id: nuevoId("v"), fecha: ahora(),
             items: renglones.map(({ productoId, nombre, rubro, precio, costo, cantidad, mayor }) => ({ productoId, nombre, rubro, precio, costo, cantidad, mayor })),
@@ -937,9 +938,8 @@ export function crearDatos(prefijo = MARCA.prefijo) {
     function caja(usuario, dia = fechaLocalISO(0)) {
         exigir(esDelLocal(usuario), "La caja la ve la librería.");
         const ventas = delDia(db().ventas, dia);
-        const porMedio = { efectivo: 0, transferencia: 0, tarjeta: 0 };
-        ventas.forEach((v) => (porMedio[v.medio] += v.total));
-        const vendido = porMedio.efectivo + porMedio.transferencia + porMedio.tarjeta;
+        const porMedio = sumarPorMedio(ventas, MEDIOS);
+        const vendido = Object.values(porMedio).reduce((a, b) => a + b, 0);
         const renglones = ventas.flatMap((v) => v.items);
         const costo = renglones.reduce((t, i) => t + (i.costo ?? 0) * i.cantidad, 0);
         const cuantos = {};

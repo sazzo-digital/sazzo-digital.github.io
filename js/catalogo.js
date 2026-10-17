@@ -2,8 +2,8 @@
 // Catálogo de Sazzo: arma las tarjetas de demos (desde demos.js), las animaciones al bajar, los botones de
 // contacto (desde config.js), guarda de dónde vino la visita (?o=papel / ?o=ig) y avisa a la medición.
 // ============================================
-import { DEMOS, TRABAJOS } from "./demos.js?v=095c77a65a";
-import { CONTACTO, MEDICION, LINK_DEMOS, RUTA_LIBS } from "./config.js?v=095c77a65a";
+import { DEMOS, TRABAJOS } from "./demos.js?v=912c3af85b";
+import { CONTACTO, MEDICION, LINK_DEMOS, RUTA_LIBS } from "./config.js?v=912c3af85b";
 
 const $ = (selector, raiz = document) => raiz.querySelector(selector);
 const $$ = (selector, raiz = document) => [...raiz.querySelectorAll(selector)];
@@ -35,7 +35,7 @@ function origen() {
     const edad = Date.now() - Number(m[2]);
     return edad > -60000 && edad < DURA_ORIGEN ? m[1] : "directo";
 }
-if (parametros.get("yo") === "1") guardado.escribir("sazzo-yo", "1"); // los celulares del equipo no cuentan
+if (parametros.get("yo") === "1") guardado.escribir("sazzo-yo", "1"); // los celulares del equipo van aparte, como prueba
 if (parametros.get("yo") === "0") guardado.borrar("sazzo-yo");
 
 function equipo() {
@@ -71,21 +71,25 @@ const EVENTOS = ["abrio-catalogo", "probar", "escribir", "instagram", "detalle"]
 const esLaPC = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname) || location.protocol === "file:";
 
 /** Avisa al registro de visitas qué pasó (uno de EVENTOS; en "probar", qué demo). */
-function contar(que, demo = "") {
+const desdeDe = (el) => (el?.closest?.("#ventana-detalle") ? "detalle" : el?.closest?.("header") ? "cabecera" : el?.closest?.("footer") ? "pie" : el?.closest?.("section[id]")?.id ?? "");
+
+function contar(que, demo = "", desde = "") {
     if (!EVENTOS.includes(que)) return;
+    const prueba = navigator.webdriver ? "robot" : guardado.leer("sazzo-yo") === "1" ? "yo" : "";
     const evento = {
         evento: que,
         demo: String(demo).slice(0, 30),
         persona: "",
-        pantalla: "",
+        pantalla: String(desde).slice(0, 40),
         origen: origen().slice(0, 30),
         equipo: equipo(),
         sesion,
         dispositivo: dispositivo().slice(0, 60),
-        cuando: Date.now()
+        cuando: Date.now(),
+        ...(prueba ? { prueba } : {})
     };
     const direccion = String(MEDICION.direccion ?? "");
-    if (!direccion.startsWith("https://script.google.com/macros/") || esLaPC || guardado.leer("sazzo-yo") === "1") {
+    if (!direccion.startsWith("https://script.google.com/macros/") || esLaPC) {
         console.debug("[visitas: no se manda]", evento);
         return;
     }
@@ -256,27 +260,38 @@ function abrirDetalle(demo) {
         : "";
     ventanaDetalle.showModal();
     $(".ventana-detalle__cuerpo", ventanaDetalle).scrollTop = 0;
-    contar("detalle", demo.id);
+    contar("detalle", demo.id, "demos");
 }
 
 if (typeof ventanaDetalle.showModal === "function") {
     $$("[data-detalle]").forEach((b) => b.addEventListener("click", () => abrirDetalle(DEMOS.find((d) => d.id === b.dataset.detalle))));
     ventanaDetalle.addEventListener("click", (e) => {
         if (e.target === ventanaDetalle || e.target.closest("[data-cerrar]")) ventanaDetalle.close();
-        if (e.target.closest("[data-demo]")) contar("probar", e.target.closest("[data-demo]").dataset.demo);
+        if (e.target.closest("[data-demo]")) contar("probar", e.target.closest("[data-demo]").dataset.demo, "detalle");
     });
 } else {
     $$("[data-detalle]").forEach((b) => (b.hidden = true));
 }
-$$(".demo [data-demo]").forEach((a) => a.addEventListener("click", () => contar("probar", a.dataset.demo)));
+$$(".demo [data-demo]").forEach((a) => a.addEventListener("click", () => contar("probar", a.dataset.demo, "demos")));
 
 $$("[data-link-demo]").forEach((a) => {
     const demo = DEMOS.find((d) => d.id === a.dataset.linkDemo && d.estado === "activa");
     const link = demo ? linkDe(demo) : null;
     if (!link) return (a.hidden = true);
     a.href = link;
-    a.addEventListener("click", () => contar("probar", demo.id));
+    if (a.matches(".sorpresa")) a.style.setProperty("--acento", demo.acento);
+    a.addEventListener("click", () => contar("probar", demo.id, desdeDe(a)));
 });
+
+const videos = $$(".sorpresa__video");
+const sinVideo = navigator.connection?.saveData || matchMedia("(prefers-reduced-motion: reduce)").matches;
+if (videos.length && !sinVideo && "IntersectionObserver" in window) {
+    const mirar = new IntersectionObserver((entradas) => entradas.forEach((e) => {
+        if (e.isIntersecting) e.target.play().catch(() => {});
+        else e.target.pause();
+    }), { threshold: 0.4 });
+    videos.forEach((v) => mirar.observe(v));
+}
 
 if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
     const marcarAvance = () => {
@@ -344,7 +359,7 @@ $$("[data-whatsapp]").forEach((a) => {
         a.href = linkWhatsapp;
         a.target = "_blank";
         a.rel = "noopener";
-        a.addEventListener("click", () => contar("escribir"));
+        a.addEventListener("click", () => contar("escribir", "", desdeDe(a)));
     }
 });
 // Sin número, los "Escribinos" de arriba llevan a la sección de contacto y los botones de WhatsApp no se muestran
@@ -355,7 +370,7 @@ $$("[data-instagram]").forEach((a) => {
         a.href = `https://www.instagram.com/${encodeURIComponent(usuarioInstagram)}/`;
         a.target = "_blank";
         a.rel = "noopener";
-        a.addEventListener("click", () => contar("instagram"));
+        a.addEventListener("click", () => contar("instagram", "", desdeDe(a)));
         // Con WhatsApp, Instagram queda como segundo botón (borde); sin WhatsApp, es el principal
         if (linkWhatsapp && a.classList.contains("boton")) a.classList.add("boton--borde");
     } else a.hidden = true;

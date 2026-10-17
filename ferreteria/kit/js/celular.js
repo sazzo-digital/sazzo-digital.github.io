@@ -13,8 +13,8 @@
 // Lo que queda prendido (la pantalla, la cámara) se suelta solo al cambiar de pantalla (rutas.js →
 // alSalirDeLaPantalla). Nada de esto manda datos a ningún lado.
 // ============================================
-import { esc, aviso } from "./ui.js?v=8ec449d814";
-import { alSalirDeLaPantalla } from "./rutas.js?v=8ec449d814";
+import { esc, aviso } from "./ui.js?v=9904c28649";
+import { alSalirDeLaPantalla } from "./rutas.js?v=9904c28649";
 
 // ---------- Pantalla siempre prendida (Wake Lock) ----------
 let candado = null;
@@ -121,6 +121,27 @@ export function prenderSonido(prefijo, prendido) {
 }
 
 let audio = null;
+
+export function pip(prefijo) {
+    if (!sonidoPrendido(prefijo)) return false;
+    try {
+        audio ??= new (window.AudioContext || window.webkitAudioContext)();
+        const t = audio.currentTime + 0.01;
+        const nota = audio.createOscillator();
+        const volumen = audio.createGain();
+        nota.type = "square";
+        nota.frequency.value = 880;
+        volumen.gain.setValueAtTime(0.0001, t);
+        volumen.gain.exponentialRampToValueAtTime(0.12, t + 0.005);
+        volumen.gain.exponentialRampToValueAtTime(0.0001, t + 0.06);
+        nota.connect(volumen).connect(audio.destination);
+        nota.start(t);
+        nota.stop(t + 0.07);
+        return true;
+    } catch {
+        return false;
+    }
+}
 
 /** "Ding" de dos notas, hecho por código (sin archivos). Solo suena si el sonido de esa demo está prendido. */
 export function ding(prefijo, { siempre = false } = {}) {

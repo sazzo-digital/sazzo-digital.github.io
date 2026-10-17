@@ -3,11 +3,11 @@
 // En cada pedido: si alcanza el stock de cada artículo (y, si no, otro de la misma familia: el cuaderno rojo por el
 // azul), "Separar" (se descuenta del stock), "Avisar" (mensaje para copiar) y "Cobrar y entregar" (queda como venta).
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=c96e24d926";
-import { mostrarMensaje } from "../../kit/js/mensaje.js?v=c96e24d926";
-import { ESTADOS_PEDIDO, MEDIOS, TOPES, pesos } from "../datos.js?v=c96e24d926";
-import { guia, activarGuias, pasos, pastillaEstado, tarjetaPedido, cuando } from "./comunes.js?v=c96e24d926";
-import { htmlConsigna } from "../../kit/js/consigna.js?v=c96e24d926";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=d60f8ab62c";
+import { mostrarMensaje } from "../../kit/js/mensaje.js?v=d60f8ab62c";
+import { ESTADOS_PEDIDO, MEDIOS, TOPES, pesos } from "../datos.js?v=d60f8ab62c";
+import { guia, activarGuias, pasos, pastillaEstado, tarjetaPedido, cuando } from "./comunes.js?v=d60f8ab62c";
+import { htmlConsigna } from "../../kit/js/consigna.js?v=d60f8ab62c";
 
 /** Billetes "redondos" para cobrar una lista: el próximo múltiplo de $10.000, de $50.000 y $100.000. */
 const billetesPara = (total) => [...new Set([10_000, 50_000, 100_000].map((b) => Math.ceil(Math.max(1, total) / b) * b))].slice(0, 3);

@@ -1,12 +1,12 @@
 // ============================================
-// "Cómo anda el gimnasio" (Vane, en la compu): la caja del mes (efectivo y transferencia), a qué hora viene la gente
+// "Cómo anda el gimnasio" (Vane, en la compu): la caja del mes (por medio de pago), a qué hora viene la gente
 // (cuadro de calor de las últimas 4 semanas: "de 19 a 21 se llena"), las clases de la semana con su ocupación, los
 // socios por plan de cuota y pasar socios y pagos a Excel.
 // ============================================
-import { esc, vacio } from "../../kit/js/ui.js?v=289ec4bb58";
-import { bajarExcel } from "../../kit/js/archivos.js?v=289ec4bb58";
-import { NEGOCIO } from "../marca.js?v=289ec4bb58";
-import { pesos } from "../datos.js?v=289ec4bb58";
+import { esc, vacio } from "../../kit/js/ui.js?v=f31b69dab0";
+import { bajarExcel } from "../../kit/js/archivos.js?v=f31b69dab0";
+import { NEGOCIO } from "../marca.js?v=f31b69dab0";
+import { pesos } from "../datos.js?v=f31b69dab0";
 
 /** Cuánto color lleva cada casillero del calor: pocos escalones, para que el número siempre se lea (contraste). */
 function escalon(valor, maximo) {
@@ -35,7 +35,7 @@ export function vistaGimnasio(cont, { datos }) {
         <div class="numeros-grandes">
             <div><span>Cobrado este mes</span><b>${esc(pesos(g.caja.total))}</b><small>${esc(g.caja.pagos)} pagos</small></div>
             <div><span>En efectivo</span><b>${esc(pesos(g.caja.efectivo))}</b><small>en el mostrador</small></div>
-            <div><span>Por transferencia</span><b>${esc(pesos(g.caja.transferencia))}</b><small>al alias</small></div>
+            <div><span>Transferencia, tarjetas y QR</span><b>${esc(pesos(g.caja.sinEfectivo))}</b><small>${esc(pesos(g.caja.transferencia))} al alias</small></div>
             <div><span>Clases de la semana</span><b>${esc(ocupacion)}%</b><small>de los lugares ocupados</small></div>
         </div>
         <div class="columnas">

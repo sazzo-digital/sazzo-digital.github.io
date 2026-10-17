@@ -6,9 +6,9 @@
 // por tenerlo. La cámara pide permiso, se ve en una ventanita y se apaga al leer, al cerrar, al cambiar de pantalla
 // o al esconder la pestaña. Nada sale del celular: la imagen no se guarda ni se manda.
 // ============================================
-import { aviso } from "./ui.js?v=21e7a89345";
-import { alSalirDeLaPantalla } from "./rutas.js?v=21e7a89345";
-import { RUTA_ESCANER } from "./config.js?v=21e7a89345";
+import { aviso } from "./ui.js?v=d29cdf6ff2";
+import { alSalirDeLaPantalla } from "./rutas.js?v=d29cdf6ff2";
+import { RUTA_ESCANER } from "./config.js?v=d29cdf6ff2";
 
 export const FORMATOS_PRODUCTOS = ["ean_13", "ean_8", "upc_a", "upc_e", "code_128"];
 export const TOPE_CODIGO = 40; // letras: un código de producto real tiene 8 a 14
@@ -43,6 +43,14 @@ export async function crearLector(formatos = FORMATOS_PRODUCTOS) {
 export const limpiarCodigo = (texto) => String(texto ?? "").trim().replace(/[^\w-]/g, "").slice(0, TOPE_CODIGO);
 
 /** Abre la cámara en una ventanita y llama a alLeer(codigo) con lo primero que lea. */
+export function camaraQueSeApaga(estado) {
+    return () => navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } }).then((camara) => {
+        if (estado.seguir()) estado.guardar(camara);
+        else camara.getTracks().forEach((t) => t.stop());
+        return camara;
+    });
+}
+
 export async function escanear(alLeer, { formatos = FORMATOS_PRODUCTOS, texto = "Apuntá al código de barras" } = {}) {
     const capa = document.createElement("div");
     capa.className = "camara";
@@ -58,6 +66,7 @@ export async function escanear(alLeer, { formatos = FORMATOS_PRODUCTOS, texto = 
     document.body.append(capa);
     let flujo = null;
     let seguir = true;
+    const pedirCamara = camaraQueSeApaga({ seguir: () => seguir, guardar: (c) => (flujo = c) });
     const cerrar = () => {
         if (!seguir) return;
         seguir = false;
@@ -72,15 +81,8 @@ export async function escanear(alLeer, { formatos = FORMATOS_PRODUCTOS, texto = 
     alSalirDeLaPantalla(cerrar);
     capa.querySelector("button").addEventListener("click", cerrar);
     try {
-        const [camara, lector] = await Promise.all([
-            navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } }),
-            crearLector(formatos)
-        ]);
-        flujo = camara;
-        if (!seguir) {
-            camara.getTracks().forEach((t) => t.stop()); // la cerraron mientras arrancaba: que no quede prendida
-            return;
-        }
+        const [, lector] = await Promise.all([pedirCamara(), crearLector(formatos)]);
+        if (!seguir) return;
         const video = capa.querySelector("video");
         video.srcObject = flujo;
         await video.play();
@@ -100,4 +102,51 @@ export async function escanear(alLeer, { formatos = FORMATOS_PRODUCTOS, texto = 
         if (!habia) return;
         aviso(e?.name === "NotAllowedError" ? "Sin permiso para la cámara: escribí el código a mano." : "No se pudo usar la cámara. Escribí el código o usá el lector.", "error");
     }
+}
+
+export const FORMATOS_CAJA = ["qr_code", ...FORMATOS_PRODUCTOS];
+export const ESPERA_REPETIDO = 1200;
+
+export function nuevaLectura(ultimo, codigo, ahora, espera = ESPERA_REPETIDO) {
+    if (!codigo) return { cuenta: false, ultimo };
+    const repetido = ultimo?.codigo === codigo && ahora - ultimo.cuando < espera;
+    return { cuenta: !repetido, ultimo: { codigo, cuando: ahora } };
+}
+
+export function escanearSeguido(video, alLeer, { formatos = FORMATOS_CAJA, alFallar } = {}) {
+    let seguir = true;
+    let flujo = null;
+    const pedirCamara = camaraQueSeApaga({ seguir: () => seguir, guardar: (c) => (flujo = c) });
+    let ultimo = null;
+    const parar = () => {
+        if (!seguir) return;
+        seguir = false;
+        flujo?.getTracks().forEach((t) => t.stop());
+        video.srcObject = null;
+        document.removeEventListener("visibilitychange", alEsconder);
+    };
+    const alEsconder = () => {
+        if (document.visibilityState === "hidden") parar();
+    };
+    document.addEventListener("visibilitychange", alEsconder);
+    (async () => {
+        try {
+            const [, lector] = await Promise.all([pedirCamara(), crearLector(formatos)]);
+            if (!seguir) return;
+            video.srcObject = flujo;
+            await video.play();
+            while (seguir) {
+                const [leido] = await lector.detect(video);
+                const lectura = nuevaLectura(ultimo, limpiarCodigo(leido?.rawValue), Date.now());
+                ultimo = lectura.ultimo;
+                if (lectura.cuenta && seguir) alLeer(ultimo.codigo);
+                await new Promise((r) => setTimeout(r, 200));
+            }
+        } catch (e) {
+            const habia = seguir;
+            parar();
+            if (habia) alFallar?.(e);
+        }
+    })();
+    return parar;
 }

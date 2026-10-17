@@ -4,15 +4,16 @@
 // El mecánico carga lo que encontró y los repuestos, sin ver precios. Y el presupuesto (dueño): para imprimir, con la
 // firma del cliente en pantalla y en PDF para mandarlo por WhatsApp.
 // ============================================
-import { esc, aviso, fechaCorta, fechaHora } from "../../kit/js/ui.js?v=0579abf08d";
-import { fechaLocalISO } from "../../kit/js/fechas.js?v=0579abf08d";
-import { pedirFirma, esFirma } from "../../kit/js/firma.js?v=0579abf08d";
-import { htmlBotonDictar, activarDictado } from "../../kit/js/dictado.js?v=0579abf08d";
-import { armarPdf, pdfListo } from "../../kit/js/pdf.js?v=0579abf08d";
-import { ESTADOS, REPUESTOS, MANO_DE_OBRA, TOPES, pesos } from "../datos.js?v=0579abf08d";
-import { NEGOCIO, MARCA } from "../marca.js?v=0579abf08d";
-import { guia, activarGuias, chapa, pastillaEstado, textoPromesa, mostrarMensaje } from "./comunes.js?v=0579abf08d";
-import { htmlConsigna, htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=0579abf08d";
+import { esc, aviso, fechaCorta, fechaHora } from "../../kit/js/ui.js?v=2426c7e92d";
+import { fechaLocalISO } from "../../kit/js/fechas.js?v=2426c7e92d";
+import { pedirFirma, esFirma } from "../../kit/js/firma.js?v=2426c7e92d";
+import { htmlBotonDictar, activarDictado } from "../../kit/js/dictado.js?v=2426c7e92d";
+import { armarPdf, pdfListo } from "../../kit/js/pdf.js?v=2426c7e92d";
+import { ESTADOS, REPUESTOS, MANO_DE_OBRA, TOPES, pesos } from "../datos.js?v=2426c7e92d";
+import { NEGOCIO, MARCA } from "../marca.js?v=2426c7e92d";
+import { guia, activarGuias, chapa, pastillaEstado, textoPromesa, mostrarMensaje } from "./comunes.js?v=2426c7e92d";
+import { htmlConsigna, htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=2426c7e92d";
+import { htmlAntesDespues, activarAntesDespues } from "../../kit/js/antes-despues.js?v=2426c7e92d";
 
 export function vistaOrden(cont, { usuario, datos, irA, params: [id] }) {
     const o = datos.orden(id, usuario);
@@ -109,6 +110,12 @@ export function vistaOrden(cont, { usuario, datos, irA, params: [id] }) {
             ${dueno && o.renglones.length ? `<a class="boton-link imprimir-link" href="#/orden/${esc(o.id)}/imprimir"><i class="ti ti-file-text"></i> Presupuesto: imprimir, firma y PDF</a>` : ""}
         </section>
         ${botones.length ? `<div class="acciones-orden">${botones.join("")}</div>` : ""}
+        ${o.estado === "listo" || o.estado === "entregado" ? `
+        <section class="bloque fotos-arreglo">
+            <h2 class="subtitulo"><i class="ti ti-camera"></i> Fotos del arreglo</h2>
+            <p class="nota">Sacás una foto cuando entra y otra cuando sale: el cliente ve el trabajo y no hay discusiones. Deslizá para comparar.</p>
+            ${htmlAntesDespues({ antes: "img/arreglo-antes.png", despues: "img/arreglo-despues.png", texto: "Ejemplo: chapa y pintura (dibujo)" })}
+        </section>` : ""}
         <section class="bloque">
             <h2 class="subtitulo"><i class="ti ti-history"></i> Historial</h2>
             <ol class="historial">${o.historial.map((h) => `
@@ -118,6 +125,7 @@ export function vistaOrden(cont, { usuario, datos, irA, params: [id] }) {
         </section>`;
     activarGuias(cont, irA);
     activarConsigna(cont, MARCA);
+    activarAntesDespues(cont);
     activarDictado(cont); // el mecánico con las manos sucias dicta lo que encontró
 
     cont.querySelector(".encontro")?.addEventListener("submit", (e) => {

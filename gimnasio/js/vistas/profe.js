@@ -3,11 +3,12 @@
 // quién está entrenando, quién terminó y qué día de la rutina le toca), los avisos (récords de hoy y ayer, y los que
 // vienen pero hace rato que no anotan lo que hacen) y un buscador para llegar a la ficha de cualquiera de sus alumnos.
 // ============================================
-import { esc, vacio } from "../../kit/js/ui.js?v=289ec4bb58";
-import { kilos } from "../datos.js?v=289ec4bb58";
-import { NEGOCIO } from "../marca.js?v=289ec4bb58";
-import { pastilla, cara } from "./comunes.js?v=289ec4bb58";
-import { htmlConsigna } from "../../kit/js/consigna.js?v=289ec4bb58";
+import { esc, vacio } from "../../kit/js/ui.js?v=f31b69dab0";
+import { kilos } from "../datos.js?v=f31b69dab0";
+import { NEGOCIO } from "../marca.js?v=f31b69dab0";
+import { pastilla, cara } from "./comunes.js?v=f31b69dab0";
+import { htmlConsigna } from "../../kit/js/consigna.js?v=f31b69dab0";
+import { htmlBotonTV, abrirModoTV } from "../../kit/js/modo-tv.js?v=f31b69dab0";
 
 let texto = ""; // lo buscado queda mientras se navega
 
@@ -48,7 +49,7 @@ export function vistaGimnasioHoy(cont, { usuario, datos }) {
     cont.innerHTML = `
         <div class="titulo-con-accion">
             <h1 class="titulo">Hoy en el gimnasio</h1>
-            <span class="negocio"><i class="ti ti-users" aria-hidden="true"></i>${esc(NEGOCIO)}</span>
+            <span class="titulo-con-accion__botones"><span class="negocio"><i class="ti ti-users" aria-hidden="true"></i>${esc(NEGOCIO)}</span>${htmlBotonTV("Récords en la tele")}</span>
         </div>
         <p class="nota"><i class="ti ti-hand-stop" aria-hidden="true"></i><span>Llegaron <b>${esc(g.llegaron)}</b> de tus ${esc(g.total)} alumnos de hoy.</span></p>
         ${records.length || g.sinAnotar.length ? `
@@ -81,6 +82,7 @@ export function vistaGimnasioHoy(cont, { usuario, datos }) {
             <input type="search" name="q" maxlength="40" placeholder="Buscar por nombre" value="${esc(texto)}" autocomplete="off">
         </label>
         <ul class="tarjetas lista-alumnos"></ul>`;
+    cont.querySelector("[data-modo-tv]").addEventListener("click", () => abrirModoTV({ titulo: NEGOCIO, icono: "ti-trophy", armar: () => htmlTVGimnasio(datos.hoyEnElGimnasio(usuario)) }));
 
     const lista = cont.querySelector(".lista-alumnos");
     function pintar() {
@@ -105,4 +107,23 @@ export function vistaGimnasioHoy(cont, { usuario, datos }) {
         pintar();
     });
     pintar();
+}
+
+export function htmlTVGimnasio(g) {
+    const ahora = g.horarios.flatMap((h) => h.alumnos).filter((a) => a.estado === "entrenando" || a.estado === "llego");
+    return `<div class="tv-grilla tv-grilla--destacada">
+        <section class="tv-tarjeta tv-tarjeta--ahora">
+            <span class="tv-tarjeta__rotulo">Récords de hoy y ayer</span>
+            ${g.records.length ? `<ul class="tv-lista">${g.records.slice(0, 5).map((r) => `
+                <li><i class="ti ti-trophy" aria-hidden="true"></i><span><b>${esc(r.socio)}</b> · ${esc(r.nombre)}</span><small>${esc(kilos(r.peso))} · antes ${esc(kilos(r.antes))}</small></li>`).join("")}
+            </ul>` : `<span class="tv-tarjeta__chico">Hoy todavía no hubo récords. ¿Quién se anima?</span>`}
+        </section>
+        <section class="tv-tarjeta">
+            <span class="tv-tarjeta__rotulo">Entrenando ahora</span>
+            <b class="tv-tarjeta__grande">${esc(ahora.length)}</b>
+            <span class="tv-tarjeta__chico">${ahora.length ? ahora.slice(0, 8).map((a) => esc(a.nombre)).join(" · ") : "El gimnasio está tranquilo"}</span>
+            <span class="tv-tarjeta__rotulo">Hoy vinieron</span>
+            <span class="tv-tarjeta__chico">${esc(g.llegaron)} de ${esc(g.total)} que tenían turno</span>
+        </section>
+    </div>`;
 }

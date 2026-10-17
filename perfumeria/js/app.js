@@ -3,19 +3,19 @@
 // Cada persona tiene su menú: Carolina (dueña) pedidos, stock y clientas; Julieta (clienta) el catálogo y su pedido.
 // irA() cambia de persona sin pasar por "Probala como…" (botón del recorrido: "Mirá lo que le llega a Carolina →").
 // ============================================
-import { $, conFundido } from "../kit/js/ui.js?v=f04a42026d";
-import { iniciarDemo } from "../kit/js/arranque.js?v=f04a42026d";
-import { vistaIngreso } from "../kit/js/ingreso.js?v=f04a42026d";
-import { pintarMarco } from "../kit/js/marco.js?v=f04a42026d";
-import { mostrarRuta } from "../kit/js/rutas.js?v=f04a42026d";
-import { vistaAcerca } from "../kit/js/acerca.js?v=f04a42026d";
-import { MARCA, PERSONAS, DETALLE, buscarPersona } from "./marca.js?v=f04a42026d";
-import { aparte } from "../kit/js/aparte.js?v=f04a42026d";
-import { leerSesionGuardada } from "../kit/js/guardado.js?v=f04a42026d";
+import { $, conFundido } from "../kit/js/ui.js?v=8faf6088f2";
+import { iniciarDemo } from "../kit/js/arranque.js?v=8faf6088f2";
+import { vistaIngreso } from "../kit/js/ingreso.js?v=8faf6088f2";
+import { pintarMarco } from "../kit/js/marco.js?v=8faf6088f2";
+import { mostrarRuta } from "../kit/js/rutas.js?v=8faf6088f2";
+import { vistaAcerca } from "../kit/js/acerca.js?v=8faf6088f2";
+import { MARCA, PERSONAS, DETALLE, buscarPersona } from "./marca.js?v=8faf6088f2";
+import { aparte } from "../kit/js/aparte.js?v=8faf6088f2";
+import { leerSesionGuardada } from "../kit/js/guardado.js?v=8faf6088f2";
 
 // Los datos de ejemplo y las pantallas se bajan aparte (al terminar de cargar): "Probala como…" aparece sin esperarlos
-const pantallas = aparte(() => import("./pantallas.js?v=f04a42026d"));
-const { vistaInicio, vistaPerfume, vistaPedido, vistaMisPedidos, vistaStock, vistaClientas, avisosDe } = pantallas.funciones;
+const pantallas = aparte(() => import("./pantallas.js?v=8faf6088f2"));
+const { vistaInicio, vistaPerfume, vistaPedido, vistaMisPedidos, vistaStock, vistaClientas, vistaMostrador, avisosDe } = pantallas.funciones;
 
 iniciarDemo(MARCA);
 let datos = null; // se arma cuando bajan las pantallas
@@ -27,7 +27,7 @@ let contenido = null;
 
 const ACERCA = { ruta: "/acerca", icono: "ti-info-circle", texto: "Acerca" };
 const MENU = {
-    duena: [{ ruta: "/inicio", icono: "ti-inbox", texto: "Pedidos" }, { ruta: "/stock", icono: "ti-bottle", texto: "Stock" }, { ruta: "/clientas", icono: "ti-users", texto: "Clientas" }, ACERCA],
+    duena: [{ ruta: "/inicio", icono: "ti-inbox", texto: "Pedidos" }, { ruta: "/mostrador", icono: "ti-cash-register", texto: "Mostrador" }, { ruta: "/stock", icono: "ti-bottle", texto: "Stock" }, { ruta: "/clientas", icono: "ti-users", texto: "Clientas" }, ACERCA],
     cliente: [{ ruta: "/inicio", icono: "ti-sparkles", texto: "Perfumes" }, { ruta: "/pedido", icono: "ti-shopping-bag", texto: "Tu pedido" }, { ruta: "/mis-pedidos", icono: "ti-list", texto: "Mis pedidos" }, ACERCA]
 };
 
@@ -41,6 +41,7 @@ const RUTAS = [
     { patron: /^\/pedido$/, vista: con(vistaPedido), puede: esClienta },
     { patron: /^\/mis-pedidos$/, vista: con(vistaMisPedidos), puede: esClienta },
     { patron: /^\/stock$/, vista: con(vistaStock), puede: esDuena },
+    { patron: /^\/mostrador$/, vista: con(vistaMostrador), puede: esDuena },
     { patron: /^\/clientas$/, vista: con(vistaClientas), puede: esDuena },
     { patron: /^\/acerca$/, vista: (cont) => vistaAcerca(cont, { marca: MARCA }) }
 ];

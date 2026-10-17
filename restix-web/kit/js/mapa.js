@@ -6,10 +6,10 @@
 // cuadraditos del mapa los da OpenStreetMap (gratis, con su nombre abajo a la derecha, como pide su política; poco
 // tráfico: es una demo). Los puntos son de ejemplo: nunca se usa la ubicación de quien mira.
 // ============================================
-import { aviso } from "./ui.js?v=633ebcf9e8";
-import { alSalirDeLaPantalla } from "./rutas.js?v=633ebcf9e8";
-import { RUTA_LIBS } from "./config.js?v=633ebcf9e8";
-import { cargarLibreria } from "./archivos.js?v=633ebcf9e8";
+import { aviso } from "./ui.js?v=cbb0f3090e";
+import { alSalirDeLaPantalla } from "./rutas.js?v=cbb0f3090e";
+import { RUTA_LIBS } from "./config.js?v=cbb0f3090e";
+import { cargarLibreria } from "./archivos.js?v=cbb0f3090e";
 
 const VERSION = "1.9.4";
 export const TOPE_PUNTOS = 200;
@@ -85,7 +85,7 @@ export async function mostrarMapa(lugar, puntos, { zoomMaximo = 15 } = {}) {
         (p.radio
             ? L.circle([p.lat, p.lng], { radius: p.radio, color: p.color, weight: 2, fillColor: p.color, fillOpacity: 0.22 })
             : L.circleMarker([p.lat, p.lng], { radius: 10, color: "#ffffff", weight: 2, fillColor: p.color, fillOpacity: 0.95 }))
-            .bindTooltip(p.titulo, { direction: "top", offset: [0, -8] })
+            .bindTooltip(Object.assign(document.createElement("span"), { textContent: p.titulo }), { direction: "top", offset: [0, -8] })
             .bindPopup(globito(p))
             .addTo(mapa));
     // El borde se calcula con los puntos (y lo que ocupa cada zona): un círculo recién agregado no se puede medir

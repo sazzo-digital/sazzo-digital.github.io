@@ -3,11 +3,12 @@
 // cuánto tiene que haber en el cajón. "Cerrar caja": contás la plata y te dice si sobra o falta.
 // El dueño ve además los últimos 7 días.
 // ============================================
-import { esc, aviso, fechaCorta } from "../../kit/js/ui.js?v=85347c5bd0";
-import { diaLocalDe } from "../../kit/js/fechas.js?v=85347c5bd0";
-import { bajarExcel } from "../../kit/js/archivos.js?v=85347c5bd0";
-import { FONDO_CAJA, MEDIOS, TOPES, pesos } from "../datos.js?v=85347c5bd0";
-import { hora } from "./comunes.js?v=85347c5bd0";
+import { esc, aviso, fechaCorta } from "../../kit/js/ui.js?v=5dc1b11480";
+import { diaLocalDe } from "../../kit/js/fechas.js?v=5dc1b11480";
+import { bajarExcel } from "../../kit/js/archivos.js?v=5dc1b11480";
+import { FONDO_CAJA, MEDIOS, TOPES, pesos } from "../datos.js?v=5dc1b11480";
+import { textoMedio } from "../../kit/js/pagos.js?v=5dc1b11480";
+import { hora } from "./comunes.js?v=5dc1b11480";
 
 const DIAS = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
 const nombreDia = (dia) => {
@@ -42,7 +43,8 @@ export function vistaCaja(cont, { usuario, datos }) {
         <div class="numeros-caja">
             <div class="numero-caja"><span>Vendido hoy</span><b>${esc(pesos(c.vendido))}</b><small>${esc(c.cantidad)} ventas</small></div>
             <div class="numero-caja"><span>Efectivo</span><b>${esc(pesos(c.porMedio.efectivo))}</b></div>
-            <div class="numero-caja"><span>Transferencia</span><b>${esc(pesos(c.porMedio.transferencia + c.cobradoTransferencia))}</b>${c.cobradoTransferencia ? `<small>con ${esc(pesos(c.cobradoTransferencia))} de fiados</small>` : ""}</div>
+            <div class="numero-caja"><span>Débito y crédito</span><b>${esc(pesos(c.porMedio.debito + c.porMedio.credito))}</b><small>débito ${esc(pesos(c.porMedio.debito))} · crédito ${esc(pesos(c.porMedio.credito))}</small></div>
+            <div class="numero-caja"><span>Transferencia y QR</span><b>${esc(pesos(c.porMedio.transferencia + c.porMedio.qr + c.cobradoTransferencia))}</b>${c.cobradoTransferencia ? `<small>con ${esc(pesos(c.cobradoTransferencia))} de fiados</small>` : ""}</div>
             <div class="numero-caja"><span>Fiado anotado</span><b>${esc(pesos(c.porMedio.fiado))}</b>${c.cobros.length ? `<small>cobrados: ${esc(pesos(c.cobradoEfectivo + c.cobradoTransferencia))}</small>` : ""}</div>
         </div>
         <div class="tablero-caja">
@@ -50,7 +52,7 @@ export function vistaCaja(cont, { usuario, datos }) {
                 <h2 class="subtitulo"><i class="ti ti-receipt"></i> Últimas ventas</h2>
                 ${c.ultimas.length ? `<ul class="movimientos">${c.ultimas.map((v) => `
                     <li class="movimiento">
-                        <span><b>${esc(v.items.map((i) => i.nombre).join(", "))}</b><small>${esc(hora(v.fecha))} · ${esc(MEDIOS[v.medio])}${v.cliente ? ` (${esc(v.cliente)})` : ""} · ${esc(v.por)}</small></span>
+                        <span><b>${esc(v.items.map((i) => i.nombre).join(", "))}</b><small>${esc(hora(v.fecha))} · ${esc(textoMedio(v, MEDIOS))}${v.cliente ? ` (${esc(v.cliente)})` : ""} · ${esc(v.por)}</small></span>
                         <b class="monto">${esc(pesos(v.total))}</b>
                     </li>`).join("")}</ul>` : `<p class="nota">Todavía no hubo ventas hoy.</p>`}
             </section>
@@ -89,7 +91,7 @@ export function vistaCaja(cont, { usuario, datos }) {
         const boton = e.currentTarget;
         boton.disabled = true;
         const filas = datos.ventasDeLaSemana(usuario).map((v) => {
-            return [fechaCorta(diaLocalDe(v.fecha)), hora(v.fecha), v.items.map((i) => `${i.cantidad} ${i.nombre}`).join(", "), MEDIOS[v.medio], v.cliente, { valor: v.total, formato: "pesos" }, v.por];
+            return [fechaCorta(diaLocalDe(v.fecha)), hora(v.fecha), v.items.map((i) => `${i.cantidad} ${i.nombre}`).join(", "), textoMedio(v, MEDIOS), v.cliente, { valor: v.total, formato: "pesos" }, v.por];
         });
         bajarExcel("Ventas de la semana", [["Día", "Hora", "Productos", "Pago", "Fiado a", "Total", "Atendió"], ...filas], { hoja: "Ventas", anchos: [11, 7, 46, 14, 16, 12, 10] })
             .finally(() => (boton.disabled = false));

@@ -7,12 +7,16 @@
 // Código que no está → "¿Lo cargás?" y queda listo para vender.
 // En la compu, dos columnas (artículos | ticket); en el celular, el ticket abajo con una barrita arriba que lleva a él.
 // ============================================
-import { esc, aviso, vacio, fechaHora } from "../../kit/js/ui.js?v=8ec449d814";
-import { puedeEscanear, escanear } from "../../kit/js/escaner.js?v=8ec449d814";
-import { TOPES, MEDIOS, RUBROS, UNIDADES, DESCUENTO_MAYOR, pesos, precioMayor, precioConUnidad, cantidadTexto, numeroCantidad, redondearCantidad } from "../datos.js?v=8ec449d814";
-import { NEGOCIO } from "../marca.js?v=8ec449d814";
-import { pintarCobro, etiquetaUnidad } from "./comunes.js?v=8ec449d814";
-import { EVENTO_REINICIO } from "../../kit/js/guardado.js?v=8ec449d814";
+import { esc, aviso, vacio, fechaHora } from "../../kit/js/ui.js?v=9904c28649";
+import { puedeEscanear, escanear } from "../../kit/js/escaner.js?v=9904c28649";
+import { TOPES, MEDIOS, RUBROS, UNIDADES, DESCUENTO_MAYOR, pesos, precioMayor, precioConUnidad, cantidadTexto, numeroCantidad, redondearCantidad } from "../datos.js?v=9904c28649";
+import { textoMedio } from "../../kit/js/pagos.js?v=9904c28649";
+import { NEGOCIO, MARCA } from "../marca.js?v=9904c28649";
+import { pintarCobro, etiquetaUnidad } from "./comunes.js?v=9904c28649";
+import { EVENTO_REINICIO } from "../../kit/js/guardado.js?v=9904c28649";
+import { abrirCaja } from "../../kit/js/caja.js?v=9904c28649";
+import { MEDIOS_PAGO, mediosParaCaja } from "../../kit/js/pagos.js?v=9904c28649";
+import { RUBROS as RUBROS_CAJA, precioPara } from "../datos.js?v=9904c28649";
 
 // El ticket en curso queda en memoria mientras se navega (se vacía al cobrar)
 export const ticket = new Map(); // productoId → cantidad
@@ -29,6 +33,7 @@ export function vistaVender(cont, { usuario, datos }) {
             <h1 class="titulo">Vender</h1>
             <span class="negocio"><i class="ti ti-building-store" aria-hidden="true"></i>${esc(NEGOCIO)}</span>
         </div>
+        <button class="boton boton--ancho abrir-caja" type="button" data-abrir-caja><i class="ti ti-scan"></i> Abrir la caja: escaneá y cobrá como en el súper</button>
         <button class="ticket-barra" type="button" hidden></button>
         <div class="caja-venta">
             <section class="productos" aria-label="Artículos">
@@ -187,7 +192,7 @@ export function vistaVender(cont, { usuario, datos }) {
             <div class="hecho">
                 <i class="ti ti-circle-check" aria-hidden="true"></i>
                 <h2 class="titulo">${v.medio === "cuenta" ? "Anotado en la cuenta" : "Vendido"}</h2>
-                <p>${esc(pesos(v.total))} · ${esc(MEDIOS[v.medio])}${v.cuenta ? ` · ${esc(v.cuenta.nombre)}` : ""}</p>
+                <p>${esc(pesos(v.total))} · ${esc(textoMedio(v, MEDIOS))}${v.cuenta ? ` · ${esc(v.cuenta.nombre)}` : ""}</p>
                 ${v.vuelto !== null ? `<p class="vuelto vuelto--grande">Vuelto: <b>${esc(pesos(v.vuelto))}</b></p>` : ""}
                 ${v.cuenta ? `<p class="nota"><i class="ti ti-user-dollar"></i> ${esc(v.cuenta.nombre)} debe ahora ${esc(pesos(v.cuenta.deuda))}.</p>` : ""}
                 <button class="boton boton--secundario" type="button" data-nueva><i class="ti ti-plus"></i> Nueva venta</button>
@@ -279,6 +284,24 @@ export function vistaVender(cont, { usuario, datos }) {
         pintarProductos();
     });
     cont.querySelector("[data-camara]")?.addEventListener("click", () => escanear(alBuscar));
+    const paraCaja = (p) => ({ ...p, seccion: p.rubro, icono: RUBROS_CAJA.find((r) => r.id === p.rubro)?.icono ?? "ti-package" });
+    cont.querySelector("[data-abrir-caja]").addEventListener("click", () => abrirCaja({
+        titulo: NEGOCIO,
+        prefijo: MARCA.prefijo,
+        productos: () => datos.listarProductos().filter((p) => !p.servicio).map(paraCaja),
+        secciones: RUBROS_CAJA.filter((r) => datos.listarProductos().some((p) => p.rubro === r.id && !p.servicio)).map((r) => ({ id: r.id, texto: r.nombre })),
+        buscar: (texto) => datos.listarProductos({ texto }).filter((p) => !p.servicio).slice(0, 24).map(paraCaja),
+        buscarCodigo: (codigo) => {
+            const p = datos.porCodigo(codigo);
+            return p && !p.servicio ? paraCaja(p) : null;
+        },
+        medios: mediosParaCaja(MEDIOS_PAGO),
+        billetes: [2_000, 5_000, 10_000, 20_000],
+        imagenQR: (p) => `img/qr/${encodeURIComponent(p.codigo)}.svg`,
+        cobrar: ({ items, medio, pagaCon, pagos }) => datos.vender(usuario, { items, medio, pagaCon, pagos }),
+        precioPara,
+        alCerrar: () => vistaVender(cont, { usuario, datos })
+    }));
 
     pintarRubros();
     pintarProductos();
@@ -299,7 +322,7 @@ function htmlTicketPrevia(v) {
             <span class="ticket-papel__renglon"><span>${esc(i.unidad === "u" ? `${i.cantidad} x ${i.nombre}` : `${cantidadTexto(i.cantidad, i.unidad)} ${i.nombre}`)}</span><b>${esc(pesos(i.subtotal))}</b></span>`).join("")}
             <hr>
             <span class="ticket-papel__renglon ticket-papel__total"><span>TOTAL</span><b>${esc(pesos(v.total))}</b></span>
-            <span>${esc(MEDIOS[v.medio])}${v.vuelto !== null ? ` · vuelto ${esc(pesos(v.vuelto))}` : ""}</span>
+            <span>${esc(textoMedio(v, MEDIOS))}${v.vuelto !== null ? ` · vuelto ${esc(pesos(v.vuelto))}` : ""}</span>
             <hr>
             <small>Demo de Sazzo · no válido como factura</small>
         </div>`;

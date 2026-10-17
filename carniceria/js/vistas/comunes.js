@@ -3,11 +3,11 @@
 // de estado de un pedido, los pasos de un pedido (pedido → listo → retirado), "hace cuánto" y el campo de kilos.
 // Todo dato que entra a HTML pasa por esc().
 // ============================================
-import { esc } from "../../kit/js/ui.js?v=d0fa7e2aa0";
-import { diaLocalDe, fechaLocalISO } from "../../kit/js/fechas.js?v=d0fa7e2aa0";
-import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=d0fa7e2aa0";
-import { ESTADOS_PEDIDO, TOPES, kilos, pesos } from "../datos.js?v=d0fa7e2aa0";
-import { buscarPersona } from "../marca.js?v=d0fa7e2aa0";
+import { esc } from "../../kit/js/ui.js?v=3e2c528089";
+import { diaLocalDe, fechaLocalISO } from "../../kit/js/fechas.js?v=3e2c528089";
+import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=3e2c528089";
+import { ESTADOS_PEDIDO, TOPES, kilos, pesos } from "../datos.js?v=3e2c528089";
+import { buscarPersona } from "../marca.js?v=3e2c528089";
 
 /** Botón del recorrido con la persona de la carnicería: guia("u-empleado", "/pedidos", "Mirá lo que le llega a Darío"). */
 export const guia = (personaId, ruta, texto) => htmlGuia({ persona: buscarPersona(personaId), ruta, texto });

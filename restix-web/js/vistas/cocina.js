@@ -2,11 +2,12 @@
 // La cocina (Beto; la moza también la puede mirar): los pedidos que llegan, lo más viejo primero, con cuánto hace que
 // esperan (en rojo si pasan los 15 minutos). "Listo" lo saca y la mesa ve "comida lista".
 // ============================================
-import { esc, aviso } from "../../kit/js/ui.js?v=633ebcf9e8";
-import { mantenerPantallaPrendida, htmlBotonVoz, activarBotonVoz, decir } from "../../kit/js/celular.js?v=633ebcf9e8";
-import { MARCA } from "../marca.js?v=633ebcf9e8";
-import { ticket, guia, activarGuias, haceMin, hora } from "./comunes.js?v=633ebcf9e8";
-import { htmlConsigna } from "../../kit/js/consigna.js?v=633ebcf9e8";
+import { esc, aviso } from "../../kit/js/ui.js?v=cbb0f3090e";
+import { mantenerPantallaPrendida, htmlBotonVoz, activarBotonVoz, decir } from "../../kit/js/celular.js?v=cbb0f3090e";
+import { MARCA, NEGOCIO } from "../marca.js?v=cbb0f3090e";
+import { ticket, guia, activarGuias, haceMin, hora } from "./comunes.js?v=cbb0f3090e";
+import { htmlConsigna } from "../../kit/js/consigna.js?v=cbb0f3090e";
+import { htmlBotonTV, abrirModoTV } from "../../kit/js/modo-tv.js?v=cbb0f3090e";
 
 const DEMORA_MIN = 15;
 const leidas = new Set(); // los pedidos que ya se leyeron en voz alta (una vez cada uno)
@@ -29,7 +30,7 @@ export function vistaCocina(cont, { usuario, datos, irA }, recien = null) {
         <div class="titulo-con-accion">
             <h1 class="titulo">Cocina</h1>
             <span class="contador-grande">${c.pendientes.length} <small>${c.pendientes.length === 1 ? "pedido" : "pedidos"}</small></span>
-            ${htmlBotonVoz(MARCA.prefijo, "Leer los pedidos en voz alta")}
+            <span class="titulo-con-accion__botones">${htmlBotonVoz(MARCA.prefijo, "Leer los pedidos en voz alta")}${htmlBotonTV("Pedidos en la tele")}</span>
         </div>
         ${recien ? `
         <div class="hecho hecho--chico">
@@ -51,6 +52,7 @@ export function vistaCocina(cont, { usuario, datos, irA }, recien = null) {
         <h2 class="subtitulo"><i class="ti ti-history"></i> Lo último que salió</h2>
         <ul class="salieron">${c.listas.map((l) => `<li><b>${esc(l.mesa)}</b> · ${esc(l.items.map((i) => `${i.cantidad} ${i.nombre}`).join(", "))}<small>${esc(hora(l.listaEn))}</small></li>`).join("")}</ul>` : ""}`;
     activarGuias(cont, irA);
+    cont.querySelector("[data-modo-tv]").addEventListener("click", () => abrirModoTV({ titulo: NEGOCIO, icono: "ti-chef-hat", armar: () => htmlTVCocina(datos.cocina(usuario)) }));
     activarBotonVoz(cont, MARCA.prefijo, { alPrender: () => setTimeout(() => leerNuevos(c.pendientes), 1800) });
     leerNuevos(c.pendientes);
     cont.querySelectorAll("[data-listo]").forEach((b) => b.addEventListener("click", () => {
@@ -63,4 +65,21 @@ export function vistaCocina(cont, { usuario, datos, irA }, recien = null) {
             aviso(err, "error");
         }
     }));
+}
+
+export function htmlTVCocina({ pendientes, listas }) {
+    return `<div class="tv-grilla">
+        <section class="tv-tarjeta">
+            <span class="tv-tarjeta__rotulo">En preparación · ${esc(pendientes.length)}</span>
+            ${pendientes.length ? `<ul class="tv-lista">${pendientes.slice(0, 7).map((p) => `
+                <li${p.minutos >= DEMORA_MIN ? ` class="tv-lista__ojo"` : ""}><i class="ti ti-flame" aria-hidden="true"></i><b>${esc(p.mesa)}</b><small>${esc(haceMin(p.minutos))}</small></li>`).join("")}
+            </ul>` : `<span class="tv-tarjeta__chico">No hay nada en el fuego.</span>`}
+        </section>
+        <section class="tv-tarjeta tv-tarjeta--ahora">
+            <span class="tv-tarjeta__rotulo">Listo para servir</span>
+            ${listas.length ? `<ul class="tv-lista">${listas.slice(0, 7).map((l) => `
+                <li><i class="ti ti-circle-check" aria-hidden="true"></i><b>${esc(l.mesa)}</b><small>${esc(hora(l.listaEn))}</small></li>`).join("")}
+            </ul>` : `<span class="tv-tarjeta__chico">Todavía no salió nada.</span>`}
+        </section>
+    </div>`;
 }

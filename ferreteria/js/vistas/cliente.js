@@ -5,13 +5,13 @@
 //   "Mis presupuestos": cómo va cada uno (pedido → te lo mandaron → aceptado → retirado), el PDF, "Aceptar" y su
 //   cuenta corriente (lo que debe y los últimos movimientos).
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=8ec449d814";
-import { armarPdf, pdfListo } from "../../kit/js/pdf.js?v=8ec449d814";
-import { TOPES, pesos, cantidadTexto } from "../datos.js?v=8ec449d814";
-import { NEGOCIO } from "../marca.js?v=8ec449d814";
-import { guia, activarGuias, pasos, pastillaEstado, cuando, validez, barraTope, haceDias, htmlFoto } from "./comunes.js?v=8ec449d814";
-import { htmlConsigna } from "../../kit/js/consigna.js?v=8ec449d814";
-import { datosPdf } from "./presupuestos.js?v=8ec449d814";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=9904c28649";
+import { armarPdf, pdfListo } from "../../kit/js/pdf.js?v=9904c28649";
+import { TOPES, pesos, cantidadTexto } from "../datos.js?v=9904c28649";
+import { NEGOCIO } from "../marca.js?v=9904c28649";
+import { guia, activarGuias, pasos, pastillaEstado, cuando, validez, barraTope, haceDias, htmlFoto } from "./comunes.js?v=9904c28649";
+import { htmlConsigna } from "../../kit/js/consigna.js?v=9904c28649";
+import { datosPdf } from "./presupuestos.js?v=9904c28649";
 
 // Lo que va escribiendo queda en memoria mientras se navega
 const EJEMPLO = ["cano de 1/2 x 3", "4 codos de 1/2", "2 llaves de paso 1/2", "teflon"];
@@ -59,6 +59,7 @@ export function vistaPedirPresupuesto(cont, { usuario, datos, irA }) {
     const lineas = () => form.lineas.value.split("\n");
 
     const actualizar = () => {
+        if (!lista.isConnected) return;
         let v;
         try {
             v = datos.verRenglones(lineas(), { foto: form.foto.checked });

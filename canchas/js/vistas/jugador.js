@@ -3,13 +3,14 @@
 // nombre del grupo y seña simulada) y "Mis turnos" (con Cancelar y la regla de la seña a la vista).
 // Lo ocupado se ve, pero no se puede tocar: nunca se pisan.
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=21e7a89345";
-import { TIPOS, TOPES, CANCELAR_HORAS, pesos, nombreFecha } from "../datos.js?v=21e7a89345";
-import { NEGOCIO } from "../marca.js?v=21e7a89345";
-import { guia, activarGuias, pastillaSena, pastillaEstado, chipsDias } from "./comunes.js?v=21e7a89345";
-import { htmlConsigna } from "../../kit/js/consigna.js?v=21e7a89345";
-import { aHora, minutoAhora } from "../../kit/js/turnos.js?v=21e7a89345";
-import { htmlCopiable, activarCopiables } from "../../kit/js/celular.js?v=21e7a89345";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=d29cdf6ff2";
+import { TIPOS, TOPES, CANCELAR_HORAS, pesos, nombreFecha } from "../datos.js?v=d29cdf6ff2";
+import { NEGOCIO } from "../marca.js?v=d29cdf6ff2";
+import { guia, activarGuias, pastillaSena, pastillaEstado, chipsDias } from "./comunes.js?v=d29cdf6ff2";
+import { htmlConsigna } from "../../kit/js/consigna.js?v=d29cdf6ff2";
+import { aHora, minutoAhora } from "../../kit/js/turnos.js?v=d29cdf6ff2";
+import { htmlCopiable, activarCopiables } from "../../kit/js/celular.js?v=d29cdf6ff2";
+import { htmlCuenta, pedirCantina } from "./cuenta.js?v=d29cdf6ff2";
 
 // Lo elegido queda mientras se navega
 let fecha = null;
@@ -138,6 +139,10 @@ export function vistaMisTurnos(cont, { usuario, datos }) {
                 ${conCancelar ? pastillaSena(t.sena) : pastillaEstado(t.estado)}
             </div>
             <p class="tarjeta__quien"><b>${esc(nombreFecha(t.fecha))}</b> de ${esc(t.hora)} a ${esc(t.hasta)} · ${esc(t.grupo)}</p>
+            ${conCancelar || datos.cuenta(t.id).pago ? htmlCuenta(datos.cuenta(t.id), { soyJugador: true }) : ""}
+            ${conCancelar && !datos.cuenta(t.id).pago ? `
+            <button class="boton boton--secundario boton--ancho" type="button" data-cantina="${esc(t.id)}"><i class="ti ti-cup"></i> Pedir a la cantina</button>
+            <div class="lugar-cantina" data-lugar="${esc(t.id)}"></div>` : ""}
             ${conCancelar ? `
             <div class="tarjeta__pie">
                 <small>${datos.seDevuelve(t.id) ? `Si cancelás ahora, la seña se devuelve.` : `Faltan menos de ${CANCELAR_HORAS} h: si cancelás, la seña se pierde.`}</small>
@@ -153,6 +158,13 @@ export function vistaMisTurnos(cont, { usuario, datos }) {
             <summary>Anteriores y cancelados (${anteriores.length})</summary>
             <ul class="tarjetas">${anteriores.map((t) => tarjeta(t, false)).join("")}</ul>
         </details>` : ""}`;
+    cont.querySelectorAll("[data-cantina]").forEach((b) => b.addEventListener("click", () => pedirCantina(cont.querySelector(`[data-lugar="${b.dataset.cantina}"]`), {
+        datos, usuario, turnoId: b.dataset.cantina, textoBoton: "Pedir",
+        alListo: () => {
+            aviso("Pedido: le llega a la cantina");
+            vistaMisTurnos(cont, { usuario, datos });
+        }
+    })));
     cont.querySelectorAll("[data-cancelar]").forEach((b) => b.addEventListener("click", () => {
         const devuelve = datos.seDevuelve(b.dataset.cancelar);
         if (!confirm(devuelve ? "¿Cancelar el turno? La seña se devuelve." : "¿Cancelar el turno? Faltan pocas horas: la seña se pierde.")) return;

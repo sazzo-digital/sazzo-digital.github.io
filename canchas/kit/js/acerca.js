@@ -4,8 +4,8 @@
 // - Con alguien adentro: la pantalla entera (vistaAcerca), desde el menú o la cabecera de la demo.
 // Nada de datos personales: firma Sazzo. El contacto ("Quiero esto para mi negocio") llega en el paso 2.
 // ============================================
-import { esc } from "./ui.js?v=21e7a89345";
-import { logoSazzo, nombreDemo } from "./marca.js?v=21e7a89345";
+import { esc } from "./ui.js?v=d29cdf6ff2";
+import { logoSazzo, nombreDemo } from "./marca.js?v=d29cdf6ff2";
 
 const AVISO_DEMO =
     "Es una demo: los datos son inventados y quedan guardados solo en este navegador. No te pedimos ningún dato. La versión real se arma a medida de cada negocio.";
@@ -14,7 +14,10 @@ const AVISO_DEMO =
 export const textoAcerca = (marca) => `
     ${marca.descripcion ? `<p class="acerca__texto">${esc(marca.descripcion)}</p>` : ""}
     <p class="acerca__texto">${esc(AVISO_DEMO)}</p>
-    <p class="acerca__autor">Hecho por <strong>Sazzo</strong> · Tu mundo digital, en orden.</p>`;
+    <p class="acerca__autor">Hecho por <strong>Sazzo</strong> · Tu mundo digital, en orden.</p>
+    ${versionDemo() ? `<p class="acerca__version">Versión ${esc(versionDemo())}</p>` : ""}`;
+
+export const versionDemo = () => document.querySelector('meta[name="version"]')?.content ?? "";
 
 /** Pie de la pantalla de ingreso: "Acerca de Sazzo Kiosco", que se despliega ahí mismo. */
 export const pieAcerca = (marca) => `

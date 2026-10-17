@@ -1,7 +1,7 @@
-import { esc } from "./ui.js?v=f04a42026d";
-import { linkQuieroEsto } from "./enlaces.js?v=f04a42026d";
-import { abrirColores } from "./colores.js?v=f04a42026d";
-import { contar } from "./visita.js?v=f04a42026d";
+import { esc } from "./ui.js?v=8faf6088f2";
+import { linkQuieroEsto } from "./enlaces.js?v=8faf6088f2";
+import { abrirColores } from "./colores.js?v=8faf6088f2";
+import { contar } from "./visita.js?v=8faf6088f2";
 
 export const TOPE_CONSIGNA = { pasos: 9, letras: 160 };
 

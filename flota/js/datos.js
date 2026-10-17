@@ -5,12 +5,12 @@
 // Reglas del kit: exigir() en lo que modifica, topes en todo lo que se carga, nada se borra y se devuelven copias.
 // Si cambia la forma de los datos, subir VERSION_DATOS (se regeneran solos).
 // ============================================
-import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=842bff8c10";
-import { enteroHasta, sinPasarse } from "../kit/js/topes.js?v=842bff8c10";
-import { fechaLocalISO, diasHasta } from "../kit/js/fechas.js?v=842bff8c10";
-import { MARCA, PERSONAS } from "./marca.js?v=842bff8c10";
+import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=41455accc5";
+import { enteroHasta, sinPasarse } from "../kit/js/topes.js?v=41455accc5";
+import { fechaLocalISO, diasHasta } from "../kit/js/fechas.js?v=41455accc5";
+import { MARCA, PERSONAS } from "./marca.js?v=41455accc5";
 
-export const VERSION_DATOS = 2;
+export const VERSION_DATOS = 3;
 
 // ---------- Topes (cada uno con su prueba de valor absurdo) ----------
 export const TOPES = {
@@ -18,7 +18,20 @@ export const TOPES = {
     nota: 200, // letras de la nota del mecánico al cerrar
     km: 1_500_000, // kilometraje máximo de un vehículo
     cantidad: 20, // repuestos de un mismo tipo usados en un arreglo
-    abiertos: 30 // problemas sin arreglar en toda la flota (alguien aburrido apretando "Enviar")
+    abiertos: 30, // problemas sin arreglar en toda la flota (alguien aburrido apretando "Enviar")
+    entrada: 999,
+    stock: 9_999,
+    detalle: 60,
+    movimientos: 500
+};
+
+export const SERVICE_CADA_KM = { camion: 10_000, utilitario: 10_000, camioneta: 10_000, moto: 5_000 };
+export const MOTIVOS_STOCK = {
+    arreglo: { texto: "Arreglo", icono: "ti-tool", sale: true },
+    service: { texto: "Service", icono: "ti-gauge", sale: true },
+    venta: { texto: "Venta", icono: "ti-cash", sale: true },
+    salida: { texto: "Salida", icono: "ti-logout", sale: true },
+    entrada: { texto: "Entró", icono: "ti-truck-delivery", sale: false }
 };
 
 export const SERVICE_CERCA_KM = 1000; // desde cuántos km antes del service se avisa
@@ -145,7 +158,8 @@ export function semilla() {
             { id: "r-lampara", nombre: "Lámparas", unidad: "unidades", cantidad: 0, minimo: 2 },
             { id: "r-cubierta", nombre: "Cubiertas", unidad: "unidades", cantidad: 1, minimo: 1 },
             { id: "r-refrigerante", nombre: "Refrigerante", unidad: "litros", cantidad: 4, minimo: 2 }
-        ]
+        ],
+        movimientosStock: []
     };
 }
 
@@ -349,16 +363,9 @@ export function crearDatos(prefijo = MARCA.prefijo) {
         const p = buscar(db().problemas, id, "Ese problema ya no existe.");
         exigir(estaAbierto(p), "Ese problema ya está arreglado.");
         const texto = sinPasarse(nota, TOPES.nota, "la nota");
-        exigir(Array.isArray(repuestos), "Los repuestos usados no llegaron bien.");
-        exigir(new Set(repuestos.map((u) => u.repuestoId)).size === repuestos.length, "Cada repuesto va una sola vez.");
-        // Primero se revisa todo; recién después se descuenta (o todo o nada)
-        const usados = repuestos.map(({ repuestoId, cantidad }) => {
-            const r = buscar(db().repuestos, repuestoId, "Ese repuesto no existe.");
-            const n = enteroHasta(cantidad, `La cantidad de ${r.nombre.toLowerCase()}`, { desde: 1, hasta: TOPES.cantidad });
-            exigir(n <= r.cantidad, r.cantidad ? `De ${r.nombre.toLowerCase()} quedan solo ${r.cantidad}.` : `No hay ${r.nombre.toLowerCase()}.`);
-            return { r, n };
-        });
+        const usados = revisarUsados(repuestos);
         usados.forEach(({ r, n }) => (r.cantidad -= n));
+        anotarMovimientos(usados, "arreglo", `${nombreVehiculo(p.vehiculoId)} · ${tipoProblema(p.tipo).texto}`, usuario);
         const momento = ahora();
         if (p.estado === "avisado") {
             p.tomadoPor = usuario.nombre;
@@ -383,10 +390,65 @@ export function crearDatos(prefijo = MARCA.prefijo) {
         return armarVehiculo(v);
     }
 
+    function revisarUsados(repuestos) {
+        exigir(Array.isArray(repuestos), "Los repuestos usados no llegaron bien.");
+        exigir(new Set(repuestos.map((u) => u.repuestoId)).size === repuestos.length, "Cada repuesto va una sola vez.");
+        return repuestos.map(({ repuestoId, cantidad }) => {
+            const r = buscar(db().repuestos, repuestoId, "Ese repuesto no existe.");
+            const n = enteroHasta(cantidad, `La cantidad de ${r.nombre.toLowerCase()}`, { desde: 1, hasta: TOPES.cantidad });
+            exigir(n <= r.cantidad, r.cantidad ? `De ${r.nombre.toLowerCase()} quedan solo ${r.cantidad}.` : `No hay ${r.nombre.toLowerCase()}.`);
+            return { r, n };
+        });
+    }
+
+    function anotarMovimientos(usados, motivo, detalle, usuario) {
+        db().movimientosStock ??= [];
+        usados.forEach(({ r, n }) => db().movimientosStock.push({
+            id: nuevoId("ms"), repuestoId: r.id, nombre: r.nombre, unidad: r.unidad,
+            cantidad: MOTIVOS_STOCK[motivo].sale ? -n : n, motivo, detalle, quien: usuario.nombre, cuando: ahora()
+        }));
+        if (db().movimientosStock.length > TOPES.movimientos) db().movimientosStock.splice(0, db().movimientosStock.length - TOPES.movimientos);
+    }
+
+    function hacerService(usuario, vehiculoId, { repuestos = [], nota = "" } = {}) {
+        exigir(["admin", "mecanico"].includes(usuario?.rol), "El service lo cargan la administradora o el mecánico.");
+        const v = buscar(db().vehiculos, vehiculoId, "Ese vehículo no existe.");
+        const texto = sinPasarse(nota, TOPES.nota, "la nota");
+        const usados = revisarUsados(repuestos);
+        exigir(usados.length, "Marcá qué repuestos usaste en el service.");
+        usados.forEach(({ r, n }) => (r.cantidad -= n));
+        anotarMovimientos(usados, "service", `${v.nombre} · service`, usuario);
+        v.proximoService = v.km + (SERVICE_CADA_KM[v.tipo] ?? 10_000);
+        v.ultimoService = { cuando: ahora(), km: v.km, nota: texto, por: usuario.nombre, repuestos: usados.map(({ r, n }) => ({ repuestoId: r.id, nombre: r.nombre, cantidad: n })) };
+        guardado.persistir();
+        return armarVehiculo(v);
+    }
+
+    function moverStock(usuario, repuestoId, { motivo, cantidad, detalle = "" } = {}) {
+        exigir(["admin", "mecanico"].includes(usuario?.rol), "El stock lo mueven la administradora o el mecánico.");
+        exigir(["venta", "salida", "entrada"].includes(motivo), "Elegí si entró, se vendió o salió.");
+        const r = buscar(db().repuestos, repuestoId, "Ese repuesto no existe.");
+        const texto = sinPasarse(detalle, TOPES.detalle, "el detalle");
+        const n = enteroHasta(cantidad, `La cantidad de ${r.nombre.toLowerCase()}`, { desde: 1, hasta: TOPES.entrada });
+        if (motivo === "entrada") {
+            exigir(r.cantidad + n <= TOPES.stock, `Hasta ${TOPES.stock.toLocaleString("es-AR")} de cada repuesto.`);
+            r.cantidad += n;
+        } else {
+            exigir(n <= r.cantidad, r.cantidad ? `De ${r.nombre.toLowerCase()} quedan solo ${r.cantidad}.` : `No hay ${r.nombre.toLowerCase()}.`);
+            r.cantidad -= n;
+        }
+        anotarMovimientos([{ r, n }], motivo, texto, usuario);
+        guardado.persistir();
+        return { ...copia(r), estado: estadoRepuesto(r) };
+    }
+
+    const movimientosStock = (cuantos = 8) => (db().movimientosStock ?? []).slice(-cuantos).reverse().map(copia);
+
     return {
         guardado,
         listarVehiculos, ficha, vehiculoDe, problemasAbiertos, avisosDe, listarRepuestos,
         resumen, paraMirar, movimientos,
-        avisarProblema, tomarProblema, cerrarProblema, cargarKm
+        avisarProblema, tomarProblema, cerrarProblema, cargarKm,
+        hacerService, moverStock, movimientosStock
     };
 }

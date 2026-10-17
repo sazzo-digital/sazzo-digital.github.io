@@ -13,14 +13,14 @@
 // Festejo: cuando aparece una confirmación (.hecho: turno reservado, venta cobrada, orden creada…), el ✓ entra con un
 // rebote, salen chispitas del color de la demo y el celular vibra cortito (Android). Quieto con "reducir movimiento".
 // ============================================
-import { $, $$, esc, iniciales } from "./ui.js?v=85347c5bd0";
-import { logoSazzo, nombreDemo } from "./marca.js?v=85347c5bd0";
-import { interruptorTema, activarInterruptorTema } from "./apariencia.js?v=85347c5bd0";
-import { linkOtrasDemos, linkQuieroEsto } from "./enlaces.js?v=85347c5bd0";
-import { abrirColores, leerNombre } from "./colores.js?v=85347c5bd0";
-import { contar } from "./visita.js?v=85347c5bd0";
-import { pintarAvisos } from "./avisos.js?v=85347c5bd0";
-import { revisarDetalle, htmlBotonDetalle, activarDetalle } from "./detalle.js?v=85347c5bd0";
+import { $, $$, esc, iniciales } from "./ui.js?v=5dc1b11480";
+import { logoSazzo, nombreDemo } from "./marca.js?v=5dc1b11480";
+import { interruptorTema, activarInterruptorTema } from "./apariencia.js?v=5dc1b11480";
+import { linkOtrasDemos, linkQuieroEsto } from "./enlaces.js?v=5dc1b11480";
+import { abrirColores, leerNombre } from "./colores.js?v=5dc1b11480";
+import { contar } from "./visita.js?v=5dc1b11480";
+import { pintarAvisos } from "./avisos.js?v=5dc1b11480";
+import { revisarDetalle, htmlBotonDetalle, activarDetalle } from "./detalle.js?v=5dc1b11480";
 
 /** La barrita de Sazzo: colores, otras demos y "Quiero esto" (los textos largos solo si hay lugar). */
 export function htmlBarraSazzo(marca, opciones, conDetalle = false) {
@@ -46,6 +46,16 @@ function htmlNombreNegocio(marca) {
     return `<small data-nombre-negocio data-lema="${esc(marca.lema ?? "")}"${texto ? "" : " hidden"}>${esc(texto)}</small>`;
 }
 
+function htmlPersonaCabecera(usuario) {
+    const rol = usuario.rolTexto ?? usuario.rol;
+    const quien = `${usuario.nombre ?? ""}${rol ? ` · ${rol}` : ""}`;
+    return `
+                <button class="cabecera__persona" id="persona-cabecera" type="button" title="Cambiar persona" aria-label="Cambiar persona (ahora: ${esc(quien)})">
+                    <span class="cabecera__avatar" aria-hidden="true">${esc(iniciales(usuario))}<i class="ti ti-switch-horizontal"></i></span>
+                    <span class="cabecera__cambiar" aria-hidden="true">Cambiar<span class="cabecera__cambiar-mas"> persona</span></span>
+                </button>`;
+}
+
 export function htmlMarco({ marca, usuario, menu = [], cambiarPersona = true, detalle = null }) {
     return `
         <button class="saltar" id="saltar" type="button">Saltar al contenido</button>
@@ -55,7 +65,7 @@ export function htmlMarco({ marca, usuario, menu = [], cambiarPersona = true, de
                 ${htmlBotonColores()}
             </div>
             <a class="cabecera__marca" href="#/inicio" title="Ir al inicio">${logoSazzo()}<span>${nombreDemo(marca)}${htmlNombreNegocio(marca)}</span></a>
-            <div class="cabecera__fin"></div>
+            <div class="cabecera__fin">${cambiarPersona ? htmlPersonaCabecera(usuario) : ""}</div>
         </header>
         <div class="banda-prueba">
             <p class="banda-prueba__persona">
@@ -116,7 +126,7 @@ export function ubicarBarraSazzo(app) {
     const cabecera = $(".cabecera__fin", app);
     if (!barra || !cabecera) return;
     if (matchMedia(ESCRITORIO).matches) {
-        cabecera.append(barra);
+        cabecera.prepend(barra);
     } else if (barra.parentElement === cabecera) {
         $(".pie-celu", app).prepend(barra);
     }
@@ -206,6 +216,7 @@ export function festejar(hecho) {
 
 // Avisos entre roles (kit/avisos.js): los del marco que está a la vista; se vuelven a mirar después de cada pantalla
 let avisosDelMarco = null;
+let ultimaPersona = null;
 if (typeof document !== "undefined") {
     document.addEventListener("sazzo:pantalla", () => {
         if (avisosDelMarco?.app.isConnected) pintarAvisos(avisosDelMarco.app, avisosDelMarco);
@@ -231,6 +242,10 @@ export function pintarMarco(app, { marca, usuario, menu = [], alCambiarPersona, 
     // Para quien usa teclado: el primer Tab ofrece saltar la cabecera e ir directo al contenido
     $("#saltar", app).addEventListener("click", () => $("#contenido", app).focus());
     $("#cambiar-persona", app)?.addEventListener("click", () => alCambiarPersona());
+    $("#persona-cabecera", app)?.addEventListener("click", () => alCambiarPersona());
+    const quien = usuario.id ?? usuario.nombre;
+    if (ultimaPersona !== null && ultimaPersona !== quien) $("#persona-cabecera", app)?.classList.add("cabecera__persona--nueva");
+    ultimaPersona = quien;
     $("#reiniciar", app).addEventListener("click", () => {
         if (!confirm("¿Volver a los datos de prueba del principio? Se pierde lo que cargaste.")) return;
         alReiniciar?.();

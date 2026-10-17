@@ -6,14 +6,15 @@
 // Las ventas guardan el precio del momento: si después sube un proveedor, lo vendido no cambia.
 // Si cambia la forma de los datos, subir VERSION_DATOS (se regeneran solos).
 // ============================================
-import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=85347c5bd0";
-import { enteroHasta, sinPasarse } from "../kit/js/topes.js?v=85347c5bd0";
-import { diaLocalDe, fechaLocalISO } from "../kit/js/fechas.js?v=85347c5bd0";
-import { columnasDe, numeroDe, textoParaComparar } from "../kit/js/tablas.js?v=85347c5bd0";
-import { filtrarPorTexto } from "../kit/js/buscar.js?v=85347c5bd0";
-import { MARCA } from "./marca.js?v=85347c5bd0";
+import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=5dc1b11480";
+import { enteroHasta, sinPasarse } from "../kit/js/topes.js?v=5dc1b11480";
+import { diaLocalDe, fechaLocalISO } from "../kit/js/fechas.js?v=5dc1b11480";
+import { columnasDe, numeroDe, textoParaComparar } from "../kit/js/tablas.js?v=5dc1b11480";
+import { filtrarPorTexto } from "../kit/js/buscar.js?v=5dc1b11480";
+import { MARCA } from "./marca.js?v=5dc1b11480";
+import { MEDIOS_PAGO, DIVIDIDO, revisarPagos, sumarPorMedio } from "../kit/js/pagos.js?v=5dc1b11480";
 
-export const VERSION_DATOS = 2;
+export const VERSION_DATOS = 3;
 
 // ---------- Topes (cada uno con su prueba de valor absurdo) ----------
 export const TOPES = {
@@ -46,7 +47,19 @@ export const COLUMNAS_LISTA = {
 
 export const FONDO_CAJA = 20_000; // el cambio con el que arranca el cajón cada día
 export const TOPE_FIADO_NUEVO = 30_000;
-export const MEDIOS = { efectivo: "Efectivo", transferencia: "Transferencia", fiado: "Fiado" };
+export const MEDIOS = { ...MEDIOS_PAGO, fiado: "Fiado" };
+
+export const SECCIONES = [
+    { id: "bebidas", texto: "Bebidas" },
+    { id: "alfajores", texto: "Alfajores" },
+    { id: "golosinas", texto: "Golosinas" },
+    { id: "snacks", texto: "Snacks" },
+    { id: "almacen", texto: "Almacén" }
+];
+export const seccionDe = (nombre) => (/gaseosa|agua|soda|jugo|cerveza|isot[oó]nica|energizante/i.test(nombre) ? "bebidas"
+    : /alfajor/i.test(nombre) ? "alfajores"
+    : /chicle|caramelo|chocolate|chupet|turr[oó]n|oblea|barrita|gomita|pastillas/i.test(nombre) ? "golosinas"
+    : /papas|man[ií]|palitos|galletitas|chizitos|frutos secos|pochoclo/i.test(nombre) ? "snacks" : "almacen");
 
 // Ruleta de premios (promo del kiosco, de ejemplo): una tirada por compra desde PROMO_DESDE, pagada en el momento.
 // El peso dice qué tan seguido sale cada premio (más peso, más seguido). Nada se guarda: el premio se entrega ahí.
@@ -129,6 +142,23 @@ const CATALOGO = {
     ]
 };
 
+const SUMADOS = [
+    ["pr-norte", "Agua con gas 500 ml", 1_300, 10, 4],
+    ["pr-norte", "Gaseosa lima 500 ml", 1_700, 12, 6],
+    ["pr-norte", "Jugo en caja 200 ml", 700, 20, 8],
+    ["pr-norte", "Agua saborizada 500 ml", 1_400, 9, 4],
+    ["pr-sur", "Alfajor de maicena", 1_000, 18, 6],
+    ["pr-sur", "Alfajor de chocolate blanco", 1_300, 14, 6],
+    ["pr-sur", "Alfajor de fruta", 1_100, 10, 4],
+    ["pr-sur", "Alfajor sin TACC", 1_400, 8, 4],
+    ["pr-sur", "Gomitas", 800, 22, 8],
+    ["pr-sur", "Pastillas de menta", 600, 3, 6],
+    ["pr-sur", "Papas fritas grandes", 3_000, 8, 4],
+    ["pr-sur", "Chizitos", 1_400, 10, 4],
+    ["pr-sur", "Mix de frutos secos", 2_200, 6, 3],
+    ["pr-sur", "Pochoclo", 1_200, 12, 4]
+];
+
 // Los clientes de la libreta: [id, nombre, detalle, tope, cuánto deben hoy]
 const CLIENTES = [
     ["c-graciela", "Graciela", "del 3° B", 30_000, 18_400],
@@ -167,6 +197,10 @@ export function semilla() {
             n++;
         }
     }
+    for (const [proveedorId, nombre, precio, stock, minimo] of SUMADOS) {
+        productos.push({ id: `p-${n}`, codigo: `200000000${String(n).padStart(4, "0")}`, nombre, precio, stock, minimo, proveedorId, rapido: false });
+        n++;
+    }
     const clientes = CLIENTES.map(([id, nombre, detalle, tope]) => ({ id, nombre, detalle, tope, movimientos: [] }));
 
     // Ventas de los últimos 6 días y de hoy hasta hace un rato (de 8 a 21:30)
@@ -191,7 +225,7 @@ export function semilla() {
             }
             const total = items.reduce((t, x) => t + x.precio * x.cantidad, 0);
             const r = azar();
-            const medio = r < 0.62 ? "efectivo" : r < 0.92 ? "transferencia" : "fiado";
+            const medio = r < 0.45 ? "efectivo" : r < 0.6 ? "debito" : r < 0.7 ? "credito" : r < 0.84 ? "transferencia" : r < 0.92 ? "qr" : "fiado";
             const venta = { id: `v-${dias}-${i}`, fecha: momento(dias, hora), items, total, medio, clienteId: null, pagaCon: null, vuelto: null, por: azar() < 0.7 ? "Sofía" : "Rubén" };
             if (medio === "fiado") {
                 const c = clientes[Math.floor(azar() * clientes.length)];
@@ -515,11 +549,12 @@ export function crearDatos(prefijo = MARCA.prefijo) {
      * Cobrar: efectivo (con "paga con" opcional → vuelto), transferencia o fiado (con cliente).
      * Si un fiado pasa el tope, lo tiene que autorizar el dueño (autorizarTope: true).
      */
-    function vender(usuario, { items, medio, pagaCon = null, clienteId = null, autorizarTope = false } = {}) {
+    function vender(usuario, { items, medio, pagaCon = null, clienteId = null, autorizarTope = false, pagos = null } = {}) {
         exigir(esDelKiosco(usuario), "Solo alguien del kiosco puede vender.");
         exigir(db().ventas.length < TOPES.ventas, `Ya hay ${TOPES.ventas} ventas. Es una demo: tocá "Empezar de cero" arriba.`);
-        exigir(MEDIOS[medio], "Elegí cómo paga.");
+        exigir(MEDIOS[medio] || medio === DIVIDIDO, "Elegí cómo paga.");
         const { renglones, total } = armarTicket(items);
+        const partes = medio === DIVIDIDO ? revisarPagos(total, pagos, Object.keys(MEDIOS_PAGO)) : null;
         let vuelto = null;
         if (medio === "efectivo" && pagaCon !== null && pagaCon !== "") {
             const con = enteroHasta(pagaCon, "Con cuánto paga", { desde: 1, hasta: TOPES.pagaCon });
@@ -540,7 +575,7 @@ export function crearDatos(prefijo = MARCA.prefijo) {
                 exigir(esDueno(usuario), `Se pasa del tope de ${c.nombre}: lo tiene que autorizar el dueño.`);
             }
         }
-        const venta = { id: nuevoId("v"), fecha: ahora(), items: renglones, total, medio, clienteId: c?.id ?? null, pagaCon, vuelto, por: usuario.nombre };
+        const venta = { id: nuevoId("v"), fecha: ahora(), items: renglones, total, medio, clienteId: c?.id ?? null, pagaCon, vuelto, por: usuario.nombre, ...(partes ? { pagos: partes } : {}) };
         renglones.forEach((r) => (buscar(db().productos, r.productoId).stock -= r.cantidad));
         db().ventas.push(venta);
         if (c) c.movimientos.push({ id: nuevoId("m"), tipo: "fiado", monto: total, fecha: venta.fecha, ventaId: venta.id, medio: null, por: usuario.nombre });
@@ -555,8 +590,7 @@ export function crearDatos(prefijo = MARCA.prefijo) {
     /** La caja de un día (hoy si no se dice): por medio de pago, fiados, lo más vendido y cuánto tiene que haber. */
     function caja(dia = fechaLocalISO(0)) {
         const ventas = delDia(db().ventas, dia);
-        const porMedio = { efectivo: 0, transferencia: 0, fiado: 0 };
-        ventas.forEach((v) => (porMedio[v.medio] += v.total));
+        const porMedio = sumarPorMedio(ventas, MEDIOS);
         const cobros = db().clientes.flatMap((c) => delDia(c.movimientos.filter((m) => m.tipo === "pago"), dia).map((m) => ({ ...copia(m), cliente: c.nombre })));
         const cobradoEfectivo = cobros.filter((m) => m.medio === "efectivo").reduce((t, m) => t + m.monto, 0);
         const cobradoTransferencia = cobros.filter((m) => m.medio === "transferencia").reduce((t, m) => t + m.monto, 0);
@@ -566,7 +600,7 @@ export function crearDatos(prefijo = MARCA.prefijo) {
         const cierre = db().cierres.filter((c) => c.dia === dia).at(-1) ?? null;
         return {
             dia, cantidad: ventas.length, porMedio,
-            vendido: porMedio.efectivo + porMedio.transferencia + porMedio.fiado,
+            vendido: Object.values(porMedio).reduce((t, n) => t + n, 0),
             cobros, cobradoEfectivo, cobradoTransferencia,
             enCajon: FONDO_CAJA + porMedio.efectivo + cobradoEfectivo,
             masVendidos, cierre: copia(cierre),

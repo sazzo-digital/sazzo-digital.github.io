@@ -2,8 +2,8 @@
 // Marca, personas y "también puede tener" de Sazzo Kiosco (diseñada el 08/10/2026).
 // Las personas son los roles reales del rubro (nombres inventados): el dueño y la empleada.
 // ============================================
-import { revisarMarca } from "../kit/js/marca.js?v=85347c5bd0";
-import { negocioDe } from "../kit/js/colores.js?v=85347c5bd0";
+import { revisarMarca } from "../kit/js/marca.js?v=5dc1b11480";
+import { negocioDe } from "../kit/js/colores.js?v=5dc1b11480";
 
 export const MARCA = revisarMarca({
     id: "kiosco",
@@ -42,12 +42,21 @@ export const NEGOCIO = negocioDe(MARCA.prefijo, "Kiosco La Esquina"); // nombre 
 
 export const DETALLE = {
     hace: [
-        "Lector de códigos con la cámara del celu: el producto se suma solo al ticket",
+        "Caja como en el súper: escaneás el QR de cada producto y se suma solo, con el total grande y el vuelto",
         "Stock por proveedor, con el filtro \"Hay que pedir\" para lo que se está terminando",
         "La lista del proveedor desde un Excel, y el stock y las ventas para bajar a Excel",
         "Caja del día: lo más vendido, las últimas ventas, los últimos 7 días y el cierre",
         "Ruleta de premios de ejemplo, para una promo del kiosco"
     ],
+    extra: {
+        titulo: "Para probar ya",
+        renglones: [
+            "Tocá «Abrir la caja» y sumá productos de la góndola: se suman al ticket al toque, como en el súper",
+            "Con el celu, escaneá los QR de los productos (están en «Ver los QR», para otro celu o para imprimir)",
+            "Cobrá en efectivo con el vuelto en grande, con débito, crédito, QR o mitad y mitad",
+            "Atento al stock: avisa «quedan 2» antes de que se termine"
+        ]
+    },
     tambien: [
         "Cobro con Mercado Pago o QR, y lector de códigos o balanza",
         "Que la caja y el stock se vean en el celular del dueño, al instante",

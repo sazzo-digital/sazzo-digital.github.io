@@ -6,17 +6,17 @@
 // en semilla.js. Todo cuelga de "la empresa actual" (la forma ya sirve para varias empresas).
 // La plata va en centavos. Si cambia la forma de los datos, subir VERSION_DATOS (se regeneran solos).
 // ============================================
-import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=03798c8bfa";
-import { enteroHasta, sinPasarse } from "../kit/js/topes.js?v=03798c8bfa";
-import { esFechaISO } from "../kit/js/fechas.js?v=03798c8bfa";
-import { MARCA } from "./marca.js?v=03798c8bfa";
-import { semilla as semillaFabrica, ID_CONSUMIDOR_FINAL } from "./semilla.js?v=03798c8bfa";
-import { armarAsientos, armarMayor, armarBalance, CUENTAS_CONTABLES } from "./contabilidad.js?v=03798c8bfa";
+import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=0edfe6e2d5";
+import { enteroHasta, sinPasarse } from "../kit/js/topes.js?v=0edfe6e2d5";
+import { esFechaISO } from "../kit/js/fechas.js?v=0edfe6e2d5";
+import { MARCA } from "./marca.js?v=0edfe6e2d5";
+import { semilla as semillaFabrica, ID_CONSUMIDOR_FINAL } from "./semilla.js?v=0edfe6e2d5";
+import { armarAsientos, armarMayor, armarBalance, CUENTAS_CONTABLES } from "./contabilidad.js?v=0edfe6e2d5";
 import {
     COMPROBANTES, NC_DE, CONDICIONES, ALICUOTAS, ORDEN_ALICUOTAS, TOPE_CF_IDENTIFICAR, signo, esAlicuota, tipoFactura,
     calcularComprobante, repartirNotaCredito, caeSimulado, revisarCuit, soloNumeros, aCentavos, fechaISO, sumarDias,
     periodoDe, periodoActual, ultimosPeriodos, correrPeriodo, vencimientoIva, numeroComprobante
-} from "./reglas.js?v=03798c8bfa";
+} from "./reglas.js?v=0edfe6e2d5";
 
 export const VERSION_DATOS = 4;
 
@@ -223,6 +223,10 @@ export function crearDatos(prefijo = MARCA.prefijo, { semilla = semillaFabrica }
             if ("condicionIva" in campos) {
                 if (!["RI", "MT", "EX"].includes(campos.condicionIva)) throw new Error("Elegí la condición frente al IVA de la empresa.");
                 nuevos.condicionIva = campos.condicionIva;
+            }
+            if ("topeMonotributo" in campos) {
+                const t = String(campos.topeMonotributo ?? "").trim();
+                nuevos.topeMonotributo = t ? aCentavos(t, "El tope de tu categoría", { desde: 1, hasta: TOPES.total }) : null;
             }
             if ("puntoVenta" in campos) nuevos.puntoVenta = enteroHasta(Number(campos.puntoVenta), "El punto de venta", { desde: 1, hasta: TOPES.puntoVenta });
             if ("domicilio" in campos) nuevos.domicilio = sinPasarse(campos.domicilio, TOPES.domicilio, "el domicilio");
@@ -609,6 +613,13 @@ export function crearDatos(prefijo = MARCA.prefijo, { semilla = semillaFabrica }
 
         // ---------- IVA ----------
         /** Los últimos 12 períodos con su posición de IVA (del más viejo al actual). */
+        monotributo() {
+            const e = emp();
+            const facturado = this.historialIva(12).reduce((n, h) => n + h.ventas, 0);
+            const tope = e.topeMonotributo ?? null;
+            return { facturado, tope, usado: tope ? Math.min(999, Math.round((facturado / tope) * 100)) : null, quedan: tope ? tope - facturado : null };
+        },
+
         historialIva(cantidad = 12) {
             const todas = posiciones();
             const quiero = new Set(ultimosPeriodos(cantidad));

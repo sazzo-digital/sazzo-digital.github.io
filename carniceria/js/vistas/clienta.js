@@ -3,12 +3,12 @@
 // kilo, "en plata" o por unidad) y cómo lo quiere ("milanesas finitas"), el combo del asado, el horario de retiro y
 // pedir. El total es aproximado: la carnicería lo pesa y se ajusta. Después, en "Mis pedidos", cómo va.
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=d0fa7e2aa0";
-import { TOPES, ANIMALES, RETIROS, COMBO_ASADO, pesos, kilos, precioPorPeso, gramosPara } from "../datos.js?v=d0fa7e2aa0";
-import { NEGOCIO } from "../marca.js?v=d0fa7e2aa0";
-import { htmlMediaRes, activarMediaRes } from "../media-res.js?v=d0fa7e2aa0";
-import { guia, activarGuias, pasos, pastillaEstado, cuando, precioDe, loPedido } from "./comunes.js?v=d0fa7e2aa0";
-import { htmlConsigna } from "../../kit/js/consigna.js?v=d0fa7e2aa0";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=3e2c528089";
+import { TOPES, ANIMALES, RETIROS, COMBO_ASADO, pesos, kilos, precioPorPeso, gramosPara } from "../datos.js?v=3e2c528089";
+import { NEGOCIO } from "../marca.js?v=3e2c528089";
+import { htmlMediaRes, activarMediaRes } from "../media-res.js?v=3e2c528089";
+import { guia, activarGuias, pasos, pastillaEstado, cuando, precioDe, loPedido } from "./comunes.js?v=3e2c528089";
+import { htmlConsigna } from "../../kit/js/consigna.js?v=3e2c528089";
 
 // Lo elegido queda en memoria mientras se navega
 const carrito = new Map(); // articuloId → { modo, cantidad, aclaracion }

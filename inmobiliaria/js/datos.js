@@ -9,11 +9,11 @@
 // Reglas del kit: exigir() en lo que modifica, topes en todo lo que se carga, nada se borra y se devuelven copias.
 // Si cambia la forma de los datos, subir VERSION_DATOS (se regeneran solos).
 // ============================================
-import { crearGuardado, exigir, copia, nuevoId, buscar } from "../kit/js/guardado.js?v=0ca3fb45de";
-import { enteroHasta, sinPasarse } from "../kit/js/topes.js?v=0ca3fb45de";
-import { esFechaISO } from "../kit/js/fechas.js?v=0ca3fb45de";
-import { aHora, aMinutos, diaSemana, libres, revisarLibre } from "../kit/js/turnos.js?v=0ca3fb45de";
-import { MARCA, NEGOCIO, buscarPersona } from "./marca.js?v=0ca3fb45de";
+import { crearGuardado, exigir, copia, nuevoId, buscar } from "../kit/js/guardado.js?v=17203dc0ea";
+import { enteroHasta, sinPasarse } from "../kit/js/topes.js?v=17203dc0ea";
+import { esFechaISO } from "../kit/js/fechas.js?v=17203dc0ea";
+import { aHora, aMinutos, diaSemana, libres, revisarLibre } from "../kit/js/turnos.js?v=17203dc0ea";
+import { MARCA, NEGOCIO, buscarPersona } from "./marca.js?v=17203dc0ea";
 
 export const VERSION_DATOS = 2; // 2: las propiedades de fábrica traen fotos y dos, el recorrido 360
 
@@ -517,6 +517,14 @@ export function crearDatos(prefijo = MARCA.prefijo, { reloj = () => new Date() }
         const p = buscar(db().propiedades, id, "Esa propiedad no existe.");
         exigir(estado === "disponible" || estado === "reservada" || (estado === "alquilada") === (p.operacion === "alquiler"), p.operacion === "venta" ? "Una propiedad en venta se vende, no se alquila." : "Una propiedad en alquiler se alquila, no se vende.");
         p.estado = estado;
+        if (estado !== "disponible") {
+            const motivo = `Se canceló: la propiedad está ${ESTADOS_PROPIEDAD[estado].toLowerCase()}.`;
+            db().visitas.filter((v) => v.propiedadId === p.id && !v.anulado && ["pedida", "confirmada"].includes(v.estado)).forEach((v) => {
+                Object.assign(v, { estado: "cancelada", anulado: true, canceladaPor: usuario.id, canceladaEl: ahoraISO(), visto: true, motivo });
+                const c = db().consultas.find((x) => x.id === v.consultaId);
+                if (c && c.estado === "agendada") c.estado = "nueva";
+            });
+        }
         guardado.persistir();
         return armarPropiedad(p);
     }

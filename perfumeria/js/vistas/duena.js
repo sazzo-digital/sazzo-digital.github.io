@@ -3,11 +3,20 @@
 // entregado), el stock (frascos y botellas madre en ml, lo que hay que pedir primero) y las clientas (lo que compra
 // cada una y "Cumplen este mes" con el saludo para copiar).
 // ============================================
-import { esc, aviso, vacio, fechaCorta, fechaHora } from "../../kit/js/ui.js?v=f04a42026d";
-import { TOPES, MADRE_POCO_ML, pesos } from "../datos.js?v=f04a42026d";
-import { frasco, pastillaPedido, mostrarMensaje } from "./comunes.js?v=f04a42026d";
-import { htmlConsigna, htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=f04a42026d";
-import { MARCA } from "../marca.js?v=f04a42026d";
+import { esc, aviso, vacio, fechaCorta, fechaHora } from "../../kit/js/ui.js?v=8faf6088f2";
+import { TOPES, MADRE_POCO_ML, MEDIOS, pesos } from "../datos.js?v=8faf6088f2";
+import { frasco, pastillaPedido, mostrarMensaje } from "./comunes.js?v=8faf6088f2";
+import { htmlConsigna, htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=8faf6088f2";
+import { MARCA } from "../marca.js?v=8faf6088f2";
+
+let cobrando = null;
+let medioCobro = "efectivo";
+let pagosDiv = null;
+
+const partesDe = (total) => {
+    if (!pagosDiv || pagosDiv.total !== total) pagosDiv = { total, partes: [{ medio: "efectivo", monto: Math.floor(total / 2) }, { medio: "debito", monto: total - Math.floor(total / 2) }] };
+    return pagosDiv.partes;
+};
 
 const MESES = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
 
@@ -25,10 +34,29 @@ export function vistaPedidos(cont, { usuario, datos }) {
                 <span class="acciones">
                     ${o.estado === "nuevo" ? `<button class="boton boton--chico" type="button" data-accion="preparar" data-id="${esc(o.id)}"><i class="ti ti-package"></i> Preparado</button>` : ""}
                     ${o.estado === "preparado" ? `<button class="boton boton--chico" type="button" data-accion="avisar" data-id="${esc(o.id)}"><i class="ti ti-message-circle"></i> ${o.avisado ? "Volver a avisar" : "Avisar que está listo"}</button>
-                    <button class="boton boton--chico boton--secundario" type="button" data-accion="entregar" data-id="${esc(o.id)}"><i class="ti ti-check"></i> Entregado</button>` : ""}
+                    <button class="boton boton--chico boton--secundario" type="button" data-accion="cobrar" data-id="${esc(o.id)}"><i class="ti ti-cash"></i> Cobrar y entregar</button>` : ""}
                     <button class="boton-icono" type="button" data-accion="cancelar" data-id="${esc(o.id)}" title="Cancelar pedido" aria-label="Cancelar el pedido de ${esc(o.clienta)}"><i class="ti ti-x"></i></button>
                 </span>
             </div>
+            ${cobrando === o.id ? `
+            <div class="cobro-pedido formulario">
+                <p class="cobro-pedido__total">Cobrar <b>${esc(pesos(o.total))}</b></p>
+                <div class="chips" role="radiogroup" aria-label="Cómo paga">
+                    ${Object.entries({ ...MEDIOS, dividido: "Dos medios" }).map(([id, texto]) => `<button class="chip${medioCobro === id ? " activo" : ""}" type="button" role="radio" aria-checked="${medioCobro === id}" data-medio-cobro="${id}">${esc(texto)}</button>`).join("")}
+                </div>
+                ${medioCobro === "dividido" ? `<div class="cobro-pedido__dos">${partesDe(o.total).map((x, i) => `
+                    <div class="cobro-pedido__parte">
+                        <select data-medio-parte="${i}" aria-label="Medio de la parte ${i + 1}">${Object.entries(MEDIOS).map(([id, texto]) => `<option value="${id}"${x.medio === id ? " selected" : ""}>${esc(texto)}</option>`).join("")}</select>
+                        <input data-monto-parte="${i}" type="text" inputmode="numeric" maxlength="9" value="${esc(x.monto)}" aria-label="Monto de la parte ${i + 1}">
+                    </div>`).join("")}</div>` : ""}
+                ${medioCobro === "efectivo" ? `
+                <label class="cobro-pedido__paga">Paga con <small>(si querés saber el vuelto)</small>
+                    <input name="pagaCon" type="text" inputmode="numeric" maxlength="9" autocomplete="off" placeholder="Ej: 100000">
+                </label>
+                <p class="cobro-pedido__vuelto" data-vuelto></p>` : ""}
+                <button class="boton boton--ancho" type="button" data-confirmar-cobro="${esc(o.id)}"><i class="ti ti-check"></i> Cobrado y entregado</button>
+                <button class="boton-link" type="button" data-cerrar-cobro>Volver</button>
+            </div>` : ""}
         </li>`;
     const consigna = p.nuevos.length
         ? htmlConsigna({ paso: 2, total: 3, accion: "Tocá “Preparado” en el pedido nuevo.", resultado: "Se descuenta el frasco o los ml de la botella madre." })
@@ -70,9 +98,8 @@ export function vistaPedidos(cont, { usuario, datos }) {
                 }
             });
         },
-        entregar: (id) => {
-            datos.entregar(usuario, id);
-            aviso("Entregado");
+        cobrar: (id) => {
+            cobrando = cobrando === id ? null : id;
         },
         cancelar: (id) => {
             if (!confirm("¿Cancelar el pedido? Si estaba preparado, el stock vuelve.")) throw null;
@@ -80,6 +107,41 @@ export function vistaPedidos(cont, { usuario, datos }) {
             aviso("Pedido cancelado");
         }
     };
+    const total = (id) => p.preparados.find((o) => o.id === id)?.total ?? 0;
+    const pagaConDe = () => {
+        const v = cont.querySelector(".cobro-pedido [name=pagaCon]")?.value.replace(/\D/g, "") ?? "";
+        return v ? Number(v) : null;
+    };
+    cont.querySelector(".cobro-pedido [name=pagaCon]")?.addEventListener("input", () => {
+        const con = pagaConDe();
+        const t = total(cobrando);
+        cont.querySelector("[data-vuelto]").innerHTML = con === null ? "" : con < t ? `No alcanza: son ${esc(pesos(t))}.` : `Vuelto <b>${esc(pesos(con - t))}</b>`;
+    });
+    cont.querySelectorAll(".cobro-pedido [data-medio-parte]").forEach((sel) => sel.addEventListener("change", () => (pagosDiv.partes[Number(sel.dataset.medioParte)].medio = sel.value)));
+    cont.querySelectorAll(".cobro-pedido [data-monto-parte]").forEach((inp) => inp.addEventListener("input", () => {
+        const i = Number(inp.dataset.montoParte);
+        pagosDiv.partes[i].monto = Number(inp.value.replace(/\D/g, "")) || 0;
+        pagosDiv.partes[1 - i].monto = Math.max(0, pagosDiv.total - pagosDiv.partes[i].monto);
+        cont.querySelector(`.cobro-pedido [data-monto-parte="${1 - i}"]`).value = String(pagosDiv.partes[1 - i].monto);
+    }));
+    cont.querySelectorAll("[data-medio-cobro]").forEach((b) => b.addEventListener("click", () => {
+        medioCobro = b.dataset.medioCobro;
+        otraVez();
+    }));
+    cont.querySelector("[data-cerrar-cobro]")?.addEventListener("click", () => {
+        cobrando = null;
+        otraVez();
+    });
+    cont.querySelector("[data-confirmar-cobro]")?.addEventListener("click", (e) => {
+        try {
+            const o = datos.entregar(usuario, e.currentTarget.dataset.confirmarCobro, { medio: medioCobro, pagaCon: medioCobro === "efectivo" ? pagaConDe() : null, pagos: medioCobro === "dividido" ? pagosDiv.partes.map((x) => ({ ...x })) : null });
+            cobrando = null;
+            aviso(o.pago?.vuelto ? `Cobrado y entregado · vuelto ${pesos(o.pago.vuelto)}` : "Cobrado y entregado");
+            otraVez();
+        } catch (err) {
+            aviso(err, "error");
+        }
+    });
     cont.querySelectorAll("[data-accion]").forEach((b) => b.addEventListener("click", () => {
         try {
             acciones[b.dataset.accion](b.dataset.id);

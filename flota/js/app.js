@@ -3,19 +3,19 @@
 // Cada persona tiene su menú. irA() cambia de persona sin pasar por "Probala como…" (lo usan los botones del
 // recorrido: "Mirá lo que le llega a Diego →").
 // ============================================
-import { $, conFundido } from "../kit/js/ui.js?v=842bff8c10";
-import { iniciarDemo } from "../kit/js/arranque.js?v=842bff8c10";
-import { vistaIngreso } from "../kit/js/ingreso.js?v=842bff8c10";
-import { pintarMarco } from "../kit/js/marco.js?v=842bff8c10";
-import { mostrarRuta } from "../kit/js/rutas.js?v=842bff8c10";
-import { vistaAcerca } from "../kit/js/acerca.js?v=842bff8c10";
-import { MARCA, PERSONAS, DETALLE, buscarPersona } from "./marca.js?v=842bff8c10";
-import { aparte } from "../kit/js/aparte.js?v=842bff8c10";
-import { leerSesionGuardada } from "../kit/js/guardado.js?v=842bff8c10";
+import { $, conFundido } from "../kit/js/ui.js?v=41455accc5";
+import { iniciarDemo } from "../kit/js/arranque.js?v=41455accc5";
+import { vistaIngreso } from "../kit/js/ingreso.js?v=41455accc5";
+import { pintarMarco } from "../kit/js/marco.js?v=41455accc5";
+import { mostrarRuta } from "../kit/js/rutas.js?v=41455accc5";
+import { vistaAcerca } from "../kit/js/acerca.js?v=41455accc5";
+import { MARCA, PERSONAS, DETALLE, buscarPersona } from "./marca.js?v=41455accc5";
+import { aparte } from "../kit/js/aparte.js?v=41455accc5";
+import { leerSesionGuardada } from "../kit/js/guardado.js?v=41455accc5";
 
 // Los datos de ejemplo y las pantallas se bajan aparte (al terminar de cargar): "Probala como…" aparece sin esperarlos
-const pantallas = aparte(() => import("./pantallas.js?v=842bff8c10"));
-const { vistaInicio, vistaAvisar, vistaArreglar, vistaVehiculos, vistaFicha, vistaRepuestos, avisosDe } = pantallas.funciones;
+const pantallas = aparte(() => import("./pantallas.js?v=41455accc5"));
+const { vistaInicio, vistaAvisar, vistaArreglar, vistaVehiculos, vistaFicha, vistaService, vistaRepuestos, avisosDe } = pantallas.funciones;
 
 iniciarDemo(MARCA);
 let datos = null; // se arma cuando bajan las pantallas
@@ -42,6 +42,7 @@ const RUTAS = [
     { patron: /^\/arreglar\/([\w-]+)$/, vista: con(vistaArreglar), puede: (u) => u.rol === "mecanico", menu: "/inicio" },
     { patron: /^\/vehiculos$/, vista: con(vistaVehiculos), puede: esOficina },
     { patron: /^\/vehiculos\/([\w-]+)$/, vista: con(vistaFicha), puede: esOficina },
+    { patron: /^\/service\/([\w-]+)$/, vista: con(vistaService), puede: esOficina, menu: "/vehiculos" },
     { patron: /^\/repuestos$/, vista: con(vistaRepuestos), puede: esOficina },
     { patron: /^\/acerca$/, vista: (cont) => vistaAcerca(cont, { marca: MARCA }) }
 ];

@@ -5,9 +5,9 @@
 //   entregarArchivo(blob, "presupuesto-104.pdf");    // "Compartir" (WhatsApp, mail…) o "Descargar"
 // Las librerías (kit\libs\, ver su LEEME) se bajan recién la primera vez que alguien toca el botón.
 // ============================================
-import { esc, aviso, mensajeDe } from "./ui.js?v=03798c8bfa";
-import { alSalirDeLaPantalla } from "./rutas.js?v=03798c8bfa";
-import { RUTA_LIBS } from "./config.js?v=03798c8bfa";
+import { esc, aviso, mensajeDe } from "./ui.js?v=0edfe6e2d5";
+import { alSalirDeLaPantalla } from "./rutas.js?v=0edfe6e2d5";
+import { RUTA_LIBS } from "./config.js?v=0edfe6e2d5";
 
 const VERSIONES = {
     "write-excel-file.min.js": "4.1.1",
@@ -152,6 +152,44 @@ function celdaLeida(valor) {
     return t ? t.slice(0, TOPES_EXCEL.letras) : null;
 }
 
+export const TOPES_ZIP = { entradas: 300, hojas: 20, descomprimido: 40 * 1024 * 1024, proporcion: 200 };
+
+export function revisarZip(buffer) {
+    const NO_ES = "No pude leer el archivo: ¿es un Excel (.xlsx)?";
+    const GRANDE = "Ese Excel es demasiado grande por dentro. Dejá solo la hoja con la lista y guardalo de nuevo.";
+    const v = new DataView(buffer);
+    let fin = -1;
+    for (let i = buffer.byteLength - 22; i >= Math.max(0, buffer.byteLength - 22 - 65535); i--) {
+        if (v.getUint32(i, true) === 0x06054b50) {
+            fin = i;
+            break;
+        }
+    }
+    if (fin < 0) return NO_ES;
+    const entradas = v.getUint16(fin + 10, true);
+    if (entradas > TOPES_ZIP.entradas) return GRANDE;
+    let p = v.getUint32(fin + 16, true);
+    let total = 0;
+    let hojas = 0;
+    const texto = new TextDecoder();
+    for (let n = 0; n < entradas; n++) {
+        if (p + 46 > buffer.byteLength || v.getUint32(p, true) !== 0x02014b50) return NO_ES;
+        const comprimido = v.getUint32(p + 20, true);
+        const real = v.getUint32(p + 24, true);
+        const largo = v.getUint16(p + 28, true);
+        if (p + 46 + largo > buffer.byteLength) return NO_ES;
+        const ruta = texto.decode(new Uint8Array(buffer, p + 46, largo));
+        if (comprimido === 0xffffffff || real === 0xffffffff || real > TOPES_ZIP.descomprimido) return GRANDE;
+        if (real > 1024 * 1024 && real / Math.max(comprimido, 1) > TOPES_ZIP.proporcion) return GRANDE;
+        if (/^xl\/worksheets\/[^/]+\.xml$/i.test(ruta)) hojas++;
+        total += real;
+        p += 46 + largo + v.getUint16(p + 30, true) + v.getUint16(p + 32, true);
+    }
+    if (hojas > TOPES_ZIP.hojas) return `Ese Excel tiene demasiadas hojas (máximo ${TOPES_ZIP.hojas}). Dejá solo la de la lista.`;
+    if (total > TOPES_ZIP.descomprimido) return GRANDE;
+    return null;
+}
+
 /**
  * Lee la primera hoja de un Excel (.xlsx) elegido por la persona. Devuelve las filas (sin las vacías del final),
  * con topes de tamaño, renglones, columnas y letras. Lo que devuelve hay que pasarlo por esc() antes de mostrarlo.
@@ -161,6 +199,8 @@ export async function leerExcel(archivo) {
     if (archivo.name && !/\.xlsx$/i.test(archivo.name)) throw new Error("Tiene que ser un Excel nuevo (.xlsx). Si es .xls o .csv, abrilo en Excel y guardalo como .xlsx.");
     if (!archivo.size) throw new Error("El archivo está vacío.");
     if (archivo.size > TOPES_EXCEL.bytes) throw new Error("El archivo es muy grande (máximo 2 MB).");
+    const problema = revisarZip(await archivo.arrayBuffer());
+    if (problema) throw new Error(problema);
     const leer = await cargarLibreria("read-excel-file.min.js", "readXlsxFile");
     let hojas;
     try {
@@ -211,4 +251,4 @@ export async function bajarExcel(nombre, filas, opciones = {}) {
 }
 
 // Encontrar columnas y leer precios de lo que vino en el Excel: en tablas.js (sin pantalla, para los datos)
-export { columnasDe, numeroDe, textoParaComparar } from "./tablas.js?v=03798c8bfa";
+export { columnasDe, numeroDe, textoParaComparar } from "./tablas.js?v=0edfe6e2d5";

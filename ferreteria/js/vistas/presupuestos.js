@@ -5,14 +5,14 @@
 // renglón. "Mandar" fija los precios por 7 días y arma el mensaje; "PDF" lo deja para compartir. Cuando lo acepta,
 // "Pasar a venta" descuenta el stock y lo cobra (de contado o a su cuenta corriente).
 // ============================================
-import { esc, aviso, vacio, fechaCorta } from "../../kit/js/ui.js?v=8ec449d814";
-import { diaLocalDe } from "../../kit/js/fechas.js?v=8ec449d814";
-import { mostrarMensaje } from "../../kit/js/mensaje.js?v=8ec449d814";
-import { armarPdf, pdfListo } from "../../kit/js/pdf.js?v=8ec449d814";
-import { ESTADOS_PRESUPUESTO, TOPES, UNIDADES, VALIDEZ_DIAS, pesos, precioConUnidad, cantidadTexto, entender, diaMes } from "../datos.js?v=8ec449d814";
-import { NEGOCIO } from "../marca.js?v=8ec449d814";
-import { guia, activarGuias, pasos, pastillaEstado, tarjetaPresupuesto, cuando, validez, pintarCobro, etiquetaUnidad, htmlFoto } from "./comunes.js?v=8ec449d814";
-import { htmlConsigna } from "../../kit/js/consigna.js?v=8ec449d814";
+import { esc, aviso, vacio, fechaCorta } from "../../kit/js/ui.js?v=9904c28649";
+import { diaLocalDe } from "../../kit/js/fechas.js?v=9904c28649";
+import { mostrarMensaje } from "../../kit/js/mensaje.js?v=9904c28649";
+import { armarPdf, pdfListo } from "../../kit/js/pdf.js?v=9904c28649";
+import { ESTADOS_PRESUPUESTO, TOPES, UNIDADES, VALIDEZ_DIAS, pesos, precioConUnidad, cantidadTexto, entender, diaMes } from "../datos.js?v=9904c28649";
+import { NEGOCIO } from "../marca.js?v=9904c28649";
+import { guia, activarGuias, pasos, pastillaEstado, tarjetaPresupuesto, cuando, validez, pintarCobro, etiquetaUnidad, htmlFoto } from "./comunes.js?v=9904c28649";
+import { htmlConsigna } from "../../kit/js/consigna.js?v=9904c28649";
 
 /** Lo que va en el PDF del presupuesto (lo usan el mostrador y el cliente). */
 export const datosPdf = (pr) => ({
@@ -111,6 +111,8 @@ export function vistaPresupuesto(cont, opciones, recien = null) {
     const otraVez = (r = null) => vistaPresupuesto(cont, opciones, r);
     const abierto = elegidos.get(pr.id) ?? null;
     const conFoto = pr.items.some((i) => i.foto);
+    const sugeridos = editable ? datos.sugeridosFoto(pr.id) : [];
+    const nombreCliente = pr.cliente ? pr.cliente.split(" ")[0] : "";
 
     const filaItem = (i) => {
         const u = UNIDADES[i.unidad] ?? UNIDADES.u;
@@ -138,9 +140,16 @@ export function vistaPresupuesto(cont, opciones, recien = null) {
                     <span class="item-presupuesto__precio">× ${esc(precioConUnidad(i.precioUsado, i.unidad))}${i.precioHoy !== undefined && i.precioHoy !== i.precio && pr.estado !== "pedido" ? ` <small class="falta">(era ${esc(pesos(i.precio))})</small>` : ""}</span>
                     <b class="monto">${esc(pesos(i.subtotal))}</b>
                 </div>` : ""}
+                ${editable && i.foto && !i.productoId && sugeridos.length ? `
+                <div class="que-es">
+                    <p class="que-es__titulo">¿Qué es?</p>
+                    <div class="que-es__opciones">
+                        ${sugeridos.map((p) => `<button class="boton que-es__opcion" type="button" data-sugerido="${esc(i.id)}" data-producto="${esc(p.id)}">${esc(p.nombre)}</button>`).join("")}
+                    </div>
+                </div>` : ""}
                 ${editable ? `
                 <div class="item-presupuesto__botones">
-                    <button class="boton boton--chico${i.productoId ? " boton--secundario" : ""}" type="button" data-elegir="${esc(i.id)}"><i class="ti ${i.productoId ? "ti-arrows-exchange" : "ti-search"}"></i> ${i.productoId ? "Cambiar" : "Elegir qué es"}</button>
+                    <button class="boton boton--chico${i.productoId || i.foto ? " boton--secundario" : ""}" type="button" data-elegir="${esc(i.id)}"><i class="ti ${i.productoId ? "ti-arrows-exchange" : "ti-search"}"></i> ${i.productoId ? "Cambiar" : i.foto ? "Buscar otro" : "Elegir qué es"}</button>
                     <button class="boton-link" type="button" data-quitar="${esc(i.id)}"><i class="ti ti-trash"></i> Sacar</button>
                 </div>
                 ${abierto === i.id ? htmlElegir(i) : ""}` : ""}
@@ -171,7 +180,7 @@ export function vistaPresupuesto(cont, opciones, recien = null) {
         </div>` : ""}
         ${pr.vencido ? `<p class="alerta alerta--alerta"><i class="ti ti-clock"></i> ${esc(validez(pr))}: van los precios de hoy${pr.subio > 0 ? ` (sube ${esc(pesos(pr.subio))})` : ""}. Volvé a armarlo y mandalo de nuevo, o vendelo así.</p>` : ""}
         ${editable && empleado ? htmlConsigna({ paso: 2, total: 5, accion: pr.sinResolver
-            ? conFoto ? "Mirá la foto que mandó: tocá “Elegir qué es” y buscá (es una canilla de 1/2). Después, mandáselo." : "Hay renglones que el buscador no entendió: tocá “Elegir qué es”. Después, mandáselo."
+            ? conFoto ? "Mirá la foto que mandó y tocá qué es (es una canilla de 1/2). Después, mandáselo." : "Hay renglones que el buscador no entendió: tocá “Elegir qué es”. Después, mandáselo."
             : "Revisá las cantidades y mandáselo.", resultado: "Le llega con el PDF y los precios quedan fijos por 7 días." }) : ""}
         <div class="presupuesto-cuerpo${conFoto ? " presupuesto-cuerpo--foto" : ""}">
             ${conFoto ? `<figure class="foto-cliente">${htmlFoto()}<figcaption><i class="ti ti-photo"></i> La foto que mandó ${esc(pr.cliente.split(" ")[0] || "el cliente")}</figcaption></figure>` : ""}
@@ -185,6 +194,12 @@ export function vistaPresupuesto(cont, opciones, recien = null) {
                 <div class="total"><span>${pr.sinResolver ? "Total (sin lo que falta elegir)" : "Total"}</span><b>${esc(pesos(pr.total))}</b></div>
             </div>
         </div>
+        ${editable ? `
+        <div class="mandar-fijo">
+            ${pr.sinResolver
+                ? `<button class="boton boton--ancho boton--grande boton--secundario" type="button" data-falta><i class="ti ti-hand-finger"></i> ${pr.items.some((i) => i.foto && !i.productoId) ? "Elegí qué es lo de la foto" : pr.sinResolver === 1 ? "Elegí el renglón que falta" : `Elegí los ${esc(pr.sinResolver)} renglones que faltan`}</button>`
+                : `<button class="boton boton--ancho boton--grande" type="button" data-mandar><i class="ti ti-send"></i> Mandar${nombreCliente ? ` a ${esc(nombreCliente)}` : " el presupuesto"} · ${esc(pesos(pr.total))}</button>`}
+        </div>` : ""}
         <div class="acciones-presupuesto"></div>`;
 
     const acciones = cont.querySelector(".acciones-presupuesto");
@@ -192,8 +207,6 @@ export function vistaPresupuesto(cont, opciones, recien = null) {
 
     if (pr.estado === "pedido") {
         acciones.innerHTML = `
-            <button class="boton boton--ancho boton--grande" type="button" data-mandar${pr.sinResolver ? " disabled" : ""}><i class="ti ti-send"></i> Mandar el presupuesto${pr.cliente ? ` a ${esc(pr.cliente.split(" ")[0])}` : ""}</button>
-            ${pr.sinResolver ? `<p class="nota"><i class="ti ti-info-circle"></i> Primero elegí ${pr.sinResolver === 1 ? "el renglón que falta" : `los ${esc(pr.sinResolver)} renglones que faltan`}.</p>` : ""}
             ${htmlAnular()}`;
     } else if (pr.estado === "enviado" || pr.estado === "aceptado") {
         acciones.innerHTML = `
@@ -246,7 +259,18 @@ export function vistaPresupuesto(cont, opciones, recien = null) {
     cont.querySelectorAll(".elegir").forEach((panel) => activarElegir(panel));
     cont.querySelectorAll("[data-quitar]").forEach((b) => b.addEventListener("click", () => hacer(() => datos.quitarRenglon(usuario, pr.id, b.dataset.quitar), "Renglón sacado")));
     cont.querySelectorAll("[data-cantidad]").forEach((c) => c.addEventListener("change", () => hacer(() => datos.cambiarCantidad(usuario, pr.id, c.dataset.cantidad, c.value), null)));
-    acciones.querySelector("[data-mandar]")?.addEventListener("click", () => mandar());
+    cont.querySelectorAll("[data-sugerido]").forEach((b) => b.addEventListener("click", () => {
+        elegidos.delete(pr.id);
+        hacer(() => datos.elegirArticulo(usuario, pr.id, b.dataset.sugerido, b.dataset.producto), "Elegido");
+    }));
+    cont.querySelector("[data-falta]")?.addEventListener("click", () => {
+        const renglon = cont.querySelector(".item-presupuesto--suelto");
+        renglon?.scrollIntoView({ block: "center", behavior: "smooth" });
+        renglon?.classList.remove("item-presupuesto--marcado");
+        void renglon?.offsetWidth;
+        renglon?.classList.add("item-presupuesto--marcado");
+    });
+    cont.querySelector("[data-mandar]")?.addEventListener("click", () => mandar());
     acciones.querySelector("[data-reenviar]")?.addEventListener("click", () => mandar());
     acciones.querySelector("[data-aceptar]")?.addEventListener("click", () => hacer(() => datos.aceptarPresupuesto(usuario, pr.id), "Anotado: lo aceptó"));
     acciones.querySelector("[data-rearmar]")?.addEventListener("click", () => {

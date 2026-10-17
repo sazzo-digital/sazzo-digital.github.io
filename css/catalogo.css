@@ -244,6 +244,35 @@ a { color: inherit; }
 @keyframes fluir { to { background-position: 0 20px; } }
 @keyframes fluir-de-costado { to { background-position: 20px 0; } }
 
+/* 6b. Mirá lo que hacen */
+.sorpresas { padding-bottom: 1rem; }
+.sorpresas__fila {
+    display: flex; gap: .8rem; margin: 1.6rem -16px 0; padding: 6px 16px .8rem;
+    overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-inline: 16px;
+}
+.sorpresa {
+    --acento: var(--verde);
+    flex: 0 0 78%; scroll-snap-align: start; scroll-snap-stop: always;
+    display: grid; align-content: start; gap: .55rem; padding: .8rem .8rem 1.2rem;
+    border: 1px solid var(--borde); border-radius: calc(var(--radio) + 4px); color: var(--texto); text-decoration: none;
+    background: radial-gradient(ellipse at top left, color-mix(in srgb, var(--acento) 22%, transparent), transparent 65%), var(--superficie);
+    transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease;
+}
+.sorpresa:hover, .sorpresa:focus-visible { transform: translateY(-4px); border-color: var(--acento); box-shadow: var(--sombra); }
+.sorpresa__video {
+    display: block; width: 100%; height: auto; aspect-ratio: 1; object-fit: cover; object-position: top;
+    border: 1px solid var(--borde); border-radius: var(--radio); background: #0b1210;
+    box-shadow: 0 0 26px -12px var(--acento);
+}
+.sorpresa__frase, .sorpresa__texto, .sorpresa__link { padding-inline: .4rem; }
+.sorpresa__frase { font: 700 clamp(1.2rem, 4.6vw, 1.45rem)/1.2 var(--fuente-titulos); }
+.sorpresa__texto { color: var(--texto-suave); font-size: .92rem; }
+.sorpresa__link { display: inline-flex; align-items: center; gap: .35rem; margin-top: .3rem; color: color-mix(in srgb, var(--acento) 55%, var(--texto)); font-weight: 600; font-size: .9rem; }
+@media (min-width: 900px) {
+    .sorpresas__fila { display: grid; grid-template-columns: repeat(3, 1fr); overflow: visible; margin-inline: 0; padding-inline: 0; }
+}
+@media (prefers-reduced-motion: reduce) { .sorpresa { transition: none; } }
+
 /* 7. Demos: tarjetas con un celular dibujado */
 .demos {
     display: flex; gap: .8rem; margin: 1.6rem -16px 0; padding: 6px 16px .8rem;
@@ -263,7 +292,7 @@ a { color: inherit; }
 .atajo::before { content: ""; width: .55rem; height: .55rem; border-radius: 50%; background: var(--acento); box-shadow: 0 0 8px var(--acento); }
 .atajo:hover { border-color: var(--verde); background: var(--verde-suave); transform: translateY(-1px); }
 .demo {
-    flex: 0 0 86%; scroll-snap-align: center;
+    flex: 0 0 86%; scroll-snap-align: center; scroll-snap-stop: always;
     display: grid; grid-template-columns: 84px minmax(0, 1fr); gap: 0 1rem; align-items: start; align-content: start;
     padding: 1.1rem; border-radius: var(--radio);
     background: var(--superficie); border: 1px solid var(--borde);
@@ -506,6 +535,29 @@ a { color: inherit; }
 .galeria__punto { width: 8px; height: 8px; border-radius: 50%; background: var(--borde); }
 .galeria__punto.activo { background: var(--verde); }
 
+/* 9f. Preguntas frecuentes */
+.preguntas { display: grid; gap: .7rem; max-width: 60rem; margin: 1.6rem auto 0; align-items: start; }
+.pregunta {
+    border: 1px solid var(--borde); border-radius: var(--radio); background: var(--superficie);
+    transition: border-color .2s ease;
+}
+.pregunta summary {
+    display: flex; align-items: center; justify-content: space-between; gap: 1rem; min-height: 52px; padding: .8rem 1.1rem;
+    font-weight: 600; cursor: pointer; list-style: none;
+}
+.pregunta summary::-webkit-details-marker { display: none; }
+.pregunta summary::after {
+    content: ""; flex: none; width: .55rem; height: .55rem; border-right: 2px solid var(--texto-suave); border-bottom: 2px solid var(--texto-suave);
+    transform: rotate(45deg) translateY(-2px); transition: transform .2s ease;
+}
+.pregunta[open] { border-color: var(--borde); box-shadow: inset 3px 0 0 var(--verde); }
+.pregunta[open] summary::after { transform: rotate(225deg) translateY(-2px); }
+.pregunta p { margin: 0; padding: 0 1.1rem 1rem; font-size: .95rem; line-height: 1.6; color: var(--texto-suave); }
+.pregunta summary:focus-visible { outline: 2px solid var(--verde); outline-offset: 2px; border-radius: var(--radio); }
+.preguntas__otra { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: .8rem; margin-top: 1.4rem; color: var(--texto-suave); }
+@media (min-width: 900px) { .preguntas { grid-template-columns: 1fr 1fr; } }
+@media (prefers-reduced-motion: reduce) { .pregunta, .pregunta summary::after { transition: none; } }
+
 /* 10. Pie */
 .pie { border-top: 1px solid var(--borde); padding: 2.6rem 16px 1.4rem; color: var(--texto-suave); font-size: .92rem; }
 .pie a { color: var(--texto); text-decoration: none; }
@@ -522,6 +574,7 @@ a { color: inherit; }
     max-width: var(--ancho); margin: 2rem auto 0; padding-top: 1.1rem; border-top: 1px solid var(--borde);
     display: flex; flex-wrap: wrap; justify-content: space-between; gap: .5rem 1.5rem; font-size: .8rem;
 }
+.pie__version { margin-left: .4rem; font-family: var(--fuente-numeros); color: var(--texto-suave); }
 
 /* 11. Animaciones */
 /* Logo que se escribe solo */
