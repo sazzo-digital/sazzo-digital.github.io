@@ -24,7 +24,7 @@
     <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
     <!-- Letras desde el propio sitio (antes Google Fonts); el script de armar las apunta a la copia compartida -->
     <link rel="stylesheet" href="letras/letras.css?v=835c157c22">
-    <link rel="stylesheet" href="css/catalogo.css?v=912c3af85b">
+    <link rel="stylesheet" href="css/catalogo.css?v=c09dfacb5b">
     <!-- Si hay JavaScript, las secciones arrancan ocultas y aparecen al bajar (sin JavaScript se ve todo igual) -->
     <script>
         document.documentElement.classList.add("js");
@@ -131,7 +131,7 @@
                     <path class="cursor" fill="none" stroke="var(--verde)" stroke-width="7" stroke-linecap="round" d="M231 24 V56"/>
                 </svg>
             </h1>
-            <p class="portada__frase">Tu negocio en el celu: ventas, stock y turnos, sin papeles.</p>
+            <p class="portada__frase">Tu negocio en el celu o en tu compu: ventas, stock y turnos, sin papeles.</p>
             <p class="portada__texto">Sistemas, páginas web y automatizaciones a la medida de tu negocio. Tu mundo digital, en orden.</p>
             <div class="portada__botones">
                 <a class="boton" href="#demos">Probá las demos <svg class="icono" aria-hidden="true"><use href="#i-flecha"/></svg></a>
@@ -185,6 +185,18 @@
                     <b class="sorpresa__frase">La cantina, a la cuenta de la cancha</b>
                     <span class="sorpresa__texto">El equipo pide las bebidas desde su turno y al final se divide entre todos.</span>
                     <span class="sorpresa__link">Probalo en Canchas <svg class="icono" aria-hidden="true"><use href="#i-flecha"/></svg></span>
+                </a>
+                <a class="sorpresa" href="#demos" data-link-demo="carniceria">
+                    <video class="sorpresa__video" muted loop playsinline preload="none" poster="img/sorpresas/carniceria.jpg" width="600" height="750" aria-hidden="true"><source src="img/sorpresas/carniceria.mp4" type="video/mp4"></video>
+                    <b class="sorpresa__frase">La balanza en la pantalla</b>
+                    <span class="sorpresa__texto">Ponés el corte en la balanza, el peso aparece en grande y el precio sale solo.</span>
+                    <span class="sorpresa__link">Probalo en Carnicería <svg class="icono" aria-hidden="true"><use href="#i-flecha"/></svg></span>
+                </a>
+                <a class="sorpresa" href="#demos" data-link-demo="gimnasio">
+                    <video class="sorpresa__video" muted loop playsinline preload="none" poster="img/sorpresas/gimnasio.jpg" width="600" height="750" aria-hidden="true"><source src="img/sorpresas/gimnasio.mp4" type="video/mp4"></video>
+                    <b class="sorpresa__frase">Entrada con QR</b>
+                    <span class="sorpresa__texto">El socio muestra su QR en la puerta y ves al toque si tiene la cuota al día.</span>
+                    <span class="sorpresa__link">Probalo en Gimnasio <svg class="icono" aria-hidden="true"><use href="#i-flecha"/></svg></span>
                 </a>
                 <a class="sorpresa" href="#demos" data-link-demo="contable">
                     <video class="sorpresa__video" muted loop playsinline preload="none" poster="img/sorpresas/contable.jpg" width="600" height="750" aria-hidden="true"><source src="img/sorpresas/contable.mp4" type="video/mp4"></video>
@@ -355,12 +367,16 @@
                     <p>No hace falta bajar nada de la tienda de apps. El sistema se usa desde el celu o la compu, y se puede dejar como una app en la pantalla de inicio. Se actualiza solo.</p>
                 </details>
                 <details class="pregunta">
+                    <summary>¿Lo puedo usar en el celu y en la compu?</summary>
+                    <p>Sí. Funciona en el celu, en la tablet y en la compu, con la misma cuenta. En la versión para tu negocio, lo que cargás en uno lo ves en los otros.</p>
+                </details>
+                <details class="pregunta">
                     <summary>¿El sistema es mío?</summary>
                     <p>Elegís vos. Podemos cuidarlo nosotros y vos solo lo usás, o te lo entregamos funcionando a tu nombre y queda todo tuyo. Lo podés decidir al final, y en las dos formas tus datos son tuyos.</p>
                 </details>
             </div>
             <p class="preguntas__otra revelar">¿Otra pregunta? <a class="boton" href="#contacto" data-whatsapp data-solo-con-numero><svg class="icono" aria-hidden="true"><use href="#i-whatsapp"/></svg> Escribinos por WhatsApp</a></p>
-            <script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "¿Qué hace Sazzo?", "acceptedAnswer": {"@type": "Answer", "text": "Hacemos sistemas y páginas web a la medida de tu negocio: para ordenar ventas, stock, turnos, pedidos o las tareas del equipo, desde el celu o la compu."}}, {"@type": "Question", "name": "¿Puedo probar algo antes de decidir?", "acceptedAnswer": {"@type": "Answer", "text": "Sí. En sazzo.com.ar tenés demos para probar en un toque, sin registrarte. Hay una para cada rubro y vamos sumando más."}}, {"@type": "Question", "name": "¿Tienen una demo de mi rubro?", "acceptedAnswer": {"@type": "Answer", "text": "Hoy hay demos para kiosco, librería, ferretería, carnicería, perfumería, restaurante, barbería, gimnasio, canchas, taller, inmobiliaria, estudio contable y flotas de vehículos. Si el tuyo no está, te mostramos la que más se parece y la adaptamos a cómo trabajás."}}, {"@type": "Question", "name": "¿Cómo trabajan?", "acceptedAnswer": {"@type": "Answer", "text": "Primero charlamos: nos contás cómo trabajás hoy y qué te gustaría ordenar. Después te mostramos una demo parecida a tu negocio para que la pruebes. Lo armamos a tu medida, con tu nombre y tus colores, y vas probando mientras avanza."}}, {"@type": "Question", "name": "¿Hacen páginas web?", "acceptedAnswer": {"@type": "Answer", "text": "Sí. Hacemos páginas que se ven bien en el celu, con tus productos, tu horario y un botón para que te escriban directo. También te ayudamos a que te encuentren en Google."}}, {"@type": "Question", "name": "¿Hay que instalar algo?", "acceptedAnswer": {"@type": "Answer", "text": "No hace falta bajar nada de la tienda de apps. El sistema se usa desde el celu o la compu, y se puede dejar como una app en la pantalla de inicio. Se actualiza solo."}}, {"@type": "Question", "name": "¿El sistema es mío?", "acceptedAnswer": {"@type": "Answer", "text": "Elegís vos. Podemos cuidarlo nosotros y vos solo lo usás, o te lo entregamos funcionando a tu nombre y queda todo tuyo. Lo podés decidir al final, y en las dos formas tus datos son tuyos."}}]}</script>
+            <script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "¿Qué hace Sazzo?", "acceptedAnswer": {"@type": "Answer", "text": "Hacemos sistemas y páginas web a la medida de tu negocio: para ordenar ventas, stock, turnos, pedidos o las tareas del equipo, desde el celu o la compu."}}, {"@type": "Question", "name": "¿Puedo probar algo antes de decidir?", "acceptedAnswer": {"@type": "Answer", "text": "Sí. En sazzo.com.ar tenés demos para probar en un toque, sin registrarte. Hay una para cada rubro y vamos sumando más."}}, {"@type": "Question", "name": "¿Tienen una demo de mi rubro?", "acceptedAnswer": {"@type": "Answer", "text": "Hoy hay demos para kiosco, librería, ferretería, carnicería, perfumería, restaurante, barbería, gimnasio, canchas, taller, inmobiliaria, estudio contable y flotas de vehículos. Si el tuyo no está, te mostramos la que más se parece y la adaptamos a cómo trabajás."}}, {"@type": "Question", "name": "¿Cómo trabajan?", "acceptedAnswer": {"@type": "Answer", "text": "Primero charlamos: nos contás cómo trabajás hoy y qué te gustaría ordenar. Después te mostramos una demo parecida a tu negocio para que la pruebes. Lo armamos a tu medida, con tu nombre y tus colores, y vas probando mientras avanza."}}, {"@type": "Question", "name": "¿Hacen páginas web?", "acceptedAnswer": {"@type": "Answer", "text": "Sí. Hacemos páginas que se ven bien en el celu, con tus productos, tu horario y un botón para que te escriban directo. También te ayudamos a que te encuentren en Google."}}, {"@type": "Question", "name": "¿Hay que instalar algo?", "acceptedAnswer": {"@type": "Answer", "text": "No hace falta bajar nada de la tienda de apps. El sistema se usa desde el celu o la compu, y se puede dejar como una app en la pantalla de inicio. Se actualiza solo."}}, {"@type": "Question", "name": "¿Lo puedo usar en el celu y en la compu?", "acceptedAnswer": {"@type": "Answer", "text": "Sí. Funciona en el celu, en la tablet y en la compu, con la misma cuenta. En la versión para tu negocio, lo que cargás en uno lo ves en los otros."}}, {"@type": "Question", "name": "¿El sistema es mío?", "acceptedAnswer": {"@type": "Answer", "text": "Elegís vos. Podemos cuidarlo nosotros y vos solo lo usás, o te lo entregamos funcionando a tu nombre y queda todo tuyo. Lo podés decidir al final, y en las dos formas tus datos son tuyos."}}]}</script>
         </section>
 
         <!-- 5. A medida -->
@@ -461,6 +477,6 @@
         </div>
     </footer>
 
-    <script type="module" src="js/catalogo.js?v=912c3af85b"></script>
+    <script type="module" src="js/catalogo.js?v=c09dfacb5b"></script>
 </body>
 </html>
