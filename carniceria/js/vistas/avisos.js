@@ -4,7 +4,7 @@
 //   Darío lo pesa y lo deja listo → a Claudia le salta "¡Tu pedido está listo!". Si lo anulan, también se entera.
 // Acá solo se dice qué pasó y a quién le importa; el kit decide qué es nuevo para cada uno.
 // ============================================
-import { RETIROS } from "../datos.js?v=d96418e257";
+import { RETIROS } from "../datos.js?v=1ec4437652";
 
 export function avisosDe(datos) {
     const avisos = [];

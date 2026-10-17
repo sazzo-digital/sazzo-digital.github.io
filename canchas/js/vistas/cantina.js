@@ -1,8 +1,8 @@
-import { esc } from "../../kit/js/ui.js?v=64e5d8bb7d";
-import { abrirCaja } from "../../kit/js/caja.js?v=64e5d8bb7d";
-import { MEDIOS_PAGO, mediosParaCaja } from "../../kit/js/pagos.js?v=64e5d8bb7d";
-import { pesos } from "../datos.js?v=64e5d8bb7d";
-import { MARCA, NEGOCIO } from "../marca.js?v=64e5d8bb7d";
+import { esc } from "../../kit/js/ui.js?v=fe5d9ea352";
+import { abrirCaja, htmlMasDeLaCaja } from "../../kit/js/caja.js?v=fe5d9ea352";
+import { MEDIOS_PAGO, mediosParaCaja } from "../../kit/js/pagos.js?v=fe5d9ea352";
+import { pesos, SECCIONES_CANTINA } from "../datos.js?v=fe5d9ea352";
+import { MARCA, NEGOCIO } from "../marca.js?v=fe5d9ea352";
 
 const MEDIOS_CAJA = mediosParaCaja(MEDIOS_PAGO);
 
@@ -14,6 +14,7 @@ export function vistaCantina(cont, { usuario, datos }) {
         </div>
         <p class="nota"><i class="ti ti-info-circle" aria-hidden="true"></i> Para el que viene a comprar sin turno. Lo que piden los equipos va a la cuenta de su turno (tocá el turno en la grilla).</p>
         <div class="lugar-caja"></div>
+        ${htmlMasDeLaCaja({ cajaDelDia: false })}
         <section class="stock-del-dia"></section>`;
     const lugarStock = cont.querySelector(".stock-del-dia");
     const pintarStock = () => {
@@ -36,6 +37,7 @@ export function vistaCantina(cont, { usuario, datos }) {
         titulo: `Cantina · ${NEGOCIO}`,
         prefijo: MARCA.prefijo,
         productos: () => datos.cantina(),
+        secciones: SECCIONES_CANTINA,
         buscarCodigo: (codigo) => datos.cantina().find((p) => p.id === codigo) ?? null,
         medios: MEDIOS_CAJA,
         billetes: [2_000, 5_000, 10_000, 20_000],

@@ -1,4 +1,4 @@
 // ============================================
 // Inicio de Sazzo Kiosco: en el mostrador, lo primero es vender (para Sofía y para Rubén).
 // ============================================
-export { vistaVender as vistaInicio } from "./vender.js?v=ff432d252c";
+export { vistaVender as vistaInicio } from "./vender.js?v=0cd22c02c4";

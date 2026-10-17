@@ -1,9 +1,9 @@
-import { esc, fechaHora } from "../../kit/js/ui.js?v=01b46d5bbb";
-import { abrirCaja } from "../../kit/js/caja.js?v=01b46d5bbb";
-import { filtrarPorTexto } from "../../kit/js/buscar.js?v=01b46d5bbb";
-import { MEDIOS, pesos } from "../datos.js?v=01b46d5bbb";
-import { mediosParaCaja, textoMedio } from "../../kit/js/pagos.js?v=01b46d5bbb";
-import { MARCA, NEGOCIO } from "../marca.js?v=01b46d5bbb";
+import { esc, fechaHora } from "../../kit/js/ui.js?v=9e08669d15";
+import { abrirCaja, htmlMasDeLaCaja } from "../../kit/js/caja.js?v=9e08669d15";
+import { filtrarPorTexto } from "../../kit/js/buscar.js?v=9e08669d15";
+import { MEDIOS, pesos } from "../datos.js?v=9e08669d15";
+import { mediosParaCaja, textoMedio } from "../../kit/js/pagos.js?v=9e08669d15";
+import { MARCA, NEGOCIO } from "../marca.js?v=9e08669d15";
 
 const MEDIOS_CAJA = mediosParaCaja(MEDIOS);
 
@@ -15,6 +15,7 @@ export function vistaMostrador(cont, { usuario, datos }) {
         </div>
         <p class="nota"><i class="ti ti-info-circle" aria-hidden="true"></i> Para la que compra en el local: frascos y decants. Cada venta descuenta el stock (los decants, los ml de la botella madre).</p>
         <div class="lugar-caja"></div>
+        ${htmlMasDeLaCaja({ cajaDelDia: false })}
         <section class="ventas-mostrador"></section>`;
     const lugarVentas = cont.querySelector(".ventas-mostrador");
     const pintarVentas = () => {

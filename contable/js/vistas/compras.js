@@ -3,13 +3,13 @@
 // en Mis Comprobantes y faltan cargar) y cargar una a mano, con el IVA calculado solo. Una compra mal cargada se
 // anula (no se borra). Solo administración carga; Hernán y Patricia miran.
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=22b7f22ca9";
-import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=22b7f22ca9";
-import { htmlConsigna } from "../../kit/js/consigna.js?v=22b7f22ca9";
-import { TOPES } from "../datos.js?v=22b7f22ca9";
-import { ALICUOTAS, ORDEN_ALICUOTAS, pesos, numeroComprobante, nombrePeriodo, periodoActual, fechaISO, aCentavos } from "../reglas.js?v=22b7f22ca9";
-import { buscarPersona } from "../marca.js?v=22b7f22ca9";
-import { diaMes, periodoPedido, htmlSelectorMes, activarSelectorMes, conEspera, nombreDe } from "./comunes.js?v=22b7f22ca9";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=9807a2d772";
+import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=9807a2d772";
+import { htmlConsigna } from "../../kit/js/consigna.js?v=9807a2d772";
+import { TOPES } from "../datos.js?v=9807a2d772";
+import { ALICUOTAS, ORDEN_ALICUOTAS, pesos, numeroComprobante, nombrePeriodo, periodoActual, fechaISO, aCentavos } from "../reglas.js?v=9807a2d772";
+import { buscarPersona } from "../marca.js?v=9807a2d772";
+import { diaMes, periodoPedido, htmlSelectorMes, activarSelectorMes, conEspera, nombreDe } from "./comunes.js?v=9807a2d772";
 
 const puedeCargar = (u) => u.rol === "admin";
 

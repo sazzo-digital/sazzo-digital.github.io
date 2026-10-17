@@ -2,8 +2,8 @@
 // Marca, personas y "también puede tener" de Sazzo Canchas (diseñada el 08/10/2026).
 // Las personas son los roles reales del rubro (nombres inventados): el dueño del complejo y un jugador.
 // ============================================
-import { revisarMarca } from "../kit/js/marca.js?v=64e5d8bb7d";
-import { negocioDe } from "../kit/js/colores.js?v=64e5d8bb7d";
+import { revisarMarca } from "../kit/js/marca.js?v=fe5d9ea352";
+import { negocioDe } from "../kit/js/colores.js?v=fe5d9ea352";
 
 export const MARCA = revisarMarca({
     id: "canchas",

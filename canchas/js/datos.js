@@ -6,14 +6,14 @@
 // Reglas del kit: exigir() en lo que modifica, topes en todo lo que se carga, nada se borra (se anula o se libera)
 // y se devuelven copias. Si cambia la forma de los datos, subir VERSION_DATOS (se regeneran solos).
 // ============================================
-import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=64e5d8bb7d";
-import { sinPasarse } from "../kit/js/topes.js?v=64e5d8bb7d";
-import { fechaLocalISO, diaLocalDe } from "../kit/js/fechas.js?v=64e5d8bb7d";
-import { aMinutos, aHora, diaSemana, proximosDias, franjas, fijosDelDia, ocupados, libres, revisarLibre, sePisan } from "../kit/js/turnos.js?v=64e5d8bb7d";
-import { MARCA } from "./marca.js?v=64e5d8bb7d";
-import { MEDIOS_PAGO, DIVIDIDO, revisarPagos } from "../kit/js/pagos.js?v=64e5d8bb7d";
+import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=fe5d9ea352";
+import { sinPasarse } from "../kit/js/topes.js?v=fe5d9ea352";
+import { fechaLocalISO, diaLocalDe } from "../kit/js/fechas.js?v=fe5d9ea352";
+import { aMinutos, aHora, diaSemana, proximosDias, franjas, fijosDelDia, ocupados, libres, revisarLibre, sePisan } from "../kit/js/turnos.js?v=fe5d9ea352";
+import { MARCA } from "./marca.js?v=fe5d9ea352";
+import { MEDIOS_PAGO, DIVIDIDO, revisarPagos } from "../kit/js/pagos.js?v=fe5d9ea352";
 
-export const VERSION_DATOS = 3;
+export const VERSION_DATOS = 4;
 
 export const TOPES = {
     grupo: 30, // letras del nombre del grupo
@@ -28,15 +28,34 @@ export const TOPES = {
     pagaCon: 10_000_000
 };
 
+export const SECCIONES_CANTINA = [
+    { id: "bebidas", texto: "Bebidas" },
+    { id: "cervezas", texto: "Cervezas" },
+    { id: "comida", texto: "Comida" },
+    { id: "snacks", texto: "Snacks" }
+];
+
 export const CANTINA = [
-    ["agua", "Agua 500 ml", 1_200, 24, "ti-bottle"],
-    ["gaseosa", "Gaseosa 500 ml", 1_800, 18, "ti-bottle"],
-    ["isotonica", "Bebida isotónica", 2_200, 12, "ti-bottle"],
-    ["cerveza", "Cerveza lata", 2_300, 24, "ti-beer"],
-    ["hielo", "Bolsa de hielo", 1_500, 6, "ti-snowflake"],
-    ["sandwich", "Sándwich de miga x3", 3_000, 8, "ti-bread"],
-    ["papas", "Papas fritas", 1_800, 10, "ti-cookie"],
-    ["alfajor", "Alfajor", 1_000, 20, "ti-candy"]
+    ["agua", "Agua 500 ml", 1_200, 24, "ti-bottle", "bebidas"],
+    ["gaseosa", "Gaseosa 500 ml", 1_800, 18, "ti-bottle", "bebidas"],
+    ["isotonica", "Bebida isotónica", 2_200, 12, "ti-bottle", "bebidas"],
+    ["saborizada", "Agua saborizada 500 ml", 1_400, 16, "ti-bottle", "bebidas"],
+    ["gaseosa-15", "Gaseosa 1,5 L", 3_200, 10, "ti-bottle", "bebidas"],
+    ["hielo", "Bolsa de hielo", 1_500, 6, "ti-snowflake", "bebidas"],
+    ["cerveza", "Cerveza lata", 2_300, 24, "ti-beer", "cervezas"],
+    ["cerveza-litro", "Cerveza 1 L", 4_500, 12, "ti-beer", "cervezas"],
+    ["cerveza-tirada", "Pinta tirada", 3_800, 40, "ti-glass-full", "cervezas"],
+    ["cerveza-sin", "Cerveza sin alcohol", 2_200, 8, "ti-beer", "cervezas"],
+    ["hamburguesa", "Hamburguesa completa", 5_500, 15, "ti-burger", "comida"],
+    ["hamburguesa-simple", "Hamburguesa simple", 4_500, 15, "ti-burger", "comida"],
+    ["pancho", "Pancho", 2_500, 20, "ti-sausage", "comida"],
+    ["sandwich", "Sándwich de miga x3", 3_000, 8, "ti-bread", "comida"],
+    ["pizza", "Porción de pizza", 2_800, 12, "ti-pizza", "comida"],
+    ["papas", "Papas fritas", 1_800, 10, "ti-cookie", "snacks"],
+    ["mani", "Maní salado", 1_200, 14, "ti-cookie", "snacks"],
+    ["alfajor", "Alfajor", 1_000, 20, "ti-candy", "snacks"],
+    ["chocolate", "Chocolate", 1_500, 12, "ti-candy", "snacks"],
+    ["cereal", "Barra de cereal", 900, 18, "ti-cookie", "snacks"]
 ];
 
 export const MEDIOS = MEDIOS_PAGO;
@@ -151,7 +170,7 @@ export function semilla() {
     const cancha = CANCHAS[0];
     const libre = libres({ lugarId: cancha.id, fecha, horario: horarioDe(cancha, fecha), turnos, fijos }).at(-2);
     if (libre !== undefined) turnos.push(nuevoTurno(cancha, fecha, libre, { id: "t-fede", grupo: "Los pibes del laburo", jugadorId: "u-jugador", origen: "app" }));
-    const cantina = CANTINA.map(([id, nombre, precio, stock, icono]) => ({ id, nombre, precio, stock, icono }));
+    const cantina = CANTINA.map(([id, nombre, precio, stock, icono, seccion]) => ({ id, nombre, precio, stock, icono, seccion }));
     return { turnos, fijos, cantina, ventasCantina: [] };
 }
 

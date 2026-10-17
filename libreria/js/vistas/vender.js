@@ -1,9 +1,9 @@
-import { esc, aviso } from "../../kit/js/ui.js?v=7d888de8f5";
-import { TOPES, RUBROS, pesos, esISBN, precioPara } from "../datos.js?v=7d888de8f5";
-import { NEGOCIO, MARCA } from "../marca.js?v=7d888de8f5";
-import { EVENTO_REINICIO } from "../../kit/js/guardado.js?v=7d888de8f5";
-import { abrirCaja } from "../../kit/js/caja.js?v=7d888de8f5";
-import { MEDIOS_PAGO, mediosParaCaja } from "../../kit/js/pagos.js?v=7d888de8f5";
+import { esc, aviso } from "../../kit/js/ui.js?v=8028f8820b";
+import { TOPES, RUBROS, pesos, esISBN, precioPara } from "../datos.js?v=8028f8820b";
+import { NEGOCIO, MARCA } from "../marca.js?v=8028f8820b";
+import { EVENTO_REINICIO } from "../../kit/js/guardado.js?v=8028f8820b";
+import { abrirCaja, htmlMasDeLaCaja } from "../../kit/js/caja.js?v=8028f8820b";
+import { MEDIOS_PAGO, mediosParaCaja } from "../../kit/js/pagos.js?v=8028f8820b";
 
 export const ticket = new Map();
 addEventListener(EVENTO_REINICIO, () => ticket.clear());
@@ -18,7 +18,8 @@ export function vistaVender(cont, { usuario, datos }) {
         </div>
         ${ticket.size ? "" : `<p class="nota"><i class="ti ti-bulb"></i> Probá: buscá “birome”, llevá 12 lapiceras azules (sale el precio por mayor) y sumá 20 fotocopias.</p>`}
         <div class="cargar" hidden></div>
-        <div class="lugar-caja"></div>`;
+        <div class="lugar-caja"></div>
+        ${htmlMasDeLaCaja()}`;
     const panelCargar = cont.querySelector(".cargar");
     const productos = () => datos.listarProductos().map(paraCaja);
 

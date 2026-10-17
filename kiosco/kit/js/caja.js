@@ -1,7 +1,7 @@
-import { esc, aviso } from "./ui.js?v=ff432d252c";
-import { puedeEscanear, escanearSeguido } from "./escaner.js?v=ff432d252c";
-import { pip, vibrar, htmlBotonSonido, activarBotonSonido, htmlCopiable, activarCopiables } from "./celular.js?v=ff432d252c";
-import { DIVIDIDO, revisarPagos } from "./pagos.js?v=ff432d252c";
+import { esc, aviso } from "./ui.js?v=0cd22c02c4";
+import { puedeEscanear, escanearSeguido } from "./escaner.js?v=0cd22c02c4";
+import { pip, vibrar, htmlBotonSonido, activarBotonSonido, htmlCopiable, activarCopiables } from "./celular.js?v=0cd22c02c4";
+import { DIVIDIDO, revisarPagos } from "./pagos.js?v=0cd22c02c4";
 
 export const TOPE_RENGLONES = 30;
 export const TOPE_CANTIDAD = 99;
@@ -543,4 +543,24 @@ export function abrirCaja({
         pintarTicket();
     };
     return { capa, sumar, leer, cerrar, ticket, pintar };
+}
+
+export const MAS_DE_LA_CAJA = [
+    "Caja por turnos (mañana y tarde), con quién la abrió y quién la cerró",
+    "Apertura con el cambio inicial y cierre con arqueo: lo que tiene que haber contra lo contado, por cada medio de pago",
+    "Retiros y gastos anotados (pago a un proveedor, un delivery, el cambio que se lleva el dueño)",
+    "Varias cajas o puestos a la vez, con su usuario cada uno",
+    "Factura electrónica de cada venta, conectada a ARCA",
+    "Impresora de tickets y cajón de dinero que se abre solo",
+    "Reportes del día, la semana y el mes, para bajar a Excel"
+];
+
+export function htmlMasDeLaCaja({ extra = [], cajaDelDia = true } = {}) {
+    return `
+        <details class="caja-mas bloque">
+            <summary><i class="ti ti-cash-register" aria-hidden="true"></i> ¿Qué más puede tener la caja en tu negocio?</summary>
+            <p class="nota">La versión para tu negocio se arma a tu medida. Por ejemplo:</p>
+            <ul>${[...MAS_DE_LA_CAJA, ...extra].map((t) => `<li>${esc(t)}</li>`).join("")}</ul>
+            ${cajaDelDia ? `<p class="nota">Algunas ya se pueden probar en la demo, en la pantalla de la caja del día.</p>` : ""}
+        </details>`;
 }

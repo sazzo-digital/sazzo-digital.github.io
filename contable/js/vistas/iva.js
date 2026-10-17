@@ -4,13 +4,13 @@
 // para bajar (Excel/CSV para el contador y los .txt del Libro IVA Digital, de prueba). La ven todos; bajar archivos
 // es cosa de Patricia (los demás también pueden mirarlos).
 // ============================================
-import { esc, descargarCSV, fechaCorta } from "../../kit/js/ui.js?v=22b7f22ca9";
-import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=22b7f22ca9";
-import { htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=22b7f22ca9";
-import { ALICUOTAS, ORDEN_ALICUOTAS, pesos, pesosRedondo, nombrePeriodo, mesCorto, formatoCuit } from "../reglas.js?v=22b7f22ca9";
-import { buscarPersona, MARCA } from "../marca.js?v=22b7f22ca9";
-import { libroDigitalVentas, libroDigitalCompras, bajarTexto } from "../libro-digital.js?v=22b7f22ca9";
-import { periodoPedido, htmlSelectorMes, activarSelectorMes, htmlTabla, diaMes } from "./comunes.js?v=22b7f22ca9";
+import { esc, descargarCSV, fechaCorta } from "../../kit/js/ui.js?v=9807a2d772";
+import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=9807a2d772";
+import { htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=9807a2d772";
+import { ALICUOTAS, ORDEN_ALICUOTAS, pesos, pesosRedondo, nombrePeriodo, mesCorto, formatoCuit } from "../reglas.js?v=9807a2d772";
+import { buscarPersona, MARCA } from "../marca.js?v=9807a2d772";
+import { libroDigitalVentas, libroDigitalCompras, bajarTexto } from "../libro-digital.js?v=9807a2d772";
+import { periodoPedido, htmlSelectorMes, activarSelectorMes, htmlTabla, diaMes } from "./comunes.js?v=9807a2d772";
 
 export function vistaIva(cont, { usuario, datos, consulta, irA }) {
     const e = datos.leerEmpresa();

@@ -3,11 +3,11 @@
 // entregado), el stock (frascos y botellas madre en ml, lo que hay que pedir primero) y las clientas (lo que compra
 // cada una y "Cumplen este mes" con el saludo para copiar).
 // ============================================
-import { esc, aviso, vacio, fechaCorta, fechaHora } from "../../kit/js/ui.js?v=01b46d5bbb";
-import { TOPES, MADRE_POCO_ML, MEDIOS, pesos } from "../datos.js?v=01b46d5bbb";
-import { frasco, pastillaPedido, mostrarMensaje } from "./comunes.js?v=01b46d5bbb";
-import { htmlConsigna, htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=01b46d5bbb";
-import { MARCA } from "../marca.js?v=01b46d5bbb";
+import { esc, aviso, vacio, fechaCorta, fechaHora } from "../../kit/js/ui.js?v=9e08669d15";
+import { TOPES, MADRE_POCO_ML, MEDIOS, pesos } from "../datos.js?v=9e08669d15";
+import { frasco, pastillaPedido, mostrarMensaje } from "./comunes.js?v=9e08669d15";
+import { htmlConsigna, htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=9e08669d15";
+import { MARCA } from "../marca.js?v=9e08669d15";
 
 let cobrando = null;
 let medioCobro = "efectivo";

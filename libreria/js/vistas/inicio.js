@@ -2,8 +2,8 @@
 // Inicio de Sazzo Librería: distinto para cada persona.
 // Mariela y Joaquín → Vender (en el mostrador lo primero es vender) · Paula → pedir la lista escolar.
 // ============================================
-import { vistaVender } from "./vender.js?v=7d888de8f5";
-import { vistaPedirLista } from "./clienta.js?v=7d888de8f5";
+import { vistaVender } from "./vender.js?v=8028f8820b";
+import { vistaPedirLista } from "./clienta.js?v=8028f8820b";
 
 export function vistaInicio(cont, opciones) {
     return opciones.usuario.rol === "clienta" ? vistaPedirLista(cont, opciones) : vistaVender(cont, opciones);

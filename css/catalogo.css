@@ -656,6 +656,22 @@ a { color: inherit; }
     #demos { max-width: 1320px; }
 }
 
+/* Con el dedo: todo lo que se toca mide 44 px o más (en la cabecera crece el área de toque, no el dibujo) */
+@media (pointer: coarse) {
+    .boton, .atajo, .paso__link { min-height: 44px; }
+    .pie__lista { gap: 0; }
+    .pie__lista a, .pie__legal a { display: inline-flex; align-items: center; gap: .3rem; min-height: 44px; }
+    .cabecera__marca, .interruptor-tema, .cabecera > .boton { position: relative; }
+    .cabecera__marca::after, .interruptor-tema::after, .cabecera > .boton::after { content: ""; position: absolute; inset: -6px -3px; }
+    .cabecera > .boton { min-height: 0; }
+}
+@media (pointer: coarse) and (max-width: 639px) {
+    .seccion { padding-top: 2.4rem; padding-bottom: 2.4rem; }
+    .servicio { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: .3rem .8rem; align-items: center; padding: 1.2rem; }
+    .servicio h3 { margin: 0; }
+    .servicio p, .servicio .paso__link { grid-column: 1 / -1; }
+}
+
 /* 13. "Reducir movimiento": todo quieto y visible */
 @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }

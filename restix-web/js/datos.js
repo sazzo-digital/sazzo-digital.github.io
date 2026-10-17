@@ -6,11 +6,11 @@
 // Reglas del kit: exigir() en lo que modifica, topes en todo lo que se carga y se devuelven copias.
 // Si cambia la forma de los datos, subir VERSION_DATOS (se regeneran solos).
 // ============================================
-import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=7cbd57cafd";
-import { enteroHasta } from "../kit/js/topes.js?v=7cbd57cafd";
-import { fechaLocalISO, diaLocalDe } from "../kit/js/fechas.js?v=7cbd57cafd";
-import { MARCA } from "./marca.js?v=7cbd57cafd";
-import { MEDIOS_PAGO } from "../kit/js/pagos.js?v=7cbd57cafd";
+import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=711fd4936e";
+import { enteroHasta } from "../kit/js/topes.js?v=711fd4936e";
+import { fechaLocalISO, diaLocalDe } from "../kit/js/fechas.js?v=711fd4936e";
+import { MARCA } from "./marca.js?v=711fd4936e";
+import { MEDIOS_PAGO } from "../kit/js/pagos.js?v=711fd4936e";
 
 export const VERSION_DATOS = 3;
 

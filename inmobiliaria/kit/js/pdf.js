@@ -13,8 +13,8 @@
 // pasan a los caracteres que esa letra tiene (tildes, ñ, ¿¡, °, comillas sí; emojis no).
 // Librería: jsPDF (kit\libs\, MIT, ~410 KB), se baja recién al tocar el botón.
 // ============================================
-import { cargarLibreria, entregarArchivo, nombreDeArchivo } from "./archivos.js?v=762e55522a";
-import { esFirma } from "./firma.js?v=762e55522a";
+import { cargarLibreria, entregarArchivo, nombreDeArchivo } from "./archivos.js?v=62b76fcf22";
+import { esFirma } from "./firma.js?v=62b76fcf22";
 
 const TOPE_TEXTO = 600;
 const TOPE_FILAS = 200;

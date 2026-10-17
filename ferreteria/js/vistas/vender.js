@@ -1,9 +1,9 @@
-import { esc, aviso, fechaHora } from "../../kit/js/ui.js?v=18501d9a5e";
-import { TOPES, MEDIOS, RUBROS, UNIDADES, pesos, cantidadTexto, precioPara } from "../datos.js?v=18501d9a5e";
-import { textoMedio, mediosParaCaja } from "../../kit/js/pagos.js?v=18501d9a5e";
-import { NEGOCIO, MARCA } from "../marca.js?v=18501d9a5e";
-import { EVENTO_REINICIO } from "../../kit/js/guardado.js?v=18501d9a5e";
-import { abrirCaja } from "../../kit/js/caja.js?v=18501d9a5e";
+import { esc, aviso, fechaHora } from "../../kit/js/ui.js?v=a3952e4be2";
+import { TOPES, MEDIOS, RUBROS, UNIDADES, pesos, cantidadTexto, precioPara } from "../datos.js?v=a3952e4be2";
+import { textoMedio, mediosParaCaja } from "../../kit/js/pagos.js?v=a3952e4be2";
+import { NEGOCIO, MARCA } from "../marca.js?v=a3952e4be2";
+import { EVENTO_REINICIO } from "../../kit/js/guardado.js?v=a3952e4be2";
+import { abrirCaja, htmlMasDeLaCaja } from "../../kit/js/caja.js?v=a3952e4be2";
 
 export const ticket = new Map();
 addEventListener(EVENTO_REINICIO, () => ticket.clear());
@@ -24,7 +24,8 @@ export function vistaVender(cont, { usuario, datos }) {
         </div>
         ${ticket.size ? "" : `<p class="nota"><i class="ti ti-bulb"></i> Probá: buscá “taco del 8” y llevá 100 (sale por mayor), sumá 10 m de “cable 2,5” y cobralo a la cuenta de Gustavo: se pasa del tope.</p>`}
         <div class="cargar" hidden></div>
-        <div class="lugar-caja"></div>`;
+        <div class="lugar-caja"></div>
+        ${htmlMasDeLaCaja()}`;
     const panelCargar = cont.querySelector(".cargar");
 
     const caja = abrirCaja({

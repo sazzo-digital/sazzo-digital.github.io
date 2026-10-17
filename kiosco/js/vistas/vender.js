@@ -1,13 +1,13 @@
-import { esc, aviso } from "../../kit/js/ui.js?v=ff432d252c";
-import { mantenerPantallaPrendida, ding } from "../../kit/js/celular.js?v=ff432d252c";
-import { girarRuleta } from "../../kit/js/ruleta.js?v=ff432d252c";
-import { TOPES, MEDIOS, PREMIOS, PROMO_DESDE, SECCIONES, ganaTirada, pesos, seccionDe } from "../datos.js?v=ff432d252c";
-import { mediosParaCaja } from "../../kit/js/pagos.js?v=ff432d252c";
-import { MARCA, NEGOCIO } from "../marca.js?v=ff432d252c";
-import { guia, activarGuias } from "./comunes.js?v=ff432d252c";
-import { htmlConsigna } from "../../kit/js/consigna.js?v=ff432d252c";
-import { EVENTO_REINICIO } from "../../kit/js/guardado.js?v=ff432d252c";
-import { abrirCaja } from "../../kit/js/caja.js?v=ff432d252c";
+import { esc, aviso } from "../../kit/js/ui.js?v=0cd22c02c4";
+import { mantenerPantallaPrendida, ding } from "../../kit/js/celular.js?v=0cd22c02c4";
+import { girarRuleta } from "../../kit/js/ruleta.js?v=0cd22c02c4";
+import { TOPES, MEDIOS, PREMIOS, PROMO_DESDE, SECCIONES, ganaTirada, pesos, seccionDe } from "../datos.js?v=0cd22c02c4";
+import { mediosParaCaja } from "../../kit/js/pagos.js?v=0cd22c02c4";
+import { MARCA, NEGOCIO } from "../marca.js?v=0cd22c02c4";
+import { guia, activarGuias } from "./comunes.js?v=0cd22c02c4";
+import { htmlConsigna } from "../../kit/js/consigna.js?v=0cd22c02c4";
+import { EVENTO_REINICIO } from "../../kit/js/guardado.js?v=0cd22c02c4";
+import { abrirCaja, htmlMasDeLaCaja } from "../../kit/js/caja.js?v=0cd22c02c4";
 
 export const ticket = new Map();
 addEventListener(EVENTO_REINICIO, () => ticket.clear());
@@ -30,7 +30,8 @@ export function vistaVender(cont, { usuario, datos, irA }) {
         </div>
         <div class="recorrido-caja"></div>
         <div class="cargar" hidden></div>
-        <div class="lugar-caja"></div>`;
+        <div class="lugar-caja"></div>
+        ${htmlMasDeLaCaja()}`;
     const recorrido = cont.querySelector(".recorrido-caja");
     const panelCargar = cont.querySelector(".cargar");
     const esEmpleada = usuario.rol === "empleada";

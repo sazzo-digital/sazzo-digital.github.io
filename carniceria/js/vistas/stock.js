@@ -6,12 +6,12 @@
 //   "Cargar un corte" y la "Pizarra para la tele".
 // También acá: las etiquetas de ejemplo de la balanza (para probar el escáner sin balanza).
 // ============================================
-import { esc, aviso, vacio, mensajeDe } from "../../kit/js/ui.js?v=d96418e257";
-import { ANIMALES, TOPES, nombreAnimal, pesos, kilos, armarEtiqueta } from "../datos.js?v=d96418e257";
-import { NEGOCIO } from "../marca.js?v=d96418e257";
-import { svgEAN } from "../codigo-barras.js?v=d96418e257";
-import { htmlCopiable, activarCopiables } from "../../kit/js/celular.js?v=d96418e257";
-import { pastillaStock, precioDe, campoKg, kgEnCampo, cuantoHay } from "./comunes.js?v=d96418e257";
+import { esc, aviso, vacio, mensajeDe } from "../../kit/js/ui.js?v=1ec4437652";
+import { ANIMALES, TOPES, nombreAnimal, pesos, kilos, armarEtiqueta } from "../datos.js?v=1ec4437652";
+import { NEGOCIO } from "../marca.js?v=1ec4437652";
+import { svgEAN } from "../codigo-barras.js?v=1ec4437652";
+import { htmlCopiable, activarCopiables } from "../../kit/js/celular.js?v=1ec4437652";
+import { pastillaStock, precioDe, campoKg, kgEnCampo, cuantoHay } from "./comunes.js?v=1ec4437652";
 
 const RAPIDOS = [5, 8, 10, 15];
 let textoBuscado = ""; // el buscador recuerda lo escrito mientras se navega

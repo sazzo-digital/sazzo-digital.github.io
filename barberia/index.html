@@ -4,8 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval' 'unsafe-hashes' 'sha256-MhtPZXr7+LpJUY5qtMutB+qWfQtMaPccfe7QXtCcEYc='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://tile.openstreetmap.org; font-src 'self'; connect-src 'self' blob: https://script.google.com https://script.googleusercontent.com; worker-src 'self' blob:; media-src 'self' data: blob:; object-src 'none'; base-uri 'self'; form-action 'self'">
-    <meta name="version" content="1.0 · 17/10/2026">
-    <meta name="robots" content="noindex, nofollow">
+    <meta name="version" content="1.1 · 17/10/2026">
+    <link rel="canonical" href="https://sazzo.com.ar/barberia/">
     <meta property="og:site_name" content="Sazzo">
     <meta property="og:type" content="website">
     <meta property="og:locale" content="es_AR">
@@ -23,41 +23,41 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#ddd1bb" media="(prefers-color-scheme: light)">
     <meta name="theme-color" content="#0a0e0d" media="(prefers-color-scheme: dark)">
-    <title>Sazzo Barbería</title>
+    <title>Sazzo Barbería · Sistema para barberías y peluquerías en Neuquén</title>
     <!-- Tema elegido a mano, antes de dibujar para que no parpadee (del kit) -->
-    <script src="kit/js/tema.js?v=340591ef79"></script>
+    <script src="kit/js/tema.js?v=4b6fa0cfc2"></script>
     <link rel="icon" href="img/isotipo.svg" type="image/svg+xml">
     <!-- Letras desde el propio sitio (antes Google Fonts); el script de armar las apunta a la copia compartida -->
-    <link rel="stylesheet" href="../letras/letras.css?v=a6d2bd6745">
+    <link rel="stylesheet" href="../letras/letras.css?v=a3d96a5223">
     <link rel="preload" href="../letras/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="../letras/space-grotesk-latin.woff2" as="font" type="font/woff2" crossorigin>
     <!-- Íconos (Tabler Icons 3.19.0) desde el propio sitio: el script de armar lo cambia por la copia compartida (../iconos/) -->
     <link rel="preload" href="../iconos/fonts/tabler-icons.woff2" as="font" type="font/woff2" crossorigin>
-    <link rel="stylesheet" href="../iconos/tabler-icons.min.css?v=a6d2bd6745" media="print" onload="this.media='all'">
-    <noscript><link rel="stylesheet" href="../iconos/tabler-icons.min.css?v=a6d2bd6745"></noscript>
-    <link rel="stylesheet" href="styles/style.css?v=340591ef79">
-    <link rel="modulepreload" href="js/app.js?v=340591ef79">
-    <link rel="modulepreload" href="kit/js/ui.js?v=340591ef79">
-    <link rel="modulepreload" href="kit/js/arranque.js?v=340591ef79">
-    <link rel="modulepreload" href="kit/js/ingreso.js?v=340591ef79">
-    <link rel="modulepreload" href="kit/js/marco.js?v=340591ef79">
-    <link rel="modulepreload" href="kit/js/rutas.js?v=340591ef79">
-    <link rel="modulepreload" href="kit/js/acerca.js?v=340591ef79">
-    <link rel="modulepreload" href="js/marca.js?v=340591ef79">
-    <link rel="modulepreload" href="kit/js/aparte.js?v=340591ef79">
-    <link rel="modulepreload" href="kit/js/guardado.js?v=340591ef79">
-    <link rel="modulepreload" href="kit/js/visita.js?v=340591ef79">
-    <link rel="modulepreload" href="kit/js/colores.js?v=340591ef79">
-    <link rel="modulepreload" href="kit/js/navegador.js?v=340591ef79">
-    <link rel="modulepreload" href="kit/js/teclado.js?v=340591ef79">
-    <link rel="modulepreload" href="kit/js/instalar.js?v=340591ef79">
-    <link rel="modulepreload" href="kit/js/marca.js?v=340591ef79">
-    <link rel="modulepreload" href="kit/js/enlaces.js?v=340591ef79">
-    <link rel="modulepreload" href="kit/js/detalle.js?v=340591ef79">
-    <link rel="modulepreload" href="kit/js/apariencia.js?v=340591ef79">
-    <link rel="modulepreload" href="kit/js/avisos.js?v=340591ef79">
-    <link rel="modulepreload" href="kit/js/config.js?v=340591ef79">
-    <link rel="modulepreload" href="kit/js/topes.js?v=340591ef79">
+    <link rel="stylesheet" href="../iconos/tabler-icons.min.css?v=a3d96a5223" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="../iconos/tabler-icons.min.css?v=a3d96a5223"></noscript>
+    <link rel="stylesheet" href="styles/style.css?v=4b6fa0cfc2">
+    <link rel="modulepreload" href="js/app.js?v=4b6fa0cfc2">
+    <link rel="modulepreload" href="kit/js/ui.js?v=4b6fa0cfc2">
+    <link rel="modulepreload" href="kit/js/arranque.js?v=4b6fa0cfc2">
+    <link rel="modulepreload" href="kit/js/ingreso.js?v=4b6fa0cfc2">
+    <link rel="modulepreload" href="kit/js/marco.js?v=4b6fa0cfc2">
+    <link rel="modulepreload" href="kit/js/rutas.js?v=4b6fa0cfc2">
+    <link rel="modulepreload" href="kit/js/acerca.js?v=4b6fa0cfc2">
+    <link rel="modulepreload" href="js/marca.js?v=4b6fa0cfc2">
+    <link rel="modulepreload" href="kit/js/aparte.js?v=4b6fa0cfc2">
+    <link rel="modulepreload" href="kit/js/guardado.js?v=4b6fa0cfc2">
+    <link rel="modulepreload" href="kit/js/visita.js?v=4b6fa0cfc2">
+    <link rel="modulepreload" href="kit/js/colores.js?v=4b6fa0cfc2">
+    <link rel="modulepreload" href="kit/js/navegador.js?v=4b6fa0cfc2">
+    <link rel="modulepreload" href="kit/js/teclado.js?v=4b6fa0cfc2">
+    <link rel="modulepreload" href="kit/js/instalar.js?v=4b6fa0cfc2">
+    <link rel="modulepreload" href="kit/js/marca.js?v=4b6fa0cfc2">
+    <link rel="modulepreload" href="kit/js/enlaces.js?v=4b6fa0cfc2">
+    <link rel="modulepreload" href="kit/js/detalle.js?v=4b6fa0cfc2">
+    <link rel="modulepreload" href="kit/js/apariencia.js?v=4b6fa0cfc2">
+    <link rel="modulepreload" href="kit/js/avisos.js?v=4b6fa0cfc2">
+    <link rel="modulepreload" href="kit/js/config.js?v=4b6fa0cfc2">
+    <link rel="modulepreload" href="kit/js/topes.js?v=4b6fa0cfc2">
 </head>
 
 <body>
@@ -71,7 +71,7 @@
             <p class="cargando__texto">Cargando…</p>
         </div>
     </div>
-    <script type="module" src="js/app.js?v=340591ef79"></script>
+    <script type="module" src="js/app.js?v=4b6fa0cfc2"></script>
 </body>
 
 </html>
