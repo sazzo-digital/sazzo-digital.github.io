@@ -3,10 +3,10 @@
 // entregadas) y cuánto tiene que haber en el cajón. "Cerrar caja": contás la plata y te dice si sobra o falta.
 // La dueña ve además la ganancia (venta menos costo) y los últimos 7 días.
 // ============================================
-import { esc, aviso, fechaCorta } from "../../kit/js/ui.js?v=d60f8ab62c";
-import { FONDO_CAJA, MEDIOS, TOPES, pesos } from "../datos.js?v=d60f8ab62c";
-import { textoMedio } from "../../kit/js/pagos.js?v=d60f8ab62c";
-import { hora } from "./comunes.js?v=d60f8ab62c";
+import { esc, aviso, fechaCorta } from "../../kit/js/ui.js?v=7d888de8f5";
+import { FONDO_CAJA, MEDIOS, TOPES, pesos } from "../datos.js?v=7d888de8f5";
+import { textoMedio } from "../../kit/js/pagos.js?v=7d888de8f5";
+import { hora } from "./comunes.js?v=7d888de8f5";
 
 const DIAS = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
 const nombreDia = (dia) => {

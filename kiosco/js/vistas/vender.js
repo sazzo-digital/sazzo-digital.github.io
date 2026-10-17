@@ -1,244 +1,108 @@
-// ============================================
-// Vender (Sofía y Rubén): botones con lo más vendido, buscador por nombre o código (el lector USB escribe el código
-// y aprieta Enter solo) y la cámara del celular (kit/escaner.js: con el lector del celular o, en iPhone, el de respaldo). Ticket con +/−, total,
-// "Paga con…" → vuelto, y cobrar en efectivo, transferencia o fiado (con aviso de tope).
-// Código que no está → "¿Lo cargás?" y queda listo para vender.
-// En la compu, dos columnas (productos | ticket); en el celular, el ticket abajo con una barrita arriba que lleva a él.
-// ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=5dc1b11480";
-import { puedeEscanear, escanear } from "../../kit/js/escaner.js?v=5dc1b11480";
-import { mantenerPantallaPrendida, htmlCopiable, activarCopiables, htmlBotonSonido, activarBotonSonido, ding } from "../../kit/js/celular.js?v=5dc1b11480";
-import { girarRuleta } from "../../kit/js/ruleta.js?v=5dc1b11480";
-import { TOPES, MEDIOS, PREMIOS, PROMO_DESDE, SECCIONES, ganaTirada, pesos, seccionDe } from "../datos.js?v=5dc1b11480";
-import { MEDIOS_PAGO, mediosParaCaja } from "../../kit/js/pagos.js?v=5dc1b11480";
-import { MARCA, NEGOCIO } from "../marca.js?v=5dc1b11480";
-import { guia, activarGuias } from "./comunes.js?v=5dc1b11480";
-import { htmlConsigna } from "../../kit/js/consigna.js?v=5dc1b11480";
-import { EVENTO_REINICIO } from "../../kit/js/guardado.js?v=5dc1b11480";
-import { abrirCaja } from "../../kit/js/caja.js?v=5dc1b11480";
+import { esc, aviso } from "../../kit/js/ui.js?v=ff432d252c";
+import { mantenerPantallaPrendida, ding } from "../../kit/js/celular.js?v=ff432d252c";
+import { girarRuleta } from "../../kit/js/ruleta.js?v=ff432d252c";
+import { TOPES, MEDIOS, PREMIOS, PROMO_DESDE, SECCIONES, ganaTirada, pesos, seccionDe } from "../datos.js?v=ff432d252c";
+import { mediosParaCaja } from "../../kit/js/pagos.js?v=ff432d252c";
+import { MARCA, NEGOCIO } from "../marca.js?v=ff432d252c";
+import { guia, activarGuias } from "./comunes.js?v=ff432d252c";
+import { htmlConsigna } from "../../kit/js/consigna.js?v=ff432d252c";
+import { EVENTO_REINICIO } from "../../kit/js/guardado.js?v=ff432d252c";
+import { abrirCaja } from "../../kit/js/caja.js?v=ff432d252c";
 
-// El ticket en curso queda en memoria mientras se navega (se vacía al cobrar)
-export const ticket = new Map(); // productoId → cantidad
-let medio = "efectivo";
-addEventListener(EVENTO_REINICIO, () => {
-    ticket.clear();
-    medio = "efectivo";
-});
+export const ticket = new Map();
+addEventListener(EVENTO_REINICIO, () => ticket.clear());
 
 const BILLETES = [2_000, 5_000, 10_000, 20_000];
-const ALIAS = "la.esquina.kiosco"; // de ejemplo: al cobrar con transferencia se copia con un toque
+const ALIAS = "la.esquina.kiosco";
 const ICONOS = { bebidas: "ti-bottle", alfajores: "ti-cookie", golosinas: "ti-candy", snacks: "ti-paper-bag", almacen: "ti-basket" };
 const conIcono = (p) => {
     const seccion = seccionDe(p.nombre);
     return { ...p, seccion, icono: ICONOS[seccion] ?? "ti-package" };
 };
-const MEDIOS_CAJA = mediosParaCaja(MEDIOS_PAGO);
+const MEDIOS_CAJA = mediosParaCaja(MEDIOS);
 
-export function vistaVender(cont, { usuario, datos, irA, despuesDeCaja = false }) {
-    mantenerPantallaPrendida(); // la caja del mostrador: que la pantalla no se apague entre venta y venta
+export function vistaVender(cont, { usuario, datos, irA }) {
+    mantenerPantallaPrendida();
     cont.innerHTML = `
         <div class="titulo-con-accion">
             <h1 class="titulo">Vender</h1>
             <span class="negocio"><i class="ti ti-building-store" aria-hidden="true"></i>${esc(NEGOCIO)}</span>
-            ${htmlBotonSonido(MARCA.prefijo)}
         </div>
-        <button class="boton boton--ancho abrir-caja" type="button" data-abrir-caja><i class="ti ti-scan"></i> Abrir la caja: escaneá y cobrá como en el súper</button>
-        <button class="ticket-barra" type="button" hidden></button>
-        <div class="caja-venta">
-            <section class="productos" aria-label="Productos">
-                <form class="buscar" novalidate>
-                    <label class="buscador">
-                        <i class="ti ti-search" aria-hidden="true"></i>
-                        <span class="solo-lector">Buscar por nombre o código</span>
-                        <input name="q" type="search" autocomplete="off" maxlength="40" placeholder="Nombre o código (Enter)">
-                    </label>
-                    ${puedeEscanear() ? `<button class="boton boton--secundario" type="button" data-camara><i class="ti ti-camera"></i><span class="solo-lector">Escanear con la cámara</span></button>` : ""}
-                </form>
-                <div class="cargar" hidden></div>
-                <div class="grilla-productos"></div>
-            </section>
-            <section class="ticket" id="ticket" aria-label="Ticket"></section>
-        </div>`;
-
-    const q = cont.querySelector("[name=q]");
-    const grilla = cont.querySelector(".grilla-productos");
+        <div class="recorrido-caja"></div>
+        <div class="cargar" hidden></div>
+        <div class="lugar-caja"></div>`;
+    const recorrido = cont.querySelector(".recorrido-caja");
     const panelCargar = cont.querySelector(".cargar");
-    const lugarTicket = cont.querySelector(".ticket");
-    const barra = cont.querySelector(".ticket-barra");
-    barra.addEventListener("click", () => lugarTicket.scrollIntoView({ block: "start", behavior: "smooth" }));
+    const esEmpleada = usuario.rol === "empleada";
 
-    const agregar = (id, cuantos = 1) => {
-        const p = datos.listarProductos().find((x) => x.id === id);
-        if (!p) return;
-        const nueva = (ticket.get(id) ?? 0) + cuantos;
-        if (nueva > Math.min(p.stock, TOPES.cantidad)) {
-            aviso(p.stock ? `De ${p.nombre} quedan solo ${p.stock}.` : `No queda ${p.nombre}.`, "error");
-            return;
-        }
-        if (nueva <= 0) ticket.delete(id);
-        else ticket.set(id, nueva);
-        pintarTicket();
+    const pintarRecorrido = (v = null) => {
+        if (!esEmpleada) return;
+        recorrido.innerHTML = !v
+            ? htmlConsigna({ paso: 1, total: 3, accion: "Sumá la gaseosa de 1,5 L y el alfajor triple de la góndola, y cobrá con $ 10.000.", resultado: "Se suma en la pantalla grande y te calcula el vuelto solo." })
+            : v.medio === "fiado"
+                ? htmlConsigna({ paso: 2, total: 3, accion: "Anotá un fiado.", hecho: `quedó en la libreta${v.cliente ? ` de ${v.cliente.nombre}` : ""}`, guia: guia("u-dueno", "/stock/aumento", "Pasá a Rubén: subí los precios de un proveedor") })
+                : htmlConsigna({ paso: 2, total: 3, accion: "Ahora anotá un fiado: leche y pan lactal para Graciela. Al cobrar, elegí «Fiado» y su nombre.", resultado: "Queda en su libreta, con su tope." });
+        activarGuias(recorrido, irA);
     };
 
-    function pintarProductos() {
-        const texto = q.value.trim();
-        const lista = texto ? datos.listarProductos({ texto }).slice(0, 12) : datos.rapidos();
-        grilla.innerHTML = `
-            <p class="rotulo-chico">${texto ? `${lista.length ? "Resultados" : ""}` : "Lo más vendido"}</p>
-            ${lista.length ? `<div class="botones-productos">${lista.map((p) => `
-                <button class="producto${p.stock ? "" : " producto--sin"}" type="button" data-agregar="${esc(p.id)}"${p.stock ? "" : " disabled"}>
-                    <span class="producto__nombre">${esc(p.nombre)}</span>
-                    <span class="producto__precio">${esc(pesos(p.precio))}</span>
-                    ${p.stock ? "" : `<small>No hay</small>`}
-                </button>`).join("")}</div>`
-            : vacio(/^\d{4,14}$/.test(texto) ? "No está ese código. Apretá Enter para cargarlo." : "No hay productos con ese nombre.", "ti-search")}`;
-        grilla.querySelectorAll("[data-agregar]").forEach((b) => b.addEventListener("click", () => agregar(b.dataset.agregar)));
-    }
-
-    function pintarTicket() {
-        const items = [...ticket].map(([productoId, cantidad]) => ({ productoId, cantidad }));
-        const unidades = items.reduce((t, i) => t + i.cantidad, 0);
-        let armado = { renglones: [], total: 0 };
-        try {
-            if (items.length) armado = datos.armarTicket(items);
-        } catch (e) {
-            aviso(e, "error");
-        }
-        barra.hidden = !items.length;
-        barra.innerHTML = `<i class="ti ti-receipt" aria-hidden="true"></i> ${unidades} ${unidades === 1 ? "producto" : "productos"} · <b>${esc(pesos(armado.total))}</b> <span>Cobrar ↓</span>`;
-        const clientes = datos.listarClientes();
-        lugarTicket.innerHTML = `
-            <h2 class="subtitulo"><i class="ti ti-receipt"></i> Ticket</h2>
-            ${items.length ? `
-            <ul class="renglones">${armado.renglones.map((r) => `
-                <li class="renglon">
-                    <span class="renglon__nombre">${esc(r.nombre)}<small>${esc(pesos(r.precio))} c/u</small></span>
-                    <span class="contador-uso">
-                        <button class="boton-icono" type="button" data-menos="${esc(r.productoId)}" aria-label="Uno menos de ${esc(r.nombre)}"><i class="ti ti-minus"></i></button>
-                        <b>${esc(r.cantidad)}</b>
-                        <button class="boton-icono" type="button" data-mas="${esc(r.productoId)}" aria-label="Uno más de ${esc(r.nombre)}"><i class="ti ti-plus"></i></button>
-                    </span>
-                    <span class="renglon__total">${esc(pesos(r.precio * r.cantidad))}</span>
-                </li>`).join("")}
-            </ul>
-            <div class="total"><span>Total</span><b>${esc(pesos(armado.total))}</b></div>
-            <div class="chips medios" role="radiogroup" aria-label="Cómo paga">
-                ${Object.entries(MEDIOS).map(([id, texto]) => `<button class="chip${medio === id ? " activo" : ""}" type="button" role="radio" aria-checked="${medio === id}" data-medio="${id}">${texto}</button>`).join("")}
-            </div>
-            <form class="formulario cobrar" novalidate>
-                ${medio === "efectivo" ? `
-                <label>Paga con (si querés saber el vuelto)
-                    <input name="pagaCon" type="number" inputmode="numeric" min="0" max="${TOPES.pagaCon}" step="1" placeholder="Ej: 10000">
-                </label>
-                <div class="billetes">${BILLETES.filter((b) => b >= armado.total).map((b) => `<button class="chip" type="button" data-billete="${b}">${esc(pesos(b))}</button>`).join("")}</div>
-                <p class="vuelto" aria-live="polite"></p>` : ""}
-                ${medio === "fiado" ? `
-                <label>¿A quién?
-                    <select name="cliente">
-                        <option value="">Elegí de la libreta…</option>
-                        ${clientes.map((c) => `<option value="${esc(c.id)}">${esc(c.nombre)}${c.detalle ? ` (${esc(c.detalle)})` : ""} · debe ${esc(pesos(c.deuda))}</option>`).join("")}
-                    </select>
-                </label>
-                <p class="tope-aviso" aria-live="polite"></p>` : ""}
-                ${medio === "transferencia" ? `
-                <p class="alias">Que te transfiera al alias ${htmlCopiable(ALIAS, "Copiar el alias")}</p>` : ""}
-                <button class="boton boton--ancho boton--grande" type="submit"><i class="ti ti-cash"></i> Cobrar ${esc(pesos(armado.total))}</button>
-            </form>
-            <button class="boton-link vaciar" type="button"><i class="ti ti-trash"></i> Vaciar ticket</button>`
-            : `<p class="nota"><i class="ti ti-hand-finger"></i> Tocá un producto o escribí su código para empezar.</p>`}`;
-
-        lugarTicket.querySelectorAll("[data-mas]").forEach((b) => b.addEventListener("click", () => agregar(b.dataset.mas, 1)));
-        lugarTicket.querySelectorAll("[data-menos]").forEach((b) => b.addEventListener("click", () => agregar(b.dataset.menos, -1)));
-        activarCopiables(lugarTicket, "Alias copiado: pasáselo al cliente.");
-        lugarTicket.querySelectorAll("[data-medio]").forEach((b) => b.addEventListener("click", () => {
-            medio = b.dataset.medio;
-            pintarTicket();
-        }));
-        lugarTicket.querySelector(".vaciar")?.addEventListener("click", () => {
-            ticket.clear();
-            pintarTicket();
-        });
-        const form = lugarTicket.querySelector(".cobrar");
-        if (!form) return;
-        const pagaCon = form.pagaCon;
-        const mostrarVuelto = () => {
-            const n = Number(pagaCon.value);
-            const p = lugarTicket.querySelector(".vuelto");
-            if (!pagaCon.value) p.textContent = "";
-            else if (!Number.isInteger(n) || n < armado.total) p.innerHTML = `<span class="falta">Con ${esc(pesos(n || 0))} no alcanza.</span>`;
-            else p.innerHTML = `Vuelto: <b>${esc(pesos(n - armado.total))}</b>`;
-        };
-        pagaCon?.addEventListener("input", mostrarVuelto);
-        lugarTicket.querySelectorAll("[data-billete]").forEach((b) => b.addEventListener("click", () => {
-            pagaCon.value = b.dataset.billete;
-            mostrarVuelto();
-        }));
-        form.cliente?.addEventListener("change", () => {
-            const p = lugarTicket.querySelector(".tope-aviso");
-            if (!form.cliente.value) return (p.textContent = "");
-            const t = datos.revisarTope(form.cliente.value, armado.total);
-            p.className = `tope-aviso${t.pasa ? " tope-aviso--pasa" : ""}`;
-            p.innerHTML = t.pasa
-                ? `<i class="ti ti-alert-triangle"></i> Debería ${esc(pesos(t.despues))} y su tope es ${esc(pesos(t.tope))}.${usuario.rol === "dueno" ? " Si cobrás igual, lo autorizás vos." : " Lo tiene que autorizar Rubén."}`
-                : `Debe ${esc(pesos(t.deuda))} → con esto, ${esc(pesos(t.despues))} (tope ${esc(pesos(t.tope))}).`;
-        });
-        form.addEventListener("submit", (e) => {
-            e.preventDefault();
-            const datosVenta = { items, medio, pagaCon: pagaCon?.value ? Number(pagaCon.value) : null, clienteId: form.cliente?.value || null };
-            try {
-                if (medio === "fiado" && datosVenta.clienteId && datos.revisarTope(datosVenta.clienteId, armado.total).pasa && usuario.rol === "dueno") {
-                    if (!confirm("Se pasa del tope de fiado. ¿Lo autorizás igual?")) return;
-                    datosVenta.autorizarTope = true;
-                }
-                const v = datos.vender(usuario, datosVenta);
-                ticket.clear();
-                vendido(v);
-            } catch (err) {
-                aviso(err, "error");
+    const totalDe = (items) => datos.armarTicket(items).total;
+    const caja = abrirCaja({
+        dentro: cont.querySelector(".lugar-caja"),
+        ticket,
+        titulo: NEGOCIO,
+        prefijo: MARCA.prefijo,
+        productos: () => datos.listarProductos().map(conIcono),
+        gondola: () => datos.listarProductos().map(conIcono),
+        secciones: SECCIONES,
+        buscar: (texto) => datos.listarProductos({ texto }).slice(0, 24).map(conIcono),
+        buscarCodigo: (codigo) => {
+            const p = datos.porCodigo(codigo);
+            return p ? conIcono(p) : null;
+        },
+        medios: MEDIOS_CAJA,
+        billetes: BILLETES,
+        alias: ALIAS,
+        imagenQR: (p) => `img/qr/${encodeURIComponent(p.codigo)}.svg`,
+        clientePara: {
+            medios: ["fiado"],
+            lista: () => datos.listarClientes().map((c) => ({ id: c.id, texto: `${c.nombre}${c.detalle ? ` (${c.detalle})` : ""} · debe ${pesos(c.deuda)}` })),
+            aviso: (id, total) => {
+                const t = datos.revisarTope(id, total);
+                return t.pasa
+                    ? `Debería ${pesos(t.despues)} y su tope es ${pesos(t.tope)}.${usuario.rol === "dueno" ? " Si cobrás igual, lo autorizás vos." : " Lo tiene que autorizar Rubén."}`
+                    : `Debe ${pesos(t.deuda)} → con esto, ${pesos(t.despues)} (tope ${pesos(t.tope)}).`;
             }
-        });
-    }
+        },
+        cobrar: ({ items, medio, pagaCon, pagos, clienteId }) => {
+            const venta = { items, medio, pagaCon, pagos, clienteId };
+            if (medio === "fiado" && clienteId && usuario.rol === "dueno" && datos.revisarTope(clienteId, totalDe(items)).pasa) {
+                if (!confirm("Se pasa del tope de fiado. ¿Lo autorizás igual?")) return false;
+                venta.autorizarTope = true;
+            }
+            return datos.vender(usuario, venta);
+        },
+        despues: (v, lugar) => {
+            ding(MARCA.prefijo);
+            if (v.cliente) lugar.insertAdjacentHTML("beforeend", `<p class="nota"><i class="ti ti-notebook"></i> ${esc(v.cliente.nombre)} debe ahora ${esc(pesos(v.cliente.deuda))}.</p>`);
+            if (ganaTirada(v)) {
+                lugar.insertAdjacentHTML("beforeend", `<button class="boton" type="button" data-ruleta><i class="ti ti-gift"></i> ¡Ganó una tirada de la ruleta!</button><p class="premio" aria-live="polite"></p>`);
+                lugar.querySelector("[data-ruleta]").addEventListener("click", async (e) => {
+                    const boton = e.currentTarget;
+                    const premio = await girarRuleta({ titulo: "Ruleta de premios", texto: `Promo de ${NEGOCIO}: cada compra desde ${pesos(PROMO_DESDE)} gana una tirada.`, premios: PREMIOS });
+                    if (!premio || !boton.isConnected) return;
+                    boton.remove();
+                    lugar.querySelector(".premio").innerHTML = `<i class="ti ti-gift" aria-hidden="true"></i> Salió: <b>${esc(premio.texto)}</b>`;
+                });
+            }
+            pintarRecorrido(v);
+        },
+        alEnter: (texto) => {
+            if (!/^\d{4,14}$/.test(texto)) return false;
+            ofrecerCargar(texto);
+            return true;
+        }
+    });
 
-    /** Después de cobrar: lo que pasó y el paso siguiente del recorrido. */
-    function vendido(v) {
-        ding(MARCA.prefijo);
-        const recorrido = usuario.rol === "empleada"
-            ? v.medio === "fiado"
-                ? htmlConsigna({ paso: 2, total: 3, accion: "Anotá un fiado.", hecho: `quedó en la libreta${v.cliente ? ` de ${v.cliente.nombre}` : ""}`, guia: guia("u-dueno", "/stock/aumento", "Pasá a Rubén: subí los precios de un proveedor") })
-                : htmlConsigna({ paso: 2, total: 3, accion: "Ahora anotá un fiado: leche y pan lactal para Graciela.", resultado: "Queda en su libreta, con su tope." })
-            : "";
-        lugarTicket.innerHTML = `
-            <div class="hecho">
-                <i class="ti ti-circle-check" aria-hidden="true"></i>
-                <h2 class="titulo">${v.medio === "fiado" ? "Anotado" : "Vendido"}</h2>
-                <p>${esc(pesos(v.total))} · ${esc(MEDIOS[v.medio])}${v.cliente ? ` · ${esc(v.cliente.nombre)}` : ""}</p>
-                ${v.vuelto !== null ? `<p class="vuelto vuelto--grande">Vuelto: <b>${esc(pesos(v.vuelto))}</b></p>` : ""}
-                ${v.cliente ? `<p class="nota"><i class="ti ti-notebook"></i> ${esc(v.cliente.nombre)} debe ahora ${esc(pesos(v.cliente.deuda))}.</p>` : ""}
-                ${ganaTirada(v) ? `<button class="boton" type="button" data-ruleta><i class="ti ti-gift"></i> ¡Ganó una tirada de la ruleta!</button>` : ""}
-                <p class="premio" aria-live="polite"></p>
-                <button class="boton boton--secundario" type="button" data-nueva><i class="ti ti-plus"></i> Nueva venta</button>
-            </div>
-            ${recorrido}`;
-        barra.hidden = true;
-        lugarTicket.querySelector("[data-nueva]").addEventListener("click", () => {
-            medio = "efectivo";
-            pintarTicket();
-            q.focus();
-        });
-        activarGuias(lugarTicket, irA);
-        // La promo: compras desde $5.000 ganan una tirada (la ruleta se da vuelta para el cliente)
-        lugarTicket.querySelector("[data-ruleta]")?.addEventListener("click", async (e) => {
-            const boton = e.currentTarget;
-            const premio = await girarRuleta({ titulo: "Ruleta de premios", texto: `Promo de ${NEGOCIO}: cada compra desde ${pesos(PROMO_DESDE)} gana una tirada.`, premios: PREMIOS });
-            if (!premio || !boton.isConnected) return;
-            boton.remove();
-            lugarTicket.querySelector(".premio").innerHTML = `<i class="ti ti-gift" aria-hidden="true"></i> Salió: <b>${esc(premio.texto)}</b>`;
-        });
-        if (matchMedia("(max-width: 999px)").matches) lugarTicket.scrollIntoView({ block: "start" });
-        pintarProductos();
-    }
-
-    /** Código que no está: "¿Lo cargás?" con nombre, precio y cuántos hay. Queda en el ticket. */
     function ofrecerCargar(codigo) {
         panelCargar.hidden = false;
         panelCargar.innerHTML = `
@@ -262,75 +126,14 @@ export function vistaVender(cont, { usuario, datos, irA, despuesDeCaja = false }
             try {
                 const p = datos.cargarProducto(usuario, { nombre: f.nombre.value, codigo, precio: Number(f.precio.value), stock: Number(f.stock.value) });
                 panelCargar.hidden = true;
-                q.value = "";
                 aviso(`${p.nombre} cargado`);
-                pintarProductos();
-                agregar(p.id);
+                caja.pintar();
+                caja.sumar(conIcono(p));
             } catch (err) {
                 aviso(err, "error");
             }
         });
     }
 
-    /** Enter en el buscador: un código que existe se suma; uno que no, se ofrece cargar; un solo resultado, se suma. */
-    function alBuscar(texto) {
-        const t = texto.trim();
-        if (!t) return;
-        const p = datos.porCodigo(t);
-        if (p) {
-            agregar(p.id);
-            q.value = "";
-            pintarProductos();
-            return;
-        }
-        if (/^\d{4,14}$/.test(t)) return ofrecerCargar(t);
-        const lista = datos.listarProductos({ texto: t });
-        if (lista.length === 1) {
-            agregar(lista[0].id);
-            q.value = "";
-            pintarProductos();
-        }
-    }
-
-    cont.querySelector(".buscar").addEventListener("submit", (e) => {
-        e.preventDefault();
-        alBuscar(q.value);
-    });
-    q.addEventListener("input", () => {
-        panelCargar.hidden = true;
-        pintarProductos();
-    });
-    cont.querySelector("[data-camara]")?.addEventListener("click", () => escanear(alBuscar));
-    let vendioEnCaja = false;
-    cont.querySelector("[data-abrir-caja]").addEventListener("click", () => abrirCaja({
-        titulo: NEGOCIO,
-        prefijo: MARCA.prefijo,
-        productos: () => datos.listarProductos().map(conIcono),
-        gondola: () => datos.listarProductos().map(conIcono),
-        secciones: SECCIONES,
-        buscarCodigo: (codigo) => {
-            const p = datos.porCodigo(codigo);
-            return p ? conIcono(p) : null;
-        },
-        medios: MEDIOS_CAJA,
-        billetes: BILLETES,
-        imagenQR: (p) => `img/qr/${encodeURIComponent(p.codigo)}.svg`,
-        cobrar: ({ items, medio: m, pagaCon, pagos }) => {
-            const venta = datos.vender(usuario, { items, medio: m, pagaCon, pagos });
-            vendioEnCaja = true;
-            return venta;
-        },
-        alCerrar: () => vistaVender(cont, { usuario, datos, irA, despuesDeCaja: vendioEnCaja })
-    }));
-    activarBotonSonido(cont, MARCA.prefijo); // "ding" al cobrar, apagado de entrada
-
-    pintarProductos();
-    pintarTicket();
-    if (usuario.rol === "empleada" && despuesDeCaja) {
-        grilla.insertAdjacentHTML("afterbegin", htmlConsigna({ paso: 2, total: 3, accion: "Ahora anotá un fiado: leche y pan lactal para Graciela.", resultado: "Queda en su libreta, con su tope." }));
-    } else if (usuario.rol === "empleada" && !ticket.size) {
-        grilla.insertAdjacentHTML("afterbegin", htmlConsigna({ paso: 1, total: 3, accion: "Tocá «Abrir la caja», sumá la gaseosa de 1,5 L y el alfajor triple de la góndola, y cobrá con $ 10.000.", resultado: "Se suma en la pantalla grande y te calcula el vuelto solo." }));
-    }
+    pintarRecorrido();
 }
-
-/** La cámara del celular lee el código de barras (solo donde el navegador sabe hacerlo: Chrome en Android). */

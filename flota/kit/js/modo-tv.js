@@ -1,5 +1,5 @@
-import { esc } from "./ui.js?v=41455accc5";
-import { mantenerPantallaPrendida } from "./celular.js?v=41455accc5";
+import { esc } from "./ui.js?v=8c64c8f688";
+import { mantenerPantallaPrendida } from "./celular.js?v=8c64c8f688";
 
 export const TOPES_TV = { minimoMs: 2000, maximoMs: 60000 };
 
@@ -11,7 +11,7 @@ export function htmlBotonTV(texto = "Modo TV") {
     return `<button class="boton boton--secundario boton--chico boton-tv" type="button" data-modo-tv><i class="ti ti-device-tv"></i> ${esc(texto)}</button>`;
 }
 
-export function abrirModoTV({ titulo = "", icono = "ti-device-tv", armar, cadaMs = 5000, reloj = () => new Date() } = {}) {
+export function abrirModoTV({ titulo = "", icono = "ti-device-tv", armar, cadaMs = 5000, reloj = () => new Date(), alTocar = null } = {}) {
     if (typeof armar !== "function") throw new Error("Falta qué mostrar en la tele.");
     cerrarAnterior?.();
     const ms = Math.min(Math.max(Math.round(Number(cadaMs)) || 5000, TOPES_TV.minimoMs), TOPES_TV.maximoMs);
@@ -30,6 +30,7 @@ export function abrirModoTV({ titulo = "", icono = "ti-device-tv", armar, cadaMs
         <p class="modo-tv__pie">Para la tele del local: conectala a la compu o al celu y dejala así. Se actualiza sola.</p>`;
     document.body.append(caja);
     const cuerpo = caja.querySelector("[data-tv-cuerpo]");
+    if (alTocar) cuerpo.addEventListener("click", (e) => alTocar(e));
     const hora = caja.querySelector("[data-tv-hora]");
     const pintar = () => {
         hora.textContent = horaDe(reloj());

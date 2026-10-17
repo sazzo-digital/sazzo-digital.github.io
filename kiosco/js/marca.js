@@ -2,8 +2,8 @@
 // Marca, personas y "también puede tener" de Sazzo Kiosco (diseñada el 08/10/2026).
 // Las personas son los roles reales del rubro (nombres inventados): el dueño y la empleada.
 // ============================================
-import { revisarMarca } from "../kit/js/marca.js?v=5dc1b11480";
-import { negocioDe } from "../kit/js/colores.js?v=5dc1b11480";
+import { revisarMarca } from "../kit/js/marca.js?v=ff432d252c";
+import { negocioDe } from "../kit/js/colores.js?v=ff432d252c";
 
 export const MARCA = revisarMarca({
     id: "kiosco",
@@ -51,7 +51,7 @@ export const DETALLE = {
     extra: {
         titulo: "Para probar ya",
         renglones: [
-            "Tocá «Abrir la caja» y sumá productos de la góndola: se suman al ticket al toque, como en el súper",
+            "En «Vender» está la caja: sumá productos de la góndola y se suman al ticket al toque, como en el súper",
             "Con el celu, escaneá los QR de los productos (están en «Ver los QR», para otro celu o para imprimir)",
             "Cobrá en efectivo con el vuelto en grande, con débito, crédito, QR o mitad y mitad",
             "Atento al stock: avisa «quedan 2» antes de que se termine"

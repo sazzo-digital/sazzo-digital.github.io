@@ -6,14 +6,16 @@
 // peso. Ticket con vuelto, alias para la transferencia, "ding" al cobrar y la vista previa del ticket.
 // En la compu, dos columnas (cortes | ticket); en el celular, el ticket abajo con una barrita arriba que lleva a él.
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=3e2c528089";
-import { puedeEscanear, escanear } from "../../kit/js/escaner.js?v=3e2c528089";
-import { mantenerPantallaPrendida, htmlCopiable, activarCopiables, htmlBotonSonido, activarBotonSonido, ding } from "../../kit/js/celular.js?v=3e2c528089";
-import { TOPES, MEDIOS, ALIAS, ANIMALES, ETIQUETA, pesos, kilos, aGramos, precioPorPeso, gramosPara, leerEtiqueta } from "../datos.js?v=3e2c528089";
-import { textoMedio, DIVIDIDO, partesIniciales, htmlDosMedios, activarDosMedios } from "../../kit/js/pagos.js?v=3e2c528089";
-import { MARCA, NEGOCIO } from "../marca.js?v=3e2c528089";
-import { campoKg, kgEnCampo, precioDe, hora } from "./comunes.js?v=3e2c528089";
-import { EVENTO_REINICIO } from "../../kit/js/guardado.js?v=3e2c528089";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=d96418e257";
+import { puedeEscanear, escanear } from "../../kit/js/escaner.js?v=d96418e257";
+import { mantenerPantallaPrendida, htmlCopiable, activarCopiables, htmlBotonSonido, activarBotonSonido, ding } from "../../kit/js/celular.js?v=d96418e257";
+import { TOPES, MEDIOS, ALIAS, ANIMALES, ETIQUETA, pesos, kilos, aGramos, precioPorPeso, gramosPara, leerEtiqueta } from "../datos.js?v=d96418e257";
+import { textoMedio, DIVIDIDO, partesIniciales, htmlDosMedios, activarDosMedios } from "../../kit/js/pagos.js?v=d96418e257";
+import { MARCA, NEGOCIO } from "../marca.js?v=d96418e257";
+import { campoKg, kgEnCampo, precioDe, hora } from "./comunes.js?v=d96418e257";
+import { EVENTO_REINICIO } from "../../kit/js/guardado.js?v=d96418e257";
+import { puedeConectarBalanza, conectarBalanza } from "../../kit/js/balanza.js?v=d96418e257";
+import { abrirModoTV } from "../../kit/js/modo-tv.js?v=d96418e257";
 
 // El ticket en curso queda en memoria mientras se navega (se vacía al cobrar)
 export const ticket = new Map(); // articuloId → { gramos } o { unidades }
@@ -32,7 +34,13 @@ const partesPara = (total) => {
     if (!partes || partes.total !== total) partes = { total, lista: partesIniciales(total, MEDIOS) };
     return partes.lista;
 };
-const RAPIDOS_KG = [0.5, 1, 1.5, 2];
+const SUMAS_G = [100, 250, 500, 1000];
+let tele = null;
+const balanza = { soltar: null, gramos: null, oyentes: new Set() };
+const avisarPeso = (g) => {
+    balanza.gramos = g;
+    balanza.oyentes.forEach((f) => f(g));
+};
 
 export function vistaVender(cont, { usuario, datos }) {
     cont.innerHTML = `
@@ -52,7 +60,25 @@ export function vistaVender(cont, { usuario, datos }) {
                     </label>
                     ${puedeEscanear() ? `<button class="boton boton--secundario" type="button" data-camara><i class="ti ti-camera"></i><span class="solo-lector">Leer la etiqueta de la balanza con la cámara</span></button>` : ""}
                 </form>
-                <p class="nota etiquetas-link"><i class="ti ti-barcode"></i> ¿Sin balanza a mano? <a href="#/stock/etiquetas">Etiquetas de ejemplo</a> para leer con la cámara.</p>
+                <section class="bloque balanza-formas" aria-label="Balanza">
+                    <div class="acciones">
+                        ${puedeEscanear() ? `<button class="boton boton--secundario" type="button" data-leer-etiqueta><i class="ti ti-barcode"></i> Leer la etiqueta de la balanza</button>` : ""}
+                        ${puedeConectarBalanza() ? `<button class="boton boton--secundario" type="button" data-conectar-balanza><i class="ti ti-plug-connected"></i> ${balanza.soltar ? "Balanza conectada: soltar" : "Conectar una balanza"}</button>` : ""}
+                    </div>
+                    <p class="nota"><i class="ti ti-info-circle"></i> ¿Sin balanza a mano? <a href="#/stock/etiquetas">Etiquetas de ejemplo</a> para leer con la cámara (desde otro celu o impresas).</p>
+                    <details class="balanza-como">
+                        <summary><i class="ti ti-scale"></i> ¿Cómo funciona la balanza?</summary>
+                        <p><b>En esta demo:</b> «Simular balanza conectada» inventa un peso para que veas cómo sería. Las etiquetas de ejemplo se leen de verdad con la cámara. Y en una compu con Chrome o Edge, «Conectar una balanza» usa una balanza de verdad, si tiene salida a la compu.</p>
+                        <p><b>En la versión para tu carnicería, de tres formas:</b></p>
+                        <ol>
+                            <li><b>Etiqueta de la balanza</b> (la más común): la balanza etiquetadora imprime un código de barras con el corte y el peso; la caja lo lee con el celu o con un lector. No hay que conectar nada. Por ejemplo, las etiquetadoras Systel Cuora o Kretz Report.</li>
+                            <li><b>Balanza conectada a la compu del mostrador</b>: el peso entra solo, sin escribirlo. Sirve con balanzas que tienen salida a la PC (por ejemplo, Systel Croma o Clipse, por cable serie con un adaptador USB). Se ajusta al modelo de tu balanza.</li>
+                            <li><b>Escribiendo el peso</b> que marca la balanza: anda con cualquiera, desde el celu o la compu.</li>
+                        </ol>
+                        <p><b>Balanza en la tele:</b> con una tele en el local, el cliente ve en grande el corte, el peso y cuánto sale mientras le pesás.</p>
+                        <p class="nota">El sistema lee el peso: la balanza sigue siendo la del local. Las marcas son ejemplos, no una recomendación.</p>
+                    </details>
+                </section>
                 <nav class="chips rubros" aria-label="Por animal"></nav>
                 <div class="pesar" hidden></div>
                 <div class="grilla-productos"></div>
@@ -165,11 +191,15 @@ export function vistaVender(cont, { usuario, datos }) {
                     <b class="pantalla-caja__total" data-balanza-kg>0,000 kg</b>
                     <span class="pantalla-caja__cuantos"><span>Balanza</span><span data-balanza-plata></span></span>
                 </div>
-                <button class="boton boton--secundario boton--ancho" type="button" data-pesar><i class="ti ti-scale"></i> Poner en la balanza</button>
+                ${balanza.soltar ? `<p class="nota"><i class="ti ti-plug-connected"></i> Balanza conectada: el peso entra solo.</p>` : `
+                <div class="simulador-balanza">
+                    <span class="rotulo-chico">Simular balanza conectada: poné carne</span>
+                    <div class="chips">${SUMAS_G.map((g) => `<button class="chip" type="button" data-poner="${g}"><i class="ti ti-plus" aria-hidden="true"></i>${esc(kilos(g))}</button>`).join("")}<button class="chip" type="button" data-poner="0"><i class="ti ti-trash" aria-hidden="true"></i>Vaciar</button></div>
+                </div>`}
+                <button class="boton boton--secundario boton--chico" type="button" data-tele><i class="ti ti-device-tv"></i> Mostrar en la tele</button>
                 <label>Peso de la balanza
                     ${campoKg({ nombre: "kg", valor: kgEnCampo(enTicket), requerido: true })}
-                </label>
-                <div class="chips rapidos-kg">${RAPIDOS_KG.map((k) => `<button class="chip" type="button" data-kg="${k}">${esc(kilos(k * 1000, k % 1 ? 1 : 0))}</button>`).join("")}</div>`}
+                </label>`}
                 <p class="cuenta-peso" aria-live="polite"></p>
                 <button class="boton boton--ancho" type="submit"><i class="ti ti-plus"></i> ${enTicket ? "Cambiar en el ticket" : "Sumar al ticket"}</button>
             </form>`;
@@ -206,28 +236,55 @@ export function vistaVender(cont, { usuario, datos }) {
             pesando.modo = b.dataset.modo;
             pintarPesar();
         }));
-        f.querySelector("[data-pesar]")?.addEventListener("click", () => {
-            const final = Math.max(TOPES.gramosMin, Math.min(Math.round((700 + Math.random() * 1100) / 5) * 5, Math.floor(a.stock / 5) * 5));
+        let animacion = 0;
+        const ponerEn = (destino) => {
+            const desde = Number.isInteger(gramosDe()) ? gramosDe() : 0;
+            const hasta = Math.max(0, Math.min(destino, TOPES.gramos));
+            f.kg.value = hasta ? kgEnCampo(hasta) : "";
             const listo = () => {
-                f.kg.value = kgEnCampo(final);
                 mostrar();
+                tele?.pintar();
             };
-            if (matchMedia("(prefers-reduced-motion: reduce)").matches) return listo();
+            listo();
+            const esta = ++animacion;
+            if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
             const inicio = performance.now();
             const paso = (ahora) => {
-                const t = Math.min((ahora - inicio) / 1100, 1);
-                if (!pantallaKg.isConnected) return;
-                const vaiven = Math.sin(t * 18) * (1 - t) * 160;
-                pantallaKg.textContent = enKg(Math.max(0, Math.round(final * (1 - Math.exp(-t * 5)) + vaiven)));
+                const t = Math.min((ahora - inicio) / 700, 1);
+                if (!pantallaKg?.isConnected || esta !== animacion) return;
+                const vaiven = Math.sin(t * 16) * (1 - t) * Math.min(120, Math.abs(hasta - desde) / 4);
+                pantallaKg.textContent = enKg(Math.max(0, Math.round(desde + (hasta - desde) * (1 - Math.exp(-t * 6)) + vaiven)));
                 if (t < 1) requestAnimationFrame(paso);
-                else listo();
+                else mostrar();
             };
             requestAnimationFrame(paso);
-        });
-        f.querySelectorAll("[data-kg]").forEach((b) => b.addEventListener("click", () => {
-            f.kg.value = kgEnCampo(Number(b.dataset.kg) * 1000);
-            mostrar();
+        };
+        f.querySelectorAll("[data-poner]").forEach((b) => b.addEventListener("click", () => {
+            const suma = Number(b.dataset.poner);
+            ponerEn(suma ? (Number.isInteger(gramosDe()) ? gramosDe() : 0) + suma : 0);
         }));
+        const alPesoReal = (g) => {
+            if (!f.isConnected) return balanza.oyentes.delete(alPesoReal);
+            if (!f.kg) return;
+            f.kg.value = kgEnCampo(g);
+            mostrar();
+            tele?.pintar();
+        };
+        if (balanza.soltar && !plata) balanza.oyentes.add(alPesoReal);
+        f.querySelector("[data-tele]")?.addEventListener("click", () => {
+            tele = abrirModoTV({
+                titulo: NEGOCIO,
+                icono: "ti-scale",
+                cadaMs: 2000,
+                armar: () => htmlTVBalanza(f.isConnected ? { nombre: a.nombre, precio: a.precio, gramos: gramosDe() } : null, !balanza.soltar),
+                alTocar: (e) => {
+                    const b = e.target.closest("[data-tv-poner]");
+                    if (!b || !f.isConnected) return;
+                    const suma = Number(b.dataset.tvPoner);
+                    ponerEn(suma ? (Number.isInteger(gramosDe()) ? gramosDe() : 0) + suma : 0);
+                }
+            });
+        });
         f.addEventListener("submit", (e) => {
             e.preventDefault();
             const g = gramosDe();
@@ -411,6 +468,32 @@ export function vistaVender(cont, { usuario, datos }) {
     });
     q.addEventListener("input", pintarCortes);
     cont.querySelector("[data-camara]")?.addEventListener("click", () => escanear(alBuscar, { formatos: ["ean_13"], texto: "Apuntá a la etiqueta de la balanza" }));
+    cont.querySelector("[data-leer-etiqueta]")?.addEventListener("click", () => escanear(alBuscar, { formatos: ["ean_13"], texto: "Apuntá a la etiqueta de la balanza" }));
+    cont.querySelector("[data-conectar-balanza]")?.addEventListener("click", async (e) => {
+        const boton = e.currentTarget;
+        if (balanza.soltar) {
+            await balanza.soltar();
+            balanza.soltar = null;
+            balanza.oyentes.clear();
+            aviso("Balanza desconectada");
+        } else {
+            try {
+                balanza.soltar = await conectarBalanza({
+                    alPeso: avisarPeso,
+                    alFallar: () => {
+                        balanza.soltar = null;
+                        aviso("Se cortó la conexión con la balanza.", "error");
+                    }
+                });
+                aviso("Balanza conectada: poné la carne y el peso entra solo");
+            } catch (err) {
+                if (err?.name !== "NotFoundError") aviso("No se pudo conectar la balanza: fijate que esté enchufada y prendida, y que no la esté usando otro programa.", "error");
+                return;
+            }
+        }
+        boton.innerHTML = `<i class="ti ti-plug-connected"></i> ${balanza.soltar ? "Balanza conectada: soltar" : "Conectar una balanza"}`;
+        pintarPesar();
+    });
     activarBotonSonido(cont, MARCA.prefijo); // "ding" al cobrar, apagado de entrada
     mantenerPantallaPrendida();
 
@@ -439,4 +522,23 @@ export function htmlTicket(v) {
             <p>${esc(textoMedio(v, MEDIOS))}${v.vuelto !== null && v.vuelto !== undefined ? ` · pagó ${esc(pesos(v.pagaCon))} · vuelto ${esc(pesos(v.vuelto))}` : ""}</p>
             <p class="papel-ticket__demo">DEMO · no es un comprobante</p>
         </div>`;
+}
+
+export function htmlTVBalanza(corte, simulada = true) {
+    const g = corte && Number.isInteger(corte.gramos) && corte.gramos > 0 ? corte.gramos : 0;
+    const kg = (g / 1000).toLocaleString("es-AR", { minimumFractionDigits: 3, maximumFractionDigits: 3 });
+    return corte ? `
+        <div class="tv-grilla tv-grilla--destacada">
+            <section class="tv-tarjeta tv-tarjeta--ahora">
+                <span class="tv-tarjeta__rotulo">${esc(corte.nombre)} · ${esc(pesos(corte.precio))} el kilo</span>
+                <b class="tv-tarjeta__grande tv-balanza__peso">${esc(kg)} kg</b>
+                <span class="tv-tarjeta__chico">En la balanza</span>
+            </section>
+            <section class="tv-tarjeta">
+                <span class="tv-tarjeta__rotulo">Sale</span>
+                <b class="tv-tarjeta__grande">${esc(g ? pesos(precioPorPeso(g, corte.precio)) : "$ 0")}</b>
+                ${simulada ? `<span class="tv-tarjeta__chico">Demo: poné carne</span>
+                <span class="chips">${SUMAS_G.map((x) => `<button class="chip" type="button" data-tv-poner="${x}">+ ${esc(kilos(x))}</button>`).join("")}<button class="chip" type="button" data-tv-poner="0">Vaciar</button></span>` : ""}
+            </section>
+        </div>` : `<p class="modo-tv__vacio">Esperando el próximo pedido…</p>`;
 }

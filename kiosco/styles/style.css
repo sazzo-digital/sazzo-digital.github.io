@@ -3326,6 +3326,76 @@ body.guardando .boton:not(.boton--secundario) {
   text-align: right;
 }
 
+.caja-super--dentro {
+  position: relative;
+  inset: auto;
+  z-index: auto;
+  overflow: clip;
+  border: 1px solid var(--borde);
+  border-radius: 16px;
+}
+@media (min-width: 1000px) {
+  .caja-super--dentro {
+    height: calc(100dvh - 10rem);
+    min-height: 32rem;
+  }
+}
+.caja-super--dentro .visor-caja {
+  position: sticky;
+  bottom: calc(var(--alto-pie, 122px) + 0.75rem + 1rem + env(safe-area-inset-bottom));
+  z-index: 2;
+  background: var(--fondo);
+}
+@media (min-width: 1000px) {
+  .caja-super--dentro .visor-caja {
+    position: static;
+  }
+}
+
+.hoja-cobro--suelta {
+  position: fixed;
+  z-index: 30;
+}
+
+.hoja-cobro__cliente {
+  display: grid;
+  gap: 0.3rem;
+}
+.hoja-cobro__cliente[hidden] {
+  display: none;
+}
+.hoja-cobro__cliente select {
+  min-height: 48px;
+  padding: 0 0.7rem;
+  border: 1px solid var(--borde-fuerte);
+  border-radius: 10px;
+  background: var(--superficie-2);
+  color: var(--texto);
+  font: inherit;
+}
+
+.hoja-cobro__alias[hidden] {
+  display: none;
+}
+
+input.caja-super__cantidad {
+  width: 100%;
+  min-height: 40px;
+  padding: 0 0.15rem;
+  border: 1px solid var(--borde);
+  border-radius: 10px;
+  background: var(--superficie-2);
+  color: var(--texto);
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 0.95rem;
+  text-align: center;
+  appearance: textfield;
+}
+input.caja-super__cantidad::-webkit-outer-spin-button, input.caja-super__cantidad::-webkit-inner-spin-button {
+  margin: 0;
+  appearance: none;
+}
+
 .modo-tv {
   position: fixed;
   inset: 0;
@@ -3480,6 +3550,11 @@ body.guardando .boton:not(.boton--secundario) {
 
 .tv-lista__ojo {
   color: #f59e0b;
+}
+
+.modo-tv .chips {
+  flex-wrap: wrap;
+  overflow: visible;
 }
 
 .contenido.entrando > :not(dialog) {

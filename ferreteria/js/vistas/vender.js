@@ -1,31 +1,20 @@
-// ============================================
-// Vender (Osvaldo y Nahuel): lo más vendido y los rubros a mano, buscador que entiende cómo pide la gente ("taco del
-// 8", "cano 1/2", "media pulgada", "foco") y la cámara del celular para el código de barras (kit/escaner.js).
-// Ticket con cantidad por unidad, por METRO o por KILO (se escribe: 2,5 m de cable, 0,750 kg de clavos), precio por
-// mayor solo (tarugos x 100), total, "Paga con…" → vuelto, y cobrar en efectivo, transferencia, tarjeta o a la cuenta
-// corriente (con aviso de tope). Después de cobrar, la vista previa del ticket para el cliente.
-// Código que no está → "¿Lo cargás?" y queda listo para vender.
-// En la compu, dos columnas (artículos | ticket); en el celular, el ticket abajo con una barrita arriba que lleva a él.
-// ============================================
-import { esc, aviso, vacio, fechaHora } from "../../kit/js/ui.js?v=9904c28649";
-import { puedeEscanear, escanear } from "../../kit/js/escaner.js?v=9904c28649";
-import { TOPES, MEDIOS, RUBROS, UNIDADES, DESCUENTO_MAYOR, pesos, precioMayor, precioConUnidad, cantidadTexto, numeroCantidad, redondearCantidad } from "../datos.js?v=9904c28649";
-import { textoMedio } from "../../kit/js/pagos.js?v=9904c28649";
-import { NEGOCIO, MARCA } from "../marca.js?v=9904c28649";
-import { pintarCobro, etiquetaUnidad } from "./comunes.js?v=9904c28649";
-import { EVENTO_REINICIO } from "../../kit/js/guardado.js?v=9904c28649";
-import { abrirCaja } from "../../kit/js/caja.js?v=9904c28649";
-import { MEDIOS_PAGO, mediosParaCaja } from "../../kit/js/pagos.js?v=9904c28649";
-import { RUBROS as RUBROS_CAJA, precioPara } from "../datos.js?v=9904c28649";
+import { esc, aviso, fechaHora } from "../../kit/js/ui.js?v=18501d9a5e";
+import { TOPES, MEDIOS, RUBROS, UNIDADES, pesos, cantidadTexto, precioPara } from "../datos.js?v=18501d9a5e";
+import { textoMedio, mediosParaCaja } from "../../kit/js/pagos.js?v=18501d9a5e";
+import { NEGOCIO, MARCA } from "../marca.js?v=18501d9a5e";
+import { EVENTO_REINICIO } from "../../kit/js/guardado.js?v=18501d9a5e";
+import { abrirCaja } from "../../kit/js/caja.js?v=18501d9a5e";
 
-// El ticket en curso queda en memoria mientras se navega (se vacía al cobrar)
-export const ticket = new Map(); // productoId → cantidad
-let medio = "efectivo";
-let rubro = null; // null = lo más vendido
-addEventListener(EVENTO_REINICIO, () => {
-    ticket.clear();
-    medio = "efectivo";
-});
+export const ticket = new Map();
+addEventListener(EVENTO_REINICIO, () => ticket.clear());
+
+const paraCaja = (p) => {
+    const u = UNIDADES[p.unidad] ?? UNIDADES.u;
+    return {
+        ...p, stock: p.servicio ? null : p.stock, seccion: p.rubro, decimal: u.decimales > 0, decimales: u.decimales, medida: u.corto ? `por ${u.nombre}` : "",
+        icono: RUBROS.find((r) => r.id === p.rubro)?.icono ?? "ti-package"
+    };
+};
 
 export function vistaVender(cont, { usuario, datos }) {
     cont.innerHTML = `
@@ -33,186 +22,61 @@ export function vistaVender(cont, { usuario, datos }) {
             <h1 class="titulo">Vender</h1>
             <span class="negocio"><i class="ti ti-building-store" aria-hidden="true"></i>${esc(NEGOCIO)}</span>
         </div>
-        <button class="boton boton--ancho abrir-caja" type="button" data-abrir-caja><i class="ti ti-scan"></i> Abrir la caja: escaneá y cobrá como en el súper</button>
-        <button class="ticket-barra" type="button" hidden></button>
-        <div class="caja-venta">
-            <section class="productos" aria-label="Artículos">
-                <form class="buscar" novalidate>
-                    <label class="buscador">
-                        <i class="ti ti-search" aria-hidden="true"></i>
-                        <span class="solo-lector">Buscar por nombre, medida o código</span>
-                        <input name="q" type="search" autocomplete="off" maxlength="40" placeholder="Como lo pide la gente: “taco del 8” (Enter)">
-                    </label>
-                    ${puedeEscanear() ? `<button class="boton boton--secundario" type="button" data-camara><i class="ti ti-camera"></i><span class="solo-lector">Escanear con la cámara</span></button>` : ""}
-                </form>
-                <nav class="chips rubros" aria-label="Rubros"></nav>
-                <div class="cargar" hidden></div>
-                <div class="grilla-productos"></div>
-            </section>
-            <section class="ticket" id="ticket" aria-label="Ticket"></section>
-        </div>`;
-
-    const q = cont.querySelector("[name=q]");
-    const grilla = cont.querySelector(".grilla-productos");
-    const chipsRubros = cont.querySelector(".rubros");
+        ${ticket.size ? "" : `<p class="nota"><i class="ti ti-bulb"></i> Probá: buscá “taco del 8” y llevá 100 (sale por mayor), sumá 10 m de “cable 2,5” y cobralo a la cuenta de Gustavo: se pasa del tope.</p>`}
+        <div class="cargar" hidden></div>
+        <div class="lugar-caja"></div>`;
     const panelCargar = cont.querySelector(".cargar");
-    const lugarTicket = cont.querySelector(".ticket");
-    const barra = cont.querySelector(".ticket-barra");
-    barra.addEventListener("click", () => lugarTicket.scrollIntoView({ block: "start", behavior: "smooth" }));
 
-    /** Cambia la cantidad de un artículo (suma `cuantos`, o la deja en `fija`). Por metro y por kilo, con decimales. */
-    const cambiar = (id, { cuantos = null, fija = null } = {}) => {
-        const p = datos.listarProductos().find((x) => x.id === id);
-        if (!p) return;
-        const u = UNIDADES[p.unidad];
-        const nueva = redondearCantidad(fija ?? (ticket.get(id) ?? 0) + (cuantos ?? u.paso), p.unidad);
-        const tope = p.servicio ? u.maximo : Math.min(p.stock, u.maximo);
-        if (nueva > tope + 1e-9) {
-            aviso(p.servicio || p.stock > u.maximo ? `Hasta ${cantidadTexto(u.maximo, p.unidad)} por venta.` : p.stock > 0 ? `De ${p.nombre} quedan solo ${cantidadTexto(p.stock, p.unidad)}.` : `No queda ${p.nombre}.`, "error");
-            pintarTicket();
-            return;
+    const caja = abrirCaja({
+        dentro: cont.querySelector(".lugar-caja"),
+        ticket,
+        titulo: NEGOCIO,
+        prefijo: MARCA.prefijo,
+        productos: () => datos.listarProductos().map(paraCaja),
+        secciones: RUBROS.filter((r) => datos.listarProductos().some((p) => p.rubro === r.id)).map((r) => ({ id: r.id, texto: r.nombre })),
+        buscar: (texto) => datos.listarProductos({ texto }).slice(0, 24).map(paraCaja),
+        buscarCodigo: (codigo) => {
+            const p = datos.porCodigo(codigo);
+            return p ? paraCaja(p) : null;
+        },
+        medios: mediosParaCaja(MEDIOS),
+        billetes: [2_000, 5_000, 10_000, 20_000],
+        imagenQR: (p) => (p.servicio ? null : `img/qr/${encodeURIComponent(p.codigo)}.svg`),
+        precioPara,
+        cotizar: (items) => datos.armarTicket(items),
+        topeCantidad: Math.max(TOPES.cantidad, TOPES.metros, TOPES.kilos),
+        clientePara: {
+            medios: ["cuenta"],
+            lista: () => datos.listarCuentas(usuario).map((c) => ({ id: c.id, texto: `${c.nombre} · debe ${pesos(c.deuda)}` })),
+            aviso: (id, total) => {
+                const t = datos.revisarTopeCuenta(id, total);
+                return t.pasa
+                    ? `Debería ${pesos(t.despues)} y su tope es ${pesos(t.tope)}.${usuario.rol === "dueno" ? " Si cobrás igual, lo autorizás vos." : " Lo tiene que autorizar Osvaldo."}`
+                    : `Debe ${pesos(t.deuda)} → con esto, ${pesos(t.despues)} (tope ${pesos(t.tope)}).`;
+            }
+        },
+        cobrar: ({ items, medio, pagaCon, pagos, clienteId }) => {
+            const venta = { items, medio, pagaCon, pagos, clienteId };
+            if (medio === "cuenta" && clienteId && usuario.rol === "dueno" && datos.revisarTopeCuenta(clienteId, datos.armarTicket(items).total).pasa) {
+                if (!confirm("Se pasa del tope de la cuenta. ¿Lo autorizás igual?")) return false;
+                venta.autorizarTope = true;
+            }
+            const v = datos.vender(usuario, venta);
+            return v.cuenta ? { ...v, cliente: v.cuenta } : v;
+        },
+        despues: (v, lugar) => {
+            if (v.cuenta) lugar.insertAdjacentHTML("beforeend", `<p class="nota"><i class="ti ti-user-dollar"></i> ${esc(v.cuenta.nombre)} debe ahora ${esc(pesos(v.cuenta.deuda))}.</p>`);
+            lugar.insertAdjacentHTML("beforeend", `<details class="ticket-previa"><summary><i class="ti ti-printer"></i> Vista previa del ticket</summary>${htmlTicketPrevia(v)}</details>`);
+            const paraArmar = datos.listarPresupuestos(usuario, { estado: "pedido" }).length;
+            if (paraArmar) lugar.insertAdjacentHTML("beforeend", `<a class="boton boton--secundario" href="#/presupuestos?ver=pedido"><i class="ti ti-file-text"></i> Hay ${esc(paraArmar)} ${paraArmar === 1 ? "presupuesto" : "presupuestos"} para armar</a>`);
+        },
+        alEnter: (texto) => {
+            if (!/^\d{4,14}$/.test(texto)) return false;
+            ofrecerCargar(texto);
+            return true;
         }
-        if (!(nueva > 0)) ticket.delete(id);
-        else ticket.set(id, nueva);
-        pintarTicket();
-    };
+    });
 
-    function pintarRubros() {
-        const chip = (id, texto, icono) => `<button class="chip${rubro === id ? " activo" : ""}" type="button" data-rubro="${esc(id ?? "")}">${icono ? `<i class="ti ${icono}" aria-hidden="true"></i>` : ""}${esc(texto)}</button>`;
-        chipsRubros.innerHTML = chip(null, "Lo más vendido", "ti-flame") + RUBROS.map((r) => chip(r.id, r.nombre, r.icono)).join("");
-        chipsRubros.querySelectorAll("[data-rubro]").forEach((b) => b.addEventListener("click", () => {
-            rubro = b.dataset.rubro || null;
-            q.value = "";
-            pintarRubros();
-            pintarProductos();
-        }));
-    }
-
-    function pintarProductos() {
-        const texto = q.value.trim();
-        chipsRubros.hidden = !!texto;
-        const lista = texto ? datos.listarProductos({ texto }).slice(0, 16) : rubro ? datos.listarProductos({ rubro }) : datos.rapidos();
-        grilla.innerHTML = `
-            ${texto ? `<p class="rotulo-chico">${lista.length ? "Resultados" : ""}</p>` : ""}
-            ${lista.length ? `<div class="botones-productos">${lista.map((p) => {
-                const sin = !p.servicio && !(p.stock > 0);
-                return `
-                <button class="producto${sin ? " producto--sin" : ""}" type="button" data-agregar="${esc(p.id)}"${sin ? " disabled" : ""}>
-                    <span class="producto__nombre">${esc(p.nombre)}</span>
-                    <span class="producto__precio">${esc(precioConUnidad(p.precio, p.unidad))}</span>
-                    ${sin ? `<small>No hay</small>` : p.mayorDesde ? `<small class="producto__mayor">x${esc(p.mayorDesde)}: ${esc(pesos(p.precioMayor))} c/u</small>` : ""}
-                </button>`;
-            }).join("")}</div>`
-            : vacio(/^\d{4,14}$/.test(texto) ? "No está ese código. Apretá Enter para cargarlo." : "No hay artículos con ese nombre.", "ti-search")}`;
-        grilla.querySelectorAll("[data-agregar]").forEach((b) => b.addEventListener("click", () => cambiar(b.dataset.agregar)));
-    }
-
-    function pintarTicket() {
-        const items = [...ticket].map(([productoId, cantidad]) => ({ productoId, cantidad }));
-        let armado = { renglones: [], total: 0, ahorro: 0 };
-        try {
-            if (items.length) armado = datos.armarTicket(items);
-        } catch (e) {
-            aviso(e, "error");
-        }
-        barra.hidden = !items.length;
-        barra.innerHTML = `<i class="ti ti-receipt" aria-hidden="true"></i> ${items.length} ${items.length === 1 ? "artículo" : "artículos"} · <b>${esc(pesos(armado.total))}</b> <span>Cobrar ↓</span>`;
-        lugarTicket.innerHTML = `
-            <h2 class="subtitulo"><i class="ti ti-receipt"></i> Ticket</h2>
-            ${items.length ? `
-            <ul class="renglones">${armado.renglones.map((r) => {
-                const u = UNIDADES[r.unidad];
-                return `
-                <li class="renglon">
-                    <span class="renglon__nombre">${esc(r.nombre)}
-                        <small>${esc(precioConUnidad(r.precio, r.unidad))}${r.unidad === "u" ? " c/u" : ""}${r.mayor ? ` <span class="etiqueta">por mayor</span>` : r.mayorDesde ? ` · desde ${esc(r.mayorDesde)}: ${esc(pesos(precioMayor(r.precioLista)))}` : ""}</small>
-                    </span>
-                    <span class="contador-uso">
-                        <button class="boton-icono" type="button" data-menos="${esc(r.productoId)}" aria-label="${esc(u.paso === 1 ? "Uno" : String(u.paso).replace(".", ","))}${u.corto ? ` ${esc(u.corto)}` : ""} menos de ${esc(r.nombre)}"><i class="ti ti-minus"></i></button>
-                        <input class="contador-uso__cantidad${r.unidad !== "u" ? " contador-uso__cantidad--decimal" : ""}" type="text" inputmode="${r.unidad === "u" ? "numeric" : "decimal"}" maxlength="8" value="${esc(String(r.cantidad).replace(".", ","))}" data-cantidad="${esc(r.productoId)}" aria-label="Cantidad de ${esc(r.nombre)}${u.corto ? ` en ${esc(u.nombre)}s` : ""}">
-                        ${u.corto ? `<span class="contador-uso__unidad">${esc(u.corto)}</span>` : ""}
-                        <button class="boton-icono" type="button" data-mas="${esc(r.productoId)}" aria-label="${esc(u.paso === 1 ? "Uno" : String(u.paso).replace(".", ","))}${u.corto ? ` ${esc(u.corto)}` : ""} más de ${esc(r.nombre)}"><i class="ti ti-plus"></i></button>
-                    </span>
-                    <span class="renglon__total">${esc(pesos(r.subtotal))}</span>
-                </li>`;
-            }).join("")}
-            </ul>
-            ${armado.ahorro ? `<p class="nota ahorro"><i class="ti ti-tag"></i> Por mayor (${DESCUENTO_MAYOR} % menos): se ahorra ${esc(pesos(armado.ahorro))}</p>` : ""}
-            <div class="total"><span>Total</span><b>${esc(pesos(armado.total))}</b></div>
-            <div class="lugar-cobro"></div>
-            <button class="boton-link vaciar" type="button"><i class="ti ti-trash"></i> Vaciar ticket</button>`
-            : `<p class="nota"><i class="ti ti-hand-finger"></i> Tocá un artículo o escribí su código para empezar.</p>`}`;
-
-        lugarTicket.querySelectorAll("[data-mas]").forEach((b) => b.addEventListener("click", () => cambiar(b.dataset.mas)));
-        lugarTicket.querySelectorAll("[data-menos]").forEach((b) => b.addEventListener("click", () => {
-            const p = datos.producto(b.dataset.menos);
-            cambiar(b.dataset.menos, { cuantos: -UNIDADES[p.unidad].paso });
-        }));
-        lugarTicket.querySelectorAll("[data-cantidad]").forEach((c) => c.addEventListener("change", () => {
-            const p = datos.producto(c.dataset.cantidad);
-            const n = c.value.trim() === "" ? 0 : numeroCantidad(c.value);
-            const u = UNIDADES[p.unidad];
-            if (!Number.isFinite(n) || n < 0 || (p.unidad === "u" && !Number.isInteger(n))) {
-                aviso(p.unidad === "u" ? `La cantidad tiene que ser un número entero y hasta ${u.maximo}.` : `Escribí los ${u.nombre}s con coma: ej. 2,5.`, "error");
-                pintarTicket();
-                return;
-            }
-            if (n > 0 && n < u.minimo) {
-                aviso(`Lo mínimo es ${cantidadTexto(u.minimo, p.unidad)}.`, "error");
-                pintarTicket();
-                return;
-            }
-            cambiar(c.dataset.cantidad, { fija: n });
-        }));
-        lugarTicket.querySelector(".vaciar")?.addEventListener("click", () => {
-            ticket.clear();
-            pintarTicket();
-        });
-        const lugarCobro = lugarTicket.querySelector(".lugar-cobro");
-        if (!lugarCobro || !armado.renglones.length) return;
-        pintarCobro(lugarCobro, {
-            usuario, datos, total: armado.total, medio,
-            alCambiarMedio: (m) => (medio = m),
-            alCobrar: (pago) => {
-                try {
-                    const v = datos.vender(usuario, { items, ...pago });
-                    ticket.clear();
-                    vendido(v);
-                } catch (err) {
-                    aviso(err, "error");
-                }
-            }
-        });
-    }
-
-    /** Después de cobrar: lo que pasó, la vista previa del ticket y qué más probar. */
-    function vendido(v) {
-        const paraArmar = datos.listarPresupuestos(usuario, { estado: "pedido" }).length;
-        lugarTicket.innerHTML = `
-            <div class="hecho">
-                <i class="ti ti-circle-check" aria-hidden="true"></i>
-                <h2 class="titulo">${v.medio === "cuenta" ? "Anotado en la cuenta" : "Vendido"}</h2>
-                <p>${esc(pesos(v.total))} · ${esc(textoMedio(v, MEDIOS))}${v.cuenta ? ` · ${esc(v.cuenta.nombre)}` : ""}</p>
-                ${v.vuelto !== null ? `<p class="vuelto vuelto--grande">Vuelto: <b>${esc(pesos(v.vuelto))}</b></p>` : ""}
-                ${v.cuenta ? `<p class="nota"><i class="ti ti-user-dollar"></i> ${esc(v.cuenta.nombre)} debe ahora ${esc(pesos(v.cuenta.deuda))}.</p>` : ""}
-                <button class="boton boton--secundario" type="button" data-nueva><i class="ti ti-plus"></i> Nueva venta</button>
-            </div>
-            <details class="ticket-previa">
-                <summary><i class="ti ti-printer"></i> Vista previa del ticket</summary>
-                ${htmlTicketPrevia(v)}
-            </details>
-            ${paraArmar ? `<a class="boton boton--secundario boton--ancho" href="#/presupuestos?ver=pedido"><i class="ti ti-file-text"></i> Hay ${esc(paraArmar)} ${paraArmar === 1 ? "presupuesto" : "presupuestos"} para armar</a>` : ""}`;
-        barra.hidden = true;
-        lugarTicket.querySelector("[data-nueva]").addEventListener("click", () => {
-            medio = "efectivo";
-            pintarTicket();
-            q.focus();
-        });
-        if (matchMedia("(max-width: 999px)").matches) lugarTicket.scrollIntoView({ block: "start" });
-        pintarProductos();
-    }
-
-    /** Código que no está: "¿Lo cargás?" con nombre, rubro, unidad, precio y cuánto hay. Queda en el ticket. */
     function ofrecerCargar(codigo) {
         panelCargar.hidden = false;
         panelCargar.innerHTML = `
@@ -245,73 +109,16 @@ export function vistaVender(cont, { usuario, datos }) {
             try {
                 const p = datos.cargarProducto(usuario, { nombre: f.nombre.value, codigo, rubro: f.rubro.value, unidad: f.unidad.value, precio: f.precio.value === "" ? NaN : Number(f.precio.value), stock: f.stock.value });
                 panelCargar.hidden = true;
-                q.value = "";
                 aviso(`${p.nombre} cargado`);
-                pintarProductos();
-                cambiar(p.id);
+                caja.pintar();
+                caja.sumar(paraCaja(p));
             } catch (err) {
                 aviso(err, "error");
             }
         });
     }
-
-    /** Enter en el buscador: un código que existe se suma; uno que no, se ofrece cargar; un solo resultado, se suma. */
-    function alBuscar(texto) {
-        const t = texto.trim();
-        if (!t) return;
-        const p = datos.porCodigo(t);
-        if (p) {
-            cambiar(p.id);
-            q.value = "";
-            pintarProductos();
-            return;
-        }
-        if (/^\d{4,14}$/.test(t)) return ofrecerCargar(t);
-        const lista = datos.listarProductos({ texto: t });
-        if (lista.length === 1) {
-            cambiar(lista[0].id);
-            q.value = "";
-            pintarProductos();
-        }
-    }
-
-    cont.querySelector(".buscar").addEventListener("submit", (e) => {
-        e.preventDefault();
-        alBuscar(q.value);
-    });
-    q.addEventListener("input", () => {
-        panelCargar.hidden = true;
-        pintarProductos();
-    });
-    cont.querySelector("[data-camara]")?.addEventListener("click", () => escanear(alBuscar));
-    const paraCaja = (p) => ({ ...p, seccion: p.rubro, icono: RUBROS_CAJA.find((r) => r.id === p.rubro)?.icono ?? "ti-package" });
-    cont.querySelector("[data-abrir-caja]").addEventListener("click", () => abrirCaja({
-        titulo: NEGOCIO,
-        prefijo: MARCA.prefijo,
-        productos: () => datos.listarProductos().filter((p) => !p.servicio).map(paraCaja),
-        secciones: RUBROS_CAJA.filter((r) => datos.listarProductos().some((p) => p.rubro === r.id && !p.servicio)).map((r) => ({ id: r.id, texto: r.nombre })),
-        buscar: (texto) => datos.listarProductos({ texto }).filter((p) => !p.servicio).slice(0, 24).map(paraCaja),
-        buscarCodigo: (codigo) => {
-            const p = datos.porCodigo(codigo);
-            return p && !p.servicio ? paraCaja(p) : null;
-        },
-        medios: mediosParaCaja(MEDIOS_PAGO),
-        billetes: [2_000, 5_000, 10_000, 20_000],
-        imagenQR: (p) => `img/qr/${encodeURIComponent(p.codigo)}.svg`,
-        cobrar: ({ items, medio, pagaCon, pagos }) => datos.vender(usuario, { items, medio, pagaCon, pagos }),
-        precioPara,
-        alCerrar: () => vistaVender(cont, { usuario, datos })
-    }));
-
-    pintarRubros();
-    pintarProductos();
-    pintarTicket();
-    if (!ticket.size) {
-        cont.querySelector(".productos").insertAdjacentHTML("afterbegin", `<p class="nota"><i class="ti ti-bulb"></i> Probá: buscá “taco del 8” y llevá 100 (sale por mayor), sumá 10 m de “cable 2,5” y cobralo a la cuenta de Gustavo: se pasa del tope.</p>`);
-    }
 }
 
-/** El ticket para el cliente, como saldría en la impresora (vista previa: nada que parezca una factura). */
 function htmlTicketPrevia(v) {
     return `
         <div class="ticket-papel" role="img" aria-label="Vista previa del ticket">
@@ -327,4 +134,3 @@ function htmlTicketPrevia(v) {
             <small>Demo de Sazzo · no válido como factura</small>
         </div>`;
 }
-

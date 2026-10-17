@@ -1,23 +1,24 @@
-import { esc, aviso } from "./ui.js?v=d29cdf6ff2";
-import { puedeEscanear, escanearSeguido } from "./escaner.js?v=d29cdf6ff2";
-import { pip, vibrar, htmlBotonSonido, activarBotonSonido } from "./celular.js?v=d29cdf6ff2";
-import { DIVIDIDO, revisarPagos } from "./pagos.js?v=d29cdf6ff2";
+import { esc, aviso } from "./ui.js?v=64e5d8bb7d";
+import { puedeEscanear, escanearSeguido } from "./escaner.js?v=64e5d8bb7d";
+import { pip, vibrar, htmlBotonSonido, activarBotonSonido, htmlCopiable, activarCopiables } from "./celular.js?v=64e5d8bb7d";
+import { DIVIDIDO, revisarPagos } from "./pagos.js?v=64e5d8bb7d";
 
 export const TOPE_RENGLONES = 30;
 export const TOPE_CANTIDAD = 99;
 export const STOCK_BAJO = 2;
+export const TOPE_PAGA_CON = 50_000_000;
 export const pesosCaja = (n) => `$ ${Math.round(n).toLocaleString("es-AR")}`;
 
-export function sumarAlTicket(ticket, producto, cuantos = 1) {
+export function sumarAlTicket(ticket, producto, cuantos = 1, tope = TOPE_CANTIDAD) {
     if (!producto) return { ok: false, mensaje: "Ese código no es de este negocio." };
     const ya = ticket.get(producto.id) ?? 0;
-    const nueva = ya + cuantos;
+    const nueva = Math.round((ya + cuantos) * 1000) / 1000;
     if (nueva <= 0) {
         ticket.delete(producto.id);
         return { ok: true, cantidad: 0 };
     }
     if (!ya && ticket.size >= TOPE_RENGLONES) return { ok: false, mensaje: `Un ticket puede tener hasta ${TOPE_RENGLONES} productos distintos.` };
-    if (nueva > TOPE_CANTIDAD) return { ok: false, mensaje: `Hasta ${TOPE_CANTIDAD} de cada producto.` };
+    if (nueva > tope) return { ok: false, mensaje: `Hasta ${tope} de cada producto.` };
     if (producto.stock !== undefined && producto.stock !== null && nueva > producto.stock) {
         return { ok: false, mensaje: producto.stock > 0 ? `De ${producto.nombre} quedan solo ${producto.stock}.` : `No queda ${producto.nombre}.` };
     }
@@ -31,7 +32,7 @@ export function renglonesDe(ticket, productos, precioPara = (p) => p.precio) {
         if (!p) return null;
         const quedan = p.stock === undefined || p.stock === null ? null : p.stock - cantidad;
         const precio = precioPara(p, cantidad);
-        return { id, nombre: p.nombre, precio, cantidad, subtotal: precio * cantidad, quedan, mayor: precio !== p.precio };
+        return { id, nombre: p.nombre, precio, cantidad, subtotal: Math.round(precio * cantidad), quedan, mayor: precio !== p.precio };
     }).filter(Boolean);
 }
 
@@ -40,6 +41,7 @@ export const totalDe = (renglones) => renglones.reduce((t, r) => t + r.subtotal,
 export function vueltoDe(total, pagaCon) {
     const con = Number(String(pagaCon ?? "").split(",")[0].replace(/\D/g, ""));
     if (!con) return { ok: true, vuelto: null };
+    if (con > TOPE_PAGA_CON) return { ok: false, mensaje: `Revisá con cuánto paga: hasta ${pesosCaja(TOPE_PAGA_CON)}.` };
     if (con < total) return { ok: false, mensaje: `Con ${pesosCaja(con)} no alcanza: son ${pesosCaja(total)}.` };
     return { ok: true, vuelto: con - total, pagaCon: con };
 }
@@ -47,21 +49,24 @@ export function vueltoDe(total, pagaCon) {
 export function abrirCaja({
     titulo, productos, gondola = productos, buscarCodigo, medios, billetes = [], cobrar, prefijo,
     imagenQR = null, alCerrar = () => {}, textoBoton = "Cobrar", escaneo = true, buscar = null, secciones = null,
-    precioPara = (p) => p.precio
+    precioPara = (p) => p.precio, dentro = null, clientePara = null, alEnter = null, despues = null, ticket: ticketDado = null, alias = "",
+    cotizar = null, topeCantidad = TOPE_CANTIDAD
 }) {
-    const ticket = new Map();
+    const ticket = ticketDado ?? new Map();
     let pararCamara = null;
     let ultimoId = null;
     let medio = medios[0]?.id ?? null;
     let seccion = secciones?.[0]?.id ?? null;
     const capa = document.createElement("div");
-    capa.className = "caja-super";
-    capa.setAttribute("role", "dialog");
-    capa.setAttribute("aria-modal", "true");
+    capa.className = dentro ? "caja-super caja-super--dentro" : "caja-super";
+    if (!dentro) {
+        capa.setAttribute("role", "dialog");
+        capa.setAttribute("aria-modal", "true");
+    }
     capa.setAttribute("aria-label", `Caja · ${titulo}`);
     capa.innerHTML = `
         <header class="caja-super__cabeza">
-            <button class="boton-icono" type="button" data-cerrar aria-label="Cerrar la caja"><i class="ti ti-x"></i></button>
+            ${dentro ? "" : `<button class="boton-icono" type="button" data-cerrar aria-label="Cerrar la caja"><i class="ti ti-x"></i></button>`}
             <b class="caja-super__titulo">Caja · ${esc(titulo)}</b>
             ${htmlBotonSonido(prefijo)}
             ${escaneo && puedeEscanear() ? `<button class="boton boton--chico" type="button" data-escanear><i class="ti ti-scan"></i> Escanear</button>` : ""}
@@ -93,10 +98,14 @@ export function abrirCaja({
             </section>
         </div>
         <p class="solo-lector" aria-live="polite" data-anuncio></p>`;
-    document.body.append(capa);
-    document.documentElement.classList.add("con-caja");
+    if (dentro) dentro.append(capa);
+    else {
+        document.body.append(capa);
+        document.documentElement.classList.add("con-caja");
+    }
     activarBotonSonido(capa, prefijo);
 
+    const lugarHojas = dentro ? document.body : capa;
     const lugarGondola = capa.querySelector(".gondola");
     const lista = capa.querySelector(".caja-super__renglones");
     const anuncio = capa.querySelector("[data-anuncio]");
@@ -120,14 +129,32 @@ export function abrirCaja({
         lugarGondola.querySelectorAll("[data-producto]").forEach((b) => b.addEventListener("click", () => sumar(productos().find((p) => p.id === b.dataset.producto))));
     };
 
+    const armarRenglones = () => {
+        const todos = productos();
+        const base = renglonesDe(ticket, todos, precioPara).map((r) => {
+            const p = todos.find((x) => x.id === r.id);
+            return { ...r, decimal: !!p?.decimal, medida: p?.medida ?? "" };
+        });
+        if (!cotizar || !base.length) return base;
+        try {
+            const c = cotizar([...ticket].map(([productoId, cantidad]) => ({ productoId, cantidad })));
+            return base.map((r) => {
+                const x = c.renglones.find((y) => y.productoId === r.id);
+                return x ? { ...r, precio: x.precio, subtotal: x.subtotal ?? Math.round(x.precio * r.cantidad), mayor: x.precio < (todos.find((p) => p.id === r.id)?.precio ?? x.precio) } : r;
+            });
+        } catch {
+            return base;
+        }
+    };
+
     const pintarTicket = () => {
-        const renglones = renglonesDe(ticket, productos(), precioPara);
+        const renglones = armarRenglones();
         const total = totalDe(renglones);
-        const cuantos = renglones.reduce((n, r) => n + r.cantidad, 0);
+        const cuantos = renglones.reduce((n, r) => n + (r.decimal ? 1 : r.cantidad), 0);
         lista.innerHTML = renglones.length ? renglones.map((r) => `
             <li class="caja-super__renglon${r.id === ultimoId ? " caja-super__renglon--nuevo" : ""}">
-                <span class="caja-super__cantidad">${esc(r.cantidad)} ×</span>
-                <span class="caja-super__nombre">${esc(r.nombre)}${r.mayor ? ` <span class="pastilla pastilla--bien">por mayor ${esc(pesosCaja(r.precio))} c/u</span>` : ""}${r.quedan !== null && r.quedan <= STOCK_BAJO ? ` <span class="pastilla pastilla--ojo">${r.quedan ? `quedan ${esc(r.quedan)}` : "no quedan más"}</span>` : ""}</span>
+                <input class="caja-super__cantidad" type="text" inputmode="${r.decimal ? "decimal" : "numeric"}" maxlength="7" value="${esc(String(r.cantidad).replace(".", ","))}" data-cantidad="${esc(r.id)}" aria-label="Cantidad de ${esc(r.nombre)}${r.medida ? ` (${esc(r.medida)})` : ""}">
+                <span class="caja-super__nombre">${esc(r.nombre)}${r.medida ? ` <small>${esc(r.medida)}</small>` : ""}${r.mayor ? ` <span class="pastilla pastilla--bien">por mayor ${esc(pesosCaja(r.precio))} c/u</span>` : ""}${r.quedan !== null && r.quedan <= STOCK_BAJO ? ` <span class="pastilla pastilla--ojo">${r.quedan ? `quedan ${esc(r.quedan)}` : "no quedan más"}</span>` : ""}</span>
                 <b class="caja-super__importe">${esc(pesosCaja(r.subtotal))}</b>
                 <span class="caja-super__botones">
                     <button class="boton-icono" type="button" data-menos="${esc(r.id)}" aria-label="Uno menos de ${esc(r.nombre)}"><i class="ti ti-minus"></i></button>
@@ -147,8 +174,32 @@ export function abrirCaja({
         });
         capa.querySelector("[data-cuantos]").textContent = `${cuantos} ${cuantos === 1 ? "producto" : "productos"}`;
         capa.querySelector("[data-cobrar]").disabled = !renglones.length;
+        capa.querySelector("[data-cobrar]").textContent = renglones.length ? `${textoBoton} ${pesosCaja(total)}` : textoBoton;
         lista.querySelectorAll("[data-menos]").forEach((b) => b.addEventListener("click", () => cambiar(b.dataset.menos, -1)));
         lista.querySelectorAll("[data-mas]").forEach((b) => b.addEventListener("click", () => cambiar(b.dataset.mas, 1)));
+        lista.querySelectorAll("[data-cantidad]").forEach((c) => c.addEventListener("change", () => {
+            const p = productos().find((x) => x.id === c.dataset.cantidad);
+            const leido = c.value.trim() === "" ? 0 : Number(c.value.trim().replace(",", "."));
+            const decimales = p?.decimales ?? (p?.decimal ? 3 : 0);
+            const n = Math.round(leido * 10 ** decimales) / 10 ** decimales;
+            if (!Number.isFinite(n) || n < 0 || (!p?.decimal && !Number.isInteger(leido))) {
+                avisarError(p?.decimal ? `La cantidad va de 0 a ${topeCantidad}, con hasta ${decimales} decimales.` : `La cantidad va de 0 a ${topeCantidad}.`);
+                return pintarTicket();
+            }
+            if (leido > 0 && n === 0) {
+                avisarError(`Es muy poco: escribí al menos ${String(1 / 10 ** decimales).replace(".", ",")}.`);
+                return pintarTicket();
+            }
+            if (cotizar && n > 0) {
+                try {
+                    cotizar([...ticket].map(([productoId, cantidad]) => ({ productoId, cantidad: productoId === c.dataset.cantidad ? n : cantidad })));
+                } catch (err) {
+                    avisarError(err?.message ?? "Esa cantidad no va.");
+                    return pintarTicket();
+                }
+            }
+            cambiar(c.dataset.cantidad, n - (ticket.get(c.dataset.cantidad) ?? 0));
+        }));
         lista.querySelectorAll("[data-sacar]").forEach((b) => b.addEventListener("click", () => {
             ticket.delete(b.dataset.sacar);
             ultimoId = null;
@@ -172,7 +223,7 @@ export function abrirCaja({
     };
 
     function sumar(producto) {
-        const r = sumarAlTicket(ticket, producto);
+        const r = sumarAlTicket(ticket, producto, 1, topeCantidad);
         if (!r.ok) {
             avisarError(r.mensaje);
             anuncio.textContent = r.mensaje;
@@ -192,7 +243,7 @@ export function abrirCaja({
     }
 
     function cambiar(id, cuantos) {
-        const r = sumarAlTicket(ticket, productos().find((p) => p.id === id), cuantos);
+        const r = sumarAlTicket(ticket, productos().find((p) => p.id === id), cuantos, topeCantidad);
         if (!r.ok) avisarError(r.mensaje);
         ultimoId = null;
         pintarTicket();
@@ -238,13 +289,13 @@ export function abrirCaja({
     }
 
     function abrirCobro() {
-        const renglones = renglonesDe(ticket, productos(), precioPara);
+        const renglones = armarRenglones();
         if (!renglones.length) return;
         const total = totalDe(renglones);
         const paraDividir = medios.filter((m) => !["fiado", "cuenta"].includes(m.id));
         let dividido = false;
         const hoja = document.createElement("div");
-        hoja.className = "hoja-cobro";
+        hoja.className = dentro ? "hoja-cobro hoja-cobro--suelta" : "hoja-cobro";
         hoja.setAttribute("role", "dialog");
         hoja.setAttribute("aria-label", `Cobrar ${pesosCaja(total)}`);
         hoja.innerHTML = `
@@ -260,6 +311,14 @@ export function abrirCaja({
                     ${billetes.length ? `<div class="hoja-cobro__billetes">${billetes.map((b) => `<button class="chip" type="button" data-billete="${b}">${esc(pesosCaja(b))}</button>`).join("")}</div>` : ""}
                     <p class="hoja-cobro__vuelto" data-vuelto></p>
                 </div>
+                ${alias ? `<p class="alias hoja-cobro__alias" hidden>Que te transfiera al alias ${htmlCopiable(alias, "Copiar el alias")}</p>` : ""}
+                ${clientePara ? `
+                <div class="hoja-cobro__cliente" hidden>
+                    <label>¿A quién?
+                        <select data-cliente><option value="">Elegí…</option>${clientePara.lista().map((c) => `<option value="${esc(c.id)}">${esc(c.texto)}</option>`).join("")}</select>
+                    </label>
+                    <p class="hoja-cobro__vuelto" data-cliente-aviso></p>
+                </div>` : ""}
                 ${paraDividir.length > 1 ? `
                 <button class="boton-link hoja-cobro__dividir-boton" type="button" data-dividir aria-pressed="false"><i class="ti ti-arrows-split"></i> Dividir el pago (por ejemplo, mitad y mitad)</button>
                 <div class="hoja-cobro__dividir" hidden>
@@ -273,12 +332,16 @@ export function abrirCaja({
                 <button class="boton boton--grande boton--ancho" type="button" data-confirmar><i class="ti ti-check"></i> Confirmar</button>
                 <button class="boton-link" type="button" data-volver>Volver al ticket</button>
             </div>`;
-        capa.append(hoja);
+        lugarHojas.append(hoja);
         const pagaCon = hoja.querySelector("[name=pagaCon]");
         const pintarMedio = () => {
             hoja.querySelectorAll("[data-medio]").forEach((b) => b.classList.toggle("activo", !dividido && b.dataset.medio === medio));
             hoja.querySelector(".hoja-cobro__medios").hidden = dividido;
             hoja.querySelector(".hoja-cobro__efectivo").hidden = dividido || medio !== "efectivo";
+            const lineaAlias = hoja.querySelector(".hoja-cobro__alias");
+            if (lineaAlias) lineaAlias.hidden = dividido || medio !== "transferencia";
+            const conCliente = hoja.querySelector(".hoja-cobro__cliente");
+            if (conCliente) conCliente.hidden = dividido || !clientePara.medios.includes(medio);
             const lugar = hoja.querySelector(".hoja-cobro__dividir");
             if (lugar) lugar.hidden = !dividido;
             hoja.querySelector("[data-dividir]")?.setAttribute("aria-pressed", String(dividido));
@@ -307,12 +370,28 @@ export function abrirCaja({
             pintarVuelto();
         }));
         pagaCon.addEventListener("input", pintarVuelto);
+        activarCopiables(hoja, "Alias copiado: pasáselo al cliente.");
+        const elegido = hoja.querySelector("[data-cliente]");
+        elegido?.addEventListener("change", () => {
+            let texto = "";
+            try {
+                texto = elegido.value ? clientePara.aviso?.(elegido.value, total) ?? "" : "";
+            } catch (err) {
+                texto = err?.message ?? "";
+            }
+            hoja.querySelector("[data-cliente-aviso]").textContent = texto;
+        });
         hoja.querySelector("[data-volver]").addEventListener("click", () => hoja.remove());
         let cobrado = false;
         hoja.querySelector("[data-confirmar]").addEventListener("click", () => {
             if (cobrado) return;
             const v = !dividido && medio === "efectivo" ? vueltoDe(total, pagaCon.value) : { ok: true, vuelto: null };
             if (!v.ok) return aviso(v.mensaje, "error");
+            const pideCliente = !dividido && clientePara?.medios.includes(medio);
+            if (pideCliente && !elegido.value) {
+                hoja.querySelector("[data-cliente-aviso]").textContent = "Elegí a quién.";
+                return;
+            }
             let pagos = null;
             if (dividido) {
                 try {
@@ -324,7 +403,8 @@ export function abrirCaja({
             }
             try {
                 const items = [...ticket].map(([productoId, cantidad]) => ({ productoId, cantidad }));
-                const hecho = cobrar(dividido ? { items, medio: DIVIDIDO, pagos, pagaCon: null } : { items, medio, pagaCon: v.pagaCon ?? null });
+                const hecho = cobrar(dividido ? { items, medio: DIVIDIDO, pagos, pagaCon: null } : { items, medio, pagaCon: v.pagaCon ?? null, ...(pideCliente ? { clienteId: elegido.value } : {}) });
+                if (hecho === false) return;
                 cobrado = true;
                 const vuelto = hecho?.vuelto ?? v.vuelto;
                 ticket.clear();
@@ -335,10 +415,11 @@ export function abrirCaja({
                     <div class="hecho hecho--chico hoja-cobro__lista">
                         <i class="ti ti-circle-check" aria-hidden="true"></i>
                         <h2 class="titulo">Venta lista</h2>
-                        <p>${esc(pesosCaja(total))} · ${esc(pagos ? pagos.map((x) => `${medios.find((m) => m.id === x.medio)?.texto ?? x.medio} ${pesosCaja(x.monto)}`).join(" + ") : medios.find((m) => m.id === medio)?.texto ?? "")}</p>
+                        <p>${esc(pesosCaja(total))} · ${esc(pagos ? pagos.map((x) => `${medios.find((m) => m.id === x.medio)?.texto ?? x.medio} ${pesosCaja(x.monto)}`).join(" + ") : medios.find((m) => m.id === medio)?.texto ?? "")}${hecho?.cliente?.nombre ? ` · ${esc(hecho.cliente.nombre)}` : ""}</p>
                         ${vuelto !== null && vuelto !== undefined ? `<p class="hoja-cobro__vuelto-grande">Vuelto <b>${esc(pesosCaja(vuelto))}</b></p>` : ""}
                     </div>
                     <button class="boton boton--grande boton--ancho" type="button" data-siguiente><i class="ti ti-arrow-right"></i> Siguiente cliente</button>`;
+                despues?.(hecho, hoja.querySelector(".hoja-cobro__lista"));
                 hoja.querySelector("[data-siguiente]").addEventListener("click", () => hoja.remove());
                 hoja.querySelector("[data-siguiente]").focus();
             } catch (err) {
@@ -350,10 +431,10 @@ export function abrirCaja({
     }
 
     function verQR() {
-        const lista = gondola();
+        const lista = gondola().filter((p) => imagenQR(p));
         let i = -1;
         const hoja = document.createElement("div");
-        hoja.className = "hoja-qr";
+        hoja.className = dentro ? "hoja-qr hoja-cobro--suelta" : "hoja-qr";
         hoja.setAttribute("role", "dialog");
         hoja.setAttribute("aria-label", "Los QR de los productos");
         const pintar = () => {
@@ -391,28 +472,53 @@ export function abrirCaja({
             });
         };
         pintar();
-        capa.append(hoja);
+        lugarHojas.append(hoja);
     }
 
     function teclas(e) {
+        if (!capa.isConnected) return limpiar();
         if (e.key === "Escape") {
-            const arriba = capa.querySelector(".hoja-qr, .hoja-cobro");
+            const arriba = lugarHojas.querySelector(".hoja-qr, .hoja-cobro");
             if (arriba) arriba.remove();
-            else cerrar();
+            else if (!dentro) cerrar();
             return;
         }
         if (e.target.closest?.("input, textarea, select, button")) return;
-        if (e.key === "Enter" && !capa.querySelector(".hoja-cobro, .hoja-qr")) abrirCobro();
+        if (e.key === "Enter" && !lugarHojas.querySelector(".hoja-cobro, .hoja-qr")) abrirCobro();
+    }
+
+    function limpiar() {
+        if (dentro) document.querySelectorAll(".hoja-cobro--suelta").forEach((h) => h.remove());
+        apagarCamara();
+        document.removeEventListener("keydown", teclas);
+        removeEventListener("hashchange", limpiar);
     }
 
     campoBuscar?.addEventListener("input", pintarGondola);
+    campoBuscar?.addEventListener("keydown", (e) => {
+        if (e.key !== "Enter") return;
+        e.preventDefault();
+        const texto = campoBuscar.value.trim();
+        if (!texto) return;
+        const porCodigo = buscarCodigo(texto);
+        const lista = porCodigo ? [] : buscar ? buscar(texto) : [];
+        if (porCodigo) sumar(porCodigo);
+        else if (alEnter?.(texto)) {
+            campoBuscar.value = "";
+            pintarGondola();
+            return;
+        } else if (lista.length === 1) sumar(lista[0]);
+        else return;
+        campoBuscar.value = "";
+        pintarGondola();
+    });
     capa.querySelectorAll("[data-seccion]").forEach((b) => b.addEventListener("click", () => {
         seccion = b.dataset.seccion;
         pintarGondola();
         pintarTicket();
     }));
     function alVolver() {
-        const arriba = capa.querySelector(".hoja-qr, .hoja-cobro");
+        const arriba = lugarHojas.querySelector(".hoja-qr, .hoja-cobro");
         if (arriba || (ticket.size && !confirm("¿Cerrar la caja? Se pierde el ticket que estás armando."))) {
             arriba?.remove();
             history.pushState({ cajaSuper: true }, "");
@@ -420,14 +526,21 @@ export function abrirCaja({
         }
         cerrar(true, true);
     }
-    history.pushState({ cajaSuper: true }, "");
-    addEventListener("popstate", alVolver);
-    capa.querySelector("[data-cerrar]").addEventListener("click", () => cerrar());
+    if (dentro) addEventListener("hashchange", limpiar);
+    else {
+        history.pushState({ cajaSuper: true }, "");
+        addEventListener("popstate", alVolver);
+        capa.querySelector("[data-cerrar]").addEventListener("click", () => cerrar());
+    }
     capa.querySelector("[data-cobrar]").addEventListener("click", abrirCobro);
     capa.querySelector("[data-ver-qr]")?.addEventListener("click", verQR);
     document.addEventListener("keydown", teclas);
     pintarGondola();
     pintarTicket();
-    capa.querySelector("[data-cerrar]").focus();
-    return { capa, sumar, leer, cerrar, ticket };
+    if (!dentro) capa.querySelector("[data-cerrar]").focus();
+    const pintar = () => {
+        pintarGondola();
+        pintarTicket();
+    };
+    return { capa, sumar, leer, cerrar, ticket, pintar };
 }

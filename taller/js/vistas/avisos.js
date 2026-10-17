@@ -7,7 +7,7 @@
 // Quién hizo el último paso sale del historial de la orden. Acá solo se dice qué pasó y a quién le importa; el kit
 // decide qué es nuevo para cada uno.
 // ============================================
-import { MECANICOS, formatoPatente } from "../datos.js?v=2426c7e92d";
+import { MECANICOS, formatoPatente } from "../datos.js?v=7e0a2e6f44";
 
 const DEL_DUENO = {
     recibido: { titulo: "¡Entró un auto para vos!", icono: "ti-bell-ringing", boton: "Revisarlo" },

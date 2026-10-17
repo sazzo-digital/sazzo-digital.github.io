@@ -3,10 +3,10 @@
 // (cuadro de calor de las últimas 4 semanas: "de 19 a 21 se llena"), las clases de la semana con su ocupación, los
 // socios por plan de cuota y pasar socios y pagos a Excel.
 // ============================================
-import { esc, vacio } from "../../kit/js/ui.js?v=f31b69dab0";
-import { bajarExcel } from "../../kit/js/archivos.js?v=f31b69dab0";
-import { NEGOCIO } from "../marca.js?v=f31b69dab0";
-import { pesos } from "../datos.js?v=f31b69dab0";
+import { esc, vacio } from "../../kit/js/ui.js?v=bb9e384aee";
+import { bajarExcel } from "../../kit/js/archivos.js?v=bb9e384aee";
+import { NEGOCIO } from "../marca.js?v=bb9e384aee";
+import { pesos } from "../datos.js?v=bb9e384aee";
 
 /** Cuánto color lleva cada casillero del calor: pocos escalones, para que el número siempre se lea (contraste). */
 function escalon(valor, maximo) {

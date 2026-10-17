@@ -4,16 +4,16 @@
 // El mecánico carga lo que encontró y los repuestos, sin ver precios. Y el presupuesto (dueño): para imprimir, con la
 // firma del cliente en pantalla y en PDF para mandarlo por WhatsApp.
 // ============================================
-import { esc, aviso, fechaCorta, fechaHora } from "../../kit/js/ui.js?v=2426c7e92d";
-import { fechaLocalISO } from "../../kit/js/fechas.js?v=2426c7e92d";
-import { pedirFirma, esFirma } from "../../kit/js/firma.js?v=2426c7e92d";
-import { htmlBotonDictar, activarDictado } from "../../kit/js/dictado.js?v=2426c7e92d";
-import { armarPdf, pdfListo } from "../../kit/js/pdf.js?v=2426c7e92d";
-import { ESTADOS, REPUESTOS, MANO_DE_OBRA, TOPES, pesos } from "../datos.js?v=2426c7e92d";
-import { NEGOCIO, MARCA } from "../marca.js?v=2426c7e92d";
-import { guia, activarGuias, chapa, pastillaEstado, textoPromesa, mostrarMensaje } from "./comunes.js?v=2426c7e92d";
-import { htmlConsigna, htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=2426c7e92d";
-import { htmlAntesDespues, activarAntesDespues } from "../../kit/js/antes-despues.js?v=2426c7e92d";
+import { esc, aviso, fechaCorta, fechaHora } from "../../kit/js/ui.js?v=7e0a2e6f44";
+import { fechaLocalISO } from "../../kit/js/fechas.js?v=7e0a2e6f44";
+import { pedirFirma, esFirma } from "../../kit/js/firma.js?v=7e0a2e6f44";
+import { htmlBotonDictar, activarDictado } from "../../kit/js/dictado.js?v=7e0a2e6f44";
+import { armarPdf, pdfListo } from "../../kit/js/pdf.js?v=7e0a2e6f44";
+import { ESTADOS, REPUESTOS, MANO_DE_OBRA, TOPES, pesos } from "../datos.js?v=7e0a2e6f44";
+import { NEGOCIO, MARCA } from "../marca.js?v=7e0a2e6f44";
+import { guia, activarGuias, chapa, pastillaEstado, textoPromesa, mostrarMensaje } from "./comunes.js?v=7e0a2e6f44";
+import { htmlConsigna, htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=7e0a2e6f44";
+import { htmlAntesDespues, activarAntesDespues } from "../../kit/js/antes-despues.js?v=7e0a2e6f44";
 
 export function vistaOrden(cont, { usuario, datos, irA, params: [id] }) {
     const o = datos.orden(id, usuario);

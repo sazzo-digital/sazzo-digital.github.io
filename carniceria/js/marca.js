@@ -3,8 +3,8 @@
 // Las personas son los roles reales del rubro (nombres inventados): el dueño, el carnicero del mostrador y una clienta
 // que pide desde el celular.
 // ============================================
-import { revisarMarca } from "../kit/js/marca.js?v=3e2c528089";
-import { negocioDe } from "../kit/js/colores.js?v=3e2c528089";
+import { revisarMarca } from "../kit/js/marca.js?v=d96418e257";
+import { negocioDe } from "../kit/js/colores.js?v=d96418e257";
 
 export const MARCA = revisarMarca({
     id: "carniceria",
@@ -54,19 +54,19 @@ export const DETALLE = {
     hace: [
         "Pizarra de precios para la tele del local, en pantalla completa",
         "Subió la hacienda: precio sugerido de cada corte con tu margen",
-        "Lector de la etiqueta de la balanza con la cámara",
+        "La balanza: leer su etiqueta con la cámara, conectarla a la compu (Chrome o Edge) o mostrarla en la tele",
         "Desposte en PDF y merma promedio por animal",
         "Caja del día con lo vendido en kilos y en plata"
     ],
     extra: {
         titulo: "Para probar ya",
         renglones: [
-            "Como Darío, en Vender tocá «Poner en la balanza»: el peso aparece en el visor y el precio se calcula solo",
-            "Cobrá con dos medios a la vez: una parte en efectivo y otra con débito"
+            "Como Darío, tocá un corte y «poné carne» en la balanza simulada: el peso y el precio aparecen solos",
+            "Tocá «Mostrar en la tele»: el cliente ve el corte, el peso y cuánto sale"
         ]
     },
     tambien: [
-        "Balanza conectada: el peso entra solo, sin escribirlo",
+        "La balanza conectada a la compu del mostrador, ajustada a tu modelo",
         "Imprimir las etiquetas y el ticket en la impresora del mostrador",
         "Cobro con Mercado Pago o QR",
         "Avisos por WhatsApp cuando el pedido está listo",

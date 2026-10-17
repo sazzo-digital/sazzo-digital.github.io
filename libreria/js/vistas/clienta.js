@@ -2,11 +2,11 @@
 // Lo de Paula (clienta), desde el celular: elegir la lista del colegio, destildar lo que ya tiene en casa, ver el total
 // y pedirla; después, en "Mis pedidos", ver cómo va (pedida → separada → retirada).
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=d60f8ab62c";
-import { TOPES, pesos } from "../datos.js?v=d60f8ab62c";
-import { NEGOCIO } from "../marca.js?v=d60f8ab62c";
-import { guia, activarGuias, pasos, pastillaEstado, cuando } from "./comunes.js?v=d60f8ab62c";
-import { htmlConsigna } from "../../kit/js/consigna.js?v=d60f8ab62c";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=7d888de8f5";
+import { TOPES, pesos } from "../datos.js?v=7d888de8f5";
+import { NEGOCIO } from "../marca.js?v=7d888de8f5";
+import { guia, activarGuias, pasos, pastillaEstado, cuando } from "./comunes.js?v=7d888de8f5";
+import { htmlConsigna } from "../../kit/js/consigna.js?v=7d888de8f5";
 
 // La lista elegida y lo destildado quedan en memoria mientras se navega
 let listaId = "l-1";

@@ -73,7 +73,7 @@ export const DEMOS = [
             extra: {
                 titulo: "Para probar ya",
                 renglones: [
-                    "Tocá «Abrir la caja» y sumá productos de la góndola: se suman al ticket al toque, como en el súper",
+                    "En «Vender» está la caja: sumá productos de la góndola y se suman al ticket al toque, como en el súper",
                     "Con el celu, escaneá los QR de los productos (están en «Ver los QR», para otro celu o para imprimir)",
                     "Cobrá en efectivo con el vuelto en grande, con débito, crédito, QR o mitad y mitad",
                     "Atento al stock: avisa «quedan 2» antes de que se termine"
@@ -383,19 +383,19 @@ export const DEMOS = [
             hace: [
                 "Pizarra de precios para la tele del local, en pantalla completa",
                 "Subió la hacienda: precio sugerido de cada corte con tu margen",
-                "Lector de la etiqueta de la balanza con la cámara",
+                "La balanza: leer su etiqueta con la cámara, conectarla a la compu (Chrome o Edge) o mostrarla en la tele",
                 "Desposte en PDF y merma promedio por animal",
                 "Caja del día con lo vendido en kilos y en plata"
             ],
             extra: {
                 titulo: "Para probar ya",
                 renglones: [
-                    "Como Darío, en Vender tocá «Poner en la balanza»: el peso aparece en el visor y el precio se calcula solo",
-                    "Cobrá con dos medios a la vez: una parte en efectivo y otra con débito"
+                    "Como Darío, tocá un corte y «poné carne» en la balanza simulada: el peso y el precio aparecen solos",
+                    "Tocá «Mostrar en la tele»: el cliente ve el corte, el peso y cuánto sale"
                 ]
             },
             tambien: [
-                "Balanza conectada: el peso entra solo, sin escribirlo",
+                "La balanza conectada a la compu del mostrador, ajustada a tu modelo",
                 "Imprimir las etiquetas y el ticket en la impresora del mostrador",
                 "Cobro con Mercado Pago o QR",
                 "Avisos por WhatsApp cuando el pedido está listo",

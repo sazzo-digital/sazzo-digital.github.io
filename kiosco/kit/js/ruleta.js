@@ -7,8 +7,8 @@
 // al tocar "Girar" (al azar, según el peso de cada uno) y la rueda frena justo en él. Con "reducir movimiento", no gira:
 // muestra el premio directo. Nada se guarda.
 // ============================================
-import { esc, aviso, sinMovimiento } from "./ui.js?v=5dc1b11480";
-import { alSalirDeLaPantalla } from "./rutas.js?v=5dc1b11480";
+import { esc, aviso, sinMovimiento } from "./ui.js?v=ff432d252c";
+import { alSalirDeLaPantalla } from "./rutas.js?v=ff432d252c";
 
 export const TOPE_PREMIOS = 12;
 const TOPE_TEXTO = 28;

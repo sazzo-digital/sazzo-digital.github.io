@@ -3,11 +3,11 @@
 // de estado de un presupuesto, los pasos (pedido → enviado → aceptado → vendido), la tarjeta de un presupuesto, el
 // formulario de cobro (Vender y "Pasar a venta") y "hace cuánto". Todo dato que entra a HTML pasa por esc().
 // ============================================
-import { esc } from "../../kit/js/ui.js?v=9904c28649";
-import { diaLocalDe, fechaLocalISO } from "../../kit/js/fechas.js?v=9904c28649";
-import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=9904c28649";
-import { ESTADOS_PRESUPUESTO, MEDIOS, TOPES, UNIDADES, pesos, cantidadTexto, diaMes } from "../datos.js?v=9904c28649";
-import { buscarPersona } from "../marca.js?v=9904c28649";
+import { esc } from "../../kit/js/ui.js?v=18501d9a5e";
+import { diaLocalDe, fechaLocalISO } from "../../kit/js/fechas.js?v=18501d9a5e";
+import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=18501d9a5e";
+import { ESTADOS_PRESUPUESTO, MEDIOS, TOPES, UNIDADES, pesos, cantidadTexto, diaMes } from "../datos.js?v=18501d9a5e";
+import { buscarPersona } from "../marca.js?v=18501d9a5e";
 
 /** Botón del recorrido con la persona de la ferretería: guia("u-empleado", "/presupuestos", "Mirá lo que le llega a Nahuel"). */
 export const guia = (personaId, ruta, texto) => htmlGuia({ persona: buscarPersona(personaId), ruta, texto });

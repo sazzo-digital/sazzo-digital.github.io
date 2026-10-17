@@ -3,18 +3,18 @@
 // Lara (moza) ve el salón, la cocina (solo mirar) y la caja; Beto, la cocina; Flor (cliente), la carta del QR.
 // irA() cambia de persona sin pasar por "Probala como…" (botón del recorrido: "Mirá lo que le llega a la cocina →").
 // ============================================
-import { $, conFundido } from "../kit/js/ui.js?v=cbb0f3090e";
-import { iniciarDemo } from "../kit/js/arranque.js?v=cbb0f3090e";
-import { vistaIngreso } from "../kit/js/ingreso.js?v=cbb0f3090e";
-import { pintarMarco } from "../kit/js/marco.js?v=cbb0f3090e";
-import { mostrarRuta } from "../kit/js/rutas.js?v=cbb0f3090e";
-import { vistaAcerca } from "../kit/js/acerca.js?v=cbb0f3090e";
-import { MARCA, PERSONAS, DETALLE, buscarPersona } from "./marca.js?v=cbb0f3090e";
-import { aparte } from "../kit/js/aparte.js?v=cbb0f3090e";
-import { leerSesionGuardada } from "../kit/js/guardado.js?v=cbb0f3090e";
+import { $, conFundido } from "../kit/js/ui.js?v=7cbd57cafd";
+import { iniciarDemo } from "../kit/js/arranque.js?v=7cbd57cafd";
+import { vistaIngreso } from "../kit/js/ingreso.js?v=7cbd57cafd";
+import { pintarMarco } from "../kit/js/marco.js?v=7cbd57cafd";
+import { mostrarRuta } from "../kit/js/rutas.js?v=7cbd57cafd";
+import { vistaAcerca } from "../kit/js/acerca.js?v=7cbd57cafd";
+import { MARCA, PERSONAS, DETALLE, buscarPersona } from "./marca.js?v=7cbd57cafd";
+import { aparte } from "../kit/js/aparte.js?v=7cbd57cafd";
+import { leerSesionGuardada } from "../kit/js/guardado.js?v=7cbd57cafd";
 
 // Los datos de ejemplo y las pantallas se bajan aparte (al terminar de cargar): "Probala como…" aparece sin esperarlos
-const pantallas = aparte(() => import("./pantallas.js?v=cbb0f3090e"));
+const pantallas = aparte(() => import("./pantallas.js?v=7cbd57cafd"));
 const { vistaInicio, vistaMesa, vistaCobro, vistaCaja, vistaCocina, avisosDe } = pantallas.funciones;
 
 iniciarDemo(MARCA);

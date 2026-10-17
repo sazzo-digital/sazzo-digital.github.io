@@ -2,10 +2,10 @@
 // Inicio de Sazzo Flota: distinto para cada persona.
 // Marta (administradora) → tablero · Diego (mecánico) → problemas abiertos · Ramón (chofer) → su vehículo y "Avisar".
 // ============================================
-import { animarNumeros } from "../../kit/js/ui.js?v=41455accc5";
-import { vistaInicioAdmin } from "./admin.js?v=41455accc5";
-import { vistaInicioMecanico } from "./mecanico.js?v=41455accc5";
-import { vistaInicioChofer } from "./chofer.js?v=41455accc5";
+import { animarNumeros } from "../../kit/js/ui.js?v=8c64c8f688";
+import { vistaInicioAdmin } from "./admin.js?v=8c64c8f688";
+import { vistaInicioMecanico } from "./mecanico.js?v=8c64c8f688";
+import { vistaInicioChofer } from "./chofer.js?v=8c64c8f688";
 
 const POR_ROL = { admin: vistaInicioAdmin, mecanico: vistaInicioMecanico, chofer: vistaInicioChofer };
 

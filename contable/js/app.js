@@ -3,18 +3,18 @@
 // El menú de abajo tiene lugar para 5: cada persona ve las 4 que más usa + "Más" (todas). Las pantallas que se
 // apagan en "Tu empresa" desaparecen del menú. irA() cambia de persona sin pasar por "Probala como…" (recorrido).
 // ============================================
-import { $, vacio, conFundido } from "../kit/js/ui.js?v=0edfe6e2d5";
-import { iniciarDemo } from "../kit/js/arranque.js?v=0edfe6e2d5";
-import { vistaIngreso } from "../kit/js/ingreso.js?v=0edfe6e2d5";
-import { pintarMarco } from "../kit/js/marco.js?v=0edfe6e2d5";
-import { mostrarRuta } from "../kit/js/rutas.js?v=0edfe6e2d5";
-import { vistaAcerca } from "../kit/js/acerca.js?v=0edfe6e2d5";
-import { MARCA, PERSONAS, DETALLE, buscarPersona } from "./marca.js?v=0edfe6e2d5";
-import { aparte } from "../kit/js/aparte.js?v=0edfe6e2d5";
-import { leerSesionGuardada } from "../kit/js/guardado.js?v=0edfe6e2d5";
+import { $, vacio, conFundido } from "../kit/js/ui.js?v=22b7f22ca9";
+import { iniciarDemo } from "../kit/js/arranque.js?v=22b7f22ca9";
+import { vistaIngreso } from "../kit/js/ingreso.js?v=22b7f22ca9";
+import { pintarMarco } from "../kit/js/marco.js?v=22b7f22ca9";
+import { mostrarRuta } from "../kit/js/rutas.js?v=22b7f22ca9";
+import { vistaAcerca } from "../kit/js/acerca.js?v=22b7f22ca9";
+import { MARCA, PERSONAS, DETALLE, buscarPersona } from "./marca.js?v=22b7f22ca9";
+import { aparte } from "../kit/js/aparte.js?v=22b7f22ca9";
+import { leerSesionGuardada } from "../kit/js/guardado.js?v=22b7f22ca9";
 
 // Los datos de ejemplo y las pantallas se bajan aparte (al terminar de cargar): "Probala como…" aparece sin esperarlos
-const pantallas = aparte(() => import("./pantallas.js?v=0edfe6e2d5"));
+const pantallas = aparte(() => import("./pantallas.js?v=22b7f22ca9"));
 const { vistaInicio, vistaFacturar, vistaNuevaFactura, vistaComprobante, vistaCompras, vistaNuevaCompra, vistaIva, vistaCuentas, vistaFicha, vistaContabilidad, vistaEmpresa, vistaMas, avisosDe } = pantallas.funciones;
 
 iniciarDemo(MARCA);

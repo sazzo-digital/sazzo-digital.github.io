@@ -2,9 +2,9 @@
 // Piezas que comparten las pantallas de Sazzo Kiosco: el botón del recorrido (del kit), la pastilla de stock y
 // "hace cuánto". Todo dato que entra a HTML pasa por esc().
 // ============================================
-import { esc } from "../../kit/js/ui.js?v=5dc1b11480";
-import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=5dc1b11480";
-import { buscarPersona } from "../marca.js?v=5dc1b11480";
+import { esc } from "../../kit/js/ui.js?v=ff432d252c";
+import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=ff432d252c";
+import { buscarPersona } from "../marca.js?v=ff432d252c";
 
 /** Botón del recorrido con la persona de Kiosco: guia("u-dueno", "/stock/aumento", "Pasá a Rubén…"). */
 export const guia = (personaId, ruta, texto) => htmlGuia({ persona: buscarPersona(personaId), ruta, texto });

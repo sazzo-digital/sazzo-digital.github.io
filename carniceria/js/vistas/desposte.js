@@ -7,13 +7,13 @@
 //   El dueño ve además el costo real por kilo de cada corte y el precio sugerido con su margen ("Aplicar", con
 //   Deshacer) y lo baja en PDF. Darío carga los pesos; los costos los ve Ricardo.
 // ============================================
-import { esc, aviso, vacio, fechaCorta } from "../../kit/js/ui.js?v=3e2c528089";
-import { armarPdf, pdfListo } from "../../kit/js/pdf.js?v=3e2c528089";
-import { TOPES, TIPOS_INGRESO, PROVEEDORES, pesos, kilos, aGramos, mermaEsperada } from "../datos.js?v=3e2c528089";
-import { NEGOCIO, MARCA } from "../marca.js?v=3e2c528089";
-import { htmlConsigna, htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=3e2c528089";
-import { htmlMediaRes, activarMediaRes, ZONAS } from "../media-res.js?v=3e2c528089";
-import { guia, activarGuias, cuando, campoKg, kgEnCampo, porcentaje, unDecimal } from "./comunes.js?v=3e2c528089";
+import { esc, aviso, vacio, fechaCorta } from "../../kit/js/ui.js?v=d96418e257";
+import { armarPdf, pdfListo } from "../../kit/js/pdf.js?v=d96418e257";
+import { TOPES, TIPOS_INGRESO, PROVEEDORES, pesos, kilos, aGramos, mermaEsperada } from "../datos.js?v=d96418e257";
+import { NEGOCIO, MARCA } from "../marca.js?v=d96418e257";
+import { htmlConsigna, htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=d96418e257";
+import { htmlMediaRes, activarMediaRes, ZONAS } from "../media-res.js?v=d96418e257";
+import { guia, activarGuias, cuando, campoKg, kgEnCampo, porcentaje, unDecimal } from "./comunes.js?v=d96418e257";
 
 /** La merma contra la esperada: pastilla verde (igual o menos), amarilla (hasta 1,5 puntos más) o roja. */
 function pastillaMerma(merma, esperada) {

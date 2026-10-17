@@ -5,14 +5,14 @@
 // - Vane (dueña): la cuota y los pagos (registrar, confirmar el aviso de transferencia, deshacer, recordatorio armado),
 //   el apto físico y el reglamento firmado en pantalla, si viene o no (invitar a volver) y la baja.
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=f31b69dab0";
-import { MEDIOS_PAGO, DIVIDIDO, textoMedio, partesIniciales, htmlDosMedios, activarDosMedios } from "../../kit/js/pagos.js?v=f31b69dab0";
-import { pedirFirma } from "../../kit/js/firma.js?v=f31b69dab0";
-import { armarPdf, pdfListo } from "../../kit/js/pdf.js?v=f31b69dab0";
-import { NEGOCIO, MARCA } from "../marca.js?v=f31b69dab0";
-import { htmlConsigna, htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=f31b69dab0";
-import { TOPES, REINVITAR_DIAS, pesos, kilos, cuanto, fechaCorta, nombreFecha } from "../datos.js?v=f31b69dab0";
-import { guia, activarGuias, pastilla, pastillaCuota, cara, haceDias, graficoPeso, barrasSemanas, mostrarMensaje } from "./comunes.js?v=f31b69dab0";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=bb9e384aee";
+import { MEDIOS_PAGO, DIVIDIDO, textoMedio, partesIniciales, htmlDosMedios, activarDosMedios } from "../../kit/js/pagos.js?v=bb9e384aee";
+import { pedirFirma } from "../../kit/js/firma.js?v=bb9e384aee";
+import { armarPdf, pdfListo } from "../../kit/js/pdf.js?v=bb9e384aee";
+import { NEGOCIO, MARCA } from "../marca.js?v=bb9e384aee";
+import { htmlConsigna, htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=bb9e384aee";
+import { TOPES, REINVITAR_DIAS, pesos, kilos, cuanto, fechaCorta, nombreFecha } from "../datos.js?v=bb9e384aee";
+import { guia, activarGuias, pastilla, pastillaCuota, cara, haceDias, graficoPeso, barrasSemanas, mostrarMensaje } from "./comunes.js?v=bb9e384aee";
 
 let ajustando = null; // "diaId|ejercicioId" del ejercicio que el profe está ajustando
 let medio = "efectivo"; // lo último elegido al registrar un pago

@@ -3,14 +3,14 @@
 // los días en pastillas, la cara de cada socio, el gráfico de progreso (SVG, sin librerías) y la ventanita del
 // mensaje para copiar (del kit). Todo dato que entra a HTML pasa por esc().
 // ============================================
-import { esc } from "../../kit/js/ui.js?v=f31b69dab0";
-import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=f31b69dab0";
-import { buscarPersona } from "../marca.js?v=f31b69dab0";
-import { kilos } from "../datos.js?v=f31b69dab0";
+import { esc } from "../../kit/js/ui.js?v=bb9e384aee";
+import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=bb9e384aee";
+import { buscarPersona } from "../marca.js?v=bb9e384aee";
+import { kilos } from "../datos.js?v=bb9e384aee";
 
 export const guia = (personaId, ruta, texto) => htmlGuia({ persona: buscarPersona(personaId), ruta, texto });
 export { activarGuias };
-export { mostrarMensaje } from "../../kit/js/mensaje.js?v=f31b69dab0";
+export { mostrarMensaje } from "../../kit/js/mensaje.js?v=bb9e384aee";
 
 const CLASE_CUOTA = { "al-dia": "bien", pronto: "alerta", vencida: "mal" };
 
