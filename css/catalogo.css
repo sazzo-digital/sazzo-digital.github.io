@@ -360,6 +360,7 @@ a { color: inherit; }
 .adapta__item:hover { transform: translateY(-4px); border-color: var(--verde); }
 .adapta__item h3 { margin: .15rem 0 .3rem; font-size: 1.08rem; }
 .adapta__item p { color: var(--texto-suave); font-size: .95rem; }
+.adapta__tecnico { display: block; font: 500 .72rem var(--fuente-numeros); letter-spacing: .08em; text-transform: uppercase; color: var(--verde); }
 .adapta__nota { margin: 1.8rem auto 0; max-width: 36rem; text-align: center; color: var(--texto-suave); }
 .adapta__nota .icono { color: var(--verde); vertical-align: -.2em; margin-right: .3rem; }
 
@@ -649,6 +650,7 @@ a { color: inherit; }
 @media (min-width: 1040px) {
     .demo { flex-basis: calc((100% - 2.4rem) / 3); }
     .adapta { grid-template-columns: repeat(4, 1fr); }
+    #por-dentro .adapta { grid-template-columns: repeat(3, 1fr); }
     .automatiza { grid-template-columns: minmax(0, 2fr) minmax(0, 3fr); align-items: center; padding: 2rem; }
     .adapta__item { flex-direction: column; gap: .8rem; }
 }

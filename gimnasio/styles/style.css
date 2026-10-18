@@ -4101,7 +4101,7 @@ details[open] > :not(summary) {
   color: var(--primario-tinta);
 }
 .hoy__dia {
-  font-family: "Space Grotesk", "Inter", system-ui, sans-serif;
+  font-family: "Barlow Condensed", "Space Grotesk", "Inter", system-ui, sans-serif;
   font-size: 2.4rem;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
@@ -4152,7 +4152,7 @@ details[open] > :not(summary) {
   transform: rotate(-90deg);
 }
 .anillo b {
-  font-family: "Space Grotesk", "Inter", system-ui, sans-serif;
+  font-family: "Barlow Condensed", "Space Grotesk", "Inter", system-ui, sans-serif;
   font-size: 1rem;
   font-variant-numeric: tabular-nums;
 }
@@ -4214,7 +4214,7 @@ details[open] > :not(summary) {
   border-radius: 50%;
   background: var(--primario-suave);
   color: var(--primario-tinta);
-  font-family: "Space Grotesk", "Inter", system-ui, sans-serif;
+  font-family: "Barlow Condensed", "Space Grotesk", "Inter", system-ui, sans-serif;
   font-weight: 700;
 }
 .ejercicio__nombre {
@@ -4307,7 +4307,7 @@ details[open] .ejercicio__flecha {
   font-size: 2.4rem;
 }
 .record > b {
-  font-family: "Space Grotesk", "Inter", system-ui, sans-serif;
+  font-family: "Barlow Condensed", "Space Grotesk", "Inter", system-ui, sans-serif;
   font-size: 1.4rem;
 }
 .record__chip {
@@ -4367,7 +4367,7 @@ details[open] .ejercicio__flecha {
   border-radius: 10px;
   background: var(--superficie);
   color: var(--texto);
-  font-family: "Space Grotesk", "Inter", system-ui, sans-serif;
+  font-family: "Barlow Condensed", "Space Grotesk", "Inter", system-ui, sans-serif;
   font-size: 1.15rem;
   font-weight: 600;
   font-variant-numeric: tabular-nums;
@@ -4440,7 +4440,7 @@ details[open] .ejercicio__flecha {
   min-width: 3rem;
   min-height: 44px;
   justify-content: center;
-  font-family: "Space Grotesk", "Inter", system-ui, sans-serif;
+  font-family: "Barlow Condensed", "Space Grotesk", "Inter", system-ui, sans-serif;
   font-size: 1.05rem;
   font-variant-numeric: tabular-nums;
 }
@@ -4518,7 +4518,7 @@ details[open] .ejercicio__flecha {
   opacity: 0.85;
 }
 .descanso__reloj {
-  font-family: "Space Grotesk", "Inter", system-ui, sans-serif;
+  font-family: "Barlow Condensed", "Space Grotesk", "Inter", system-ui, sans-serif;
   font-size: 3rem;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
@@ -4905,7 +4905,7 @@ details[open] .ejercicio__flecha {
   color: var(--texto-suave);
 }
 .caja-mes b {
-  font-family: "Space Grotesk", "Inter", system-ui, sans-serif;
+  font-family: "Barlow Condensed", "Space Grotesk", "Inter", system-ui, sans-serif;
   font-size: 2.4rem;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
@@ -4938,7 +4938,7 @@ details[open] .ejercicio__flecha {
   cursor: pointer;
 }
 .cuadro b {
-  font-family: "Space Grotesk", "Inter", system-ui, sans-serif;
+  font-family: "Barlow Condensed", "Space Grotesk", "Inter", system-ui, sans-serif;
   font-size: 2rem;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
@@ -4973,7 +4973,7 @@ details[open] .ejercicio__flecha {
   margin: 0 0 0.45rem;
   padding: 0.4rem 0;
   background: var(--fondo);
-  font-family: "Space Grotesk", "Inter", system-ui, sans-serif;
+  font-family: "Barlow Condensed", "Space Grotesk", "Inter", system-ui, sans-serif;
   font-size: 1.6rem;
   font-weight: 700;
   font-variant-numeric: tabular-nums;

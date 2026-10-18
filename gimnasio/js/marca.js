@@ -2,8 +2,8 @@
 // Marca, personas y "también puede tener" de Sazzo Gimnasio (propuesta aprobada el 10/10/2026).
 // Las personas son los roles reales del rubro (nombres inventados): la dueña, el profe de musculación y un socio.
 // ============================================
-import { revisarMarca } from "../kit/js/marca.js?v=246a3ca4b7";
-import { negocioDe } from "../kit/js/colores.js?v=246a3ca4b7";
+import { revisarMarca } from "../kit/js/marca.js?v=c74ffc37fc";
+import { negocioDe } from "../kit/js/colores.js?v=c74ffc37fc";
 
 export const MARCA = revisarMarca({
     id: "gimnasio",

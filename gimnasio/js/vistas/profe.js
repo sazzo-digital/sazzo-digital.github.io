@@ -3,12 +3,12 @@
 // quién está entrenando, quién terminó y qué día de la rutina le toca), los avisos (récords de hoy y ayer, y los que
 // vienen pero hace rato que no anotan lo que hacen) y un buscador para llegar a la ficha de cualquiera de sus alumnos.
 // ============================================
-import { esc, vacio } from "../../kit/js/ui.js?v=246a3ca4b7";
-import { kilos } from "../datos.js?v=246a3ca4b7";
-import { NEGOCIO } from "../marca.js?v=246a3ca4b7";
-import { pastilla, cara } from "./comunes.js?v=246a3ca4b7";
-import { htmlConsigna } from "../../kit/js/consigna.js?v=246a3ca4b7";
-import { htmlBotonTV, abrirModoTV } from "../../kit/js/modo-tv.js?v=246a3ca4b7";
+import { esc, vacio } from "../../kit/js/ui.js?v=c74ffc37fc";
+import { kilos } from "../datos.js?v=c74ffc37fc";
+import { NEGOCIO } from "../marca.js?v=c74ffc37fc";
+import { pastilla, cara } from "./comunes.js?v=c74ffc37fc";
+import { htmlConsigna } from "../../kit/js/consigna.js?v=c74ffc37fc";
+import { htmlBotonTV, abrirModoTV } from "../../kit/js/modo-tv.js?v=c74ffc37fc";
 
 let texto = ""; // lo buscado queda mientras se navega
 
