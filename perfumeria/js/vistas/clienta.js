@@ -3,12 +3,12 @@
 // "Recomendame uno"), cada perfume con sus notas y presentaciones, "Tu pedido" (el carrito) y "Mis pedidos".
 // El pedido no pide ningún dato: Julieta ya entró como ella. Retiro en el local.
 // ============================================
-import { esc, aviso, vacio, fechaCorta, mensajeDe } from "../../kit/js/ui.js?v=9e08669d15";
-import { verEn3D } from "../../kit/js/modelo3d.js?v=9e08669d15";
-import { FAMILIAS, PARA, PRESENTACIONES, TOPES, pesos, frasco3D, notaFrasco } from "../datos.js?v=9e08669d15";
-import { NEGOCIO } from "../marca.js?v=9e08669d15";
-import { frasco, carrito, itemsDelCarrito, unidadesEnCarrito, guia, activarGuias, pastillaPedido } from "./comunes.js?v=9e08669d15";
-import { htmlConsigna } from "../../kit/js/consigna.js?v=9e08669d15";
+import { esc, aviso, vacio, fechaCorta, mensajeDe } from "../../kit/js/ui.js?v=106c94830d";
+import { verEn3D } from "../../kit/js/modelo3d.js?v=106c94830d";
+import { FAMILIAS, PARA, PRESENTACIONES, TOPES, pesos, frasco3D, notaFrasco } from "../datos.js?v=106c94830d";
+import { NEGOCIO } from "../marca.js?v=106c94830d";
+import { frasco, carrito, itemsDelCarrito, unidadesEnCarrito, guia, activarGuias, pastillaPedido } from "./comunes.js?v=106c94830d";
+import { htmlConsigna } from "../../kit/js/consigna.js?v=106c94830d";
 
 let familia = null;
 let para = null;

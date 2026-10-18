@@ -13,14 +13,14 @@
 // Festejo: cuando aparece una confirmación (.hecho: turno reservado, venta cobrada, orden creada…), el ✓ entra con un
 // rebote, salen chispitas del color de la demo y el celular vibra cortito (Android). Quieto con "reducir movimiento".
 // ============================================
-import { $, $$, esc, iniciales } from "./ui.js?v=9807a2d772";
-import { logoSazzo, nombreDemo } from "./marca.js?v=9807a2d772";
-import { interruptorTema, activarInterruptorTema } from "./apariencia.js?v=9807a2d772";
-import { linkOtrasDemos, linkQuieroEsto } from "./enlaces.js?v=9807a2d772";
-import { abrirColores, leerNombre } from "./colores.js?v=9807a2d772";
-import { contar } from "./visita.js?v=9807a2d772";
-import { pintarAvisos } from "./avisos.js?v=9807a2d772";
-import { revisarDetalle, htmlBotonDetalle, activarDetalle } from "./detalle.js?v=9807a2d772";
+import { $, $$, esc, iniciales } from "./ui.js?v=9772d00e3d";
+import { logoSazzo, nombreDemo } from "./marca.js?v=9772d00e3d";
+import { interruptorTema, activarInterruptorTema } from "./apariencia.js?v=9772d00e3d";
+import { linkOtrasDemos, linkQuieroEsto } from "./enlaces.js?v=9772d00e3d";
+import { abrirColores, leerNombre } from "./colores.js?v=9772d00e3d";
+import { contar } from "./visita.js?v=9772d00e3d";
+import { pintarAvisos } from "./avisos.js?v=9772d00e3d";
+import { revisarDetalle, htmlBotonDetalle, activarDetalle } from "./detalle.js?v=9772d00e3d";
 
 /** La barrita de Sazzo: colores, otras demos y "Quiero esto" (los textos largos solo si hay lugar). */
 export function htmlBarraSazzo(marca, opciones, conDetalle = false) {

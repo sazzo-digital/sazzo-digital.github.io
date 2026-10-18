@@ -4,14 +4,14 @@
 // "Anotar turno" en un casillero libre (para cuando llaman por teléfono).
 // Los turnos que reservó un jugador y Gustavo todavía no miró aparecen arriba y marcados "Nuevo".
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=fe5d9ea352";
-import { mantenerPantallaPrendida } from "../../kit/js/celular.js?v=fe5d9ea352";
-import { aHora } from "../../kit/js/turnos.js?v=fe5d9ea352";
-import { TOPES, CANCHAS, TIPOS, pesos, nombreFecha, horarioDe } from "../datos.js?v=fe5d9ea352";
-import { pastillaSena, pastillaEstado, chipsDias } from "./comunes.js?v=fe5d9ea352";
-import { buscarPersona, MARCA } from "../marca.js?v=fe5d9ea352";
-import { htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=fe5d9ea352";
-import { htmlCuenta, pedirCantina, cobrarCuenta } from "./cuenta.js?v=fe5d9ea352";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=cd2f647129";
+import { mantenerPantallaPrendida } from "../../kit/js/celular.js?v=cd2f647129";
+import { aHora } from "../../kit/js/turnos.js?v=cd2f647129";
+import { TOPES, CANCHAS, TIPOS, pesos, nombreFecha, horarioDe } from "../datos.js?v=cd2f647129";
+import { pastillaSena, pastillaEstado, chipsDias } from "./comunes.js?v=cd2f647129";
+import { buscarPersona, MARCA } from "../marca.js?v=cd2f647129";
+import { htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=cd2f647129";
+import { htmlCuenta, pedirCantina, cobrarCuenta } from "./cuenta.js?v=cd2f647129";
 
 const PASO = 30; // la grilla va de media hora en media hora (entran los turnos de 60 y los de 90 min)
 

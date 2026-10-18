@@ -2922,10 +2922,40 @@ body.guardando .boton:not(.boton--secundario) {
     top: 86%;
   }
 }
+.gondola__fila {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-width: 0;
+  max-width: 100%;
+}
+
 .gondola__secciones {
+  flex: 1;
+  min-width: 0;
   flex-wrap: nowrap;
   overflow-x: auto;
-  padding-bottom: 0.2rem;
+  padding: 0 1rem 0.2rem;
+  scrollbar-width: none;
+  mask-image: linear-gradient(to right, transparent, #000 1rem, #000 calc(100% - 1rem), transparent);
+}
+
+.gondola__flecha {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--borde);
+  border-radius: 50%;
+  background: var(--superficie);
+  color: var(--texto);
+  font-size: 1.1rem;
+  cursor: pointer;
+}
+.gondola__flecha:hover, .gondola__flecha:active {
+  border-color: var(--primario);
+  color: var(--primario);
 }
 
 .gondola__precio {

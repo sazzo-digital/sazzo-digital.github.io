@@ -5,8 +5,8 @@
 // Quién lo hizo sale del "hechoPor" de cada comprobante. Acá solo se dice qué pasó y a quién le importa; el kit decide
 // qué es nuevo para cada uno.
 // ============================================
-import { PERSONAS } from "../marca.js?v=9807a2d772";
-import { COMPROBANTES, numeroComprobante, pesos } from "../reglas.js?v=9807a2d772";
+import { PERSONAS } from "../marca.js?v=9772d00e3d";
+import { COMPROBANTES, numeroComprobante, pesos } from "../reglas.js?v=9772d00e3d";
 
 export function avisosDe(datos) {
     const db = datos.guardado.db();

@@ -21,8 +21,8 @@
 //   minutos"). Mientras la usa (cada cambio que guarda), no se renuevan. Se avisa con un cartelito.
 // ============================================
 
-import { aviso } from "./ui.js?v=9e08669d15";
-import { olvidarAvisos } from "./avisos.js?v=9e08669d15";
+import { aviso } from "./ui.js?v=106c94830d";
+import { olvidarAvisos } from "./avisos.js?v=106c94830d";
 
 /** Nombres compartidos entre el catálogo y todas las demos (no pueden ser el prefijo de una demo). */
 export const COMPARTIDAS = ["sazzo-origen", "sazzo-equipo", "sazzo-tema", "sazzo-yo"];

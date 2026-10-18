@@ -6,12 +6,12 @@
 // Reglas del kit: exigir() en lo que modifica, topes en todo lo que se carga, nada se borra (se anula o se libera)
 // y se devuelven copias. Si cambia la forma de los datos, subir VERSION_DATOS (se regeneran solos).
 // ============================================
-import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=fe5d9ea352";
-import { sinPasarse } from "../kit/js/topes.js?v=fe5d9ea352";
-import { fechaLocalISO, diaLocalDe } from "../kit/js/fechas.js?v=fe5d9ea352";
-import { aMinutos, aHora, diaSemana, proximosDias, franjas, fijosDelDia, ocupados, libres, revisarLibre, sePisan } from "../kit/js/turnos.js?v=fe5d9ea352";
-import { MARCA } from "./marca.js?v=fe5d9ea352";
-import { MEDIOS_PAGO, DIVIDIDO, revisarPagos } from "../kit/js/pagos.js?v=fe5d9ea352";
+import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=cd2f647129";
+import { sinPasarse } from "../kit/js/topes.js?v=cd2f647129";
+import { fechaLocalISO, diaLocalDe } from "../kit/js/fechas.js?v=cd2f647129";
+import { aMinutos, aHora, diaSemana, proximosDias, franjas, fijosDelDia, ocupados, libres, revisarLibre, sePisan } from "../kit/js/turnos.js?v=cd2f647129";
+import { MARCA } from "./marca.js?v=cd2f647129";
+import { MEDIOS_PAGO, DIVIDIDO, revisarPagos } from "../kit/js/pagos.js?v=cd2f647129";
 
 export const VERSION_DATOS = 4;
 

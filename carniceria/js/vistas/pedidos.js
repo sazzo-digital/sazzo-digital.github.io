@@ -4,14 +4,14 @@
 // diferencia. "Listo: avisarle" lo separa (se descuenta del stock) y arma el mensaje para WhatsApp; "Cobrar y
 // entregar" lo pasa a la caja; o se anula (lo separado vuelve al stock).
 // ============================================
-import { DIVIDIDO, partesIniciales, htmlDosMedios, activarDosMedios } from "../../kit/js/pagos.js?v=1ec4437652";
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=1ec4437652";
-import { mostrarMensaje } from "../../kit/js/mensaje.js?v=1ec4437652";
-import { htmlCopiable, activarCopiables, ding } from "../../kit/js/celular.js?v=1ec4437652";
-import { ESTADOS_PEDIDO, MEDIOS, RETIROS, TOPES, ALIAS, pesos, kilos, aGramos, precioPorPeso } from "../datos.js?v=1ec4437652";
-import { MARCA } from "../marca.js?v=1ec4437652";
-import { guia, activarGuias, pasos, pastillaEstado, tarjetaPedido, cuando, campoKg, kgEnCampo, loPedido } from "./comunes.js?v=1ec4437652";
-import { htmlConsigna } from "../../kit/js/consigna.js?v=1ec4437652";
+import { DIVIDIDO, partesIniciales, htmlDosMedios, activarDosMedios } from "../../kit/js/pagos.js?v=4a89686926";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=4a89686926";
+import { mostrarMensaje } from "../../kit/js/mensaje.js?v=4a89686926";
+import { htmlCopiable, activarCopiables, ding } from "../../kit/js/celular.js?v=4a89686926";
+import { ESTADOS_PEDIDO, MEDIOS, RETIROS, TOPES, ALIAS, pesos, kilos, aGramos, precioPorPeso } from "../datos.js?v=4a89686926";
+import { MARCA } from "../marca.js?v=4a89686926";
+import { guia, activarGuias, pasos, pastillaEstado, tarjetaPedido, cuando, campoKg, kgEnCampo, loPedido } from "./comunes.js?v=4a89686926";
+import { htmlConsigna } from "../../kit/js/consigna.js?v=4a89686926";
 
 /** Billetes "redondos" para cobrar un pedido: el próximo múltiplo de $10.000, de $20.000 y $50.000. */
 const billetesPara = (total) => [...new Set([10_000, 20_000, 50_000].map((b) => Math.ceil(Math.max(1, total) / b) * b))].slice(0, 3);

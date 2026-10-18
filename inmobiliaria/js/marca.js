@@ -3,8 +3,8 @@
 // Las personas son los roles reales del rubro (nombres inventados): la dueña (martillera), el agente que atiende
 // consultas y visitas, y una chica que busca alquilar y pide la visita desde el celular.
 // ============================================
-import { revisarMarca } from "../kit/js/marca.js?v=62b76fcf22";
-import { negocioDe } from "../kit/js/colores.js?v=62b76fcf22";
+import { revisarMarca } from "../kit/js/marca.js?v=9d3e22ed3f";
+import { negocioDe } from "../kit/js/colores.js?v=9d3e22ed3f";
 
 export const MARCA = revisarMarca({
     id: "inmobiliaria",

@@ -3,10 +3,10 @@
 // cuenta corriente con el saldo renglón por renglón y, para administración, cobrar o pagar. Desde acá también se
 // suman clientes y proveedores.
 // ============================================
-import { esc, aviso } from "../../kit/js/ui.js?v=9807a2d772";
-import { TOPES, CUENTAS } from "../datos.js?v=9807a2d772";
-import { CONDICIONES, pesos, formatoCuit } from "../reglas.js?v=9807a2d772";
-import { diaMes, haceDias, htmlTabla, documento, condicionTexto, fechaCorta } from "./comunes.js?v=9807a2d772";
+import { esc, aviso } from "../../kit/js/ui.js?v=9772d00e3d";
+import { TOPES, CUENTAS } from "../datos.js?v=9772d00e3d";
+import { CONDICIONES, pesos, formatoCuit } from "../reglas.js?v=9772d00e3d";
+import { diaMes, haceDias, htmlTabla, documento, condicionTexto, fechaCorta } from "./comunes.js?v=9772d00e3d";
 
 const puedeCargar = (u) => u.rol === "admin";
 const PESTANAS = { clientes: "Clientes", proveedores: "Proveedores", plata: "Caja y banco" };

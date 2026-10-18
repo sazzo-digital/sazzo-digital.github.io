@@ -8,7 +8,7 @@
 //     ocupa su lugar todas las semanas ese día, salvo las fechas liberadas.
 // La regla de oro: dos turnos del mismo lugar nunca se pisan.
 // ============================================
-import { fechaLocalISO, esFechaISO } from "./fechas.js?v=62b76fcf22";
+import { fechaLocalISO, esFechaISO } from "./fechas.js?v=9d3e22ed3f";
 
 export const MINUTOS_DIA = 1440;
 

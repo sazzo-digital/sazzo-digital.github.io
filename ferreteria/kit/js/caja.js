@@ -1,7 +1,7 @@
-import { esc, aviso } from "./ui.js?v=a3952e4be2";
-import { puedeEscanear, escanearSeguido } from "./escaner.js?v=a3952e4be2";
-import { pip, vibrar, htmlBotonSonido, activarBotonSonido, htmlCopiable, activarCopiables } from "./celular.js?v=a3952e4be2";
-import { DIVIDIDO, revisarPagos } from "./pagos.js?v=a3952e4be2";
+import { esc, aviso, sinMovimiento } from "./ui.js?v=1b85913f15";
+import { puedeEscanear, escanearSeguido } from "./escaner.js?v=1b85913f15";
+import { pip, vibrar, htmlBotonSonido, activarBotonSonido, htmlCopiable, activarCopiables } from "./celular.js?v=1b85913f15";
+import { DIVIDIDO, revisarPagos } from "./pagos.js?v=1b85913f15";
 
 export const TOPE_RENGLONES = 30;
 export const TOPE_CANTIDAD = 99;
@@ -81,7 +81,11 @@ export function abrirCaja({
                 </div>
                 ${buscar ? `<label class="buscador caja-super__buscar"><i class="ti ti-search" aria-hidden="true"></i><span class="solo-lector">Buscar</span><input type="search" autocomplete="off" maxlength="40" placeholder="Buscá por nombre" data-buscar></label>` : ""}
                 <p class="caja-super__ayuda"><i class="ti ti-hand-finger" aria-hidden="true"></i> ${escaneo ? "¿Sin QR a mano? Tocá un producto de la góndola:" : "Tocá un producto para sumarlo:"}</p>
-                ${secciones?.length ? `<div class="chips gondola__secciones" role="tablist" aria-label="Secciones">${secciones.map((x) => `<button class="chip" type="button" role="tab" data-seccion="${esc(x.id)}">${esc(x.texto)}</button>`).join("")}</div>` : ""}
+                ${secciones?.length ? `<div class="gondola__fila">
+                    <button class="gondola__flecha" type="button" data-seccion-paso="-1" aria-label="Sección anterior"><i class="ti ti-arrow-left" aria-hidden="true"></i></button>
+                    <div class="chips gondola__secciones" role="tablist" aria-label="Secciones">${secciones.map((x) => `<button class="chip" type="button" role="tab" data-seccion="${esc(x.id)}">${esc(x.texto)}</button>`).join("")}</div>
+                    <button class="gondola__flecha" type="button" data-seccion-paso="1" aria-label="Sección siguiente"><i class="ti ti-arrow-right" aria-hidden="true"></i></button>
+                </div>` : ""}
                 <div class="gondola"></div>
                 ${imagenQR ? `<button class="boton-link caja-super__qr" type="button" data-ver-qr><i class="ti ti-qrcode"></i> Ver los QR para escanear (o imprimirlos)</button>` : ""}
             </section>
@@ -512,10 +516,16 @@ export function abrirCaja({
         campoBuscar.value = "";
         pintarGondola();
     });
-    capa.querySelectorAll("[data-seccion]").forEach((b) => b.addEventListener("click", () => {
-        seccion = b.dataset.seccion;
+    const elegirSeccion = (id) => {
+        seccion = id;
         pintarGondola();
         pintarTicket();
+        capa.querySelector(`[data-seccion="${CSS.escape(id)}"]`)?.scrollIntoView({ block: "nearest", inline: "center", behavior: sinMovimiento() ? "auto" : "smooth" });
+    };
+    capa.querySelectorAll("[data-seccion]").forEach((b) => b.addEventListener("click", () => elegirSeccion(b.dataset.seccion)));
+    capa.querySelectorAll("[data-seccion-paso]").forEach((b) => b.addEventListener("click", () => {
+        const actual = secciones.findIndex((x) => x.id === seccion);
+        elegirSeccion(secciones[(actual + Number(b.dataset.seccionPaso) + secciones.length) % secciones.length].id);
     }));
     function alVolver() {
         const arriba = lugarHojas.querySelector(".hoja-qr, .hoja-cobro");

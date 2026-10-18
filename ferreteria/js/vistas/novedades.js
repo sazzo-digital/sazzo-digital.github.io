@@ -6,8 +6,8 @@
 // Cada persona lo ve una vez (datos.marcarVisto): "Verlo" lleva al presupuesto, la cruz lo descarta. Los datos se
 // guardan en el navegador, así que funciona en el mismo aparato (o en dos pestañas); en dos celulares distintos, no.
 // ============================================
-import { esc } from "../../kit/js/ui.js?v=a3952e4be2";
-import { pesos, diaMes } from "../datos.js?v=a3952e4be2";
+import { esc } from "../../kit/js/ui.js?v=1b85913f15";
+import { pesos, diaMes } from "../datos.js?v=1b85913f15";
 
 const anunciados = new Set(); // lo que ya sonó en esta visita (no vuelve a sonar al cambiar de pantalla)
 

@@ -6,8 +6,8 @@
 // Ojo: el reconocimiento de voz lo hace el navegador con su servicio (en Chrome, los servidores de Google): por eso
 // arranca solo al tocar el botón, nunca solo, y el navegador pide permiso para el micrófono.
 // ============================================
-import { esc, aviso } from "./ui.js?v=c74ffc37fc";
-import { alSalirDeLaPantalla } from "./rutas.js?v=c74ffc37fc";
+import { esc, aviso } from "./ui.js?v=5b35731b15";
+import { alSalirDeLaPantalla } from "./rutas.js?v=5b35731b15";
 
 const Reconocedor = () => (typeof window !== "undefined" ? window.SpeechRecognition || window.webkitSpeechRecognition : null);
 

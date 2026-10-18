@@ -1,8 +1,8 @@
-import { esc } from "../../kit/js/ui.js?v=fe5d9ea352";
-import { abrirCaja, htmlMasDeLaCaja } from "../../kit/js/caja.js?v=fe5d9ea352";
-import { MEDIOS_PAGO, mediosParaCaja } from "../../kit/js/pagos.js?v=fe5d9ea352";
-import { pesos, SECCIONES_CANTINA } from "../datos.js?v=fe5d9ea352";
-import { MARCA, NEGOCIO } from "../marca.js?v=fe5d9ea352";
+import { esc } from "../../kit/js/ui.js?v=cd2f647129";
+import { abrirCaja, htmlMasDeLaCaja } from "../../kit/js/caja.js?v=cd2f647129";
+import { MEDIOS_PAGO, mediosParaCaja } from "../../kit/js/pagos.js?v=cd2f647129";
+import { pesos, SECCIONES_CANTINA } from "../datos.js?v=cd2f647129";
+import { MARCA, NEGOCIO } from "../marca.js?v=cd2f647129";
 
 const MEDIOS_CAJA = mediosParaCaja(MEDIOS_PAGO);
 

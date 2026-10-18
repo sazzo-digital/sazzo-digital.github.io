@@ -4,19 +4,19 @@
 // de agua "DEMO · SIN VALIDEZ FISCAL", el CAE de prueba y el lugar del QR dibujado. Desde ahí, la nota de crédito.
 // Solo administración carga; Hernán y Patricia miran.
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=9807a2d772";
-import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=9807a2d772";
-import { htmlConsigna } from "../../kit/js/consigna.js?v=9807a2d772";
-import { TOPES, CUENTAS, ID_CONSUMIDOR_FINAL } from "../datos.js?v=9807a2d772";
-import { PRODUCTOS } from "../semilla.js?v=9807a2d772";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=9772d00e3d";
+import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=9772d00e3d";
+import { htmlConsigna } from "../../kit/js/consigna.js?v=9772d00e3d";
+import { TOPES, CUENTAS, ID_CONSUMIDOR_FINAL } from "../datos.js?v=9772d00e3d";
+import { PRODUCTOS } from "../semilla.js?v=9772d00e3d";
 import {
     COMPROBANTES, ALICUOTAS, ORDEN_ALICUOTAS, TOPE_CF_IDENTIFICAR, pesos, numeroComprobante, formatoCuit, nombrePeriodo, signo
-} from "../reglas.js?v=9807a2d772";
-import { buscarPersona } from "../marca.js?v=9807a2d772";
+} from "../reglas.js?v=9772d00e3d";
+import { buscarPersona } from "../marca.js?v=9772d00e3d";
 import {
     fechaCorta, diaMes, pastillaTipo, periodoPedido, htmlSelectorMes, activarSelectorMes, documento, condicionTexto,
     logoEmpresa, conEspera, nombreDe
-} from "./comunes.js?v=9807a2d772";
+} from "./comunes.js?v=9772d00e3d";
 
 const puedeCargar = (u) => u.rol === "admin";
 const OPCIONES_ALICUOTA = [...ORDEN_ALICUOTAS, "ex"];
