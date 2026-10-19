@@ -4,13 +4,14 @@
 // descanso (con "ding" y vibración al terminar, si prendió el sonido). Si levanta más que nunca: "¡Nuevo récord!".
 // Si hoy descansa, le dice cuándo le toca y puede entrenar igual otro día de su rutina.
 // ============================================
-import { esc, aviso } from "../../kit/js/ui.js?v=5b35731b15";
-import { alSalirDeLaPantalla } from "../../kit/js/rutas.js?v=5b35731b15";
-import { mantenerPantallaPrendida, vibrar, ding, htmlBotonSonido, activarBotonSonido } from "../../kit/js/celular.js?v=5b35731b15";
-import { MARCA, NEGOCIO } from "../marca.js?v=5b35731b15";
-import { SOCIO_DE, kilos, cuanto } from "../datos.js?v=5b35731b15";
-import { guia, activarGuias, pastilla, pastillaCuota } from "./comunes.js?v=5b35731b15";
-import { htmlConsigna } from "../../kit/js/consigna.js?v=5b35731b15";
+import { esc, aviso } from "../../kit/js/ui.js?v=8d9cbf2f72";
+import { alSalirDeLaPantalla } from "../../kit/js/rutas.js?v=8d9cbf2f72";
+import { mantenerPantallaPrendida, vibrar, ding, htmlBotonSonido, activarBotonSonido } from "../../kit/js/celular.js?v=8d9cbf2f72";
+import { MARCA, NEGOCIO } from "../marca.js?v=8d9cbf2f72";
+import { SOCIO_DE, kilos, cuanto } from "../datos.js?v=8d9cbf2f72";
+import { guia, activarGuias, pastilla, pastillaCuota } from "./comunes.js?v=8d9cbf2f72";
+import { htmlConsigna } from "../../kit/js/consigna.js?v=8d9cbf2f72";
+import { htmlTrabajosSocio, activarTrabajosSocio } from "./trabajos.js?v=8d9cbf2f72";
 
 // Lo que queda mientras se navega: lo escrito en cada ejercicio, el último récord (para festejarlo una vez) y el descanso
 const borrador = {};
@@ -100,6 +101,7 @@ export function vistaHoy(cont, { usuario, datos, irA }) {
     const socioId = SOCIO_DE[usuario.id];
     const h = datos.hoyLeToca(socioId);
     const { socio } = datos.miCuota(usuario);
+    const trabajos = datos.misTrabajos(usuario);
     const terminado = !!h.entreno?.terminado;
     const anoto = h.ejercicios.some((e) => e.hechas.length);
     mantenerPantallaPrendida(); // el celu queda en el banco entre serie y serie: que no se apague
@@ -132,6 +134,7 @@ export function vistaHoy(cont, { usuario, datos, irA }) {
     // Hoy descansa: cuándo le toca y "entrenar igual"
     if (h.descansa) {
         cont.innerHTML = `${cabeza}
+            ${htmlTrabajosSocio(trabajos)}
             <div class="bloque">
                 <h2 class="subtitulo"><i class="ti ti-repeat" aria-hidden="true"></i> ¿Querés entrenar igual?</h2>
                 <p class="nota"><span>Elegí qué día de tu rutina hacés hoy.</span></p>
@@ -157,6 +160,7 @@ export function vistaHoy(cont, { usuario, datos, irA }) {
         ${anoto && !terminado ? `
         <button class="boton boton--secundario boton--ancho" type="button" data-terminar><i class="ti ti-circle-check" aria-hidden="true"></i> Terminar el entreno${pendientes ? ` (faltan ${pendientes})` : ""}</button>
         ${ultimoRecord ? "" : guia("u-profe", "/inicio", "Mirá cómo lo ve Mauro")}` : ""}
+        ${htmlTrabajosSocio(trabajos)}
         <div class="descanso" role="timer" aria-live="off" hidden></div>`;
     activar();
     pintarDescanso();
@@ -168,6 +172,7 @@ export function vistaHoy(cont, { usuario, datos, irA }) {
     function activar() {
         activarGuias(cont, irA);
         activarBotonSonido(cont, MARCA.prefijo);
+        activarTrabajosSocio(cont, { usuario, datos, alCambiar: otraVez });
         cont.querySelector("[data-mi-qr]")?.addEventListener("click", () => {
             const capa = document.createElement("div");
             capa.className = "qr-entrada";

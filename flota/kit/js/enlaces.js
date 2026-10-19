@@ -4,7 +4,7 @@
 // - "Quiero esto para mi negocio": WhatsApp de Sazzo con el mensaje ya escrito (dice qué demo vio). Mientras no
 //   haya número cargado (config.js), al contacto del catálogo.
 // ============================================
-import { CONTACTO, LINK_CATALOGO } from "./config.js?v=cc23b20775";
+import { CONTACTO, LINK_CATALOGO } from "./config.js?v=ffd64dfbd6";
 
 export const linkOtrasDemos = ({ catalogo = LINK_CATALOGO } = {}) => `${catalogo}#demos`;
 
@@ -15,4 +15,9 @@ export function linkQuieroEsto(marca, { contacto = CONTACTO, catalogo = LINK_CAT
     const numero = /^\d{8,15}$/.test(contacto?.whatsapp ?? "") ? contacto.whatsapp : null;
     if (!numero) return { href: `${catalogo}#contacto`, externo: false };
     return { href: `https://wa.me/${numero}?text=${encodeURIComponent(mensajeQuieroEsto(marca))}`, externo: true };
+}
+
+export function botDelChat({ contacto = CONTACTO } = {}) {
+    const bot = contacto?.chat ?? "";
+    return /^https:\/\/[\w.-]+\/web$|^http:\/\/(localhost|127\.0\.0\.1):\d{2,5}\/web$/.test(bot) ? bot : null;
 }

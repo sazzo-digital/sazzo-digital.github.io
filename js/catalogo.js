@@ -2,8 +2,8 @@
 // Catálogo de Sazzo: arma las tarjetas de demos (desde demos.js), las animaciones al bajar, los botones de
 // contacto (desde config.js), guarda de dónde vino la visita (?o=papel / ?o=ig) y avisa a la medición.
 // ============================================
-import { DEMOS, TRABAJOS } from "./demos.js?v=e3ae9fea52";
-import { CONTACTO, MEDICION, LINK_DEMOS, RUTA_LIBS } from "./config.js?v=e3ae9fea52";
+import { DEMOS, TRABAJOS } from "./demos.js?v=dc45dd1abc";
+import { CONTACTO, MEDICION, LINK_DEMOS, RUTA_LIBS, RUTA_CHAT } from "./config.js?v=dc45dd1abc";
 
 const $ = (selector, raiz = document) => raiz.querySelector(selector);
 const $$ = (selector, raiz = document) => [...raiz.querySelectorAll(selector)];
@@ -245,7 +245,22 @@ function bloqueDetalle(titulo, icono, renglones) {
         </section>`;
 }
 
+function guardarInteres(id) {
+    try {
+        sessionStorage.setItem("sazzo-interes", id);
+    } catch {}
+}
+
+function leerInteres() {
+    try {
+        return sessionStorage.getItem("sazzo-interes");
+    } catch {
+        return null;
+    }
+}
+
 function abrirDetalle(demo) {
+    guardarInteres(demo.id);
     const d = demo.detalle;
     const link = demo.estado === "activa" ? linkDe(demo) : null;
     ventanaDetalle.style.setProperty("--acento", demo.acento);
@@ -267,12 +282,18 @@ if (typeof ventanaDetalle.showModal === "function") {
     $$("[data-detalle]").forEach((b) => b.addEventListener("click", () => abrirDetalle(DEMOS.find((d) => d.id === b.dataset.detalle))));
     ventanaDetalle.addEventListener("click", (e) => {
         if (e.target === ventanaDetalle || e.target.closest("[data-cerrar]")) ventanaDetalle.close();
-        if (e.target.closest("[data-demo]")) contar("probar", e.target.closest("[data-demo]").dataset.demo, "detalle");
+        if (e.target.closest("[data-demo]")) {
+            guardarInteres(e.target.closest("[data-demo]").dataset.demo);
+            contar("probar", e.target.closest("[data-demo]").dataset.demo, "detalle");
+        }
     });
 } else {
     $$("[data-detalle]").forEach((b) => (b.hidden = true));
 }
-$$(".demo [data-demo]").forEach((a) => a.addEventListener("click", () => contar("probar", a.dataset.demo, "demos")));
+$$(".demo [data-demo]").forEach((a) => a.addEventListener("click", () => {
+    guardarInteres(a.dataset.demo);
+    contar("probar", a.dataset.demo, "demos");
+}));
 
 $$("[data-link-demo]").forEach((a) => {
     const demo = DEMOS.find((d) => d.id === a.dataset.linkDemo && d.estado === "activa");
@@ -280,7 +301,10 @@ $$("[data-link-demo]").forEach((a) => {
     if (!link) return (a.hidden = true);
     a.href = link;
     if (a.matches(".sorpresa")) a.style.setProperty("--acento", demo.acento);
-    a.addEventListener("click", () => contar("probar", demo.id, desdeDe(a)));
+    a.addEventListener("click", () => {
+        guardarInteres(demo.id);
+        contar("probar", demo.id, desdeDe(a));
+    });
 });
 
 const videos = $$(".sorpresa__video");
@@ -354,12 +378,17 @@ document.head.append(datosGoogle);
 
 // --- Contacto ---
 const linkWhatsapp = CONTACTO.whatsapp ? `https://wa.me/${CONTACTO.whatsapp}?text=${encodeURIComponent(CONTACTO.mensaje)}` : null;
+const demoDeInteres = () => DEMOS.find((d) => d.id === leerInteres() && d.estado === "activa") ?? null;
 $$("[data-whatsapp]").forEach((a) => {
     if (linkWhatsapp) {
         a.href = linkWhatsapp;
         a.target = "_blank";
         a.rel = "noopener";
-        a.addEventListener("click", () => contar("escribir", "", desdeDe(a)));
+        a.addEventListener("click", () => {
+            const demo = demoDeInteres();
+            if (demo) a.href = `https://wa.me/${CONTACTO.whatsapp}?text=${encodeURIComponent(`Hola Sazzo! Vi la demo ${demo.nombre} y quiero consultar por mi negocio.`)}`;
+            contar("escribir", demo?.id ?? "", desdeDe(a));
+        });
     }
 });
 // Sin número, los "Escribinos" de arriba llevan a la sección de contacto y los botones de WhatsApp no se muestran
@@ -386,6 +415,16 @@ if ((linkWhatsapp || usuarioInstagram) && typeof ventanaContacto.showModal === "
     ventanaContacto.addEventListener("click", (e) => {
         if (e.target === ventanaContacto || e.target.closest("[data-cerrar], a[target]")) ventanaContacto.close();
     });
+}
+const botChat = /^https:\/\/[\w.-]+\/web$|^http:\/\/(localhost|127\.0\.0\.1):\d{2,5}\/web$/.test(CONTACTO.chat ?? "") ? CONTACTO.chat : null;
+if (botChat) {
+    const guion = document.createElement("script");
+    guion.src = `${RUTA_CHAT}chat-web.js`;
+    Object.assign(guion.dataset, {
+        bot: botChat, origen: "catalogo", privacidad: "privacidad.html",
+        whatsapp: linkWhatsapp ? CONTACTO.whatsapp : "", instagram: usuarioInstagram ?? "", mensaje: CONTACTO.mensaje
+    });
+    document.body.append(guion);
 }
 if (linkWhatsapp) $$("[data-numero]").forEach((el) => (el.textContent = CONTACTO.whatsapp.replace(/^549(\d{3})(\d{3})(\d{4})$/, "$1 $2 $3")));
 if (usuarioInstagram) $$("[data-usuario]").forEach((el) => (el.textContent = `@${usuarioInstagram}`));

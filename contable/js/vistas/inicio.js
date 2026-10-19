@@ -3,12 +3,12 @@
 // quién te debe y a quién le debés, y lo último que se facturó. Arriba, el paso del recorrido de cada persona
 // (Silvina arranca facturando; Hernán y Patricia, mirando).
 // ============================================
-import { esc } from "../../kit/js/ui.js?v=9772d00e3d";
-import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=9772d00e3d";
-import { htmlConsigna } from "../../kit/js/consigna.js?v=9772d00e3d";
-import { pesos, pesosRedondo, nombrePeriodo, periodoActual, correrPeriodo, signo, numeroComprobante } from "../reglas.js?v=9772d00e3d";
-import { buscarPersona } from "../marca.js?v=9772d00e3d";
-import { logoEmpresa, haceDias, pastillaTipo, diaMes, fechaCorta } from "./comunes.js?v=9772d00e3d";
+import { esc } from "../../kit/js/ui.js?v=eb1f34068e";
+import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=eb1f34068e";
+import { htmlConsigna } from "../../kit/js/consigna.js?v=eb1f34068e";
+import { pesos, pesosRedondo, nombrePeriodo, periodoActual, correrPeriodo, signo, numeroComprobante } from "../reglas.js?v=eb1f34068e";
+import { buscarPersona } from "../marca.js?v=eb1f34068e";
+import { logoEmpresa, haceDias, pastillaTipo, diaMes, fechaCorta } from "./comunes.js?v=eb1f34068e";
 
 export function vistaInicio(cont, { usuario, datos, irA }) {
     const e = datos.leerEmpresa();

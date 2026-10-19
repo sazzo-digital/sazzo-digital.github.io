@@ -1,8 +1,8 @@
-import { esc } from "./ui.js?v=da4742b556";
-import { nombreDemo } from "./marca.js?v=da4742b556";
-import { contar } from "./visita.js?v=da4742b556";
-import { abrirColores } from "./colores.js?v=da4742b556";
-import { htmlBotonInstalar } from "./instalar.js?v=da4742b556";
+import { esc } from "./ui.js?v=aec3a46774";
+import { nombreDemo } from "./marca.js?v=aec3a46774";
+import { contar } from "./visita.js?v=aec3a46774";
+import { abrirColores } from "./colores.js?v=aec3a46774";
+import { htmlBotonInstalar } from "./instalar.js?v=aec3a46774";
 
 export const TOPE_DETALLE = { hace: 5, extra: 6, tambien: 8, letras: 120, titulo: 50 };
 

@@ -5,7 +5,8 @@
 
 // Contacto. Mientras whatsapp esté en null, "Quiero esto para mi negocio" lleva al contacto del catálogo.
 export const CONTACTO = {
-    whatsapp: "5492996210484" // solo números, con código de país y sin el 15 (número de Sazzo, cargado el 08/10)
+    whatsapp: "5492996210484", // solo números, con código de país y sin el 15 (número de Sazzo, cargado el 08/10)
+    chat: "https://bot.sazzo.com.ar/web"
 };
 
 // Dónde está el catálogo, visto desde la página de la demo. En la PC: demos-venta\catalogo\ (dos carpetas arriba
@@ -22,6 +23,8 @@ export const RUTA_3D = "../3d/";
 
 // Excel, PDF y firma en pantalla (kit\libs\). En la PC desde el kit; publicado, la copia única de la raíz ("../libs/").
 export const RUTA_LIBS = "../libs/";
+
+export const RUTA_CHAT = "../chat/";
 
 // Registro de visitas (medicion\LEEME.md): la planilla de Google de Sazzo. El script de armar el sitio cambia
 // __MEDICION__ por la dirección de medicion\direccion.txt (vacía = no se manda nada). En la PC nunca se manda.

@@ -3,14 +3,14 @@
 // nombre del grupo y seña simulada) y "Mis turnos" (con Cancelar y la regla de la seña a la vista).
 // Lo ocupado se ve, pero no se puede tocar: nunca se pisan.
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=cd2f647129";
-import { TIPOS, TOPES, CANCELAR_HORAS, pesos, nombreFecha } from "../datos.js?v=cd2f647129";
-import { NEGOCIO } from "../marca.js?v=cd2f647129";
-import { guia, activarGuias, pastillaSena, pastillaEstado, chipsDias } from "./comunes.js?v=cd2f647129";
-import { htmlConsigna } from "../../kit/js/consigna.js?v=cd2f647129";
-import { aHora, minutoAhora } from "../../kit/js/turnos.js?v=cd2f647129";
-import { htmlCopiable, activarCopiables } from "../../kit/js/celular.js?v=cd2f647129";
-import { htmlCuenta, pedirCantina } from "./cuenta.js?v=cd2f647129";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=1d1dc56902";
+import { TIPOS, TOPES, CANCELAR_HORAS, pesos, nombreFecha } from "../datos.js?v=1d1dc56902";
+import { NEGOCIO } from "../marca.js?v=1d1dc56902";
+import { guia, activarGuias, pastillaSena, pastillaEstado, chipsDias } from "./comunes.js?v=1d1dc56902";
+import { htmlConsigna } from "../../kit/js/consigna.js?v=1d1dc56902";
+import { aHora, minutoAhora } from "../../kit/js/turnos.js?v=1d1dc56902";
+import { htmlCopiable, activarCopiables } from "../../kit/js/celular.js?v=1d1dc56902";
+import { htmlCuenta, pedirCantina } from "./cuenta.js?v=1d1dc56902";
 
 // Lo elegido queda mientras se navega
 let fecha = null;

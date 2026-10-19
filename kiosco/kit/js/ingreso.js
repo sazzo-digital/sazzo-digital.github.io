@@ -7,15 +7,15 @@
 // trae `wow`, esa línea va arriba de las personas: le dice a quien llega de Instagram qué va a pasar.
 // y qué hacer al elegir una (alElegir(id): guardar la sesión y arrancar la demo).
 // ============================================
-import { $, $$, esc, iniciales, mensajeDe } from "./ui.js?v=28892a7c3c";
-import { logoSazzo, nombreDemo } from "./marca.js?v=28892a7c3c";
-import { pieAcerca } from "./acerca.js?v=28892a7c3c";
-import { linkOtrasDemos, linkQuieroEsto } from "./enlaces.js?v=28892a7c3c";
-import { activarBotonesSazzo, htmlBarraSazzo, medirPie } from "./marco.js?v=28892a7c3c";
-import { revisarDetalle, htmlBotonDetalle } from "./detalle.js?v=28892a7c3c";
-import { htmlBotonInstalar } from "./instalar.js?v=28892a7c3c";
-import { contar, contarPantalla } from "./visita.js?v=28892a7c3c";
-import { soltarPantalla } from "./rutas.js?v=28892a7c3c";
+import { $, $$, esc, iniciales, mensajeDe } from "./ui.js?v=34e46f4928";
+import { logoSazzo, nombreDemo } from "./marca.js?v=34e46f4928";
+import { pieAcerca } from "./acerca.js?v=34e46f4928";
+import { linkOtrasDemos, linkQuieroEsto, botDelChat } from "./enlaces.js?v=34e46f4928";
+import { activarBotonesSazzo, htmlBarraSazzo, medirPie } from "./marco.js?v=34e46f4928";
+import { revisarDetalle, htmlBotonDetalle } from "./detalle.js?v=34e46f4928";
+import { htmlBotonInstalar } from "./instalar.js?v=34e46f4928";
+import { contar, contarPantalla } from "./visita.js?v=34e46f4928";
+import { soltarPantalla } from "./rutas.js?v=34e46f4928";
 
 function htmlCompleta(marca) {
     if (!marca.completa) return "";
@@ -23,8 +23,9 @@ function htmlCompleta(marca) {
 }
 
 /** La pantalla entera va en <main>: los lectores de pantalla saltan directo ahí (axe: landmark-one-main). */
-export function htmlIngreso({ marca, personas, detalle = null }) {
-    const quiero = linkQuieroEsto(marca);
+export function htmlIngreso({ marca, personas, detalle = null, contacto }) {
+    const quiero = linkQuieroEsto(marca, { contacto });
+    const asistente = botDelChat({ contacto });
     // La de "Empezá por acá" primero (si hay varias marcadas, cuenta la primera)
     const recomendada = personas.find((p) => p.empezar);
     const enOrden = recomendada ? [recomendada, ...personas.filter((p) => p !== recomendada)] : personas;
@@ -56,10 +57,11 @@ export function htmlIngreso({ marca, personas, detalle = null }) {
             <div class="ingreso__sazzo">
                 <a class="boton boton--secundario" href="${esc(linkOtrasDemos())}" data-otras-demos><i class="ti ti-layout-grid"></i> Ver otras demos</a>
                 <a class="boton boton--secundario" href="${esc(quiero.href)}" data-quiero-esto${quiero.externo ? ' target="_blank" rel="noopener"' : ""}><i class="ti ti-brand-whatsapp"></i> Quiero esto para mi negocio</a>
+                ${asistente ? `<button class="boton boton--secundario" type="button" data-abrir-chat data-asistente><i class="ti ti-message-chatbot"></i> Chateá con Sazzo</button>` : ""}
             </div>
             ${pieAcerca(marca)}
         </main>
-        <div class="pie-celu pie-celu--ingreso">${htmlBarraSazzo(marca, undefined, !!revisarDetalle(detalle))}</div>`;
+        <div class="pie-celu pie-celu--ingreso">${htmlBarraSazzo(marca, { contacto }, !!revisarDetalle(detalle))}</div>`;
 }
 
 /** Una sola persona (comercio de una persona): entra directo, sin pantalla de elegir. Si falla, muestra la pantalla con el error. */

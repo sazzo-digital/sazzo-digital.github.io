@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="theme-color" content="#0b1210">
+    <title>Charlas · Sazzo</title>
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="icon" href="iconos/icono-192.png">
+    <link rel="apple-touch-icon" href="iconos/icono-180.png">
+    <link rel="stylesheet" href="../letras/letras.css">
+    <link rel="stylesheet" href="panel.css">
+</head>
+<body>
+    <section class="entrada" hidden>
+        <form class="entrada__caja">
+            <svg class="iso" viewBox="0 0 100 100" aria-hidden="true"><rect width="100" height="100" rx="22" fill="#0B1210"/><path fill="none" stroke-width="10" stroke-linecap="round" stroke="#E6EFEB" d="M40.26 38.75 A13 7.5 0 1 0 29 50 A13 7.5 0 1 1 17.74 61.25"/><path fill="none" stroke="#34D399" stroke-width="9" stroke-linecap="round" d="M58 64 H82"/></svg>
+            <h1>Charlas de la web</h1>
+            <p>Entrá con la clave del panel. Queda guardada en este navegador.</p>
+            <label for="clave">Clave</label>
+            <input id="clave" name="clave" type="password" autocomplete="current-password" required minlength="8">
+            <p class="entrada__error" role="alert" hidden></p>
+            <button class="boton" type="submit">Entrar</button>
+        </form>
+    </section>
+
+    <div class="app" hidden>
+        <header class="barra">
+            <svg class="iso" viewBox="0 0 100 100" aria-hidden="true"><rect width="100" height="100" rx="22" fill="#0B1210"/><path fill="none" stroke-width="10" stroke-linecap="round" stroke="#E6EFEB" d="M40.26 38.75 A13 7.5 0 1 0 29 50 A13 7.5 0 1 1 17.74 61.25"/><path fill="none" stroke="#34D399" stroke-width="9" stroke-linecap="round" d="M58 64 H82"/></svg>
+            <p class="barra__titulo">Charlas web <span class="barra__vivo" data-humano="desconectado">te ven desconectado</span></p>
+            <div class="estado" role="group" aria-label="Cómo te ven los visitantes">
+                <button type="button" data-estado="disponible" data-minutos="15" aria-pressed="false">Disponible 15 min</button>
+                <button type="button" data-estado="disponible" data-minutos="30" aria-pressed="false">Disponible 30 min</button>
+                <button type="button" data-estado="ocupado" aria-pressed="false">Ocupado</button>
+                <button type="button" data-estado="invisible" aria-pressed="false">Me desconecto</button>
+            </div>
+            <button class="barra__boton barra__boton--app" type="button" data-instalar hidden>Instalar</button>
+            <button class="barra__boton barra__boton--app" type="button" data-avisos hidden>Activar notificaciones</button>
+            <button class="barra__boton" type="button" data-sonido aria-pressed="true">Sonido</button>
+            <button class="barra__boton" type="button" data-cambiar-tema>Claro</button>
+            <button class="barra__boton" type="button" data-salir>Salir</button>
+        </header>
+        <p class="red" role="status" hidden>Sin conexión con el bot. Sigo probando…</p>
+
+        <aside class="lista" aria-label="Charlas">
+            <div class="filtros" role="tablist">
+                <button type="button" role="tab" data-filtro="todas" aria-selected="true">Todas <span></span></button>
+                <button type="button" role="tab" data-filtro="activas" aria-selected="false">Activas <span></span></button>
+                <button type="button" role="tab" data-filtro="tuyas" aria-selected="false">Tuyas <span></span></button>
+            </div>
+            <ul class="lista__items"></ul>
+        </aside>
+
+        <main class="charla">
+            <svg class="charla__marca" viewBox="0 12 240 56" aria-hidden="true"><g fill="none" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"><path class="marca__letra" d="M34.26 28.75 A13 7.5 0 1 0 23 40 A13 7.5 0 1 1 11.74 51.25"/><circle class="marca__letra" cx="67" cy="40" r="15.4"/><path class="marca__letra" d="M82.4 25 V55"/><path class="marca__verde" d="M98 25 H124 L98 55 H124"/><path class="marca__verde" d="M140 25 H166 L140 55 H166"/><circle class="marca__letra" cx="197" cy="40" r="15.4"/></g><circle class="marca__punto" cx="197" cy="40" r="5"/></svg>
+            <div class="charla__cielo" aria-hidden="true"><div class="sazzito"><svg viewBox="0 0 48 66"><rect class="sr-pieza" x="8" y="38" width="7" height="16" rx="3.5"/><rect class="sr-pieza" x="33" y="38" width="7" height="16" rx="3.5"/><path class="sr-fuego" d="M8.5 55q3 11 6 0z"/><path class="sr-fuego" d="M33.5 55q3 11 6 0z"/><path class="sr-trazo" d="M24 10V4"/><circle class="sr-luz sr-antena" cx="24" cy="3.5" r="2.8"/><rect class="sr-pieza" x="15" y="39" width="18" height="13" rx="5"/><rect class="sr-pieza" x="5" y="10" width="38" height="29" rx="12"/><rect class="sr-visor" x="10" y="16" width="28" height="16" rx="8"/><g class="sr-ojos"><circle class="sr-luz" cx="19" cy="23" r="2.7"/><circle class="sr-luz" cx="29" cy="23" r="2.7"/></g><rect class="sr-luz sr-boca" x="21" y="27.6" width="6" height="1.9" rx="0.95"/></svg></div><p class="sazzito__dice" hidden></p></div>
+            <div class="charla__vacia">
+                <p>Elegí una charla de la lista.</p>
+            </div>
+            <div class="charla__llena" hidden>
+                <header class="charla__cabecera">
+                    <button class="charla__volver" type="button" aria-label="Volver a la lista">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+                    </button>
+                    <div class="charla__quien">
+                        <h2 class="charla__titulo"></h2>
+                        <p class="charla__meta"></p>
+                        <p class="charla__estado"></p>
+                    </div>
+                    <div class="charla__acciones">
+                        <a class="boton boton--borde charla__whatsapp" target="_blank" rel="noopener" hidden>WhatsApp</a>
+                        <button class="boton" type="button" data-tomar>Tomar la charla</button>
+                        <button class="boton boton--borde" type="button" data-devolver hidden>Devolver al bot</button>
+                    </div>
+                </header>
+                <div class="charla__mensajes" role="log" aria-live="polite"></div>
+                <p class="charla__aviso" role="alert" hidden></p>
+                <form class="charla__form">
+                    <textarea rows="1" maxlength="2000" placeholder="Respondele…" aria-label="Tu respuesta"></textarea>
+                    <button class="boton" type="submit">Responder</button>
+                    <p class="charla__pista">Enter manda · Shift + Enter, otra línea · si la charla era del bot, al responder la tomás vos.</p>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <script src="panel.js" defer></script>
+</body>
+</html>

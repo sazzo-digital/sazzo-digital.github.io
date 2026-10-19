@@ -7,11 +7,12 @@
 // 5. Si algo se rompe (un error que nadie atajó), lo avisa al registro de visitas (sin nada personal).
 // 6. El teclado del celu en los formularios: "Siguiente"/"Listo" en Enter y sin autocompletar datos (kit/teclado.js).
 // ============================================
-import { leerLink, contar, contarPantalla, vigilarErrores, medirVelocidad } from "./visita.js?v=9772d00e3d";
-import { recuperarColor } from "./colores.js?v=9772d00e3d";
-import { avisarSiEsNavegadorDeOtraApp } from "./navegador.js?v=9772d00e3d";
-import { prepararTeclado } from "./teclado.js?v=9772d00e3d";
-import { prepararInstalar } from "./instalar.js?v=9772d00e3d";
+import { leerLink, contar, contarPantalla, vigilarErrores, medirVelocidad } from "./visita.js?v=eb1f34068e";
+import { recuperarColor } from "./colores.js?v=eb1f34068e";
+import { avisarSiEsNavegadorDeOtraApp } from "./navegador.js?v=eb1f34068e";
+import { prepararTeclado } from "./teclado.js?v=eb1f34068e";
+import { prepararInstalar } from "./instalar.js?v=eb1f34068e";
+import { cargarChat } from "./chat.js?v=eb1f34068e";
 
 export function iniciarDemo(marca) {
     leerLink();
@@ -21,6 +22,7 @@ export function iniciarDemo(marca) {
     recuperarColor(marca.prefijo);
     avisarSiEsNavegadorDeOtraApp();
     prepararInstalar(marca.nombre);
+    cargarChat(marca);
     contar("abrio-demo", marca.id);
     // Un ratito después de cada cambio de pantalla (así no cuenta los saltos intermedios)
     let espera = null;

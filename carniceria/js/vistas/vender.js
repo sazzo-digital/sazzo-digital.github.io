@@ -6,17 +6,17 @@
 // peso. Ticket con vuelto, alias para la transferencia, "ding" al cobrar y la vista previa del ticket.
 // En la compu, dos columnas (cortes | ticket); en el celular, el ticket abajo con una barrita arriba que lleva a él.
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=4a89686926";
-import { puedeEscanear, escanear } from "../../kit/js/escaner.js?v=4a89686926";
-import { mantenerPantallaPrendida, htmlCopiable, activarCopiables, htmlBotonSonido, activarBotonSonido, ding } from "../../kit/js/celular.js?v=4a89686926";
-import { TOPES, MEDIOS, ALIAS, ANIMALES, ETIQUETA, pesos, kilos, aGramos, precioPorPeso, gramosPara, leerEtiqueta } from "../datos.js?v=4a89686926";
-import { textoMedio, DIVIDIDO, partesIniciales, htmlDosMedios, activarDosMedios } from "../../kit/js/pagos.js?v=4a89686926";
-import { MARCA, NEGOCIO } from "../marca.js?v=4a89686926";
-import { campoKg, kgEnCampo, precioDe, hora } from "./comunes.js?v=4a89686926";
-import { EVENTO_REINICIO } from "../../kit/js/guardado.js?v=4a89686926";
-import { puedeConectarBalanza, conectarBalanza } from "../../kit/js/balanza.js?v=4a89686926";
-import { abrirModoTV } from "../../kit/js/modo-tv.js?v=4a89686926";
-import { htmlMasDeLaCaja } from "../../kit/js/caja.js?v=4a89686926";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=69f0fef97e";
+import { puedeEscanear, escanear } from "../../kit/js/escaner.js?v=69f0fef97e";
+import { mantenerPantallaPrendida, htmlCopiable, activarCopiables, htmlBotonSonido, activarBotonSonido, ding } from "../../kit/js/celular.js?v=69f0fef97e";
+import { TOPES, MEDIOS, ALIAS, ANIMALES, ETIQUETA, pesos, kilos, aGramos, precioPorPeso, gramosPara, leerEtiqueta } from "../datos.js?v=69f0fef97e";
+import { textoMedio, DIVIDIDO, partesIniciales, htmlDosMedios, activarDosMedios } from "../../kit/js/pagos.js?v=69f0fef97e";
+import { MARCA, NEGOCIO } from "../marca.js?v=69f0fef97e";
+import { campoKg, kgEnCampo, precioDe, hora } from "./comunes.js?v=69f0fef97e";
+import { EVENTO_REINICIO } from "../../kit/js/guardado.js?v=69f0fef97e";
+import { puedeConectarBalanza, conectarBalanza } from "../../kit/js/balanza.js?v=69f0fef97e";
+import { abrirModoTV } from "../../kit/js/modo-tv.js?v=69f0fef97e";
+import { htmlMasDeLaCaja } from "../../kit/js/caja.js?v=69f0fef97e";
 
 // El ticket en curso queda en memoria mientras se navega (se vacía al cobrar)
 export const ticket = new Map(); // articuloId → { gramos } o { unidades }

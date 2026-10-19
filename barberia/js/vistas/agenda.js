@@ -3,14 +3,14 @@
 // los dos; en la compu, una columna por barbero) y "+ Turno" (cargar a mano el que pidió por mensaje o entró sin
 // turno). El turno que sacó un cliente desde el celular aparece resaltado hasta que Leo hace algo con él.
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=464e68f222";
-import { aHora } from "../../kit/js/turnos.js?v=464e68f222";
-import { fechaLocalISO } from "../../kit/js/fechas.js?v=464e68f222";
-import { SERVICIOS, BARBEROS, TOPES, HORARIO, pesos, nombreFecha, grillaDelDia, textoLibre } from "../datos.js?v=464e68f222";
-import { pastillaEstado, chipsDias, mostrarMensaje } from "./comunes.js?v=464e68f222";
-import { htmlConsigna } from "../../kit/js/consigna.js?v=464e68f222";
-import { htmlBotonTV, abrirModoTV } from "../../kit/js/modo-tv.js?v=464e68f222";
-import { NEGOCIO } from "../marca.js?v=464e68f222";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=51466ae98e";
+import { aHora } from "../../kit/js/turnos.js?v=51466ae98e";
+import { fechaLocalISO } from "../../kit/js/fechas.js?v=51466ae98e";
+import { SERVICIOS, BARBEROS, TOPES, HORARIO, pesos, nombreFecha, grillaDelDia, textoLibre } from "../datos.js?v=51466ae98e";
+import { pastillaEstado, chipsDias, mostrarMensaje } from "./comunes.js?v=51466ae98e";
+import { htmlConsigna } from "../../kit/js/consigna.js?v=51466ae98e";
+import { htmlBotonTV, abrirModoTV } from "../../kit/js/modo-tv.js?v=51466ae98e";
+import { NEGOCIO } from "../marca.js?v=51466ae98e";
 
 let ver = "todos"; // "todos" o el id de un barbero
 

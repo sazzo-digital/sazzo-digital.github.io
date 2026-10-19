@@ -13,24 +13,29 @@
 // Festejo: cuando aparece una confirmación (.hecho: turno reservado, venta cobrada, orden creada…), el ✓ entra con un
 // rebote, salen chispitas del color de la demo y el celular vibra cortito (Android). Quieto con "reducir movimiento".
 // ============================================
-import { $, $$, esc, iniciales } from "./ui.js?v=da4742b556";
-import { logoSazzo, nombreDemo } from "./marca.js?v=da4742b556";
-import { interruptorTema, activarInterruptorTema } from "./apariencia.js?v=da4742b556";
-import { linkOtrasDemos, linkQuieroEsto } from "./enlaces.js?v=da4742b556";
-import { abrirColores, leerNombre } from "./colores.js?v=da4742b556";
-import { contar } from "./visita.js?v=da4742b556";
-import { pintarAvisos } from "./avisos.js?v=da4742b556";
-import { revisarDetalle, htmlBotonDetalle, activarDetalle } from "./detalle.js?v=da4742b556";
+import { $, $$, esc, iniciales } from "./ui.js?v=aec3a46774";
+import { logoSazzo, nombreDemo } from "./marca.js?v=aec3a46774";
+import { interruptorTema, activarInterruptorTema } from "./apariencia.js?v=aec3a46774";
+import { linkOtrasDemos, linkQuieroEsto, botDelChat } from "./enlaces.js?v=aec3a46774";
+import { abrirColores, leerNombre } from "./colores.js?v=aec3a46774";
+import { contar } from "./visita.js?v=aec3a46774";
+import { pintarAvisos } from "./avisos.js?v=aec3a46774";
+import { revisarDetalle, htmlBotonDetalle, activarDetalle } from "./detalle.js?v=aec3a46774";
 
 /** La barrita de Sazzo: colores, otras demos y "Quiero esto" (los textos largos solo si hay lugar). */
 export function htmlBarraSazzo(marca, opciones, conDetalle = false) {
     const quiero = linkQuieroEsto(marca, opciones);
+    const asistente = botDelChat(opciones);
     return `
         <div class="barra-sazzo" role="group" aria-label="Sazzo">
             ${conDetalle ? htmlBotonDetalle("barra-sazzo__detalle") : ""}
             <a class="barra-sazzo__otras" href="${esc(linkOtrasDemos(opciones))}" data-otras-demos title="Ver otras demos">
                 <i class="ti ti-layout-grid" aria-hidden="true"></i><span>Otras demos</span>
             </a>
+            ${asistente ? `
+            <button class="barra-sazzo__asistente" type="button" data-abrir-chat data-asistente title="Chateá con Sazzo">
+                <i class="ti ti-message-chatbot" aria-hidden="true"></i><span>Asistente</span>
+            </button>` : ""}
             <a class="barra-sazzo__quiero" href="${esc(quiero.href)}" data-quiero-esto${quiero.externo ? ' target="_blank" rel="noopener"' : ""}>
                 <i class="ti ti-brand-whatsapp" aria-hidden="true"></i><span>Quiero esto<span class="barra-sazzo__mas"> para mi negocio</span></span>
             </a>

@@ -9,16 +9,16 @@
 // se devuelven copias. Sin teléfonos, mails ni documentos: nada de datos personales. Pagos de ejemplo, sin tarjetas.
 // Si cambia la forma de los datos, subir VERSION_DATOS (se regeneran solos).
 // ============================================
-import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=5b35731b15";
-import { filtrarPorTexto } from "../kit/js/buscar.js?v=5b35731b15";
-import { sinPasarse } from "../kit/js/topes.js?v=5b35731b15";
-import { fechaLocalISO } from "../kit/js/fechas.js?v=5b35731b15";
-import { aMinutos, aHora, diaSemana } from "../kit/js/turnos.js?v=5b35731b15";
-import { esFirma } from "../kit/js/firma.js?v=5b35731b15";
-import { MEDIOS_PAGO, DIVIDIDO, revisarPagos, sumarPorMedio, textoMedio } from "../kit/js/pagos.js?v=5b35731b15";
-import { MARCA, NEGOCIO } from "./marca.js?v=5b35731b15";
+import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=8d9cbf2f72";
+import { filtrarPorTexto } from "../kit/js/buscar.js?v=8d9cbf2f72";
+import { sinPasarse } from "../kit/js/topes.js?v=8d9cbf2f72";
+import { fechaLocalISO } from "../kit/js/fechas.js?v=8d9cbf2f72";
+import { aMinutos, aHora, diaSemana } from "../kit/js/turnos.js?v=8d9cbf2f72";
+import { esFirma } from "../kit/js/firma.js?v=8d9cbf2f72";
+import { MEDIOS_PAGO, DIVIDIDO, revisarPagos, sumarPorMedio, textoMedio } from "../kit/js/pagos.js?v=8d9cbf2f72";
+import { MARCA, NEGOCIO } from "./marca.js?v=8d9cbf2f72";
 
-export const VERSION_DATOS = 1;
+export const VERSION_DATOS = 2;
 
 export const TOPES = {
     nombre: 40,
@@ -41,7 +41,11 @@ export const TOPES = {
     pagos: 3000,
     asistencias: 8000,
     entrenos: 4000,
-    reservas: 3000
+    reservas: 3000,
+    trabajo: 80,
+    trabajosPorSocio: 8,
+    trabajos: 2000,
+    marcasTrabajo: 8000
 };
 
 export const VENCE_PRONTO = 7; // "vence esta semana": de hoy a 7 días
@@ -481,7 +485,24 @@ export function semilla(hoy = fechaLocalISO(0), minuto = new Date().getHours() *
     });
     // Una nota del profe para Franco, de la semana pasada
     socios[0].notas.push({ id: "nt-franco-1", texto: "Buena técnica en la sentadilla. Si sale fácil, la semana que viene probamos 60.", fecha: sumarDias(hoy, -7), profeId: "p-mauro" });
-    return { planes, socios, asistencias, entrenos, pagos, reservas };
+
+    const trabajos = [];
+    const marcas = [];
+    const trabajo = (id, socioId, texto, cuando, extra = {}) => trabajos.push({ id, socioId, profeId: "p-mauro", texto, cuando, veces: null, dia: null, ...extra, desde: sumarDias(hoy, -21), baja: null });
+    const marca = (trabajoId, socioId, atras, hecho) => {
+        const fecha = sumarDias(hoy, -atras);
+        marcas.push({ id: `mt-${trabajoId}-${fecha}`, trabajoId, socioId, fecha, hecho, el: `${fecha}T21:00:00` });
+    };
+    trabajo("tr-franco-1", "s-franco", "Caminar 30 minutos", "diario");
+    trabajo("tr-franco-2", "s-franco", "Plancha 3 x 40 segundos", "semana", { veces: 3 });
+    [6, 5, 4, 3, 2, 1].forEach((n) => marca("tr-franco-1", "s-franco", n, n !== 4));
+    [5, 2].forEach((n) => marca("tr-franco-2", "s-franco", n, true));
+    socios.filter((s) => s.profeId === "p-mauro" && s.id !== "s-franco").slice(0, 3).forEach((s, i) => {
+        const id = `tr-${s.id}`;
+        trabajo(id, s.id, ["Estirar 10 minutos después de entrenar", "Caminar 20 minutos", "Abdominales 3 x 15"][i], "semana", { veces: 2 + i });
+        [6, 3, 1].slice(0, i + 1).forEach((n, k) => marca(id, s.id, n, i !== 1 || k > 0));
+    });
+    return { planes, socios, asistencias, entrenos, pagos, reservas, trabajos, marcas };
 }
 
 // ---------- Funciones de datos ----------
@@ -627,6 +648,67 @@ export function crearDatos(prefijo = MARCA.prefijo, { reloj = () => new Date() }
         const lunes = sumarDias(h, -desdeLunes);
         const hechos = new Set(entrenosDe(s.id).filter((e) => e.fecha >= lunes && e.fecha <= h && e.terminado).map((e) => e.fecha)).size;
         return { hechos, tocan: s.dias.length };
+    }
+
+    // ----- Trabajos de la semana (los deja el profe, el socio marca si los hizo) -----
+
+    const trabajosActivos = (socioId) => db().trabajos.filter((t) => t.socioId === socioId && !t.baja);
+    const marcaDe = (t, fecha) => db().marcas.find((m) => m.trabajoId === t.id && m.fecha === fecha) ?? null;
+
+    function textoCuando(t) {
+        if (t.cuando === "diario") return "Todos los días";
+        if (t.cuando === "semana") return `${t.veces} ${t.veces === 1 ? "vez" : "veces"} por semana`;
+        return `Los ${DIAS[t.dia]}`;
+    }
+
+    function armarTrabajo(t) {
+        const h = hoy();
+        const inicio = sumarDias(h, -6);
+        const semana = Array.from({ length: 7 }, (_, n) => {
+            const fecha = sumarDias(inicio, n);
+            const m = marcaDe(t, fecha);
+            return { fecha, dia: DIAS_CORTOS[diaSemana(fecha)], hecho: m ? m.hecho : null, futuro: fecha < t.desde, esHoy: fecha === h };
+        });
+        const hechos = semana.filter((d) => d.hecho === true).length;
+        const meta = t.cuando === "diario" ? diasEntre(t.desde > inicio ? t.desde : inicio, h) + 1 : t.cuando === "semana" ? t.veces : 1;
+        const hoyMarca = marcaDe(t, h);
+        const tocaHoy = t.cuando === "diario" || (t.cuando === "dia" ? diaSemana(h) === t.dia : hechos < t.veces || !!hoyMarca);
+        return {
+            id: t.id, texto: t.texto, cuando: t.cuando, veces: t.veces, dia: t.dia, textoCuando: textoCuando(t),
+            profe: profe(t.profeId)?.nombre ?? "", semana, hechos, meta: Math.max(meta, hechos), tocaHoy,
+            hoy: hoyMarca ? hoyMarca.hecho : null
+        };
+    }
+
+    function trabajosDe(socioId) {
+        const lista = trabajosActivos(socioId).map(armarTrabajo);
+        return { lista, hechos: lista.reduce((n, t) => n + t.hechos, 0), meta: lista.reduce((n, t) => n + t.meta, 0) };
+    }
+
+    function misTrabajos(usuario) {
+        exigir(esSocio(usuario), "Esto es del socio.");
+        const s = socioDe(usuario);
+        exigir(s, "No te encontramos en la lista de socios.");
+        return trabajosDe(s.id);
+    }
+
+    function marcarTrabajo(usuario, trabajoId, hecho) {
+        exigir(esSocio(usuario), "Lo marca el socio desde su celu.");
+        const s = socioDe(usuario);
+        const t = buscar(db().trabajos, trabajoId, "Ese trabajo no existe.");
+        exigir(s && t.socioId === s.id, "Ese trabajo es de otro socio.");
+        exigir(!t.baja, "Ese trabajo ya no está: tu profe lo sacó.");
+        exigir(typeof hecho === "boolean", "Elegí si lo hiciste o no.");
+        const m = marcaDe(t, hoy());
+        if (m) {
+            m.hecho = hecho;
+            m.el = ahora();
+        } else {
+            guardar("marcas", TOPES.marcasTrabajo, "marcas");
+            db().marcas.push({ id: nuevoId("mt"), trabajoId: t.id, socioId: s.id, fecha: hoy(), hecho, el: ahora() });
+        }
+        guardado.persistir();
+        return trabajosDe(s.id);
     }
 
     // ----- Para el socio -----
@@ -1046,6 +1128,7 @@ export function crearDatos(prefijo = MARCA.prefijo, { reloj = () => new Date() }
         a.ultimoPagoId = ultimo?.id ?? null;
         a.asistenciasMes = asistenciasDe(id).filter((x) => x.fecha >= sumarDias(hoy(), -29)).length;
         a.progreso = progreso(id);
+        a.trabajos = trabajosDe(id);
         if (s.planId) {
             const p = plan(s.planId);
             a.rutina = p.dias.map((d) => ({ id: d.id, nombre: d.nombre, ejercicios: ejerciciosDelDia(s, p, d, d.id === entrenoDeHoy(id)?.diaId ? entrenoDeHoy(id) : null) }));
@@ -1190,7 +1273,8 @@ export function crearDatos(prefijo = MARCA.prefijo, { reloj = () => new Date() }
                 ...armarSocio(s), dia: d ? { id: d.id, nombre: d.nombre } : null,
                 // "falto": ya pasó su hora y media y no vino
                 estado: !llego ? (aMinutos(s.hora) + 90 < minutoActual() ? "falto" : "falta") : !e || !Object.keys(e.series).length ? "llego" : e.terminado ? "termino" : "entrenando",
-                llegoA: llego ? aHora(llego.minuto) : null, records: e ? recordsDe(e) : []
+                llegoA: llego ? aHora(llego.minuto) : null, records: e ? recordsDe(e) : [],
+                trabajos: trabajosActivos(s.id).length ? trabajosDe(s.id) : null
             };
         });
         const horarios = [...new Set(lista.map((a) => a.hora))].sort().map((hora) => ({ hora, alumnos: lista.filter((a) => a.hora === hora).sort((a, b) => a.nombre.localeCompare(b.nombre, "es")) }));
@@ -1254,6 +1338,39 @@ export function crearDatos(prefijo = MARCA.prefijo, { reloj = () => new Date() }
         exigir(t, "Escribí la nota.");
         exigir(s.notas.length < TOPES.notasPorSocio, `Ya hay ${TOPES.notasPorSocio} notas para ${s.nombre}. Es una demo: tocá "Empezar de cero" arriba.`);
         s.notas.push({ id: nuevoId("nt"), texto: t, fecha: hoy(), profeId: profeDe(usuario) });
+        guardado.persistir();
+        return socio(s.id);
+    }
+
+    function alumnoPropio(usuario, socioId) {
+        exigir(esProfe(usuario), "Los trabajos los deja el profe.");
+        const s = socioCrudo(socioId);
+        exigir(s.profeId === profeDe(usuario), `${s.nombre} entrena con otro profe.`);
+        return s;
+    }
+
+    function asignarTrabajo(usuario, socioId, { texto, cuando, veces, dia } = {}) {
+        const s = alumnoPropio(usuario, socioId);
+        const t = sinPasarse(texto, TOPES.trabajo, "el trabajo");
+        exigir(t, "Escribí el trabajo.");
+        exigir(["diario", "semana", "dia"].includes(cuando), "Elegí cuándo lo tiene que hacer.");
+        exigir(trabajosActivos(s.id).length < TOPES.trabajosPorSocio, `${s.nombre} ya tiene ${TOPES.trabajosPorSocio} trabajos: sacá uno antes de sumar otro.`);
+        guardar("trabajos", TOPES.trabajos, "trabajos");
+        db().trabajos.push({
+            id: nuevoId("tr"), socioId: s.id, profeId: profeDe(usuario), texto: t, cuando,
+            veces: cuando === "semana" ? numero(veces, "Las veces por semana", { desde: 1, hasta: 6 }) : null,
+            dia: cuando === "dia" ? numero(dia, "El día", { desde: 0, hasta: 6 }) : null,
+            desde: hoy(), baja: null
+        });
+        guardado.persistir();
+        return socio(s.id);
+    }
+
+    function quitarTrabajo(usuario, trabajoId) {
+        const t = buscar(db().trabajos, trabajoId, "Ese trabajo no existe.");
+        const s = alumnoPropio(usuario, t.socioId);
+        exigir(!t.baja, "Ese trabajo ya lo sacaste.");
+        t.baja = hoy();
         guardado.persistir();
         return socio(s.id);
     }
@@ -1391,12 +1508,12 @@ export function crearDatos(prefijo = MARCA.prefijo, { reloj = () => new Date() }
         guardado, hoy,
         // socio
         hoyLeToca, llegue, entradaConQR, entrenarOtroDia, anotarSerie, deshacerSerie, terminarEntreno, miSemana, progreso,
-        dias, clasesDelDia, reservar, cancelarReserva, misReservas, miCuota, avisarPago,
+        dias, clasesDelDia, reservar, cancelarReserva, misReservas, miCuota, avisarPago, misTrabajos, marcarTrabajo,
         // dueña
         listarSocios, contarFiltros, tablero, socio, registrarPago, confirmarPago, rechazarPago, anularPago, recordatorio,
         invitarVolver, anotarApto, firmarReglamento, altaSocio, darDeBaja, reactivar, gimnasio, filasSocios, filasPagos,
         // profe
-        hoyEnElGimnasio, listarAlumnos, ajustar, quitarAjuste, dejarNota, asignarPlan,
+        hoyEnElGimnasio, listarAlumnos, ajustar, quitarAjuste, dejarNota, asignarPlan, asignarTrabajo, quitarTrabajo,
         listarPlanes, verPlan, copiarPlan, renombrarPlan, agregarDia, quitarDia, renombrarDia, agregarEjercicio,
         quitarEjercicio, cambiarEjercicio, rutinaParaPapel
     };

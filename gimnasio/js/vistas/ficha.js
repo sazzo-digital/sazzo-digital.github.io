@@ -5,14 +5,15 @@
 // - Vane (dueña): la cuota y los pagos (registrar, confirmar el aviso de transferencia, deshacer, recordatorio armado),
 //   el apto físico y el reglamento firmado en pantalla, si viene o no (invitar a volver) y la baja.
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=5b35731b15";
-import { MEDIOS_PAGO, DIVIDIDO, textoMedio, partesIniciales, htmlDosMedios, activarDosMedios } from "../../kit/js/pagos.js?v=5b35731b15";
-import { pedirFirma } from "../../kit/js/firma.js?v=5b35731b15";
-import { armarPdf, pdfListo } from "../../kit/js/pdf.js?v=5b35731b15";
-import { NEGOCIO, MARCA } from "../marca.js?v=5b35731b15";
-import { htmlConsigna, htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=5b35731b15";
-import { TOPES, REINVITAR_DIAS, pesos, kilos, cuanto, fechaCorta, nombreFecha } from "../datos.js?v=5b35731b15";
-import { guia, activarGuias, pastilla, pastillaCuota, cara, haceDias, graficoPeso, barrasSemanas, mostrarMensaje } from "./comunes.js?v=5b35731b15";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=8d9cbf2f72";
+import { MEDIOS_PAGO, DIVIDIDO, textoMedio, partesIniciales, htmlDosMedios, activarDosMedios } from "../../kit/js/pagos.js?v=8d9cbf2f72";
+import { pedirFirma } from "../../kit/js/firma.js?v=8d9cbf2f72";
+import { armarPdf, pdfListo } from "../../kit/js/pdf.js?v=8d9cbf2f72";
+import { NEGOCIO, MARCA } from "../marca.js?v=8d9cbf2f72";
+import { htmlConsigna, htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=8d9cbf2f72";
+import { TOPES, REINVITAR_DIAS, pesos, kilos, cuanto, fechaCorta, nombreFecha } from "../datos.js?v=8d9cbf2f72";
+import { guia, activarGuias, pastilla, pastillaCuota, cara, haceDias, graficoPeso, barrasSemanas, mostrarMensaje } from "./comunes.js?v=8d9cbf2f72";
+import { htmlTrabajosProfe, activarTrabajosProfe } from "./trabajos.js?v=8d9cbf2f72";
 
 let ajustando = null; // "diaId|ejercicioId" del ejercicio que el profe está ajustando
 let medio = "efectivo"; // lo último elegido al registrar un pago
@@ -103,6 +104,7 @@ function htmlProfe(a, datos) {
         <h2 class="subtitulo"><i class="ti ti-trending-up" aria-hidden="true"></i> Cómo viene</h2>
         ${a.progreso.ejercicios.length ? `<div class="graficos">${a.progreso.ejercicios.map(graficoPeso).join("")}</div>` : ""}
         <div class="bloque">${barrasSemanas(a.progreso.semanas, a.progreso.tocan)}</div>
+        ${htmlTrabajosProfe(a)}
         <h2 class="subtitulo"><i class="ti ti-message-2" aria-hidden="true"></i> Notas para ${esc(a.nombre)}</h2>
         <form class="formulario bloque nota-nueva" novalidate>
             <label>Nota (la ve en su celu)
@@ -116,6 +118,7 @@ function htmlProfe(a, datos) {
 
 function activarProfe(cont, opciones, a) {
     const { usuario, datos } = opciones;
+    activarTrabajosProfe(cont, { usuario, datos, socioId: a.id, alCambiar: () => otraVez(cont, opciones) });
     cont.querySelectorAll("[data-ajustar]").forEach((b) => b.addEventListener("click", () => {
         ajustando = ajustando === b.dataset.ajustar ? null : b.dataset.ajustar;
         otraVez(cont, opciones);

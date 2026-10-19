@@ -3,12 +3,12 @@
 // quién está entrenando, quién terminó y qué día de la rutina le toca), los avisos (récords de hoy y ayer, y los que
 // vienen pero hace rato que no anotan lo que hacen) y un buscador para llegar a la ficha de cualquiera de sus alumnos.
 // ============================================
-import { esc, vacio } from "../../kit/js/ui.js?v=5b35731b15";
-import { kilos } from "../datos.js?v=5b35731b15";
-import { NEGOCIO } from "../marca.js?v=5b35731b15";
-import { pastilla, cara } from "./comunes.js?v=5b35731b15";
-import { htmlConsigna } from "../../kit/js/consigna.js?v=5b35731b15";
-import { htmlBotonTV, abrirModoTV } from "../../kit/js/modo-tv.js?v=5b35731b15";
+import { esc, vacio } from "../../kit/js/ui.js?v=8d9cbf2f72";
+import { kilos } from "../datos.js?v=8d9cbf2f72";
+import { NEGOCIO } from "../marca.js?v=8d9cbf2f72";
+import { pastilla, cara } from "./comunes.js?v=8d9cbf2f72";
+import { htmlConsigna } from "../../kit/js/consigna.js?v=8d9cbf2f72";
+import { htmlBotonTV, abrirModoTV } from "../../kit/js/modo-tv.js?v=8d9cbf2f72";
 
 let texto = ""; // lo buscado queda mientras se navega
 
@@ -33,6 +33,7 @@ function htmlAlumno(a) {
                         ${pastilla(a.estado === "llego" && a.llegoA ? `Llegó ${a.llegoA}` : txt, clase, icono)}
                         ${a.estadoCuota === "vencida" ? pastilla("Cuota vencida", "mal") : ""}
                         ${a.sinApto ? pastilla("Sin apto físico", "alerta") : ""}
+                        ${a.trabajos ? pastilla(`Trabajos ${a.trabajos.hechos} de ${a.trabajos.meta}`, a.trabajos.hechos >= a.trabajos.meta ? "bien" : "suave", "ti-checklist") : ""}
                     </span>
                 </div>
             </div>

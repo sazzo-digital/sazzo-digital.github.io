@@ -1758,7 +1758,7 @@ body.guardando .boton:not(.boton--secundario) {
 }
 
 @media (max-width: 999px) {
-  body:has(input:not([type=checkbox], [type=radio], [type=range], [type=color], [type=file], [type=button], [type=submit]):focus, textarea:focus) .pie-celu {
+  body:has(input:not([type=checkbox], [type=radio], [type=range], [type=color], [type=file], [type=button], [type=submit], .sazzo-chat *):focus, textarea:not(.sazzo-chat *):focus) .pie-celu {
     visibility: hidden;
   }
 }
@@ -1818,11 +1818,13 @@ body.guardando .boton:not(.boton--secundario) {
 }
 @media (max-width: 1279px) {
   .cabecera .barra-sazzo .barra-sazzo__otras,
+  .cabecera .barra-sazzo .barra-sazzo__asistente,
   .cabecera .barra-sazzo .barra-sazzo__detalle {
     width: 2.4rem;
     padding: 0;
   }
   .cabecera .barra-sazzo .barra-sazzo__otras span,
+  .cabecera .barra-sazzo .barra-sazzo__asistente span,
   .cabecera .barra-sazzo .barra-sazzo__detalle span {
     position: absolute;
     width: 1px;
@@ -1834,6 +1836,12 @@ body.guardando .boton:not(.boton--secundario) {
 @media (min-width: 1440px) {
   .cabecera .barra-sazzo .barra-sazzo__mas {
     display: inline;
+  }
+}
+
+@media (max-width: 999px) {
+  .sazzo-chat {
+    --sazzo-chat-abajo: 135px;
   }
 }
 
@@ -1853,6 +1861,9 @@ body.guardando .boton:not(.boton--secundario) {
 }
 .ingreso__sazzo .boton {
   font-size: 0.88rem;
+}
+.ingreso__sazzo [data-asistente] {
+  grid-column: 1/-1;
 }
 
 .hoja {

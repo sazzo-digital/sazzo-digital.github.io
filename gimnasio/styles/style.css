@@ -1758,7 +1758,7 @@ body.guardando .boton:not(.boton--secundario) {
 }
 
 @media (max-width: 999px) {
-  body:has(input:not([type=checkbox], [type=radio], [type=range], [type=color], [type=file], [type=button], [type=submit]):focus, textarea:focus) .pie-celu {
+  body:has(input:not([type=checkbox], [type=radio], [type=range], [type=color], [type=file], [type=button], [type=submit], .sazzo-chat *):focus, textarea:not(.sazzo-chat *):focus) .pie-celu {
     visibility: hidden;
   }
 }
@@ -1818,11 +1818,13 @@ body.guardando .boton:not(.boton--secundario) {
 }
 @media (max-width: 1279px) {
   .cabecera .barra-sazzo .barra-sazzo__otras,
+  .cabecera .barra-sazzo .barra-sazzo__asistente,
   .cabecera .barra-sazzo .barra-sazzo__detalle {
     width: 2.4rem;
     padding: 0;
   }
   .cabecera .barra-sazzo .barra-sazzo__otras span,
+  .cabecera .barra-sazzo .barra-sazzo__asistente span,
   .cabecera .barra-sazzo .barra-sazzo__detalle span {
     position: absolute;
     width: 1px;
@@ -1834,6 +1836,12 @@ body.guardando .boton:not(.boton--secundario) {
 @media (min-width: 1440px) {
   .cabecera .barra-sazzo .barra-sazzo__mas {
     display: inline;
+  }
+}
+
+@media (max-width: 999px) {
+  .sazzo-chat {
+    --sazzo-chat-abajo: 135px;
   }
 }
 
@@ -1853,6 +1861,9 @@ body.guardando .boton:not(.boton--secundario) {
 }
 .ingreso__sazzo .boton {
   font-size: 0.88rem;
+}
+.ingreso__sazzo [data-asistente] {
+  grid-column: 1/-1;
 }
 
 .hoja {
@@ -4873,6 +4884,122 @@ details[open] .ejercicio__flecha {
   display: grid;
   gap: 0.7rem;
   margin-top: 0.8rem;
+}
+
+.trabajos__cabeza {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.25rem 0.75rem;
+}
+
+.trabajos__cuenta {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--texto-suave);
+}
+
+.trabajos__lista {
+  display: grid;
+  gap: 0.6rem;
+  margin: 0.6rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.trabajo {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.55rem 0.75rem;
+  padding: 0.75rem 0.85rem;
+  border: 1px solid var(--borde);
+  border-radius: 14px;
+  background: var(--superficie);
+}
+@media (max-width: 440px) {
+  .trabajo {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.trabajo__texto {
+  min-width: 0;
+}
+.trabajo__texto b {
+  display: block;
+}
+.trabajo__texto small {
+  font-size: 0.78rem;
+  color: var(--texto-suave);
+}
+
+.trabajo__botones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+.trabajo__botones .boton--secundario.activo {
+  border-color: color-mix(in srgb, #ef4444 45%, transparent);
+  color: color-mix(in srgb, #ef4444 var(--tinta-mezcla, 70%), var(--texto));
+}
+
+.trabajo__ok {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin: 0;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: color-mix(in srgb, #10b981 var(--tinta-mezcla, 70%), var(--texto));
+}
+
+.trabajo__semana {
+  grid-column: 1/-1;
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 0.3rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.trabajo__semana li {
+  padding: 0.25rem 0;
+  border: 1px solid var(--borde);
+  border-radius: 8px;
+  background: var(--superficie-2);
+  font-size: 0.7rem;
+  text-align: center;
+  color: var(--texto-suave);
+}
+.trabajo__semana .si {
+  background: color-mix(in srgb, #10b981 18%, transparent);
+  border-color: color-mix(in srgb, #10b981 40%, transparent);
+  font-weight: 700;
+  color: color-mix(in srgb, #10b981 var(--tinta-mezcla, 70%), var(--texto));
+}
+.trabajo__semana .no {
+  background: color-mix(in srgb, #ef4444 13%, transparent);
+  border-color: color-mix(in srgb, #ef4444 40%, transparent);
+  color: color-mix(in srgb, #ef4444 var(--tinta-mezcla, 70%), var(--texto));
+}
+.trabajo__semana .futuro {
+  opacity: 0.5;
+}
+.trabajo__semana .hoy {
+  outline: 2px solid var(--primario);
+  outline-offset: 1px;
+}
+
+.trabajo-nuevo {
+  margin-top: 0.9rem;
+}
+.trabajo-nuevo .campos-chicos {
+  grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+}
+.trabajo-nuevo select {
+  width: 100%;
 }
 
 .avisos-profe {
