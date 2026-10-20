@@ -9,14 +9,14 @@
 // se devuelven copias. Sin teléfonos, mails ni documentos: nada de datos personales. Pagos de ejemplo, sin tarjetas.
 // Si cambia la forma de los datos, subir VERSION_DATOS (se regeneran solos).
 // ============================================
-import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=8d9cbf2f72";
-import { filtrarPorTexto } from "../kit/js/buscar.js?v=8d9cbf2f72";
-import { sinPasarse } from "../kit/js/topes.js?v=8d9cbf2f72";
-import { fechaLocalISO } from "../kit/js/fechas.js?v=8d9cbf2f72";
-import { aMinutos, aHora, diaSemana } from "../kit/js/turnos.js?v=8d9cbf2f72";
-import { esFirma } from "../kit/js/firma.js?v=8d9cbf2f72";
-import { MEDIOS_PAGO, DIVIDIDO, revisarPagos, sumarPorMedio, textoMedio } from "../kit/js/pagos.js?v=8d9cbf2f72";
-import { MARCA, NEGOCIO } from "./marca.js?v=8d9cbf2f72";
+import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=d2c5ed7562";
+import { filtrarPorTexto } from "../kit/js/buscar.js?v=d2c5ed7562";
+import { sinPasarse } from "../kit/js/topes.js?v=d2c5ed7562";
+import { fechaLocalISO } from "../kit/js/fechas.js?v=d2c5ed7562";
+import { aMinutos, aHora, diaSemana } from "../kit/js/turnos.js?v=d2c5ed7562";
+import { esFirma } from "../kit/js/firma.js?v=d2c5ed7562";
+import { MEDIOS_PAGO, DIVIDIDO, revisarPagos, sumarPorMedio, textoMedio } from "../kit/js/pagos.js?v=d2c5ed7562";
+import { MARCA, NEGOCIO } from "./marca.js?v=d2c5ed7562";
 
 export const VERSION_DATOS = 2;
 

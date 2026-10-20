@@ -1,7 +1,7 @@
-import { esc, aviso, sinMovimiento } from "./ui.js?v=3c9558493c";
-import { puedeEscanear, escanearSeguido } from "./escaner.js?v=3c9558493c";
-import { pip, vibrar, htmlBotonSonido, activarBotonSonido, htmlCopiable, activarCopiables } from "./celular.js?v=3c9558493c";
-import { DIVIDIDO, revisarPagos } from "./pagos.js?v=3c9558493c";
+import { esc, aviso, sinMovimiento } from "./ui.js?v=59fd6f5326";
+import { puedeEscanear, escanearSeguido } from "./escaner.js?v=59fd6f5326";
+import { pip, vibrar, htmlBotonSonido, activarBotonSonido, htmlCopiable, activarCopiables } from "./celular.js?v=59fd6f5326";
+import { DIVIDIDO, revisarPagos } from "./pagos.js?v=59fd6f5326";
 
 export const TOPE_RENGLONES = 30;
 export const TOPE_CANTIDAD = 99;
@@ -72,6 +72,11 @@ export function abrirCaja({
             ${escaneo && puedeEscanear() ? `<button class="boton boton--chico" type="button" data-escanear><i class="ti ti-scan"></i> Escanear</button>` : ""}
         </header>
         <div class="caja-super__cuerpo">
+            <div class="pantalla-caja">
+                <span class="pantalla-caja__ultimo" data-ultimo>Esperando el primer producto</span>
+                <b class="pantalla-caja__total" data-total>${esc(pesosCaja(0))}</b>
+                <span class="pantalla-caja__cuantos"><span>Total</span><span data-cuantos></span></span>
+            </div>
             <section class="caja-super__lado" aria-label="Productos">
                 <div class="visor" hidden>
                     <video playsinline muted></video>
@@ -90,11 +95,6 @@ export function abrirCaja({
                 ${imagenQR ? `<button class="boton-link caja-super__qr" type="button" data-ver-qr><i class="ti ti-qrcode"></i> Ver los QR para escanear (o imprimirlos)</button>` : ""}
             </section>
             <section class="caja-super__ticket" aria-label="Ticket">
-                <div class="pantalla-caja">
-                    <span class="pantalla-caja__ultimo" data-ultimo>Esperando el primer producto</span>
-                    <b class="pantalla-caja__total" data-total>${esc(pesosCaja(0))}</b>
-                    <span class="pantalla-caja__cuantos"><span>Total</span><span data-cuantos></span></span>
-                </div>
                 <ul class="caja-super__renglones"></ul>
                 <div class="visor-caja">
                     <button class="boton boton--ancho visor-caja__cobrar" type="button" data-cobrar>${esc(textoBoton)}</button>
@@ -215,7 +215,7 @@ export function abrirCaja({
             ultimoId = null;
             pintarTicket();
         });
-        lista.querySelector(".caja-super__renglon--nuevo")?.scrollIntoView({ block: "nearest" });
+        if (matchMedia("(min-width: 1000px)").matches) lista.querySelector(".caja-super__renglon--nuevo")?.scrollIntoView({ block: "nearest" });
         return total;
     };
 

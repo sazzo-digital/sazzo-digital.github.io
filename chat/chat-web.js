@@ -117,6 +117,7 @@
                     <p class="sazzo-chat__titulo">${TEXTOS.titulo}</p>
                     <p class="sazzo-chat__subtitulo">${TEXTOS.subtitulo}</p>
                 </div>
+                <button class="sazzo-chat__cerrar" type="button" aria-label="${TEXTOS.cerrar}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
                 <ul class="sazzo-chat__presencia" aria-live="polite">
                     <li class="sazzo-chat__quienes sazzo-chat__quienes--bot">
                         <svg viewBox="0 0 48 48" aria-hidden="true"><rect x="7" y="12" width="34" height="26" rx="10"/><path d="M24 12V6"/><circle cx="18" cy="25" r="2"/><circle cx="30" cy="25" r="2"/></svg>
@@ -450,6 +451,7 @@
 
     globo(TEXTOS.hola, "bot", "sazzo-chat__intro");
     abrir.addEventListener("click", () => mostrar(panel.hidden));
+    $(".sazzo-chat__cerrar").addEventListener("click", () => mostrar(false));
     document.addEventListener("click", (e) => {
         const boton = e.target.closest("[data-abrir-chat]");
         if (!boton) return;

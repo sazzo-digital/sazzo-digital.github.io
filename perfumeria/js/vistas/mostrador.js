@@ -1,9 +1,9 @@
-import { esc, fechaHora } from "../../kit/js/ui.js?v=2b81a855a9";
-import { abrirCaja, htmlMasDeLaCaja } from "../../kit/js/caja.js?v=2b81a855a9";
-import { filtrarPorTexto } from "../../kit/js/buscar.js?v=2b81a855a9";
-import { MEDIOS, pesos } from "../datos.js?v=2b81a855a9";
-import { mediosParaCaja, textoMedio } from "../../kit/js/pagos.js?v=2b81a855a9";
-import { MARCA, NEGOCIO } from "../marca.js?v=2b81a855a9";
+import { esc, fechaHora } from "../../kit/js/ui.js?v=35edc617e5";
+import { abrirCaja, htmlMasDeLaCaja } from "../../kit/js/caja.js?v=35edc617e5";
+import { filtrarPorTexto } from "../../kit/js/buscar.js?v=35edc617e5";
+import { MEDIOS, pesos } from "../datos.js?v=35edc617e5";
+import { mediosParaCaja, textoMedio } from "../../kit/js/pagos.js?v=35edc617e5";
+import { MARCA, NEGOCIO } from "../marca.js?v=35edc617e5";
 
 const MEDIOS_CAJA = mediosParaCaja(MEDIOS);
 

@@ -13,8 +13,8 @@
 // Lo que queda prendido (la pantalla, la cámara) se suelta solo al cambiar de pantalla (rutas.js →
 // alSalirDeLaPantalla). Nada de esto manda datos a ningún lado.
 // ============================================
-import { esc, aviso } from "./ui.js?v=638b7b74d7";
-import { alSalirDeLaPantalla } from "./rutas.js?v=638b7b74d7";
+import { esc, aviso } from "./ui.js?v=6a0389f833";
+import { alSalirDeLaPantalla } from "./rutas.js?v=6a0389f833";
 
 // ---------- Pantalla siempre prendida (Wake Lock) ----------
 let candado = null;

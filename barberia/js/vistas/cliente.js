@@ -2,12 +2,12 @@
 // Pantallas del cliente (Matías), pensadas para el celular: "Sacá tu turno" (servicio, barbero o "el que esté
 // libre", día y hora libre: sin cargar ningún dato) y "Mis turnos" (con Cancelar).
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=51466ae98e";
-import { aHora } from "../../kit/js/turnos.js?v=51466ae98e";
-import { SERVICIOS, BARBEROS, pesos, nombreFecha } from "../datos.js?v=51466ae98e";
-import { NEGOCIO } from "../marca.js?v=51466ae98e";
-import { guia, activarGuias, pastillaEstado, chipsDias } from "./comunes.js?v=51466ae98e";
-import { htmlConsigna } from "../../kit/js/consigna.js?v=51466ae98e";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=d7321eabcf";
+import { aHora } from "../../kit/js/turnos.js?v=d7321eabcf";
+import { SERVICIOS, BARBEROS, pesos, nombreFecha } from "../datos.js?v=d7321eabcf";
+import { NEGOCIO } from "../marca.js?v=d7321eabcf";
+import { guia, activarGuias, pastillaEstado, chipsDias } from "./comunes.js?v=d7321eabcf";
+import { htmlConsigna } from "../../kit/js/consigna.js?v=d7321eabcf";
 
 // Lo elegido queda mientras se navega
 let servicioId = "corte";

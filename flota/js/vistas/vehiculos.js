@@ -2,10 +2,10 @@
 // Vehículos (administradora y mecánico): lista con filtro por estado y la ficha de cada uno
 // (estado, chofer de hoy, km y service, papeles con vencimiento e historia de problemas).
 // ============================================
-import { esc, vacio, aviso, fechaCorta } from "../../kit/js/ui.js?v=ffd64dfbd6";
-import { mostrarMapa } from "../../kit/js/mapa.js?v=ffd64dfbd6";
-import { ESTADOS_VEHICULO, TOPES, UBICACIONES, COLOR_ESTADO, SERVICE_CADA_KM, cantidadCon } from "../datos.js?v=ffd64dfbd6";
-import { haceCuanto, pastillaVehiculo, pastillaProblema, historiaProblema, textoRepuestos } from "./comunes.js?v=ffd64dfbd6";
+import { esc, vacio, aviso, fechaCorta } from "../../kit/js/ui.js?v=b34a203314";
+import { mostrarMapa } from "../../kit/js/mapa.js?v=b34a203314";
+import { ESTADOS_VEHICULO, TOPES, UBICACIONES, COLOR_ESTADO, SERVICE_CADA_KM, cantidadCon } from "../datos.js?v=b34a203314";
+import { haceCuanto, pastillaVehiculo, pastillaProblema, historiaProblema, textoRepuestos } from "./comunes.js?v=b34a203314";
 
 const km = (n) => `${n.toLocaleString("es-AR")} km`;
 

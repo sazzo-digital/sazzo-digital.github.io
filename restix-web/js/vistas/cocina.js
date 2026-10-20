@@ -2,12 +2,12 @@
 // La cocina (Beto; la moza también la puede mirar): los pedidos que llegan, lo más viejo primero, con cuánto hace que
 // esperan (en rojo si pasan los 15 minutos). "Listo" lo saca y la mesa ve "comida lista".
 // ============================================
-import { esc, aviso } from "../../kit/js/ui.js?v=3c9558493c";
-import { mantenerPantallaPrendida, htmlBotonVoz, activarBotonVoz, decir } from "../../kit/js/celular.js?v=3c9558493c";
-import { MARCA, NEGOCIO } from "../marca.js?v=3c9558493c";
-import { ticket, guia, activarGuias, haceMin, hora } from "./comunes.js?v=3c9558493c";
-import { htmlConsigna } from "../../kit/js/consigna.js?v=3c9558493c";
-import { htmlBotonTV, abrirModoTV } from "../../kit/js/modo-tv.js?v=3c9558493c";
+import { esc, aviso } from "../../kit/js/ui.js?v=59fd6f5326";
+import { mantenerPantallaPrendida, htmlBotonVoz, activarBotonVoz, decir } from "../../kit/js/celular.js?v=59fd6f5326";
+import { MARCA, NEGOCIO } from "../marca.js?v=59fd6f5326";
+import { ticket, guia, activarGuias, haceMin, hora } from "./comunes.js?v=59fd6f5326";
+import { htmlConsigna } from "../../kit/js/consigna.js?v=59fd6f5326";
+import { htmlBotonTV, abrirModoTV } from "../../kit/js/modo-tv.js?v=59fd6f5326";
 
 const DEMORA_MIN = 15;
 const leidas = new Set(); // los pedidos que ya se leyeron en voz alta (una vez cada uno)

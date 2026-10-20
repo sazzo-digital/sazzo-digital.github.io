@@ -1,9 +1,9 @@
-import { esc, aviso } from "../../kit/js/ui.js?v=638b7b74d7";
-import { TOPES, RUBROS, pesos, esISBN, precioPara } from "../datos.js?v=638b7b74d7";
-import { NEGOCIO, MARCA } from "../marca.js?v=638b7b74d7";
-import { EVENTO_REINICIO } from "../../kit/js/guardado.js?v=638b7b74d7";
-import { abrirCaja, htmlMasDeLaCaja } from "../../kit/js/caja.js?v=638b7b74d7";
-import { MEDIOS_PAGO, mediosParaCaja } from "../../kit/js/pagos.js?v=638b7b74d7";
+import { esc, aviso } from "../../kit/js/ui.js?v=6a0389f833";
+import { TOPES, RUBROS, pesos, esISBN, precioPara } from "../datos.js?v=6a0389f833";
+import { NEGOCIO, MARCA } from "../marca.js?v=6a0389f833";
+import { EVENTO_REINICIO } from "../../kit/js/guardado.js?v=6a0389f833";
+import { abrirCaja, htmlMasDeLaCaja } from "../../kit/js/caja.js?v=6a0389f833";
+import { MEDIOS_PAGO, mediosParaCaja } from "../../kit/js/pagos.js?v=6a0389f833";
 
 export const ticket = new Map();
 addEventListener(EVENTO_REINICIO, () => ticket.clear());

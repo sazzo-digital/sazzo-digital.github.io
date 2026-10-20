@@ -2,11 +2,11 @@
 // Clientes (barbero): buscador, "no vuelven hace más de 30 / 45 / 60 días" con "Invitarlo" (mensaje para copiar y
 // la fecha en que se lo invitó), y la ficha de cada uno: qué se hace siempre, notas, historial y "Sacarle turno".
 // ============================================
-import { esc, aviso, vacio, fechaCorta } from "../../kit/js/ui.js?v=51466ae98e";
-import { NO_VUELVEN, TOPES, nombreFecha } from "../datos.js?v=51466ae98e";
-import { mostrarMensaje } from "./comunes.js?v=51466ae98e";
-import { htmlConsigna, htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=51466ae98e";
-import { MARCA } from "../marca.js?v=51466ae98e";
+import { esc, aviso, vacio, fechaCorta } from "../../kit/js/ui.js?v=d7321eabcf";
+import { NO_VUELVEN, TOPES, nombreFecha } from "../datos.js?v=d7321eabcf";
+import { mostrarMensaje } from "./comunes.js?v=d7321eabcf";
+import { htmlConsigna, htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=d7321eabcf";
+import { MARCA } from "../marca.js?v=d7321eabcf";
 
 let noVuelven = null; // null = todos; si no, los días
 let texto = "";

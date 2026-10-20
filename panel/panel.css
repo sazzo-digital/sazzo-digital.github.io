@@ -722,7 +722,7 @@ svg {
     height: 100%;
     overflow: visible;
     filter: drop-shadow(0 0 6px rgb(52 211 153 / 45%));
-    transform: scaleX(var(--mira, 1)) rotate(var(--inclina, 0deg));
+    transform: rotate(var(--rumbo, 0deg));
 }
 
 .sazzito .sr-pieza {
@@ -789,10 +789,10 @@ svg {
 
 @keyframes sazzito-pirueta {
     50% {
-        transform: scaleX(var(--mira, 1)) rotate(200deg) scale(1.25);
+        transform: rotate(calc(var(--rumbo, 0deg) + 200deg)) scale(1.25);
     }
     to {
-        transform: scaleX(var(--mira, 1)) rotate(360deg);
+        transform: rotate(calc(var(--rumbo, 0deg) + 360deg));
     }
 }
 

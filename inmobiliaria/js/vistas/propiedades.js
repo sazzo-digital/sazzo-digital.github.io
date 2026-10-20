@@ -3,19 +3,19 @@
 // el mapa, nunca la dirección; Valeria pide la visita, la inmobiliaria ve quiénes buscan algo así y baja el PDF) y
 // "Cargar propiedad" (con fotos sacadas con el celu, que no se suben a ningún lado).
 // ============================================
-import { esc, aviso, vacio, mensajeDe, fechaCorta } from "../../kit/js/ui.js?v=ffb3304337";
-import { fechaLocalISO, diaLocalDe } from "../../kit/js/fechas.js?v=ffb3304337";
-import { mostrarMapa } from "../../kit/js/mapa.js?v=ffb3304337";
-import { armarPdf, pdfListo, fotoParaPdf } from "../../kit/js/pdf.js?v=ffb3304337";
-import { TOPES, TIPOS, ZONAS, OPERACIONES, CARACTERISTICAS, RADIO_ZONA, pesos, dolares } from "../datos.js?v=ffb3304337";
-import { NEGOCIO } from "../marca.js?v=ffb3304337";
-import { htmlConsigna } from "../../kit/js/consigna.js?v=ffb3304337";
-import { fotosDe, urlRecorrido, achicarFoto, guardarFotosEnMemoria, revisarArchivoFoto } from "../fotos.js?v=ffb3304337";
-import { abrirRecorrido } from "../visor360.js?v=ffb3304337";
+import { esc, aviso, vacio, mensajeDe, fechaCorta } from "../../kit/js/ui.js?v=271b0300c9";
+import { fechaLocalISO, diaLocalDe } from "../../kit/js/fechas.js?v=271b0300c9";
+import { mostrarMapa } from "../../kit/js/mapa.js?v=271b0300c9";
+import { armarPdf, pdfListo, fotoParaPdf } from "../../kit/js/pdf.js?v=271b0300c9";
+import { TOPES, TIPOS, ZONAS, OPERACIONES, CARACTERISTICAS, RADIO_ZONA, pesos, dolares } from "../datos.js?v=271b0300c9";
+import { NEGOCIO } from "../marca.js?v=271b0300c9";
+import { htmlConsigna } from "../../kit/js/consigna.js?v=271b0300c9";
+import { fotosDe, urlRecorrido, achicarFoto, guardarFotosEnMemoria, revisarArchivoFoto } from "../fotos.js?v=271b0300c9";
+import { abrirRecorrido } from "../visor360.js?v=271b0300c9";
 import {
     guia, activarGuias, tarjetaPropiedad, htmlFoto, medidas, hrefPropiedad, pastillaPropiedad, pastillaVisita,
     pastillaConsulta, mostrarMensaje, mayuscula
-} from "./comunes.js?v=ffb3304337";
+} from "./comunes.js?v=271b0300c9";
 
 // Lo elegido en los filtros queda mientras se navega
 const filtro = { operacion: null, ambientes: null, hasta: null, mapa: false };

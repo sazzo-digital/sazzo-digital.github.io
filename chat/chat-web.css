@@ -243,14 +243,14 @@
     display: grid;
     grid-template-columns: auto 1fr;
     align-items: center;
-    gap: 0.75rem 0.85rem;
-    padding: 1.15rem 1.25rem 1rem;
+    gap: 0.55rem 0.7rem;
+    padding: 0.85rem 1.1rem 0.75rem;
     border-bottom: 1px solid var(--sc-borde);
 }
 
 .sazzo-chat__iso {
-    width: 36px;
-    height: 36px;
+    width: 32px;
+    height: 32px;
     border-radius: 9px;
     box-shadow: 0 0 0 1px var(--sc-borde);
 }
@@ -259,16 +259,20 @@
     min-width: 0;
 }
 
+.sazzo-chat__cerrar {
+    display: none;
+}
+
 .sazzo-chat__titulo {
     margin: 0;
     color: var(--sc-texto);
-    font: 600 1.05rem/1.2 "Space Grotesk", "Inter", system-ui, sans-serif;
+    font: 600 1rem/1.2 "Space Grotesk", "Inter", system-ui, sans-serif;
 }
 
 .sazzo-chat__subtitulo {
     margin: 0.1rem 0 0;
     color: var(--sc-suave);
-    font-size: 0.78rem;
+    font-size: 0.74rem;
     line-height: 1.3;
 }
 
@@ -277,14 +281,15 @@
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 0.45rem;
+    gap: 0.4rem;
 }
 
 .sazzo-chat__red {
     display: inline-grid;
+    flex: none;
     place-items: center;
-    width: 34px;
-    height: 34px;
+    width: 30px;
+    height: 30px;
     padding: 0;
     border: 1px solid var(--sc-borde);
     border-radius: 999px;
@@ -310,8 +315,8 @@
 }
 
 .sazzo-chat__red svg {
-    width: 17px;
-    height: 17px;
+    width: 15px;
+    height: 15px;
     color: var(--sc-verde);
 }
 
@@ -325,14 +330,15 @@
 }
 
 .sazzo-chat__persona {
+    flex: none;
     justify-self: start;
-    min-height: 34px;
-    padding: 0.25rem 0.85rem;
+    min-height: 30px;
+    padding: 0.2rem 0.75rem;
     border: 1px solid var(--sc-verde);
     border-radius: 999px;
     background: var(--sc-verde-suave);
     color: var(--sc-verde);
-    font-size: 0.82rem;
+    font-size: 0.78rem;
     font-weight: 600;
 }
 
@@ -652,7 +658,7 @@
 }
 
 .sazzo-chat--aire .sazzo-chat__cabecera {
-    padding: 1.5rem 1.5rem 1.1rem;
+    padding: 1.15rem 1.25rem 0.85rem;
 }
 
 .sazzo-chat--aire .sazzo-chat__iso {
@@ -662,7 +668,7 @@
 }
 
 .sazzo-chat--aire .sazzo-chat__titulo {
-    font: 500 1.3rem/1.1 "Inter", system-ui, sans-serif;
+    font: 500 1.15rem/1.1 "Inter", system-ui, sans-serif;
     letter-spacing: -0.02em;
 }
 
@@ -799,14 +805,14 @@
 }
 
 .sazzo-chat--capsula .sazzo-chat__cabecera {
-    padding: 1.15rem 1.25rem 1rem;
+    padding: 0.85rem 1.1rem 0.75rem;
     border-bottom: 0;
     background: radial-gradient(120% 140% at 0% 0%, color-mix(in srgb, var(--sc-verde) 28%, transparent), transparent 60%), radial-gradient(90% 140% at 100% 0%, color-mix(in srgb, var(--sc-violeta) 26%, transparent), transparent 60%);
 }
 
 
 .sazzo-chat--capsula .sazzo-chat__titulo {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
 }
 
 .sazzo-chat--capsula .sazzo-chat__persona {
@@ -910,13 +916,14 @@
 
 .sazzo-chat__quienes {
     display: inline-flex;
+    flex: none;
     align-items: center;
-    gap: 0.4rem;
-    padding: 0.25rem 0.7rem 0.25rem 0.5rem;
+    gap: 0.35rem;
+    padding: 0.2rem 0.6rem 0.2rem 0.45rem;
     border: 1px solid var(--sc-borde);
     border-radius: 999px;
     background: var(--sc-superficie);
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     line-height: 1.3;
 }
 
@@ -1311,17 +1318,103 @@
     }
 
     .sazzo-chat__panel,
+    .sazzo-chat--aire .sazzo-chat__panel,
     .sazzo-chat--capsula .sazzo-chat__panel {
         position: fixed;
-        inset: 0 0 calc(var(--sazzo-chat-abajo, 20px) + env(safe-area-inset-bottom) + 70px);
+        inset: 0;
         width: auto;
         height: auto;
-        border-width: 0 0 1px;
-        border-radius: 0 0 24px 24px;
+        padding-bottom: env(safe-area-inset-bottom);
+        border-width: 0;
+        border-radius: 0;
+        overscroll-behavior: contain;
     }
 
-    .sazzo-chat--sin-boton .sazzo-chat__panel {
-        bottom: calc(var(--sazzo-chat-abajo, 0px) + env(safe-area-inset-bottom));
+    :root:has(.sazzo-chat--abierto) {
+        overflow: hidden;
+    }
+
+    .sazzo-chat--abierto .sazzo-chat__abrir {
+        display: none;
+    }
+
+    .sazzo-chat__cabecera {
+        grid-template-columns: auto 1fr auto;
+    }
+
+    .sazzo-chat__cerrar {
+        display: grid;
+        place-items: center;
+        width: 40px;
+        height: 40px;
+        padding: 0;
+        border: 1px solid var(--sc-borde);
+        border-radius: 999px;
+        background: var(--sc-superficie);
+        color: var(--sc-texto);
+        cursor: pointer;
+    }
+
+    .sazzo-chat__cerrar svg {
+        width: 18px;
+        height: 18px;
+    }
+}
+
+/* Celular chico */
+@media (max-width: 400px) {
+    .sazzo-chat__cabecera,
+    .sazzo-chat--aire .sazzo-chat__cabecera,
+    .sazzo-chat--capsula .sazzo-chat__cabecera {
+        gap: 0.45rem 0.6rem;
+        padding: 0.7rem 0.85rem 0.6rem;
+    }
+
+    .sazzo-chat__presencia,
+    .sazzo-chat__acciones {
+        flex-wrap: nowrap;
+        gap: 0.3rem;
+        overflow-x: auto;
+        scrollbar-width: none;
+    }
+
+    .sazzo-chat__quienes {
+        gap: 0.3rem;
+        padding: 0.15rem 0.5rem 0.15rem 0.4rem;
+    }
+
+    .sazzo-chat__quienes span {
+        font-size: 0.64rem;
+        letter-spacing: 0.03em;
+    }
+
+    .sazzo-chat__quienes svg {
+        width: 13px;
+        height: 13px;
+    }
+
+    .sazzo-chat__persona {
+        padding: 0.2rem 0.6rem;
+    }
+
+    .sazzo-chat--neon .sazzo-chat__persona {
+        font-size: 0.66rem;
+        letter-spacing: 0.02em;
+    }
+
+    .sazzo-chat__iso {
+        width: 28px;
+        height: 28px;
+    }
+
+    .sazzo-chat__subtitulo,
+    .sazzo-chat--neon .sazzo-chat__subtitulo {
+        font-size: 0.68rem;
+    }
+
+    .sazzo-chat__cerrar {
+        width: 34px;
+        height: 34px;
     }
 }
 

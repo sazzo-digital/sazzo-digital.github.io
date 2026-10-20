@@ -8,13 +8,13 @@
 //   "Pedidos a proveedores": lo que bajó del mínimo, por proveedor, con el mensaje para copiar y "Llegó".
 //   "Cargar artículo": con costo y margen (el precio sale solo).
 // ============================================
-import { esc, aviso, vacio, mensajeDe } from "../../kit/js/ui.js?v=638b7b74d7";
-import { mostrarMensaje } from "../../kit/js/mensaje.js?v=638b7b74d7";
-import { bajarExcel, leerExcel } from "../../kit/js/archivos.js?v=638b7b74d7";
-import { PROVEEDORES, RUBROS, TOPES, DESCUENTO_MAYOR, nombreRubro, pesos, precioDe } from "../datos.js?v=638b7b74d7";
-import { pastillaStock } from "./comunes.js?v=638b7b74d7";
-import { htmlConsigna, htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=638b7b74d7";
-import { MARCA } from "../marca.js?v=638b7b74d7";
+import { esc, aviso, vacio, mensajeDe } from "../../kit/js/ui.js?v=6a0389f833";
+import { mostrarMensaje } from "../../kit/js/mensaje.js?v=6a0389f833";
+import { bajarExcel, leerExcel } from "../../kit/js/archivos.js?v=6a0389f833";
+import { PROVEEDORES, RUBROS, TOPES, DESCUENTO_MAYOR, nombreRubro, pesos, precioDe } from "../datos.js?v=6a0389f833";
+import { pastillaStock } from "./comunes.js?v=6a0389f833";
+import { htmlConsigna, htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=6a0389f833";
+import { MARCA } from "../marca.js?v=6a0389f833";
 
 const RAPIDOS = [5, 10, 15, 20];
 let textoBuscado = ""; // el buscador de Stock recuerda lo escrito mientras se navega

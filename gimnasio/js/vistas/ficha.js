@@ -5,15 +5,15 @@
 // - Vane (dueña): la cuota y los pagos (registrar, confirmar el aviso de transferencia, deshacer, recordatorio armado),
 //   el apto físico y el reglamento firmado en pantalla, si viene o no (invitar a volver) y la baja.
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=8d9cbf2f72";
-import { MEDIOS_PAGO, DIVIDIDO, textoMedio, partesIniciales, htmlDosMedios, activarDosMedios } from "../../kit/js/pagos.js?v=8d9cbf2f72";
-import { pedirFirma } from "../../kit/js/firma.js?v=8d9cbf2f72";
-import { armarPdf, pdfListo } from "../../kit/js/pdf.js?v=8d9cbf2f72";
-import { NEGOCIO, MARCA } from "../marca.js?v=8d9cbf2f72";
-import { htmlConsigna, htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=8d9cbf2f72";
-import { TOPES, REINVITAR_DIAS, pesos, kilos, cuanto, fechaCorta, nombreFecha } from "../datos.js?v=8d9cbf2f72";
-import { guia, activarGuias, pastilla, pastillaCuota, cara, haceDias, graficoPeso, barrasSemanas, mostrarMensaje } from "./comunes.js?v=8d9cbf2f72";
-import { htmlTrabajosProfe, activarTrabajosProfe } from "./trabajos.js?v=8d9cbf2f72";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=d2c5ed7562";
+import { MEDIOS_PAGO, DIVIDIDO, textoMedio, partesIniciales, htmlDosMedios, activarDosMedios } from "../../kit/js/pagos.js?v=d2c5ed7562";
+import { pedirFirma } from "../../kit/js/firma.js?v=d2c5ed7562";
+import { armarPdf, pdfListo } from "../../kit/js/pdf.js?v=d2c5ed7562";
+import { NEGOCIO, MARCA } from "../marca.js?v=d2c5ed7562";
+import { htmlConsigna, htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=d2c5ed7562";
+import { TOPES, REINVITAR_DIAS, pesos, kilos, cuanto, fechaCorta, nombreFecha } from "../datos.js?v=d2c5ed7562";
+import { guia, activarGuias, pastilla, pastillaCuota, cara, haceDias, graficoPeso, barrasSemanas, mostrarMensaje } from "./comunes.js?v=d2c5ed7562";
+import { htmlTrabajosProfe, activarTrabajosProfe } from "./trabajos.js?v=d2c5ed7562";
 
 let ajustando = null; // "diaId|ejercicioId" del ejercicio que el profe está ajustando
 let medio = "efectivo"; // lo último elegido al registrar un pago

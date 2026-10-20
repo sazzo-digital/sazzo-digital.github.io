@@ -6,17 +6,17 @@
 // peso. Ticket con vuelto, alias para la transferencia, "ding" al cobrar y la vista previa del ticket.
 // En la compu, dos columnas (cortes | ticket); en el celular, el ticket abajo con una barrita arriba que lleva a él.
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=69f0fef97e";
-import { puedeEscanear, escanear } from "../../kit/js/escaner.js?v=69f0fef97e";
-import { mantenerPantallaPrendida, htmlCopiable, activarCopiables, htmlBotonSonido, activarBotonSonido, ding } from "../../kit/js/celular.js?v=69f0fef97e";
-import { TOPES, MEDIOS, ALIAS, ANIMALES, ETIQUETA, pesos, kilos, aGramos, precioPorPeso, gramosPara, leerEtiqueta } from "../datos.js?v=69f0fef97e";
-import { textoMedio, DIVIDIDO, partesIniciales, htmlDosMedios, activarDosMedios } from "../../kit/js/pagos.js?v=69f0fef97e";
-import { MARCA, NEGOCIO } from "../marca.js?v=69f0fef97e";
-import { campoKg, kgEnCampo, precioDe, hora } from "./comunes.js?v=69f0fef97e";
-import { EVENTO_REINICIO } from "../../kit/js/guardado.js?v=69f0fef97e";
-import { puedeConectarBalanza, conectarBalanza } from "../../kit/js/balanza.js?v=69f0fef97e";
-import { abrirModoTV } from "../../kit/js/modo-tv.js?v=69f0fef97e";
-import { htmlMasDeLaCaja } from "../../kit/js/caja.js?v=69f0fef97e";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=50d0e40a54";
+import { puedeEscanear, escanear } from "../../kit/js/escaner.js?v=50d0e40a54";
+import { mantenerPantallaPrendida, htmlCopiable, activarCopiables, htmlBotonSonido, activarBotonSonido, ding } from "../../kit/js/celular.js?v=50d0e40a54";
+import { TOPES, MEDIOS, ALIAS, ANIMALES, ETIQUETA, pesos, kilos, aGramos, precioPorPeso, gramosPara, leerEtiqueta } from "../datos.js?v=50d0e40a54";
+import { textoMedio, DIVIDIDO, partesIniciales, htmlDosMedios, activarDosMedios } from "../../kit/js/pagos.js?v=50d0e40a54";
+import { MARCA, NEGOCIO } from "../marca.js?v=50d0e40a54";
+import { campoKg, kgEnCampo, precioDe, hora } from "./comunes.js?v=50d0e40a54";
+import { EVENTO_REINICIO } from "../../kit/js/guardado.js?v=50d0e40a54";
+import { puedeConectarBalanza, conectarBalanza } from "../../kit/js/balanza.js?v=50d0e40a54";
+import { abrirModoTV } from "../../kit/js/modo-tv.js?v=50d0e40a54";
+import { htmlMasDeLaCaja } from "../../kit/js/caja.js?v=50d0e40a54";
 
 // El ticket en curso queda en memoria mientras se navega (se vacía al cobrar)
 export const ticket = new Map(); // articuloId → { gramos } o { unidades }
@@ -50,8 +50,12 @@ export function vistaVender(cont, { usuario, datos }) {
             <span class="negocio"><i class="ti ti-building-store" aria-hidden="true"></i>${esc(NEGOCIO)}</span>
             ${htmlBotonSonido(MARCA.prefijo)}
         </div>
-        <button class="ticket-barra" type="button" hidden></button>
         <div class="caja-venta">
+            <div class="pantalla-caja">
+                <span class="pantalla-caja__ultimo" data-ultimo>Esperando el primer producto</span>
+                <b class="pantalla-caja__total" data-total>${esc(pesos(0))}</b>
+                <span class="pantalla-caja__cuantos"><span>Total</span><span data-cuantos></span></span>
+            </div>
             <section class="productos" aria-label="Cortes">
                 <form class="buscar" novalidate>
                     <label class="buscador">
@@ -93,19 +97,27 @@ export function vistaVender(cont, { usuario, datos }) {
     const chips = cont.querySelector(".rubros");
     const panelPesar = cont.querySelector(".pesar");
     const lugarTicket = cont.querySelector(".ticket");
-    const barra = cont.querySelector(".ticket-barra");
-    barra.addEventListener("click", () => lugarTicket.scrollIntoView({ block: "start", behavior: "smooth" }));
+    const pantalla = cont.querySelector(".caja-venta > .pantalla-caja");
+    let ultimoId = [...ticket.keys()].at(-1) ?? null;
+    const marcarUltimo = (id) => {
+        ultimoId = id;
+        pantalla.classList.remove("pantalla-caja--sumo");
+        void pantalla.offsetWidth;
+        pantalla.classList.add("pantalla-caja--sumo");
+    };
 
     /** Suma un artículo por unidad (o lo deja en `fija`). */
     const cambiarUnidades = (id, { cuantos = 1, fija = null } = {}) => {
         const a = datos.articulo(id);
-        const nueva = fija ?? (ticket.get(id)?.unidades ?? 0) + cuantos;
+        const anterior = ticket.get(id)?.unidades ?? 0;
+        const nueva = fija ?? anterior + cuantos;
         if (nueva > Math.min(a.stock, TOPES.unidades)) {
             aviso(a.stock > TOPES.unidades ? `Hasta ${TOPES.unidades} por venta.` : a.stock ? `De ${a.nombre} quedan ${a.stock}.` : `No queda ${a.nombre}.`, "error");
             return pintarTicket();
         }
         if (!Number.isInteger(nueva) || nueva <= 0) ticket.delete(id);
         else ticket.set(id, { unidades: nueva });
+        if (nueva > anterior) marcarUltimo(id);
         pintarTicket();
     };
 
@@ -121,6 +133,7 @@ export function vistaVender(cont, { usuario, datos }) {
             return false;
         }
         ticket.set(id, { gramos });
+        marcarUltimo(id);
         pintarTicket();
         return true;
     }
@@ -310,8 +323,11 @@ export function vistaVender(cont, { usuario, datos }) {
         } catch (e) {
             aviso(e, "error");
         }
-        barra.hidden = !items.length;
-        barra.innerHTML = `<i class="ti ti-receipt" aria-hidden="true"></i> ${items.length} ${items.length === 1 ? "renglón" : "renglones"} · <b>${esc(pesos(armado.total))}</b> <span>Cobrar ↓</span>`;
+        const ultimo = armado.renglones.find((r) => r.articuloId === ultimoId) ?? armado.renglones.at(-1);
+        const cuantos = armado.renglones.reduce((n, r) => n + (r.venta === "kg" ? 1 : r.unidades), 0);
+        pantalla.querySelector("[data-total]").textContent = pesos(armado.total);
+        pantalla.querySelector("[data-ultimo]").textContent = ultimo ? `${ultimo.nombre} · ${ultimo.venta === "kg" ? kilos(ultimo.gramos) : `${ultimo.unidades} unidades`}` : "Esperando el primer producto";
+        pantalla.querySelector("[data-cuantos]").textContent = `${cuantos} ${cuantos === 1 ? "producto" : "productos"}`;
         lugarTicket.innerHTML = `
             <h2 class="subtitulo"><i class="ti ti-receipt"></i> Ticket</h2>
             ${items.length ? `
@@ -423,7 +439,9 @@ export function vistaVender(cont, { usuario, datos }) {
             </div>
             <div class="vista-ticket" hidden>${htmlTicket(v)}</div>
             ${paraPreparar ? `<a class="boton boton--secundario boton--ancho" href="#/pedidos"><i class="ti ti-clipboard-list"></i> Hay ${esc(paraPreparar)} ${paraPreparar === 1 ? "pedido" : "pedidos"} para preparar</a>` : ""}`;
-        barra.hidden = true;
+        pantalla.querySelector("[data-total]").textContent = pesos(0);
+        pantalla.querySelector("[data-ultimo]").textContent = "Venta lista · esperando el próximo producto";
+        pantalla.querySelector("[data-cuantos]").textContent = "0 productos";
         lugarTicket.querySelector("[data-nueva]").addEventListener("click", () => {
             medio = "efectivo";
             pintarTicket();

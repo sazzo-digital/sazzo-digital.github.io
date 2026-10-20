@@ -57,7 +57,9 @@
     let saludando = 0;
     let saludo = 0;
     let lugar = [0, 0];
-    let inclina = 0;
+    let rumbo = 0;
+    let cuadro = 0;
+    const GRAVEDAD = 0.21;
     let leyendo = false;
     let audio = null;
     let instalar = null;
@@ -387,12 +389,21 @@
         if (quieto.matches) lugar = [ancho - 12, alto - 12];
         else if (t > saludando) {
             const u = t * lento;
-            const antes = lugar[0];
-            lugar = [ancho * (0.5 + 0.3 * Math.sin(u * 0.29) + 0.2 * Math.sin(u * 0.77 + 1.3)), arriba + (alto - arriba) * (0.5 + 0.3 * Math.sin(u * 0.43 + 2) + 0.2 * Math.sin(u * 1.05)) + Math.sin(u * 3) * 3];
-            const paso = lugar[0] - antes;
-            if (Math.abs(paso) > 0.15) sazzito.style.setProperty("--mira", paso < 0 ? "-1" : "1");
-            inclina += (Math.max(-12, Math.min(12, paso * 6)) - inclina) * 0.08;
-            sazzito.style.setProperty("--inclina", `${inclina.toFixed(2)}deg`);
+            const camino = (k) => [ancho * (0.5 + 0.3 * Math.sin(k * 0.29) + 0.2 * Math.sin(k * 0.77 + 1.3)), arriba + (alto - arriba) * (0.5 + 0.3 * Math.sin(k * 0.43 + 2) + 0.2 * Math.sin(k * 1.05))];
+            const [x0, y0] = camino(u - 0.05);
+            const [x1, y1] = camino(u);
+            const [x2, y2] = camino(u + 0.05);
+            lugar = [x1, y1 + Math.sin(u * 3) * 3];
+            const empujeX = (x2 - 2 * x1 + x0) / 0.0025 + (x2 - x0) / 0.1;
+            const empujeY = (y2 - 2 * y1 + y0) / 0.0025 + (y2 - y0) / 0.1 - GRAVEDAD * (alto - arriba);
+            const dt = Math.min(0.1, t - cuadro);
+            cuadro = t;
+            let giro = (Math.atan2(empujeX, -empujeY) * 180) / Math.PI - rumbo;
+            giro %= 360;
+            if (giro > 180) giro -= 360;
+            if (giro < -180) giro += 360;
+            rumbo += giro * (1 - Math.exp(-Math.max(0, dt) * 7));
+            sazzito.style.setProperty("--rumbo", `${rumbo.toFixed(1)}deg`);
         }
         sazzito.style.transform = `translate(${lugar[0]}px, ${lugar[1]}px)`;
         if (!quieto.matches) requestAnimationFrame(volar);
