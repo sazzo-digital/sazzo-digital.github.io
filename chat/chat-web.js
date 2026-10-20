@@ -38,8 +38,6 @@
         lugar: "Escribí tu consulta…",
         persona: "🙋 Hablar con una persona",
         libre: "✍️ Consulta libre",
-        contar: "✍️ Contar lo que necesito",
-        contarLugar: "Contanos con tus palabras…",
         enVivo: "🟢 Hablar en vivo ahora",
         escribe: "escribiendo",
         muchos: "Recibimos muchos mensajes seguidos. Probá de nuevo en un rato.",
@@ -310,25 +308,16 @@
         try {
             datos = JSON.parse(texto);
         } catch {}
-        opciones = Array.isArray(datos) ? datos.filter((o) => typeof o === "string" && o.trim()).slice(0, 6) : [];
+        opciones = Array.isArray(datos) ? datos.filter((o) => typeof o === "string" && o.trim()).slice(0, 3) : [];
         cajaOpciones.replaceChildren();
         for (const o of opciones) {
             const b = document.createElement("button");
             b.type = "button";
             b.className = "sazzo-chat__rubro";
             b.textContent = o;
-            b.addEventListener("click", () => mandar({ texto: o }, o));
+            b.addEventListener("click", () => mandar(o === "Prefiero hablar con una persona" ? { persona: true } : { texto: o }, o));
             cajaOpciones.append(b);
         }
-        const contar = document.createElement("button");
-        contar.type = "button";
-        contar.className = "sazzo-chat__rubro sazzo-chat__rubro--libre";
-        contar.textContent = TEXTOS.contar;
-        contar.addEventListener("click", () => {
-            campo.placeholder = TEXTOS.contarLugar;
-            campo.focus();
-        });
-        cajaOpciones.append(contar);
     };
 
     const reiniciar = () => {

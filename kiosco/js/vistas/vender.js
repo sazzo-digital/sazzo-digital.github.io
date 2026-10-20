@@ -1,13 +1,13 @@
-import { pintarConsigna } from "./comunes.js?v=31552da8a0";
-import { esc, aviso } from "../../kit/js/ui.js?v=31552da8a0";
-import { mantenerPantallaPrendida, ding } from "../../kit/js/celular.js?v=31552da8a0";
-import { girarRuleta } from "../../kit/js/ruleta.js?v=31552da8a0";
-import { TOPES, MEDIOS, PREMIOS, PROMO_DESDE, SECCIONES, ganaTirada, pesos, seccionDe } from "../datos.js?v=31552da8a0";
-import { mediosParaCaja } from "../../kit/js/pagos.js?v=31552da8a0";
-import { MARCA, NEGOCIO } from "../marca.js?v=31552da8a0";
-import { guia, activarGuias } from "./comunes.js?v=31552da8a0";
-import { EVENTO_REINICIO } from "../../kit/js/guardado.js?v=31552da8a0";
-import { abrirCaja, htmlMasDeLaCaja } from "../../kit/js/caja.js?v=31552da8a0";
+import { pintarConsigna } from "./comunes.js?v=5923a3d3eb";
+import { esc, aviso } from "../../kit/js/ui.js?v=5923a3d3eb";
+import { mantenerPantallaPrendida, ding } from "../../kit/js/celular.js?v=5923a3d3eb";
+import { girarRuleta } from "../../kit/js/ruleta.js?v=5923a3d3eb";
+import { TOPES, MEDIOS, PREMIOS, PROMO_DESDE, SECCIONES, ganaTirada, pesos, seccionDe } from "../datos.js?v=5923a3d3eb";
+import { mediosParaCaja } from "../../kit/js/pagos.js?v=5923a3d3eb";
+import { MARCA, NEGOCIO } from "../marca.js?v=5923a3d3eb";
+import { guia, activarGuias } from "./comunes.js?v=5923a3d3eb";
+import { EVENTO_REINICIO } from "../../kit/js/guardado.js?v=5923a3d3eb";
+import { abrirCaja, htmlMasDeLaCaja } from "../../kit/js/caja.js?v=5923a3d3eb";
 
 export const ticket = new Map();
 addEventListener(EVENTO_REINICIO, () => ticket.clear());

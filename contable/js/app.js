@@ -3,19 +3,19 @@
 // El menú de abajo tiene lugar para 5: cada persona ve las 4 que más usa + "Más" (todas). Las pantallas que se
 // apagan en "Tu empresa" desaparecen del menú. irA() cambia de persona sin pasar por "Probala como…" (recorrido).
 // ============================================
-import { $, vacio, conFundido } from "../kit/js/ui.js?v=9b3e014917";
-import { iniciarDemo } from "../kit/js/arranque.js?v=9b3e014917";
-import { vistaIngreso } from "../kit/js/ingreso.js?v=9b3e014917";
-import { pintarMarco } from "../kit/js/marco.js?v=9b3e014917";
-import { mostrarRuta } from "../kit/js/rutas.js?v=9b3e014917";
-import { vistaAcerca as pintarAcerca } from "../kit/js/acerca.js?v=9b3e014917";
-import { conConsigna } from "./vistas/comunes.js?v=9b3e014917";
-import { MARCA, PERSONAS, DETALLE, buscarPersona } from "./marca.js?v=9b3e014917";
-import { aparte } from "../kit/js/aparte.js?v=9b3e014917";
-import { leerSesionGuardada } from "../kit/js/guardado.js?v=9b3e014917";
+import { $, vacio, conFundido } from "../kit/js/ui.js?v=842abd0a87";
+import { iniciarDemo } from "../kit/js/arranque.js?v=842abd0a87";
+import { vistaIngreso } from "../kit/js/ingreso.js?v=842abd0a87";
+import { pintarMarco } from "../kit/js/marco.js?v=842abd0a87";
+import { mostrarRuta } from "../kit/js/rutas.js?v=842abd0a87";
+import { vistaAcerca as pintarAcerca } from "../kit/js/acerca.js?v=842abd0a87";
+import { conConsigna } from "./vistas/comunes.js?v=842abd0a87";
+import { MARCA, PERSONAS, DETALLE, buscarPersona } from "./marca.js?v=842abd0a87";
+import { aparte } from "../kit/js/aparte.js?v=842abd0a87";
+import { leerSesionGuardada } from "../kit/js/guardado.js?v=842abd0a87";
 
 // Los datos de ejemplo y las pantallas se bajan aparte (al terminar de cargar): "Probala como…" aparece sin esperarlos
-const pantallas = aparte(() => import("./pantallas.js?v=9b3e014917"));
+const pantallas = aparte(() => import("./pantallas.js?v=842abd0a87"));
 const { vistaInicio, vistaFacturar, vistaNuevaFactura, vistaComprobante, vistaCompras, vistaNuevaCompra, vistaIva, vistaCuentas, vistaFicha, vistaContabilidad, vistaEmpresa, vistaMas, avisosDe } = pantallas.funciones;
 
 iniciarDemo(MARCA);

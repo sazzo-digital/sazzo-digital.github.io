@@ -2,8 +2,8 @@
 // Catálogo de Sazzo: arma las tarjetas de demos (desde demos.js), las animaciones al bajar, los botones de
 // contacto (desde config.js), guarda de dónde vino la visita (?o=papel / ?o=ig) y avisa a la medición.
 // ============================================
-import { DEMOS, TRABAJOS } from "./demos.js?v=9dfc1f5eb3";
-import { CONTACTO, MEDICION, LINK_DEMOS, RUTA_LIBS, RUTA_CHAT } from "./config.js?v=9dfc1f5eb3";
+import { DEMOS, TRABAJOS } from "./demos.js?v=ae797bfe77";
+import { CONTACTO, MEDICION, LINK_DEMOS, RUTA_LIBS, RUTA_CHAT } from "./config.js?v=ae797bfe77";
 
 const $ = (selector, raiz = document) => raiz.querySelector(selector);
 const $$ = (selector, raiz = document) => [...raiz.querySelectorAll(selector)];
@@ -419,7 +419,7 @@ if ((linkWhatsapp || usuarioInstagram) && typeof ventanaContacto.showModal === "
 const botChat = /^https:\/\/[\w.-]+\/web$|^http:\/\/(localhost|127\.0\.0\.1):\d{2,5}\/web$/.test(CONTACTO.chat ?? "") ? CONTACTO.chat : null;
 if (botChat) {
     const guion = document.createElement("script");
-    guion.src = `${RUTA_CHAT}chat-web.js`;
+    guion.src = `${RUTA_CHAT}chat-web.js?v=15455c95cb`;
     Object.assign(guion.dataset, {
         bot: botChat, origen: "catalogo", privacidad: "privacidad.html",
         whatsapp: linkWhatsapp ? CONTACTO.whatsapp : "", instagram: usuarioInstagram ?? "", mensaje: CONTACTO.mensaje

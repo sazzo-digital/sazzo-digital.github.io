@@ -1,4 +1,4 @@
-import { pintarConsigna } from "./comunes.js?v=6c9c546cd1";
+import { pintarConsigna } from "./comunes.js?v=75e80e5b8c";
 // ============================================
 // Stock y precios. Todos ven el stock por rubro, con "hay que pedir" y el precio (y el de por mayor).
 // La dueña además ve el costo y el margen de cada artículo y los corrige ahí mismo, y tiene:
@@ -9,12 +9,12 @@ import { pintarConsigna } from "./comunes.js?v=6c9c546cd1";
 //   "Pedidos a proveedores": lo que bajó del mínimo, por proveedor, con el mensaje para copiar y "Llegó".
 //   "Cargar artículo": con costo y margen (el precio sale solo).
 // ============================================
-import { esc, aviso, vacio, mensajeDe } from "../../kit/js/ui.js?v=6c9c546cd1";
-import { mostrarMensaje } from "../../kit/js/mensaje.js?v=6c9c546cd1";
-import { leerExcel } from "../../kit/js/archivos.js?v=6c9c546cd1";
-import { htmlEstante, activarEstantes } from "../../kit/js/estante.js?v=6c9c546cd1";
-import { PROVEEDORES, RUBROS, TOPES, DESCUENTO_MAYOR, nombreRubro, pesos, precioDe } from "../datos.js?v=6c9c546cd1";
-import { pastillaStock } from "./comunes.js?v=6c9c546cd1";
+import { esc, aviso, vacio, mensajeDe } from "../../kit/js/ui.js?v=75e80e5b8c";
+import { mostrarMensaje } from "../../kit/js/mensaje.js?v=75e80e5b8c";
+import { leerExcel } from "../../kit/js/archivos.js?v=75e80e5b8c";
+import { htmlEstante, activarEstantes } from "../../kit/js/estante.js?v=75e80e5b8c";
+import { PROVEEDORES, RUBROS, TOPES, DESCUENTO_MAYOR, nombreRubro, pesos, precioDe } from "../datos.js?v=75e80e5b8c";
+import { pastillaStock } from "./comunes.js?v=75e80e5b8c";
 
 const RAPIDOS = [5, 10, 15, 20];
 let textoBuscado = ""; // el buscador de Stock recuerda lo escrito mientras se navega

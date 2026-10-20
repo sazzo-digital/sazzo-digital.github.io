@@ -1,5 +1,5 @@
-import { esc } from "./ui.js?v=9b3e014917";
-import { mantenerPantallaPrendida } from "./celular.js?v=9b3e014917";
+import { esc } from "./ui.js?v=842abd0a87";
+import { mantenerPantallaPrendida } from "./celular.js?v=842abd0a87";
 
 export const TOPES_TV = { minimoMs: 2000, maximoMs: 60000 };
 

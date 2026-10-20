@@ -1,5 +1,5 @@
 const PREFIJO = "sazzo-contable";
-const COPIA = `${PREFIJO}-9b3e014917`;
+const COPIA = `${PREFIJO}-842abd0a87`;
 const BASICO = ["./", "manifest.webmanifest"];
 
 self.addEventListener("install", (e) => {

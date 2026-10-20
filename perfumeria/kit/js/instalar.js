@@ -1,4 +1,4 @@
-import { esc, aviso } from "./ui.js?v=947b9af597";
+import { esc, aviso } from "./ui.js?v=5db8adfe03";
 
 let pedidoDeInstalar = null;
 let nombreApp = "la demo";

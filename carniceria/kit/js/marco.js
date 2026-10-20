@@ -13,18 +13,18 @@
 // Festejo: cuando aparece una confirmación (.hecho: turno reservado, venta cobrada, orden creada…), el ✓ entra con un
 // rebote, salen chispitas del color de la demo y el celular vibra cortito (Android). Quieto con "reducir movimiento".
 // ============================================
-import { $, $$, esc, iniciales } from "./ui.js?v=9653b43c72";
-import { logoSazzo, nombreDemo } from "./marca.js?v=9653b43c72";
-import { LINK_CATALOGO } from "./config.js?v=9653b43c72";
-import { interruptorTema, activarInterruptorTema } from "./apariencia.js?v=9653b43c72";
-import { linkOtrasDemos, linkQuieroEsto, botDelChat } from "./enlaces.js?v=9653b43c72";
-import { abrirColores, leerNombre } from "./colores.js?v=9653b43c72";
-import { contar } from "./visita.js?v=9653b43c72";
-import { pintarAvisos } from "./avisos.js?v=9653b43c72";
-import { revisarDetalle, htmlBotonDetalle, activarDetalle } from "./detalle.js?v=9653b43c72";
-import { htmlBotonInstalarCabecera } from "./instalar.js?v=9653b43c72";
-import { olvidarDemo } from "./guardado.js?v=9653b43c72";
-import { htmlInterruptorPasos, activarInterruptorPasos } from "./consigna.js?v=9653b43c72";
+import { $, $$, esc, iniciales } from "./ui.js?v=64682b101c";
+import { logoSazzo, nombreDemo } from "./marca.js?v=64682b101c";
+import { LINK_CATALOGO } from "./config.js?v=64682b101c";
+import { interruptorTema, activarInterruptorTema } from "./apariencia.js?v=64682b101c";
+import { linkOtrasDemos, linkQuieroEsto, botDelChat } from "./enlaces.js?v=64682b101c";
+import { abrirColores, leerNombre } from "./colores.js?v=64682b101c";
+import { contar } from "./visita.js?v=64682b101c";
+import { pintarAvisos } from "./avisos.js?v=64682b101c";
+import { revisarDetalle, htmlBotonDetalle, activarDetalle } from "./detalle.js?v=64682b101c";
+import { htmlBotonInstalarCabecera } from "./instalar.js?v=64682b101c";
+import { olvidarDemo } from "./guardado.js?v=64682b101c";
+import { htmlInterruptorPasos, activarInterruptorPasos } from "./consigna.js?v=64682b101c";
 
 /** La barrita de Sazzo: colores, otras demos y "Quiero esto" (los textos largos solo si hay lugar). */
 export function htmlBarraSazzo(marca, opciones, conDetalle = false) {

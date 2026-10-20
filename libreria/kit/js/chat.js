@@ -1,11 +1,11 @@
-import { CONTACTO, RUTA_CHAT, LINK_CATALOGO } from "./config.js?v=6c9c546cd1";
-import { botDelChat, mensajeQuieroEsto } from "./enlaces.js?v=6c9c546cd1";
+import { CONTACTO, RUTA_CHAT, LINK_CATALOGO } from "./config.js?v=75e80e5b8c";
+import { botDelChat, mensajeQuieroEsto } from "./enlaces.js?v=75e80e5b8c";
 
 export function cargarChat(marca, { contacto = CONTACTO, ruta = RUTA_CHAT, catalogo = LINK_CATALOGO } = {}) {
     const bot = botDelChat({ contacto });
     if (!bot || document.querySelector("script[data-chat-sazzo]")) return null;
     const guion = document.createElement("script");
-    guion.src = `${ruta}chat-web.js`;
+    guion.src = `${ruta}chat-web.js?v=15455c95cb`;
     Object.assign(guion.dataset, {
         chatSazzo: "", bot, origen: marca.id, flotante: "no", privacidad: `${catalogo}privacidad.html`,
         whatsapp: contacto.whatsapp ?? "", mensaje: mensajeQuieroEsto(marca)

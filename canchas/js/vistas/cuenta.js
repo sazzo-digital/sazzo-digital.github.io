@@ -1,6 +1,6 @@
-import { esc, aviso } from "../../kit/js/ui.js?v=d615be4552";
-import { MEDIOS, TOPES, pesos, dividir } from "../datos.js?v=d615be4552";
-import { textoMedio } from "../../kit/js/pagos.js?v=d615be4552";
+import { esc, aviso } from "../../kit/js/ui.js?v=7d4af554c7";
+import { MEDIOS, TOPES, pesos, dividir } from "../datos.js?v=7d4af554c7";
+import { textoMedio } from "../../kit/js/pagos.js?v=7d4af554c7";
 
 export function htmlCuenta(c, { soyJugador = false } = {}) {
     return `

@@ -1,17 +1,17 @@
-import { consignaPersona, activarSerie } from "./comunes.js?v=9653b43c72";
+import { consignaPersona, activarSerie } from "./comunes.js?v=64682b101c";
 // ============================================
 // Pedidos (Ricardo y Darío): los que llegan del celu o se anotan en el mostrador, los del día por hora de retiro.
 // En cada pedido: se escribe lo que pesó cada corte (pidió 1,5, pesó 1,62): el total se ajusta solo y dice la
 // diferencia. "Listo: avisarle" lo separa (se descuenta del stock) y arma el mensaje para WhatsApp; "Cobrar y
 // entregar" lo pasa a la caja; o se anula (lo separado vuelve al stock).
 // ============================================
-import { DIVIDIDO, partesIniciales, htmlDosMedios, activarDosMedios } from "../../kit/js/pagos.js?v=9653b43c72";
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=9653b43c72";
-import { mostrarMensaje } from "../../kit/js/mensaje.js?v=9653b43c72";
-import { htmlCopiable, activarCopiables, ding } from "../../kit/js/celular.js?v=9653b43c72";
-import { ESTADOS_PEDIDO, MEDIOS, RETIROS, TOPES, ALIAS, pesos, kilos, aGramos, precioPorPeso } from "../datos.js?v=9653b43c72";
-import { MARCA } from "../marca.js?v=9653b43c72";
-import { guia, activarGuias, pasos, pastillaEstado, tarjetaPedido, cuando, campoKg, kgEnCampo, loPedido } from "./comunes.js?v=9653b43c72";
+import { DIVIDIDO, partesIniciales, htmlDosMedios, activarDosMedios } from "../../kit/js/pagos.js?v=64682b101c";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=64682b101c";
+import { mostrarMensaje } from "../../kit/js/mensaje.js?v=64682b101c";
+import { htmlCopiable, activarCopiables, ding } from "../../kit/js/celular.js?v=64682b101c";
+import { ESTADOS_PEDIDO, MEDIOS, RETIROS, TOPES, ALIAS, pesos, kilos, aGramos, precioPorPeso } from "../datos.js?v=64682b101c";
+import { MARCA } from "../marca.js?v=64682b101c";
+import { guia, activarGuias, pasos, pastillaEstado, tarjetaPedido, cuando, campoKg, kgEnCampo, loPedido } from "./comunes.js?v=64682b101c";
 
 /** Billetes "redondos" para cobrar un pedido: el próximo múltiplo de $10.000, de $20.000 y $50.000. */
 const billetesPara = (total) => [...new Set([10_000, 20_000, 50_000].map((b) => Math.ceil(Math.max(1, total) / b) * b))].slice(0, 3);

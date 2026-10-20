@@ -3,18 +3,18 @@
 // Las dos personas ven las mismas secciones; lo que cambia (precios, topes, últimos 7 días) lo controlan las
 // funciones de datos y cada pantalla. irA() cambia de persona sin pasar por "Probala como…" (botones del recorrido).
 // ============================================
-import { $, conFundido } from "../kit/js/ui.js?v=31552da8a0";
-import { iniciarDemo } from "../kit/js/arranque.js?v=31552da8a0";
-import { vistaIngreso } from "../kit/js/ingreso.js?v=31552da8a0";
-import { pintarMarco } from "../kit/js/marco.js?v=31552da8a0";
-import { mostrarRuta } from "../kit/js/rutas.js?v=31552da8a0";
-import { vistaAcerca } from "../kit/js/acerca.js?v=31552da8a0";
-import { MARCA, PERSONAS, DETALLE, buscarPersona } from "./marca.js?v=31552da8a0";
-import { aparte } from "../kit/js/aparte.js?v=31552da8a0";
-import { leerSesionGuardada } from "../kit/js/guardado.js?v=31552da8a0";
+import { $, conFundido } from "../kit/js/ui.js?v=5923a3d3eb";
+import { iniciarDemo } from "../kit/js/arranque.js?v=5923a3d3eb";
+import { vistaIngreso } from "../kit/js/ingreso.js?v=5923a3d3eb";
+import { pintarMarco } from "../kit/js/marco.js?v=5923a3d3eb";
+import { mostrarRuta } from "../kit/js/rutas.js?v=5923a3d3eb";
+import { vistaAcerca } from "../kit/js/acerca.js?v=5923a3d3eb";
+import { MARCA, PERSONAS, DETALLE, buscarPersona } from "./marca.js?v=5923a3d3eb";
+import { aparte } from "../kit/js/aparte.js?v=5923a3d3eb";
+import { leerSesionGuardada } from "../kit/js/guardado.js?v=5923a3d3eb";
 
 // Los datos de ejemplo y las pantallas se bajan aparte (al terminar de cargar): "Probala como…" aparece sin esperarlos
-const pantallas = aparte(() => import("./pantallas.js?v=31552da8a0"));
+const pantallas = aparte(() => import("./pantallas.js?v=5923a3d3eb"));
 const { vistaInicio, vistaFiados, vistaCliente, vistaStock, vistaAumento, vistaLista, vistaCaja, avisosDe } = pantallas.funciones;
 
 iniciarDemo(MARCA);

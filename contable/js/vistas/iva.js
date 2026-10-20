@@ -1,18 +1,18 @@
-import { conConsigna } from "./comunes.js?v=9b3e014917";
+import { conConsigna } from "./comunes.js?v=842abd0a87";
 // ============================================
 // IVA: la posición del mes (débito − crédito − percepciones − saldo a favor anterior = a pagar o a favor, con el
 // vencimiento según el CUIT), el gráfico de los últimos 12 meses, los libros IVA Ventas y Compras, y los archivos
 // para bajar (Excel/CSV para el contador y los .txt del Libro IVA Digital, de prueba). La ven todos; bajar archivos
 // es cosa de Patricia (los demás también pueden mirarlos).
 // ============================================
-import { esc, descargarCSV, fechaCorta } from "../../kit/js/ui.js?v=9b3e014917";
-import { htmlEstante, activarEstantes } from "../../kit/js/estante.js?v=9b3e014917";
-import { estantesIva } from "../estantes.js?v=9b3e014917";
-import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=9b3e014917";
-import { ALICUOTAS, ORDEN_ALICUOTAS, pesos, pesosRedondo, nombrePeriodo, mesCorto, formatoCuit, periodoActual } from "../reglas.js?v=9b3e014917";
-import { buscarPersona, MARCA } from "../marca.js?v=9b3e014917";
-import { libroDigitalVentas, libroDigitalCompras, bajarTexto } from "../libro-digital.js?v=9b3e014917";
-import { periodoPedido, htmlSelectorMes, activarSelectorMes, htmlTabla, diaMes, pintarConsigna } from "./comunes.js?v=9b3e014917";
+import { esc, descargarCSV, fechaCorta } from "../../kit/js/ui.js?v=842abd0a87";
+import { htmlEstante, activarEstantes } from "../../kit/js/estante.js?v=842abd0a87";
+import { estantesIva } from "../estantes.js?v=842abd0a87";
+import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=842abd0a87";
+import { ALICUOTAS, ORDEN_ALICUOTAS, pesos, pesosRedondo, nombrePeriodo, mesCorto, formatoCuit, periodoActual } from "../reglas.js?v=842abd0a87";
+import { buscarPersona, MARCA } from "../marca.js?v=842abd0a87";
+import { libroDigitalVentas, libroDigitalCompras, bajarTexto } from "../libro-digital.js?v=842abd0a87";
+import { periodoPedido, htmlSelectorMes, activarSelectorMes, htmlTabla, diaMes, pintarConsigna } from "./comunes.js?v=842abd0a87";
 
 function pintarIva(cont, { usuario, datos, consulta, irA }) {
     const e = datos.leerEmpresa();

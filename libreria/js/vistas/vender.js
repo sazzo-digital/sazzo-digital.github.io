@@ -1,10 +1,10 @@
-import { pintarConsigna } from "./comunes.js?v=6c9c546cd1";
-import { esc, aviso } from "../../kit/js/ui.js?v=6c9c546cd1";
-import { TOPES, RUBROS, pesos, esISBN, precioPara } from "../datos.js?v=6c9c546cd1";
-import { NEGOCIO, MARCA } from "../marca.js?v=6c9c546cd1";
-import { EVENTO_REINICIO } from "../../kit/js/guardado.js?v=6c9c546cd1";
-import { abrirCaja, htmlMasDeLaCaja } from "../../kit/js/caja.js?v=6c9c546cd1";
-import { MEDIOS_PAGO, mediosParaCaja } from "../../kit/js/pagos.js?v=6c9c546cd1";
+import { pintarConsigna } from "./comunes.js?v=75e80e5b8c";
+import { esc, aviso } from "../../kit/js/ui.js?v=75e80e5b8c";
+import { TOPES, RUBROS, pesos, esISBN, precioPara } from "../datos.js?v=75e80e5b8c";
+import { NEGOCIO, MARCA } from "../marca.js?v=75e80e5b8c";
+import { EVENTO_REINICIO } from "../../kit/js/guardado.js?v=75e80e5b8c";
+import { abrirCaja, htmlMasDeLaCaja } from "../../kit/js/caja.js?v=75e80e5b8c";
+import { MEDIOS_PAGO, mediosParaCaja } from "../../kit/js/pagos.js?v=75e80e5b8c";
 
 export const ticket = new Map();
 addEventListener(EVENTO_REINICIO, () => ticket.clear());
