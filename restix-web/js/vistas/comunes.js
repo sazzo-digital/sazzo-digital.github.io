@@ -2,9 +2,37 @@
 // Piezas que comparten las pantallas de Restix Sazzo: el botón del recorrido (del kit), el ticket de una comanda
 // (cocina o barra) y "hace cuánto". Todo dato que entra a HTML pasa por esc().
 // ============================================
-import { esc } from "../../kit/js/ui.js?v=59fd6f5326";
-import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=59fd6f5326";
-import { buscarPersona } from "../marca.js?v=59fd6f5326";
+import { esc } from "../../kit/js/ui.js?v=8f333cfcf6";
+import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=8f333cfcf6";
+import { MARCA, buscarPersona } from "../marca.js?v=8f333cfcf6";
+
+import { htmlConsigna, htmlConsignaFinal } from "../../kit/js/consigna.js?v=8f333cfcf6";
+
+const CONSIGNAS = {
+    moza: [
+        ["Tocá la Mesa 4 y abrila.", "Elegí cuántas personas se sentaron."],
+        ["Pedí dos muzzarellas, un fernet y dos Coca, y mandalo.", "Se separa solo lo de la cocina y lo de la barra."],
+        ["Tocá “Cobrar” en la Mesa 4 y cobrá en partes iguales.", "Podés probar el cobro sin esperar a la cocina."]
+    ],
+    cocina: [
+        ["Marcá lista la Mesa 5", "Lara ve que la comida está lista para servir."],
+        ["Marcá lista la Mesa 9", "Sale el siguiente pedido de cocina."],
+        ["Abrí Pedidos en la tele", "Ves los pedidos en una pantalla grande."]
+    ],
+    cliente: [
+        ["Tocá “Pizzas” para mirar los platos.", "La carta te lleva a las pizzas."],
+        ["Tocá “Hamburguesas” para ver qué hay.", "Ves las hamburguesas y sus ingredientes."],
+        ["Tocá “Minutas” para mirar las opciones.", "Recorrés la carta sin mandar ningún pedido."]
+    ]
+};
+
+export function consignaPersona(datos, usuario) {
+    const hechos = datos.pasos(usuario);
+    const paso = hechos.findIndex((hecho) => !hecho);
+    if (paso < 0) return htmlConsignaFinal(MARCA, 3);
+    const [accion, resultado] = CONSIGNAS[usuario.rol][paso];
+    return htmlConsigna({ paso: paso + 1, total: 3, accion, resultado });
+}
 
 export const guia = (personaId, ruta, texto) => htmlGuia({ persona: buscarPersona(personaId), ruta, texto });
 export { activarGuias };

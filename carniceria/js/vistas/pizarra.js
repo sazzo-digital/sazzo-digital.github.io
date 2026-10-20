@@ -3,10 +3,10 @@
 // tele del local (pantalla completa): cuando cambian los precios (desposte o "Subió la hacienda"), ya está al día.
 // El dueño elige la oferta del día.
 // ============================================
-import { esc, aviso } from "../../kit/js/ui.js?v=50d0e40a54";
-import { pesos } from "../datos.js?v=50d0e40a54";
-import { NEGOCIO } from "../marca.js?v=50d0e40a54";
-import { precioDe } from "./comunes.js?v=50d0e40a54";
+import { esc, aviso } from "../../kit/js/ui.js?v=55764424c5";
+import { pesos } from "../datos.js?v=55764424c5";
+import { NEGOCIO } from "../marca.js?v=55764424c5";
+import { precioDe } from "./comunes.js?v=55764424c5";
 
 export function vistaPizarra(cont, { usuario, datos }) {
     const dueno = usuario.rol === "dueno";

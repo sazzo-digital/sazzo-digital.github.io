@@ -7,13 +7,13 @@
 //   El dueño ve además el costo real por kilo de cada corte y el precio sugerido con su margen ("Aplicar", con
 //   Deshacer) y lo baja en PDF. Darío carga los pesos; los costos los ve Ricardo.
 // ============================================
-import { esc, aviso, vacio, fechaCorta } from "../../kit/js/ui.js?v=50d0e40a54";
-import { armarPdf, pdfListo } from "../../kit/js/pdf.js?v=50d0e40a54";
-import { TOPES, TIPOS_INGRESO, PROVEEDORES, pesos, kilos, aGramos, mermaEsperada } from "../datos.js?v=50d0e40a54";
-import { NEGOCIO, MARCA } from "../marca.js?v=50d0e40a54";
-import { htmlConsigna, htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=50d0e40a54";
-import { htmlMediaRes, activarMediaRes, ZONAS } from "../media-res.js?v=50d0e40a54";
-import { guia, activarGuias, cuando, campoKg, kgEnCampo, porcentaje, unDecimal } from "./comunes.js?v=50d0e40a54";
+import { esc, aviso, vacio, fechaCorta } from "../../kit/js/ui.js?v=55764424c5";
+import { armarPdf, pdfListo } from "../../kit/js/pdf.js?v=55764424c5";
+import { TOPES, TIPOS_INGRESO, PROVEEDORES, pesos, kilos, aGramos, mermaEsperada } from "../datos.js?v=55764424c5";
+import { NEGOCIO, MARCA } from "../marca.js?v=55764424c5";
+import { htmlConsigna, htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=55764424c5";
+import { htmlMediaRes, activarMediaRes, ZONAS } from "../media-res.js?v=55764424c5";
+import { guia, activarGuias, cuando, campoKg, kgEnCampo, porcentaje, unDecimal } from "./comunes.js?v=55764424c5";
 
 /** La merma contra la esperada: pastilla verde (igual o menos), amarilla (hasta 1,5 puntos más) o roja. */
 function pastillaMerma(merma, esperada) {
@@ -288,7 +288,7 @@ export function vistaDesposte(cont, opciones, recien = null) {
                 <button class="boton boton--chico boton--secundario" type="button" data-deshacer="${esc(ultimo.id)}"><i class="ti ti-arrow-back-up"></i> Deshacer</button>
             </div>
             <a class="boton boton--ancho" href="#/pizarra"><i class="ti ti-device-tv"></i> Ver la pizarra con los precios nuevos</a>
-            ${htmlConsignaFinal(MARCA)}
+            ${htmlConsignaFinal(MARCA, 3)}
             ${guia("u-dueno", "/caja", "Mirá la caja del día y la ganancia")}`
             : cambian.length ? `<button class="boton boton--ancho boton--grande" type="button" data-aplicar><i class="ti ti-check"></i> Aplicar los ${esc(cambian.length)} precios sugeridos</button>`
                 : `<p class="nota"><i class="ti ti-circle-check"></i> Los precios ya son los sugeridos.</p>`;

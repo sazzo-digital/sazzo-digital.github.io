@@ -435,6 +435,10 @@
     overflow-y: auto;
 }
 
+.sazzo-chat__rubro--libre {
+    border-style: dashed;
+}
+
 .sazzo-chat__rubro {
     min-height: 40px;
     padding: 0.45rem 1rem;

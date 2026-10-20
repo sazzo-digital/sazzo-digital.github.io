@@ -3,8 +3,8 @@
 // Las personas son los roles reales del rubro (nombres inventados): el dueño, el empleado del mostrador y un cliente
 // con cuenta corriente que pide presupuestos desde el celular.
 // ============================================
-import { revisarMarca } from "../kit/js/marca.js?v=43c5602906";
-import { negocioDe } from "../kit/js/colores.js?v=43c5602906";
+import { revisarMarca } from "../kit/js/marca.js?v=f6723a2a8a";
+import { negocioDe } from "../kit/js/colores.js?v=f6723a2a8a";
 
 export const MARCA = revisarMarca({
     id: "ferreteria",

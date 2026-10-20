@@ -6,12 +6,13 @@
 //   "Cargar un corte" y la "Pizarra para la tele".
 // También acá: las etiquetas de ejemplo de la balanza (para probar el escáner sin balanza).
 // ============================================
-import { esc, aviso, vacio, mensajeDe } from "../../kit/js/ui.js?v=50d0e40a54";
-import { ANIMALES, TOPES, nombreAnimal, pesos, kilos, armarEtiqueta } from "../datos.js?v=50d0e40a54";
-import { NEGOCIO } from "../marca.js?v=50d0e40a54";
-import { svgEAN } from "../codigo-barras.js?v=50d0e40a54";
-import { htmlCopiable, activarCopiables } from "../../kit/js/celular.js?v=50d0e40a54";
-import { pastillaStock, precioDe, campoKg, kgEnCampo, cuantoHay } from "./comunes.js?v=50d0e40a54";
+import { esc, aviso, vacio, mensajeDe } from "../../kit/js/ui.js?v=55764424c5";
+import { htmlEstante, activarEstantes } from "../../kit/js/estante.js?v=55764424c5";
+import { ANIMALES, TOPES, nombreAnimal, pesos, kilos, armarEtiqueta } from "../datos.js?v=55764424c5";
+import { NEGOCIO } from "../marca.js?v=55764424c5";
+import { svgEAN } from "../codigo-barras.js?v=55764424c5";
+import { htmlCopiable, activarCopiables } from "../../kit/js/celular.js?v=55764424c5";
+import { pastillaStock, precioDe, campoKg, kgEnCampo, cuantoHay } from "./comunes.js?v=55764424c5";
 
 const RAPIDOS = [5, 8, 10, 15];
 let textoBuscado = ""; // el buscador recuerda lo escrito mientras se navega
@@ -84,10 +85,15 @@ export function vistaStock(cont, { usuario, datos, consulta }) {
         const coinciden = texto ? new Set(datos.listarArticulos({ texto }).map((a) => a.id)) : null;
         const lista = (faltan ? aReponer : datos.listarArticulos({ animal })).filter((a) => !coinciden || coinciden.has(a.id));
         const grupos = ANIMALES.map((x) => ({ ...x, articulos: lista.filter((a) => a.animal === x.id) })).filter((g) => g.articulos.length);
-        lugar.innerHTML = grupos.length ? grupos.map((g) => `
-            <section class="grupo-stock">
-                <h2 class="subtitulo"><i class="ti ${esc(g.icono)}"></i> ${esc(g.nombre)}</h2>
-                <ul class="filas-stock">${g.articulos.map((a) => `
+        lugar.innerHTML = grupos.length ? grupos.map((g) => htmlEstante({
+            id: `stock-${g.id}`,
+            titulo: g.nombre,
+            icono: g.icono,
+            cantidad: g.articulos.length,
+            sinStock: g.articulos.filter((a) => a.estado === "sin").length,
+            pocos: g.articulos.filter((a) => a.estado === "pedir" || a.estado === "despostar").length,
+            abierta: Boolean(texto || faltan || animal),
+            contenido: `<ul class="filas-stock">${g.articulos.map((a) => `
                     <li class="fila-stock">
                         <span class="fila-stock__nombre">${esc(a.nombre)}${a.oferta ? ` <span class="etiqueta">oferta</span>` : ""}
                             <small>${dueno ? `costo ${esc(pesos(a.costo))}${a.venta === "kg" ? "/kg" : ""} · margen ${esc(a.margen)} %` : `código ${esc(a.plu)}`}${a.rinde ? " · sale del desposte" : ""}</small>
@@ -109,9 +115,9 @@ export function vistaStock(cont, { usuario, datos, consulta }) {
                                 <button class="boton boton--chico" type="submit"><i class="ti ti-device-floppy"></i> Guardar</button>
                             </form>
                         </details>` : ""}
-                    </li>`).join("")}
-                </ul>
-            </section>`).join("") : vacio(faltan ? "No hay nada para reponer. Todo en orden." : "No hay cortes con ese nombre.", faltan ? "ti-circle-check" : "ti-search");
+                    </li>`).join("")}</ul>`
+        })).join("") : vacio(faltan ? "No hay nada para reponer. Todo en orden." : "No hay cortes con ese nombre.", faltan ? "ti-circle-check" : "ti-search");
+        activarEstantes(lugar);
 
         lugar.querySelectorAll("form[data-articulo]").forEach((f) => f.addEventListener("submit", (e) => {
             e.preventDefault();

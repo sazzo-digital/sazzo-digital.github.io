@@ -4,8 +4,8 @@
 //   El dueño libera el turno de Fede → a Fede le salta "Te liberaron la cancha".
 // Acá solo se dice qué pasó y a quién le importa; el kit decide qué es nuevo para cada uno.
 // ============================================
-import { aHora } from "../../kit/js/turnos.js?v=e07e055905";
-import { CANCHAS, nombreFecha } from "../datos.js?v=e07e055905";
+import { aHora } from "../../kit/js/turnos.js?v=952176458b";
+import { CANCHAS, nombreFecha } from "../datos.js?v=952176458b";
 
 export function avisosDe(datos) {
     const avisos = [];

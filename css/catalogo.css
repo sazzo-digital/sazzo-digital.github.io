@@ -556,6 +556,9 @@ a { color: inherit; }
 .pregunta p { margin: 0; padding: 0 1.1rem 1rem; font-size: .95rem; line-height: 1.6; color: var(--texto-suave); }
 .pregunta summary:focus-visible { outline: 2px solid var(--verde); outline-offset: 2px; border-radius: var(--radio); }
 .preguntas__otra { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: .8rem; margin-top: 1.4rem; color: var(--texto-suave); }
+.boton-red { display: inline-grid; place-items: center; width: 44px; height: 44px; border: 1px solid var(--borde); border-radius: 999px; background: var(--superficie); color: var(--verde); transition: border-color .15s ease; }
+.boton-red:hover { border-color: var(--verde); }
+.boton-red .icono { width: 20px; height: 20px; }
 @media (min-width: 900px) { .preguntas { grid-template-columns: 1fr 1fr; } }
 @media (prefers-reduced-motion: reduce) { .pregunta, .pregunta summary::after { transition: none; } }
 

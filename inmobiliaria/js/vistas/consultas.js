@@ -3,14 +3,14 @@
 // atender primero (visitas pedidas desde la página, sin contestar, sin seguimiento), la ficha de cada consulta
 // (confirmar la visita, mandar la ficha en PDF y el mensaje, ofrecer otras propiedades, notas) y "Anotar consulta".
 // ============================================
-import { esc, aviso, vacio, mensajeDe } from "../../kit/js/ui.js?v=271b0300c9";
-import { aHora } from "../../kit/js/turnos.js?v=271b0300c9";
-import { TOPES, TIPOS, ZONAS, OPERACIONES, ORIGENES, ESTADOS_CONSULTA } from "../datos.js?v=271b0300c9";
-import { bajarFicha } from "./propiedades.js?v=271b0300c9";
-import { htmlConsigna } from "../../kit/js/consigna.js?v=271b0300c9";
+import { esc, aviso, vacio, mensajeDe } from "../../kit/js/ui.js?v=86b90b0105";
+import { aHora } from "../../kit/js/turnos.js?v=86b90b0105";
+import { TOPES, TIPOS, ZONAS, OPERACIONES, ORIGENES, ESTADOS_CONSULTA } from "../datos.js?v=86b90b0105";
+import { bajarFicha } from "./propiedades.js?v=86b90b0105";
+import { htmlConsigna } from "../../kit/js/consigna.js?v=86b90b0105";
 import {
     guia, activarGuias, pastillaConsulta, pastillaVisita, mostrarMensaje, hace, mayuscula, htmlFoto, medidas, hrefPropiedad
-} from "./comunes.js?v=271b0300c9";
+} from "./comunes.js?v=86b90b0105";
 
 let filtroEstado = "abiertas";
 const FILTROS = { abiertas: "Abiertas", nueva: "Nuevas", agendada: "Con visita", todas: "Todas" };

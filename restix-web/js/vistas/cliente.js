@@ -4,11 +4,13 @@
 // (verEn3D del kit: el plato se gira con el dedo y, donde el celular puede, "Verlo en tu mesa" en tamaño real).
 // Solo mirar, como la carta real de Restix: el pedido lo sigue tomando la moza.
 // ============================================
-import { esc, aviso } from "../../kit/js/ui.js?v=59fd6f5326";
-import { verEn3D } from "../../kit/js/modelo3d.js?v=59fd6f5326";
-import { cartaCliente, pesos, notaDe3D } from "../datos.js?v=59fd6f5326";
-import { NEGOCIO, MESA_CLIENTE } from "../marca.js?v=59fd6f5326";
-import { guia, activarGuias } from "./comunes.js?v=59fd6f5326";
+import { esc, aviso } from "../../kit/js/ui.js?v=8f333cfcf6";
+import { verEn3D } from "../../kit/js/modelo3d.js?v=8f333cfcf6";
+import { cartaCliente, pesos, notaDe3D } from "../datos.js?v=8f333cfcf6";
+import { MARCA, NEGOCIO, MESA_CLIENTE } from "../marca.js?v=8f333cfcf6";
+import { guia, activarGuias, consignaPersona } from "./comunes.js?v=8f333cfcf6";
+
+import { activarConsigna } from "../../kit/js/consigna.js?v=8f333cfcf6";
 
 const MODELO_VALIDO = /^[a-z0-9-]+$/; // nombre del .glb de img\, sin la extensión
 
@@ -22,7 +24,7 @@ const plato = (p) => `
         <b class="plato__precio">${esc(pesos(p.precio))}</b>
     </li>`;
 
-export function vistaCarta(cont, { irA }) {
+export function vistaCarta(cont, { usuario, datos, irA }) {
     const categorias = cartaCliente().filter((c) => c.productos.length);
     cont.innerHTML = `
         <div class="titulo-con-accion">
@@ -30,6 +32,7 @@ export function vistaCarta(cont, { irA }) {
             <span class="negocio"><i class="ti ti-qrcode" aria-hidden="true"></i>${esc(NEGOCIO)} · ${esc(MESA_CLIENTE)}</span>
         </div>
         <p class="nota"><i class="ti ti-qrcode"></i> <span>Abriste la carta con el QR de la mesa. Tocá <b>Ver en 3D</b> en la Muzzarella y giralo con el dedo.</span></p>
+        <div data-pasos>${consignaPersona(datos, usuario)}</div>
         <nav class="chips carta-cats" aria-label="Categorías">${categorias.map((c) => `<button class="chip" type="button" data-ir="${esc(c.id)}"><i class="ti ${esc(c.icono)}" aria-hidden="true"></i>${esc(c.texto)}</button>`).join("")}</nav>
         ${categorias.map((c) => `
         <section class="carta-cat" id="carta-${esc(c.id)}">
@@ -40,6 +43,11 @@ export function vistaCarta(cont, { irA }) {
         ${guia("u-moza", "/inicio", `Mirá cómo Lara toma el pedido de la ${MESA_CLIENTE}`)}`;
     // Las categorías bajan a su parte de la carta (sin tocar la dirección: el # es de las pantallas)
     cont.querySelectorAll("[data-ir]").forEach((b) => b.addEventListener("click", () => {
+        if (["pizzas", "burgers", "minutas"].includes(b.dataset.ir)) {
+            datos.mirarCategoria(usuario, b.dataset.ir);
+            cont.querySelector("[data-pasos]").innerHTML = consignaPersona(datos, usuario);
+            activarConsigna(cont, MARCA);
+        }
         cont.querySelector(`#carta-${CSS.escape(b.dataset.ir)}`)?.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" });
     }));
     const productos = categorias.flatMap((c) => c.productos);
@@ -49,4 +57,5 @@ export function vistaCarta(cont, { irA }) {
         verEn3D({ titulo: p.nombre, src: `img/${p.modelo}.glb`, nota: notaDe3D(p.modelo) }).catch((err) => aviso(err, "error"));
     }));
     activarGuias(cont, irA);
+    activarConsigna(cont, MARCA);
 }

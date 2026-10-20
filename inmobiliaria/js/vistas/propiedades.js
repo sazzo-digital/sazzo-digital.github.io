@@ -3,22 +3,22 @@
 // el mapa, nunca la dirección; Valeria pide la visita, la inmobiliaria ve quiénes buscan algo así y baja el PDF) y
 // "Cargar propiedad" (con fotos sacadas con el celu, que no se suben a ningún lado).
 // ============================================
-import { esc, aviso, vacio, mensajeDe, fechaCorta } from "../../kit/js/ui.js?v=271b0300c9";
-import { fechaLocalISO, diaLocalDe } from "../../kit/js/fechas.js?v=271b0300c9";
-import { mostrarMapa } from "../../kit/js/mapa.js?v=271b0300c9";
-import { armarPdf, pdfListo, fotoParaPdf } from "../../kit/js/pdf.js?v=271b0300c9";
-import { TOPES, TIPOS, ZONAS, OPERACIONES, CARACTERISTICAS, RADIO_ZONA, pesos, dolares } from "../datos.js?v=271b0300c9";
-import { NEGOCIO } from "../marca.js?v=271b0300c9";
-import { htmlConsigna } from "../../kit/js/consigna.js?v=271b0300c9";
-import { fotosDe, urlRecorrido, achicarFoto, guardarFotosEnMemoria, revisarArchivoFoto } from "../fotos.js?v=271b0300c9";
-import { abrirRecorrido } from "../visor360.js?v=271b0300c9";
+import { esc, aviso, vacio, mensajeDe, fechaCorta } from "../../kit/js/ui.js?v=86b90b0105";
+import { fechaLocalISO, diaLocalDe } from "../../kit/js/fechas.js?v=86b90b0105";
+import { mostrarMapa } from "../../kit/js/mapa.js?v=86b90b0105";
+import { armarPdf, pdfListo, fotoParaPdf } from "../../kit/js/pdf.js?v=86b90b0105";
+import { TOPES, TIPOS, ZONAS, OPERACIONES, CARACTERISTICAS, RADIO_ZONA, pesos, dolares } from "../datos.js?v=86b90b0105";
+import { NEGOCIO } from "../marca.js?v=86b90b0105";
+import { htmlConsigna } from "../../kit/js/consigna.js?v=86b90b0105";
+import { fotosDe, urlRecorrido, achicarFoto, guardarFotosEnMemoria, revisarArchivoFoto } from "../fotos.js?v=86b90b0105";
+import { abrirRecorrido } from "../visor360.js?v=86b90b0105";
 import {
     guia, activarGuias, tarjetaPropiedad, htmlFoto, medidas, hrefPropiedad, pastillaPropiedad, pastillaVisita,
     pastillaConsulta, mostrarMensaje, mayuscula
-} from "./comunes.js?v=271b0300c9";
+} from "./comunes.js?v=86b90b0105";
 
 // Lo elegido en los filtros queda mientras se navega
-const filtro = { operacion: null, ambientes: null, hasta: null, mapa: false };
+const filtro = { operacion: null, zona: null, ambientes: null, hasta: null, mapa: false };
 const TOPES_PRECIO = {
     alquiler: [400_000, 600_000, 800_000, 1_000_000],
     venta: [50_000, 100_000, 150_000, 200_000]
@@ -33,11 +33,13 @@ function puntoDe(p, i = 0) {
 
 export function vistaPropiedades(cont, { usuario, datos }) {
     const staff = usuario.rol !== "cliente";
+    const barrios = [...new Map(datos.listarPropiedades({ todas: staff }).map((p) => [p.zona, p.zonaNombre]))];
     if (!TOPES_PRECIO[filtro.operacion]) filtro.hasta = null;
 
     function pintar() {
         const lista = datos.listarPropiedades({ ...filtro, todas: staff });
         cont.querySelectorAll("[data-operacion]").forEach((b) => b.classList.toggle("activo", (b.dataset.operacion || null) === filtro.operacion));
+        cont.querySelectorAll("[data-barrio]").forEach((b) => b.classList.toggle("activo", (b.dataset.barrio || null) === filtro.zona));
         cont.querySelectorAll("[data-ambientes]").forEach((b) => b.classList.toggle("activo", Number(b.dataset.ambientes || 0) === (filtro.ambientes ?? 0)));
         cont.querySelectorAll("[data-ver]").forEach((b) => b.classList.toggle("activo", (b.dataset.ver === "mapa") === filtro.mapa));
         const hasta = cont.querySelector("[data-hasta]");
@@ -62,7 +64,7 @@ export function vistaPropiedades(cont, { usuario, datos }) {
             });
             return;
         }
-        lugar.innerHTML = `<ul class="props">${lista.map((p) => tarjetaPropiedad(p, usuario, staff ? extraStaff(p) : "")).join("")}</ul>`;
+        lugar.innerHTML = `<ul class="props props--grilla">${lista.map((p) => tarjetaPropiedad(p, usuario, staff ? extraStaff(p) : "")).join("")}</ul>`;
     }
 
     const extraStaff = (p) => `<span class="prop__extra">${p.estado !== "disponible" ? pastillaPropiedad(p) : ""}${p.diasSinVisitas > 30 && p.estado === "disponible" ? `<span class="pastilla pastilla--ojo">${esc(p.diasSinVisitas)} días sin visitas</span>` : `<small>${esc(p.visitas30)} visita${p.visitas30 === 1 ? "" : "s"} en 30 días</small>`}</span>`;
@@ -73,12 +75,16 @@ export function vistaPropiedades(cont, { usuario, datos }) {
             ${staff ? `<a class="boton" href="#/propiedades/nueva"><i class="ti ti-plus"></i> Cargar propiedad</a>` : `<span class="negocio"><i class="ti ti-key" aria-hidden="true"></i>${esc(NEGOCIO)}</span>`}
         </div>
         ${staff ? "" : htmlConsigna({ paso: 1, total: 3, accion: "Tocá “Alquiler” y “2+ ambientes”, abrí el depto con balcón y pedí una visita.", resultado: "Le llega a la inmobiliaria al toque." })}
-        <div class="filtros-props">
-            <div class="chips" role="group" aria-label="Operación">
+        <div class="filtros-props__controles">
+            <div class="chips filtros-props" role="group" aria-label="Operación">
                 <button class="chip" type="button" data-operacion="">Todas</button>
                 <button class="chip" type="button" data-operacion="alquiler">Alquiler</button>
                 <button class="chip" type="button" data-operacion="venta">Venta</button>
             </div>
+            ${barrios.length ? `<div class="chips filtros-props" role="group" aria-label="Barrio">
+                <button class="chip" type="button" data-barrio="">Todos</button>
+                ${barrios.map(([zona, nombre]) => `<button class="chip" type="button" data-barrio="${esc(zona)}">${esc(nombre)}</button>`).join("")}
+            </div>` : ""}
             <div class="chips" role="group" aria-label="Ambientes">
                 <button class="chip" type="button" data-ambientes="">Todos</button>
                 ${[1, 2, 3, 4].map((n) => `<button class="chip" type="button" data-ambientes="${n}">${n}+ amb</button>`).join("")}
@@ -100,6 +106,10 @@ export function vistaPropiedades(cont, { usuario, datos }) {
     }));
     cont.querySelectorAll("[data-ambientes]").forEach((b) => b.addEventListener("click", () => {
         filtro.ambientes = Number(b.dataset.ambientes) || null;
+        pintar();
+    }));
+    cont.querySelectorAll("[data-barrio]").forEach((b) => b.addEventListener("click", () => {
+        filtro.zona = b.dataset.barrio || null;
         pintar();
     }));
     cont.querySelectorAll("[data-ver]").forEach((b) => b.addEventListener("click", () => {

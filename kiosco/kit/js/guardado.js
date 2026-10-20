@@ -21,8 +21,8 @@
 //   minutos"). Mientras la usa (cada cambio que guarda), no se renuevan. Se avisa con un cartelito.
 // ============================================
 
-import { aviso } from "./ui.js?v=3664d1aeb8";
-import { olvidarAvisos } from "./avisos.js?v=3664d1aeb8";
+import { aviso } from "./ui.js?v=75a51fff75";
+import { olvidarAvisos } from "./avisos.js?v=75a51fff75";
 
 /** Nombres compartidos entre el catálogo y todas las demos (no pueden ser el prefijo de una demo). */
 export const COMPARTIDAS = ["sazzo-origen", "sazzo-equipo", "sazzo-tema", "sazzo-yo"];
@@ -49,6 +49,17 @@ export function leerSesionGuardada(prefijo) {
         return localStorage.getItem(claveSesion(prefijo));
     } catch {
         return null;
+    }
+}
+
+export function olvidarDemo(prefijo) {
+    if (!/^sazzo-[a-z0-9]+(-[a-z0-9]+)*$/.test(prefijo ?? "") || COMPARTIDAS.includes(prefijo)) return 0;
+    try {
+        const claves = Object.keys(localStorage).filter((k) => k.startsWith(`${prefijo}-`));
+        claves.forEach((k) => localStorage.removeItem(k));
+        return claves.length;
+    } catch {
+        return 0;
     }
 }
 

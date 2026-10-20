@@ -6,12 +6,12 @@
 // Reglas del kit: exigir() en lo que modifica, topes en todo lo que se carga, nada se borra (se cancela) y se
 // devuelven copias. Si cambia la forma de los datos, subir VERSION_DATOS (se regeneran solos).
 // ============================================
-import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=35edc617e5";
-import { filtrarPorTexto } from "../kit/js/buscar.js?v=35edc617e5";
-import { enteroHasta } from "../kit/js/topes.js?v=35edc617e5";
-import { fechaLocalISO, diaLocalDe } from "../kit/js/fechas.js?v=35edc617e5";
-import { MARCA, NEGOCIO } from "./marca.js?v=35edc617e5";
-import { MEDIOS_PAGO, DIVIDIDO, revisarPagos } from "../kit/js/pagos.js?v=35edc617e5";
+import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=d819d10110";
+import { filtrarPorTexto } from "../kit/js/buscar.js?v=d819d10110";
+import { enteroHasta } from "../kit/js/topes.js?v=d819d10110";
+import { fechaLocalISO, diaLocalDe } from "../kit/js/fechas.js?v=d819d10110";
+import { MARCA, NEGOCIO } from "./marca.js?v=d819d10110";
+import { MEDIOS_PAGO, DIVIDIDO, revisarPagos } from "../kit/js/pagos.js?v=d819d10110";
 
 export const VERSION_DATOS = 4;
 
@@ -58,6 +58,18 @@ export const PRESENTACIONES = {
 };
 
 export const pesos = (n) => `$ ${Math.round(n).toLocaleString("es-AR")}`;
+
+export function masVendidos(perfumes, ventas) {
+    const unidades = new Map();
+    ventas.forEach((v) => v.renglones.forEach((r) => {
+        unidades.set(r.perfumeId, (unidades.get(r.perfumeId) ?? 0) + r.cantidad);
+    }));
+    const favoritos = ["p-azahar", "p-vainilla", "p-lima", "p-te", "p-madera", "p-peonia"];
+    const orden = (p) => favoritos.includes(p.id) ? favoritos.indexOf(p.id) : favoritos.length;
+    return perfumes.slice().sort((a, b) =>
+        (unidades.get(b.id) ?? 0) - (unidades.get(a.id) ?? 0) || orden(a) - orden(b)
+    ).slice(0, 6);
+}
 
 // [id, nombre, familia, para, momento, salida, corazón, fondo, precio del frasco de 50 ml, frascos 50, frascos 100, ml en la madre]
 const PERFUMES = [
@@ -476,6 +488,7 @@ export function crearDatos(prefijo = MARCA.prefijo) {
     return {
         guardado,
         listarPerfumes, perfume, recomendar, armarCarrito, mandarPedido, misPedidos,
+        masVendidos: () => masVendidos(listarPerfumes(), db().ventas),
         pedidos, preparar, mensajeListo, avisarListo, entregar, cancelar, productosCaja, venderMostrador, ventasDeHoy,
         stock, corregirStock, clientas, mensajeSaludo, saludar
     };

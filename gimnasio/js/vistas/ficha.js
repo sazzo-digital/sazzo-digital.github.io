@@ -5,15 +5,15 @@
 // - Vane (dueña): la cuota y los pagos (registrar, confirmar el aviso de transferencia, deshacer, recordatorio armado),
 //   el apto físico y el reglamento firmado en pantalla, si viene o no (invitar a volver) y la baja.
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=d2c5ed7562";
-import { MEDIOS_PAGO, DIVIDIDO, textoMedio, partesIniciales, htmlDosMedios, activarDosMedios } from "../../kit/js/pagos.js?v=d2c5ed7562";
-import { pedirFirma } from "../../kit/js/firma.js?v=d2c5ed7562";
-import { armarPdf, pdfListo } from "../../kit/js/pdf.js?v=d2c5ed7562";
-import { NEGOCIO, MARCA } from "../marca.js?v=d2c5ed7562";
-import { htmlConsigna, htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=d2c5ed7562";
-import { TOPES, REINVITAR_DIAS, pesos, kilos, cuanto, fechaCorta, nombreFecha } from "../datos.js?v=d2c5ed7562";
-import { guia, activarGuias, pastilla, pastillaCuota, cara, haceDias, graficoPeso, barrasSemanas, mostrarMensaje } from "./comunes.js?v=d2c5ed7562";
-import { htmlTrabajosProfe, activarTrabajosProfe } from "./trabajos.js?v=d2c5ed7562";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=be499030eb";
+import { MEDIOS_PAGO, DIVIDIDO, textoMedio, partesIniciales, htmlDosMedios, activarDosMedios } from "../../kit/js/pagos.js?v=be499030eb";
+import { pedirFirma } from "../../kit/js/firma.js?v=be499030eb";
+import { armarPdf, pdfListo } from "../../kit/js/pdf.js?v=be499030eb";
+import { NEGOCIO, MARCA } from "../marca.js?v=be499030eb";
+import { htmlConsigna, htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=be499030eb";
+import { TOPES, REINVITAR_DIAS, pesos, kilos, cuanto, fechaCorta, nombreFecha } from "../datos.js?v=be499030eb";
+import { guia, activarGuias, pastilla, pastillaCuota, cara, haceDias, graficoPeso, barrasSemanas, mostrarMensaje } from "./comunes.js?v=be499030eb";
+import { htmlTrabajosProfe, activarTrabajosProfe } from "./trabajos.js?v=be499030eb";
 
 let ajustando = null; // "diaId|ejercicioId" del ejercicio que el profe está ajustando
 let medio = "efectivo"; // lo último elegido al registrar un pago
@@ -271,7 +271,7 @@ function htmlDuena(a, datos) {
         </div>
         ${a.id !== "s-franco" ? "" : a.avisoPago
             ? htmlConsigna({ paso: 5, total: 5, accion: "Fijate si llegó la transferencia y tocá “Llegó: confirmar”.", resultado: "Franco queda al día y la caja sube." })
-            : `${a.pagos.some((p) => p.estado === "confirmado" && p.confirmadoEl === datos.hoy()) ? htmlConsignaFinal(MARCA) : ""}${guia("u-socio", "/cuota", "Mirá lo que ve Franco")}`}`;
+            : `${a.pagos.some((p) => p.estado === "confirmado" && p.confirmadoEl === datos.hoy()) ? htmlConsignaFinal(MARCA, 5) : ""}${guia("u-socio", "/cuota", "Mirá lo que ve Franco")}`}`;
 }
 
 function activarDuena(cont, opciones, a) {

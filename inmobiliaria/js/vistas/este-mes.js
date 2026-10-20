@@ -3,11 +3,11 @@
 // monto nuevo calculado y el aviso armado), los que vencen, los que no pagaron, las propiedades que nadie visita y
 // las consultas que esperan respuesta. Nada de esto es un contrato ni un recibo: es la lista para no olvidarse.
 // ============================================
-import { esc, aviso, animarNumeros } from "../../kit/js/ui.js?v=271b0300c9";
-import { INDICE_MENSUAL, pesos, porcentajeTexto, diaMes } from "../datos.js?v=271b0300c9";
-import { mostrarMensaje, mayuscula } from "./comunes.js?v=271b0300c9";
-import { htmlConsigna, htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=271b0300c9";
-import { MARCA } from "../marca.js?v=271b0300c9";
+import { esc, aviso, animarNumeros } from "../../kit/js/ui.js?v=86b90b0105";
+import { INDICE_MENSUAL, pesos, porcentajeTexto, diaMes } from "../datos.js?v=86b90b0105";
+import { mostrarMensaje, mayuscula } from "./comunes.js?v=86b90b0105";
+import { htmlConsigna, htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=86b90b0105";
+import { MARCA } from "../marca.js?v=86b90b0105";
 
 // "$ 2.805.700" sin cortarse entre el signo y el número
 const plata = (n) => pesos(n).replace(" ", String.fromCharCode(160));
@@ -110,7 +110,7 @@ export function vistaEsteMes(cont, { usuario, datos }) {
                 recargar();
                 const consigna = cont.querySelector(".consigna");
                 if (consigna) {
-                    consigna.outerHTML = htmlConsignaFinal(MARCA);
+                    consigna.outerHTML = htmlConsignaFinal(MARCA, 3);
                     activarConsigna(cont, MARCA);
                 }
             });

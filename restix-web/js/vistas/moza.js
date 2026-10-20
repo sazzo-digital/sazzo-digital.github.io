@@ -3,21 +3,31 @@
 // grilla), la comanda de una mesa (al enviar se separa solo lo de la cocina y lo de la barra), el cobro dividiendo la
 // cuenta (todo junto, en partes iguales o por lo que consumió cada uno, cada parte con su medio de pago) y la caja.
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=59fd6f5326";
-import { CATEGORIAS, MEDIOS, TOPES, carta, dividir, pesos } from "../datos.js?v=59fd6f5326";
-import { MARCA, NEGOCIO } from "../marca.js?v=59fd6f5326";
-import { htmlBotonSonido, activarBotonSonido, ding } from "../../kit/js/celular.js?v=59fd6f5326";
-import { ticket, guia, activarGuias, haceMin, hora } from "./comunes.js?v=59fd6f5326";
-import { htmlConsigna, htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=59fd6f5326";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=8f333cfcf6";
+import { CATEGORIAS, MEDIOS, TOPES, carta, dividir, pesos } from "../datos.js?v=8f333cfcf6";
+import { MARCA, NEGOCIO } from "../marca.js?v=8f333cfcf6";
+import { htmlBotonSonido, activarBotonSonido, ding } from "../../kit/js/celular.js?v=8f333cfcf6";
+import { ticket, guia, activarGuias, haceMin, hora, consignaPersona } from "./comunes.js?v=8f333cfcf6";
+import { activarConsigna } from "../../kit/js/consigna.js?v=8f333cfcf6";
 
 const ESTADO_MESA = { libre: "Libre", abierta: "Abierta", cobrando: "Cobrando" };
 
+let sectorElegido = null;
+
 export function vistaPlano(cont, { usuario, datos, irA }) {
     const p = datos.plano();
+    const mesaPaso = usuario.rol === "moza" && datos.pasos(usuario).findIndex((hecho) => !hecho) === 0 ? "m4" : null;
+    const sectorPaso = p.sectores.find((s) => s.mesas.some((m) => m.id === mesaPaso))?.id;
+    const sectores = [...p.sectores.map((s) => ({ id: s.id, texto: s.texto, cantidad: s.mesas.filter((m) => m.estado !== "libre").length })), { id: "pedidos-ya", texto: "Pedidos Ya", cantidad: p.pedidosYa.length }];
+    const elegido = sectorPaso ?? sectorElegido ?? "salon";
+    const estadoVisual = (m) => m.estado === "cobrando" ? "cobrando" : m.comidaLista ? "lista" : m.cocinaPendiente ? "cocina" : m.estado === "abierta" ? "abierta" : "libre";
+    const estados = { libre: ["libre", "libres"], abierta: ["abierta", "abiertas"], cocina: ["en cocina", "en cocina"], lista: ["con comida lista", "con comida lista"], cobrando: ["cobrando", "cobrando"] };
+    const cuentas = Object.fromEntries(Object.keys(estados).map((estado) => [estado, p.sectores.flatMap((s) => s.mesas).filter((m) => estadoVisual(m) === estado).length]));
+    const panel = (id) => `id="sector-${esc(id)}" role="tabpanel" aria-labelledby="pestana-${esc(id)}" data-sector="${esc(id)}"${id === elegido ? "" : " hidden"}`;
     const tile = (m) => `
-        <a class="mesa mesa--${esc(m.estado)}" href="#/mesa/${esc(m.id)}" aria-label="${esc(m.nombre)}: ${esc(ESTADO_MESA[m.estado])}">
+        <a class="mesa mesa--${esc(m.estado)}${m.id === mesaPaso ? " mesa--paso" : ""}" data-estado="${esc(estadoVisual(m))}" href="#/mesa/${esc(m.id)}" aria-label="${esc(m.nombre)}: ${esc(ESTADO_MESA[m.estado])}">
             <b class="mesa__numero">${esc(m.nombre.replace(/^\D+/, ""))}</b>
-            ${m.estado === "libre" ? `<small>Libre</small>` : `
+            ${m.estado === "libre" ? "" : `
             <small><i class="ti ti-users" aria-hidden="true"></i> ${esc(m.abierta.personas)} · ${esc(m.minutos)}'</small>
             <small class="mesa__total">${esc(pesos(m.total))}</small>
             <span class="mesa__marcas">
@@ -26,32 +36,27 @@ export function vistaPlano(cont, { usuario, datos, irA }) {
                 ${m.comidaLista ? `<i class="ti ti-circle-check" title="Comida lista"></i>` : ""}
                 ${m.sinMandar ? `<i class="ti ti-send" title="Hay cosas sin mandar"></i>` : ""}
             </span>`}
+            ${m.id === mesaPaso ? `<span class="mesa__paso">Tocá acá</span>` : ""}
         </a>`;
     cont.innerHTML = `
         <div class="titulo-con-accion">
             <h1 class="titulo">Salón</h1>
             <span class="negocio"><i class="ti ti-building-store" aria-hidden="true"></i>${esc(NEGOCIO)}</span>
         </div>
-        ${htmlConsigna({ paso: 1, total: 3, accion: "Tocá la Mesa 4, abrila, pedí dos muzzarellas, un fernet y dos Coca, y mandalo.", resultado: "Se separa solo lo de la cocina y lo de la barra." })}
+        ${consignaPersona(datos, usuario)}
         <div class="tira">
             <span><b>${esc(p.resumen.ocupadas)}</b> de ${esc(p.resumen.total)} ocupadas</span>
             <span><b>${esc(p.resumen.personas)}</b> personas</span>
             <span>Abierto <b>${esc(pesos(p.resumen.abierto))}</b></span>
         </div>
-        <ul class="leyenda">
-            <li><span class="muestra mesa--libre"></span>Libre</li>
-            <li><span class="muestra mesa--abierta"></span>Abierta</li>
-            <li><span class="muestra mesa--cobrando"></span>Cobrando</li>
-            <li><i class="ti ti-flame"></i> En cocina</li>
-            <li><i class="ti ti-circle-check"></i> Comida lista</li>
-        </ul>
+        <div class="estados-salon">${Object.entries(cuentas).filter(([, n]) => n > 0).map(([estado, n]) => `<span class="estado-chip" data-estado="${esc(estado)}"><b>${esc(n)}</b> ${esc(estados[estado][n === 1 ? 0 : 1])}</span>`).join("")}</div>
+        <div class="pestanas-salon" role="tablist" aria-label="Sectores">${sectores.map((s) => `<button class="pestana-salon" type="button" role="tab" id="pestana-${esc(s.id)}" aria-controls="sector-${esc(s.id)}" aria-selected="${esc(s.id === elegido)}" tabindex="${s.id === elegido ? "0" : "-1"}" data-sector="${esc(s.id)}">${esc(s.texto)} <small>${esc(s.cantidad)}</small></button>`).join("")}</div>
         ${p.sectores.map((s) => `
-        <section class="sector">
+        <section class="sector" ${panel(s.id)}>
             <h2 class="subtitulo">${esc(s.texto)}</h2>
             <div class="mesas mesas--${esc(s.id)}">${s.mesas.map(tile).join("")}</div>
         </section>`).join("")}
-        ${guia("u-cliente", "/inicio", "Mirá la carta que ve el cliente con el QR")}
-        <section class="sector">
+        <section class="sector" ${panel("pedidos-ya")}>
             <h2 class="subtitulo"><i class="ti ti-motorbike"></i> Pedidos Ya</h2>
             ${p.pedidosYa.length ? `<ul class="tarjetas">${p.pedidosYa.map((o) => `
                 <li class="tarjeta${o.estado === "nuevo" ? " tarjeta--nuevo" : ""}">
@@ -62,7 +67,28 @@ export function vistaPlano(cont, { usuario, datos, irA }) {
                         ${o.estado === "aceptado" ? `<button class="boton boton--chico" type="button" data-entregar="${esc(o.id)}"${o.cocinaLista ? "" : " disabled"}><i class="ti ti-motorbike"></i> Entregado al repartidor</button>` : ""}
                     </div>
                 </li>`).join("")}</ul>` : `<p class="nota">No hay pedidos de Pedidos Ya.</p>`}
-        </section>`;
+        </section>
+        ${guia("u-cliente", "/inicio", "Mirá la carta que ve el cliente con el QR")}`;
+    const pestanas = [...cont.querySelectorAll(".pestana-salon")];
+    const elegir = (id) => {
+        sectorElegido = id;
+        pestanas.forEach((b) => {
+            const activa = b.dataset.sector === id;
+            b.setAttribute("aria-selected", String(activa));
+            b.tabIndex = activa ? 0 : -1;
+        });
+        cont.querySelectorAll(".sector[role=tabpanel]").forEach((s) => { s.hidden = s.dataset.sector !== id; });
+    };
+    pestanas.forEach((b, i) => {
+        b.addEventListener("click", () => elegir(b.dataset.sector));
+        b.addEventListener("keydown", (e) => {
+            if (!["ArrowLeft", "ArrowRight"].includes(e.key)) return;
+            e.preventDefault();
+            const siguiente = pestanas[(i + (e.key === "ArrowRight" ? 1 : -1) + pestanas.length) % pestanas.length];
+            elegir(siguiente.dataset.sector);
+            siguiente.focus();
+        });
+    });
     const hacer = (fn, msj) => {
         try {
             fn();
@@ -75,6 +101,7 @@ export function vistaPlano(cont, { usuario, datos, irA }) {
     cont.querySelectorAll("[data-aceptar]").forEach((b) => b.addEventListener("click", () => hacer(() => datos.aceptarPY(usuario, b.dataset.aceptar), "Aceptado: la comida va a la cocina")));
     cont.querySelectorAll("[data-entregar]").forEach((b) => b.addEventListener("click", () => hacer(() => datos.entregarPY(usuario, b.dataset.entregar), "Entregado: suma a la caja")));
     activarGuias(cont, irA);
+    activarConsigna(cont, MARCA);
 }
 
 let categoria = "pizzas";
@@ -97,9 +124,8 @@ export function vistaMesa(cont, { usuario, datos, irA, params: [id] }, enviado =
         <div class="enviado">
             <p class="enviado__titulo"><i class="ti ti-send"></i> Mandado. Se separó solo:</p>
             <div class="tickets">${enviado.cocina ? ticket(enviado.cocina) : ""}${enviado.barra ? ticket(enviado.barra) : ""}</div>
-            ${enviado.cocina ? htmlConsigna({ paso: 1, total: 3, accion: "Mandá el pedido.", hecho: "se separó solo, cocina y barra", guia: guia("u-cocina", "/inicio", "Mirá lo que le llega a la cocina") }) : ""}
         </div>` : ""}
-        ${m.comidaLista && !enviado ? htmlConsigna({ paso: 3, total: 3, accion: "Tocá “Cobrar” y dividí la cuenta.", resultado: "Cada parte con su medio de pago, y la caja lo suma." }) : ""}
+        ${consignaPersona(datos, usuario)}
         <div class="comanda">
             <section class="carta">
                 <div class="chips" role="tablist" aria-label="Categoría">${Object.entries(CATEGORIAS).map(([k, c]) => `
@@ -126,6 +152,7 @@ export function vistaMesa(cont, { usuario, datos, irA, params: [id] }, enviado =
             </section>
         </div>`;
     activarGuias(cont, irA);
+    activarConsigna(cont, MARCA);
     cont.querySelectorAll("[data-cat]").forEach((b) => b.addEventListener("click", () => {
         categoria = b.dataset.cat;
         otraVez(enviado);
@@ -161,11 +188,13 @@ function abrir(cont, { usuario, datos, irA, id, m }) {
     cont.innerHTML = `
         <a class="volver" href="#/inicio"><i class="ti ti-arrow-left"></i> Salón</a>
         <h1 class="titulo">${esc(m.nombre)}</h1>
+        ${consignaPersona(datos, usuario)}
         <form class="formulario bloque" novalidate>
             <p class="rotulo-chico">¿Cuántas personas?</p>
             <div class="chips">${[1, 2, 3, 4, 5, 6, 8].map((n) => `<label class="chip chip--radio"><input type="radio" name="personas" value="${n}"${n === 3 ? " checked" : ""}>${n}</label>`).join("")}</div>
             <button class="boton boton--ancho boton--grande" type="submit"><i class="ti ti-armchair"></i> Abrir la mesa</button>
         </form>`;
+    activarConsigna(cont, MARCA);
     cont.querySelector("form").addEventListener("submit", (e) => {
         e.preventDefault();
         try {
@@ -206,6 +235,7 @@ export function vistaCobro(cont, { usuario, datos, params: [id] }) {
         cont.innerHTML = `
             <a class="volver" href="#/mesa/${esc(m.id)}"><i class="ti ti-arrow-left"></i> ${esc(m.nombre)}</a>
             <div class="titulo-con-accion"><h1 class="titulo">Cobrar ${esc(m.nombre)}</h1>${htmlBotonSonido(MARCA.prefijo)}</div>
+            ${consignaPersona(datos, usuario)}
             <div class="panel total-cobro"><span class="panel__rotulo">Total</span><span class="panel__numero">${esc(pesos(m.total))}</span><small>${esc(m.abierta.personas)} personas</small></div>
             <div class="chips" role="tablist" aria-label="Cómo se divide">
                 <button class="chip${modo === "junto" ? " activo" : ""}" type="button" data-modo="junto">Todo junto</button>
@@ -247,6 +277,7 @@ export function vistaCobro(cont, { usuario, datos, params: [id] }) {
             medios[Number(b.dataset.parte)] = b.dataset.medio;
             pintar();
         }));
+        activarConsigna(cont, MARCA);
         activarBotonSonido(cont, MARCA.prefijo); // "ding" al cobrar, apagado de entrada
         cont.querySelector("[data-cobrar]").addEventListener("click", () => {
             const partes = montos().map((monto, i) => ({ monto, medio: medios[i] })).filter((p) => p.monto > 0);
@@ -261,7 +292,7 @@ export function vistaCobro(cont, { usuario, datos, params: [id] }) {
                         <ul class="resumen-cobro">${cobro.partes.map((p, i) => `<li><span>${cobro.partes.length > 1 ? `Persona ${i + 1}` : "Toda la mesa"}</span><b>${esc(pesos(p.monto))}</b><small>${esc(MEDIOS[p.medio] ?? (p.medio === "tarjeta" ? "Tarjeta" : p.medio))}</small></li>`).join("")}</ul>
                         <p class="nota"><i class="ti ti-armchair"></i> La mesa quedó libre.</p>
                     </div>
-                    ${htmlConsignaFinal(MARCA)}
+                    ${consignaPersona(datos, usuario)}
                     <a class="boton boton--ancho" href="#/caja"><i class="ti ti-cash-register"></i> Mirá la caja del turno</a>
                     <a class="boton boton--secundario boton--ancho" href="#/inicio"><i class="ti ti-layout-grid"></i> Volver al salón</a>`;
                 activarConsigna(cont, MARCA);
@@ -279,6 +310,7 @@ export function vistaCaja(cont, { usuario, datos }) {
     const medios = { ...MEDIOS, pedidosya: "Pedidos Ya" };
     cont.innerHTML = `
         <h1 class="titulo">Caja del turno</h1>
+        ${consignaPersona(datos, usuario)}
         <div class="panel total-cobro"><span class="panel__rotulo">Entró hoy</span><span class="panel__numero">${esc(pesos(c.total))}</span><small>${esc(c.cobros.length)} cobros · en las mesas todavía hay ${esc(pesos(c.abierto))}</small></div>
         <div class="medios">${Object.entries(medios).map(([k, t]) => `<div><span>${esc(t)}</span><b>${esc(pesos(c.porMedio[k]))}</b></div>`).join("")}</div>
         <section class="bloque">
@@ -300,6 +332,7 @@ export function vistaCaja(cont, { usuario, datos }) {
                 </label>
             </form>
         </section>`;
+    activarConsigna(cont, MARCA);
     cont.querySelector("form").addEventListener("submit", (e) => {
         e.preventDefault();
         const v = e.target.contado.value;

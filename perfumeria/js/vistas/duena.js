@@ -3,11 +3,12 @@
 // entregado), el stock (frascos y botellas madre en ml, lo que hay que pedir primero) y las clientas (lo que compra
 // cada una y "Cumplen este mes" con el saludo para copiar).
 // ============================================
-import { esc, aviso, vacio, fechaCorta, fechaHora } from "../../kit/js/ui.js?v=35edc617e5";
-import { TOPES, MADRE_POCO_ML, MEDIOS, pesos } from "../datos.js?v=35edc617e5";
-import { frasco, pastillaPedido, mostrarMensaje } from "./comunes.js?v=35edc617e5";
-import { htmlConsigna, htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=35edc617e5";
-import { MARCA } from "../marca.js?v=35edc617e5";
+import { esc, aviso, vacio, fechaCorta, fechaHora } from "../../kit/js/ui.js?v=d819d10110";
+import { htmlEstante, activarEstantes } from "../../kit/js/estante.js?v=d819d10110";
+import { TOPES, MADRE_POCO_ML, MEDIOS, FAMILIAS, pesos } from "../datos.js?v=d819d10110";
+import { frasco, pastillaPedido, mostrarMensaje } from "./comunes.js?v=d819d10110";
+import { htmlConsigna, htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=d819d10110";
+import { MARCA } from "../marca.js?v=d819d10110";
 
 let cobrando = null;
 let medioCobro = "efectivo";
@@ -62,7 +63,7 @@ export function vistaPedidos(cont, { usuario, datos }) {
         ? htmlConsigna({ paso: 2, total: 3, accion: "Tocá “Preparado” en el pedido nuevo.", resultado: "Se descuenta el frasco o los ml de la botella madre." })
         : p.preparados.some((o) => !o.avisado)
             ? htmlConsigna({ paso: 3, total: 3, accion: "Tocá “Avisar que está listo”.", resultado: "Te arma el mensaje para mandarle." })
-            : p.preparados.some((o) => o.avisado) ? htmlConsignaFinal(MARCA) : "";
+            : p.preparados.some((o) => o.avisado) ? htmlConsignaFinal(MARCA, 3) : "";
     cont.innerHTML = `
         <h1 class="titulo">Pedidos</h1>
         ${consigna}
@@ -158,7 +159,15 @@ export function vistaStock(cont, { usuario, datos }) {
     cont.innerHTML = `
         <h1 class="titulo">Stock</h1>
         <p class="nota"><i class="ti ti-info-circle"></i> Los decants salen de la botella madre: cuando preparás un pedido, se descuentan los ml solos.${pedir ? ` <b>${pedir} para pedir.</b>` : ""}</p>
-        <ul class="tarjetas">${lista.map((p) => {
+        ${Object.entries(FAMILIAS).map(([familia, info]) => {
+            const deEsta = lista.filter((p) => p.familia === familia);
+            return deEsta.length ? htmlEstante({
+                id: `stock-${familia}`,
+                titulo: info.texto,
+                icono: "ti-droplet",
+                cantidad: deEsta.length,
+                pocos: deEsta.filter((p) => p.pedir.length).length,
+                contenido: `<ul class="tarjetas">${deEsta.map((p) => {
             const pct = Math.min(100, Math.round((p.ml / 250) * 100));
             return `
             <li class="tarjeta tarjeta--abre${p.pedir.length ? " tarjeta--pedir" : ""}">
@@ -183,7 +192,10 @@ export function vistaStock(cont, { usuario, datos }) {
                     </form>
                 </details>
             </li>`;
-        }).join("")}</ul>`;
+        }).join("")}</ul>`
+            }) : "";
+        }).join("")}`;
+    activarEstantes(cont);
     cont.querySelectorAll("form[data-perfume]").forEach((f) => f.addEventListener("submit", (e) => {
         e.preventDefault();
         const num = (v) => (v === "" ? NaN : Number(v));

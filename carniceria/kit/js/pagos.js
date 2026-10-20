@@ -1,4 +1,4 @@
-import { esc } from "./ui.js?v=50d0e40a54";
+import { esc } from "./ui.js?v=55764424c5";
 
 export const MEDIOS_PAGO = { efectivo: "Efectivo", debito: "Débito", credito: "Crédito", transferencia: "Transferencia", qr: "QR" };
 export const ICONOS_PAGO = { efectivo: "ti-cash", debito: "ti-credit-card", credito: "ti-credit-card-pay", transferencia: "ti-building-bank", qr: "ti-qrcode", fiado: "ti-notebook", cuenta: "ti-user-dollar" };

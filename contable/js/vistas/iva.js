@@ -4,13 +4,15 @@
 // para bajar (Excel/CSV para el contador y los .txt del Libro IVA Digital, de prueba). La ven todos; bajar archivos
 // es cosa de Patricia (los demás también pueden mirarlos).
 // ============================================
-import { esc, descargarCSV, fechaCorta } from "../../kit/js/ui.js?v=50843cab80";
-import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=50843cab80";
-import { htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=50843cab80";
-import { ALICUOTAS, ORDEN_ALICUOTAS, pesos, pesosRedondo, nombrePeriodo, mesCorto, formatoCuit } from "../reglas.js?v=50843cab80";
-import { buscarPersona, MARCA } from "../marca.js?v=50843cab80";
-import { libroDigitalVentas, libroDigitalCompras, bajarTexto } from "../libro-digital.js?v=50843cab80";
-import { periodoPedido, htmlSelectorMes, activarSelectorMes, htmlTabla, diaMes } from "./comunes.js?v=50843cab80";
+import { esc, descargarCSV, fechaCorta } from "../../kit/js/ui.js?v=929def1556";
+import { htmlEstante, activarEstantes } from "../../kit/js/estante.js?v=929def1556";
+import { estantesIva } from "../estantes.js?v=929def1556";
+import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=929def1556";
+import { htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=929def1556";
+import { ALICUOTAS, ORDEN_ALICUOTAS, pesos, pesosRedondo, nombrePeriodo, mesCorto, formatoCuit } from "../reglas.js?v=929def1556";
+import { buscarPersona, MARCA } from "../marca.js?v=929def1556";
+import { libroDigitalVentas, libroDigitalCompras, bajarTexto } from "../libro-digital.js?v=929def1556";
+import { periodoPedido, htmlSelectorMes, activarSelectorMes, htmlTabla, diaMes } from "./comunes.js?v=929def1556";
 
 export function vistaIva(cont, { usuario, datos, consulta, irA }) {
     const e = datos.leerEmpresa();
@@ -46,7 +48,7 @@ export function vistaIva(cont, { usuario, datos, consulta, irA }) {
                 <p class="cuenta-iva__total"><span>${pos.resultado >= 0 ? "A pagar" : "A favor"}</span><b>${esc(pesos(Math.abs(pos.resultado)))}</b></p>
             </div>
         </div>
-        ${usuario.rol === "contadora" ? `${htmlConsignaFinal(MARCA)}${htmlGuia({ persona: hernan, ruta: "/inicio", texto: "Mirá cómo lo ve el dueño" })}` : ""}
+        ${usuario.rol === "contadora" ? `${htmlConsignaFinal(MARCA, 3)}${htmlGuia({ persona: hernan, ruta: "/inicio", texto: "Mirá cómo lo ve el dueño" })}` : ""}
 
         <div class="bloque">
             <h2 class="subtitulo"><i class="ti ti-chart-bar"></i> IVA a pagar por mes</h2>
@@ -58,7 +60,11 @@ export function vistaIva(cont, { usuario, datos, consulta, irA }) {
                 <a role="tab" class="pestana${libro === "ventas" ? " activa" : ""}" aria-selected="${libro === "ventas"}" href="#/iva?p=${esc(periodo)}&libro=ventas">Libro IVA Ventas</a>
                 <a role="tab" class="pestana${libro === "compras" ? " activa" : ""}" aria-selected="${libro === "compras"}" href="#/iva?p=${esc(periodo)}&libro=compras">Libro IVA Compras</a>
             </div>
-            ${libro === "ventas" ? tablaVentas(datos.libroIvaVentas(periodo)) : tablaCompras(datos.libroIvaCompras(periodo))}
+            ${estantesIva(historial.some((p) => p.periodo === periodo) ? historial : [...historial, pos], periodo).map((g) => {
+                const detalle = libro === "ventas" ? datos.libroIvaVentas(g.periodo) : datos.libroIvaCompras(g.periodo);
+                return htmlEstante({ id: `iva-${libro}-${g.periodo}`, titulo: g.titulo, icono: "ti-file-invoice", cantidad: detalle.filas.length, abierta: g.abierta,
+                    contenido: libro === "ventas" ? tablaVentas(detalle) : tablaCompras(detalle) });
+            }).join("")}
         </div>
 
         <div class="bloque archivos">
@@ -72,6 +78,7 @@ export function vistaIva(cont, { usuario, datos, consulta, irA }) {
         </div>`;
 
     activarSelectorMes(cont, "/iva", `&libro=${libro}`);
+    activarEstantes(cont);
     activarGuias(cont, irA);
     activarConsigna(cont, MARCA);
     cont.querySelector("[data-imprimir]").addEventListener("click", () => window.print());

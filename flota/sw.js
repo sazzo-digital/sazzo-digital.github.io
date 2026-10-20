@@ -1,5 +1,5 @@
 const PREFIJO = "sazzo-flota";
-const COPIA = `${PREFIJO}-b34a203314`;
+const COPIA = `${PREFIJO}-b86ccb1eca`;
 const BASICO = ["./", "manifest.webmanifest"];
 
 self.addEventListener("install", (e) => {

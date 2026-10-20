@@ -2,10 +2,12 @@
 // Contabilidad: libro diario (los asientos salen solos de cada factura, compra, cobro y pago), mayor de cada cuenta
 // y balance de sumas y saldos. Solo para mirar: en la demo no hay asientos manuales.
 // ============================================
-import { esc } from "../../kit/js/ui.js?v=50843cab80";
-import { pesos, nombrePeriodo, periodoActual, correrPeriodo } from "../reglas.js?v=50843cab80";
-import { nombreCuenta } from "../contabilidad.js?v=50843cab80";
-import { periodoPedido, htmlSelectorMes, activarSelectorMes, htmlTabla, fechaCorta, diaMes } from "./comunes.js?v=50843cab80";
+import { esc } from "../../kit/js/ui.js?v=929def1556";
+import { htmlEstante, activarEstantes } from "../../kit/js/estante.js?v=929def1556";
+import { agruparPorMes } from "../estantes.js?v=929def1556";
+import { pesos, nombrePeriodo, periodoActual, correrPeriodo } from "../reglas.js?v=929def1556";
+import { nombreCuenta } from "../contabilidad.js?v=929def1556";
+import { periodoPedido, htmlSelectorMes, activarSelectorMes, htmlTabla, fechaCorta, diaMes } from "./comunes.js?v=929def1556";
 
 const VISTAS = { diario: "Libro diario", mayor: "Mayor", balance: "Balance" };
 const MAX_ASIENTOS = 60; // en pantalla (el resto, cambiando de mes)
@@ -13,6 +15,7 @@ const MAX_ASIENTOS = 60; // en pantalla (el resto, cambiando de mes)
 export function vistaContabilidad(cont, { datos, consulta }) {
     const ver = Object.hasOwn(VISTAS, consulta?.get("ver")) ? consulta.get("ver") : "diario";
     const periodo = periodoPedido(consulta);
+    const todos = ver === "diario" && (!consulta?.get("p") || consulta.get("p") === "todos");
     cont.innerHTML = `
         <h1 class="titulo">Contabilidad</h1>
         <div class="pestanas" role="tablist">
@@ -26,7 +29,12 @@ export function vistaContabilidad(cont, { datos, consulta }) {
         location.hash = `#/contabilidad?ver=mayor&p=${periodo}&cuenta=${encodeURIComponent(e.target.value)}`;
     });
     const lugar = cont.querySelector(".contabilidad-contenido");
-    if (ver === "diario") pintarDiario(lugar, datos, periodo);
+    if (ver === "diario") {
+        const mes = cont.querySelector("#mes");
+        mes.insertAdjacentHTML("afterbegin", `<option value="todos"${todos ? " selected" : ""}>Todos los meses</option>`);
+        if (todos) mes.value = "todos";
+        pintarDiario(lugar, datos, todos ? null : periodo);
+    }
     if (ver === "mayor") pintarMayor(lugar, datos, periodo, cuentaPedida(datos, consulta));
     if (ver === "balance") pintarBalance(lugar, datos, periodo);
 }
@@ -46,10 +54,12 @@ function selectorCuenta(datos, consulta) {
 
 function pintarDiario(lugar, datos, periodo) {
     const asientos = datos.asientos({ periodo });
-    const mostrados = asientos.slice(-MAX_ASIENTOS).reverse();
+    const grupos = agruparPorMes(asientos, !!periodo);
     lugar.innerHTML = `
-        <p class="nota"><i class="ti ti-notebook"></i> ${asientos.length} asientos en ${esc(nombrePeriodo(periodo))}${asientos.length > MAX_ASIENTOS ? ` (se ven los últimos ${MAX_ASIENTOS})` : ""}.</p>
-        ${mostrados.length ? `<ol class="asientos">${mostrados.map((a) => `
+        <p class="nota"><i class="ti ti-notebook"></i> ${esc(asientos.length)} asientos${periodo ? ` en ${esc(nombrePeriodo(periodo))}` : " en todos los meses"}.</p>
+        ${grupos.length ? grupos.map((g) => htmlEstante({
+            id: `diario-${g.periodo}`, titulo: g.titulo, icono: "ti-notebook", cantidad: g.filas.length, abierta: g.abierta,
+            contenido: `${g.filas.length > MAX_ASIENTOS ? `<p class="nota">Se ven los últimos ${esc(MAX_ASIENTOS)} asientos del mes.</p>` : ""}<ol class="asientos">${g.filas.slice(-MAX_ASIENTOS).reverse().map((a) => `
             <li class="asiento">
                 <p class="asiento__cabeza"><b>N° ${esc(a.numero)}</b><span>${esc(fechaCorta(a.fecha))}</span>${a.origen?.comprobanteId ? `<a href="#/facturar/${esc(a.origen.comprobanteId)}">${esc(a.detalle)}</a>` : `<span>${esc(a.detalle)}</span>`}</p>
                 <table class="asiento__renglones">
@@ -57,7 +67,9 @@ function pintarDiario(lugar, datos, periodo) {
                         <tr class="${r.haber ? "haber" : "debe"}"><td>${r.haber ? "a " : ""}${esc(nombreCuenta(r.cuenta))}</td><td class="num">${r.debe ? esc(pesos(r.debe)) : ""}</td><td class="num">${r.haber ? esc(pesos(r.haber)) : ""}</td></tr>`).join("")}
                     </tbody>
                 </table>
-            </li>`).join("")}</ol>` : `<p class="nota"><i class="ti ti-info-circle"></i> No hay asientos en este mes.</p>`}`;
+            </li>`).join("")}</ol>`
+        })).join("") : `<p class="nota"><i class="ti ti-info-circle"></i> No hay asientos en este mes.</p>`}`;
+    activarEstantes(lugar);
 }
 
 function pintarMayor(lugar, datos, periodo, cuenta) {

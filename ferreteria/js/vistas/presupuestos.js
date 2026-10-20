@@ -5,14 +5,14 @@
 // renglón. "Mandar" fija los precios por 7 días y arma el mensaje; "PDF" lo deja para compartir. Cuando lo acepta,
 // "Pasar a venta" descuenta el stock y lo cobra (de contado o a su cuenta corriente).
 // ============================================
-import { esc, aviso, vacio, fechaCorta } from "../../kit/js/ui.js?v=43c5602906";
-import { diaLocalDe } from "../../kit/js/fechas.js?v=43c5602906";
-import { mostrarMensaje } from "../../kit/js/mensaje.js?v=43c5602906";
-import { armarPdf, pdfListo } from "../../kit/js/pdf.js?v=43c5602906";
-import { ESTADOS_PRESUPUESTO, TOPES, UNIDADES, VALIDEZ_DIAS, pesos, precioConUnidad, cantidadTexto, entender, diaMes } from "../datos.js?v=43c5602906";
-import { NEGOCIO } from "../marca.js?v=43c5602906";
-import { guia, activarGuias, pasos, pastillaEstado, tarjetaPresupuesto, cuando, validez, pintarCobro, etiquetaUnidad, htmlFoto } from "./comunes.js?v=43c5602906";
-import { htmlConsigna } from "../../kit/js/consigna.js?v=43c5602906";
+import { esc, aviso, vacio, fechaCorta } from "../../kit/js/ui.js?v=f6723a2a8a";
+import { diaLocalDe } from "../../kit/js/fechas.js?v=f6723a2a8a";
+import { mostrarMensaje } from "../../kit/js/mensaje.js?v=f6723a2a8a";
+import { armarPdf, pdfListo } from "../../kit/js/pdf.js?v=f6723a2a8a";
+import { ESTADOS_PRESUPUESTO, TOPES, UNIDADES, VALIDEZ_DIAS, pesos, precioConUnidad, cantidadTexto, entender, diaMes } from "../datos.js?v=f6723a2a8a";
+import { NEGOCIO } from "../marca.js?v=f6723a2a8a";
+import { guia, activarGuias, pasos, pastillaEstado, tarjetaPresupuesto, cuando, validez, pintarCobro, etiquetaUnidad, htmlFoto } from "./comunes.js?v=f6723a2a8a";
+import { htmlConsigna } from "../../kit/js/consigna.js?v=f6723a2a8a";
 
 /** Lo que va en el PDF del presupuesto (lo usan el mostrador y el cliente). */
 export const datosPdf = (pr) => ({

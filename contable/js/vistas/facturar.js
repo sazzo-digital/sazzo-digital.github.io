@@ -4,19 +4,21 @@
 // de agua "DEMO · SIN VALIDEZ FISCAL", el CAE de prueba y el lugar del QR dibujado. Desde ahí, la nota de crédito.
 // Solo administración carga; Hernán y Patricia miran.
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=50843cab80";
-import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=50843cab80";
-import { htmlConsigna } from "../../kit/js/consigna.js?v=50843cab80";
-import { TOPES, CUENTAS, ID_CONSUMIDOR_FINAL } from "../datos.js?v=50843cab80";
-import { PRODUCTOS } from "../semilla.js?v=50843cab80";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=929def1556";
+import { htmlEstante, activarEstantes } from "../../kit/js/estante.js?v=929def1556";
+import { agruparPorEstado } from "../estantes.js?v=929def1556";
+import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=929def1556";
+import { htmlConsigna } from "../../kit/js/consigna.js?v=929def1556";
+import { TOPES, CUENTAS, ID_CONSUMIDOR_FINAL } from "../datos.js?v=929def1556";
+import { PRODUCTOS } from "../semilla.js?v=929def1556";
 import {
     COMPROBANTES, ALICUOTAS, ORDEN_ALICUOTAS, TOPE_CF_IDENTIFICAR, pesos, numeroComprobante, formatoCuit, nombrePeriodo, signo
-} from "../reglas.js?v=50843cab80";
-import { buscarPersona } from "../marca.js?v=50843cab80";
+} from "../reglas.js?v=929def1556";
+import { buscarPersona } from "../marca.js?v=929def1556";
 import {
     fechaCorta, diaMes, pastillaTipo, periodoPedido, htmlSelectorMes, activarSelectorMes, documento, condicionTexto,
     logoEmpresa, conEspera, nombreDe
-} from "./comunes.js?v=50843cab80";
+} from "./comunes.js?v=929def1556";
 
 const puedeCargar = (u) => u.rol === "admin";
 const OPCIONES_ALICUOTA = [...ORDEN_ALICUOTAS, "ex"];
@@ -25,6 +27,8 @@ const OPCIONES_ALICUOTA = [...ORDEN_ALICUOTAS, "ex"];
 export function vistaFacturar(cont, { usuario, datos, consulta }) {
     const periodo = periodoPedido(consulta);
     const lista = datos.listarComprobantes({ periodo });
+    const anulados = new Set(lista.filter((c) => signo(c.tipo) > 0 && datos.restanteDeFactura(c.id).total <= 0).map((c) => c.id));
+    const grupos = agruparPorEstado(lista, anulados);
     const total = lista.reduce((s, c) => s + signo(c.tipo) * c.total, 0);
     const iva = lista.reduce((s, c) => s + signo(c.tipo) * c.iva, 0);
     cont.innerHTML = `
@@ -38,16 +42,18 @@ export function vistaFacturar(cont, { usuario, datos, consulta }) {
             <div class="panel"><span class="panel__rotulo">IVA de las ventas (débito)</span><span class="panel__numero">${esc(pesos(iva))}</span><small>va al libro IVA Ventas</small></div>
         </div>
         ${puedeCargar(usuario) ? "" : `<p class="nota"><i class="ti ti-lock"></i> Las facturas las hace Silvina (administración). Vos las ves y las imprimís.</p>`}
-        ${lista.length ? `
+        ${lista.length ? grupos.map((g) => htmlEstante({
+            id: `facturas-${g.id}`, titulo: g.titulo, icono: "ti-file-invoice", cantidad: g.filas.length, abierta: g.abierta, contenido: `
         <ul class="lista-comprobantes">
-            ${lista.map((c) => `
+            ${g.filas.map((c) => `
             <li><a class="comprobante-fila" href="#/facturar/${esc(c.id)}">
                 ${pastillaTipo(c.tipo)}
                 <span class="comprobante-fila__texto"><b>${esc(c.receptor.nombre)}</b><small>${esc(numeroComprobante(c.puntoVenta, c.numero))} · ${esc(diaMes(c.fecha))}${c.condicionVenta === "contado" ? " · contado" : ""}</small></span>
                 <b class="monto${signo(c.tipo) < 0 ? " monto--resta" : ""}">${signo(c.tipo) < 0 ? "−" : ""}${esc(pesos(c.total))}</b>
             </a></li>`).join("")}
-        </ul>` : vacio("No hay comprobantes en este mes.", "ti-file-invoice")}`;
+        </ul>` })).join("") : vacio("No hay comprobantes en este mes.", "ti-file-invoice")}`;
     activarSelectorMes(cont, "/facturar");
+    activarEstantes(cont);
 }
 
 // ---------- Factura nueva ----------

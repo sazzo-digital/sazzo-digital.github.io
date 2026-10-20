@@ -6,13 +6,13 @@
 // Reglas del kit: exigir() en lo que modifica, topes en todo lo que se carga y se devuelven copias.
 // Si cambia la forma de los datos, subir VERSION_DATOS (se regeneran solos).
 // ============================================
-import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=59fd6f5326";
-import { enteroHasta } from "../kit/js/topes.js?v=59fd6f5326";
-import { fechaLocalISO, diaLocalDe } from "../kit/js/fechas.js?v=59fd6f5326";
-import { MARCA } from "./marca.js?v=59fd6f5326";
-import { MEDIOS_PAGO } from "../kit/js/pagos.js?v=59fd6f5326";
+import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=8f333cfcf6";
+import { enteroHasta } from "../kit/js/topes.js?v=8f333cfcf6";
+import { fechaLocalISO, diaLocalDe } from "../kit/js/fechas.js?v=8f333cfcf6";
+import { MARCA } from "./marca.js?v=8f333cfcf6";
+import { MEDIOS_PAGO } from "../kit/js/pagos.js?v=8f333cfcf6";
 
-export const VERSION_DATOS = 3;
+export const VERSION_DATOS = 4;
 
 export const TOPES = {
     personas: 20,
@@ -145,7 +145,7 @@ export function semilla() {
     // El de Pedidos Ya que ya se entregó también suma a la caja
     cobros.push({ id: "co-py-2", mesa: "Pedido Ya #4807", partes: [{ monto: pedidosYa[1].total, medio: "pedidosya" }], total: pedidosYa[1].total, en: haceMin(90), por: "Lara" });
 
-    return { mesas, comandas, cobros, pedidosYa, cierres: [] };
+    return { mesas, comandas, cobros, pedidosYa, cierres: [], cartaVista: [], cocinaTVVista: false };
 }
 
 // ---------- Funciones de datos ----------
@@ -169,6 +169,29 @@ export function crearDatos(prefijo = MARCA.prefijo) {
             cocinaPendiente: pendientes,
             comidaLista: !!a && !pendientes && db().comandas.some((c) => c.mesaId === m.id && c.destino === "cocina" && c.estado === "lista" && c.creadaEn >= a.abiertaEn)
         };
+    }
+
+    function pasos(usuario) {
+        if (usuario?.rol === "cliente") return ["pizzas", "burgers", "minutas"].map((id) => db().cartaVista.includes(id));
+        if (esMoza(usuario)) {
+            const cobrada = db().cobros.some((c) => c.mesa === "Mesa 4");
+            return [!!mesa("m4").abierta || cobrada, db().comandas.some((c) => c.mesaId === "m4") || cobrada, cobrada];
+        }
+        if (esCocina(usuario)) return ["m5", "m9"].map((id) => db().comandas.some((c) => c.mesaId === id && c.destino === "cocina" && c.estado === "lista")).concat(!!db().cocinaTVVista);
+        exigir(false, "Esta serie todavía no está disponible para esa persona.");
+    }
+
+    function mirarTVCocina(usuario) {
+        exigir(esCocina(usuario), "La tele de cocina la abre Beto.");
+        db().cocinaTVVista = true;
+        guardado.persistir();
+    }
+
+    function mirarCategoria(usuario, id) {
+        exigir(usuario?.rol === "cliente", "La carta la recorre el cliente.");
+        exigir(["pizzas", "burgers", "minutas"].includes(id), "Esa categoría no es un paso de la carta.");
+        if (!db().cartaVista.includes(id)) db().cartaVista.push(id);
+        guardado.persistir();
     }
 
     // ----- Salón (la moza) -----
@@ -367,7 +390,7 @@ export function crearDatos(prefijo = MARCA.prefijo) {
     }
 
     return {
-        guardado,
+        guardado, pasos, mirarCategoria, mirarTVCocina,
         plano, mesa, abrirMesa, agregar, sacar, enviar, pedirCuenta, cobrar,
         cocina, marcarLista, aceptarPY, entregarPY, caja, cerrarCaja
     };

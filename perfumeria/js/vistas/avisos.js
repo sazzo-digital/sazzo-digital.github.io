@@ -4,7 +4,7 @@
 //   La dueña lo prepara y le avisa → a Julieta le salta "¡Tu pedido está listo!". Si lo cancelan, también se entera.
 // Acá solo se dice qué pasó y a quién le importa; el kit decide qué es nuevo para cada uno.
 // ============================================
-import { CLIENTA_DE, pesos } from "../datos.js?v=35edc617e5";
+import { CLIENTA_DE, pesos } from "../datos.js?v=d819d10110";
 
 export function avisosDe(datos) {
     const db = datos.guardado.db();

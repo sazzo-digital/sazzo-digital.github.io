@@ -4,14 +4,14 @@
 // "Anotar turno" en un casillero libre (para cuando llaman por teléfono).
 // Los turnos que reservó un jugador y Gustavo todavía no miró aparecen arriba y marcados "Nuevo".
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=e07e055905";
-import { mantenerPantallaPrendida } from "../../kit/js/celular.js?v=e07e055905";
-import { aHora } from "../../kit/js/turnos.js?v=e07e055905";
-import { TOPES, CANCHAS, TIPOS, pesos, nombreFecha, horarioDe } from "../datos.js?v=e07e055905";
-import { pastillaSena, pastillaEstado, chipsDias } from "./comunes.js?v=e07e055905";
-import { buscarPersona, MARCA } from "../marca.js?v=e07e055905";
-import { htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=e07e055905";
-import { htmlCuenta, pedirCantina, cobrarCuenta } from "./cuenta.js?v=e07e055905";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=952176458b";
+import { mantenerPantallaPrendida } from "../../kit/js/celular.js?v=952176458b";
+import { aHora } from "../../kit/js/turnos.js?v=952176458b";
+import { TOPES, CANCHAS, TIPOS, pesos, nombreFecha, horarioDe } from "../datos.js?v=952176458b";
+import { pastillaSena, pastillaEstado, chipsDias } from "./comunes.js?v=952176458b";
+import { buscarPersona, MARCA } from "../marca.js?v=952176458b";
+import { htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=952176458b";
+import { htmlCuenta, pedirCantina, cobrarCuenta } from "./cuenta.js?v=952176458b";
 
 const PASO = 30; // la grilla va de media hora en media hora (entran los turnos de 60 y los de 90 min)
 
@@ -44,7 +44,7 @@ export function vistaGrilla(cont, { usuario, datos, consulta }) {
                 <span><b>${esc(buscarPersona(t.jugadorId)?.nombre ?? "Un jugador")} reservó ${esc(t.cancha)} · ${esc(nombreFecha(t.fecha))} ${esc(t.hora)}</b><small>${esc(t.grupo)} · ${esc(t.tipo)} · seña pagada</small></span>
                 <span class="etiqueta etiqueta--nuevo">Nuevo</span>
             </a></li>`).join("")}</ul>
-        ${htmlConsignaFinal(MARCA)}` : ""}
+        ${htmlConsignaFinal(MARCA, 2)}` : ""}
         ${chipsDias(dias, fecha)}
         <div class="numeros-grilla">
             <div><span>Ocupados</span><b>${esc(g.resumen.ocupados)}<small> de ${esc(g.resumen.total)}</small></b></div>

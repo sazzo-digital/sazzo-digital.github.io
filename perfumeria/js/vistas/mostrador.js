@@ -1,11 +1,12 @@
-import { esc, fechaHora } from "../../kit/js/ui.js?v=35edc617e5";
-import { abrirCaja, htmlMasDeLaCaja } from "../../kit/js/caja.js?v=35edc617e5";
-import { filtrarPorTexto } from "../../kit/js/buscar.js?v=35edc617e5";
-import { MEDIOS, pesos } from "../datos.js?v=35edc617e5";
-import { mediosParaCaja, textoMedio } from "../../kit/js/pagos.js?v=35edc617e5";
-import { MARCA, NEGOCIO } from "../marca.js?v=35edc617e5";
+import { esc, fechaHora } from "../../kit/js/ui.js?v=d819d10110";
+import { abrirCaja, htmlMasDeLaCaja } from "../../kit/js/caja.js?v=d819d10110";
+import { FAMILIAS, PRESENTACIONES, MEDIOS, pesos } from "../datos.js?v=d819d10110";
+import { frasco } from "./comunes.js?v=d819d10110";
+import { mediosParaCaja, textoMedio } from "../../kit/js/pagos.js?v=d819d10110";
+import { MARCA, NEGOCIO } from "../marca.js?v=d819d10110";
 
 const MEDIOS_CAJA = mediosParaCaja(MEDIOS);
+let familia = "mas";
 
 export function vistaMostrador(cont, { usuario, datos }) {
     cont.innerHTML = `
@@ -14,7 +15,19 @@ export function vistaMostrador(cont, { usuario, datos }) {
             <span class="negocio"><i class="ti ti-building-store" aria-hidden="true"></i>${esc(NEGOCIO)}</span>
         </div>
         <p class="nota"><i class="ti ti-info-circle" aria-hidden="true"></i> Para la que compra en el local: frascos y decants. Cada venta descuenta el stock (los decants, los ml de la botella madre).</p>
-        <div class="lugar-caja"></div>
+        <div class="lugar-caja lugar-caja--sin-gondola"></div>
+        <section class="catalogo-mostrador" aria-label="Perfumes para vender">
+            <div class="chips" role="tablist" aria-label="Familia">
+                <button class="chip" type="button" role="tab" data-familia="mas">Lo que más sale</button>
+                <button class="chip" type="button" role="tab" data-familia="">Todos</button>
+                ${Object.entries(FAMILIAS).map(([k, f]) => `<button class="chip" type="button" role="tab" data-familia="${esc(k)}"><span class="punto" style="background:${esc(f.color)}"></span>${esc(f.texto)}</button>`).join("")}
+            </div>
+            <form class="buscar buscar--mostrador" role="search">
+                <input type="search" name="q" placeholder="Buscá un perfume" aria-label="Buscá un perfume" maxlength="40" autocomplete="off">
+            </form>
+            <ul class="perfumes perfumes--mostrador"></ul>
+            <p class="nota" data-sin-perfumes hidden>No hay perfumes con esa búsqueda.</p>
+        </section>
         ${htmlMasDeLaCaja({ cajaDelDia: false })}
         <section class="ventas-mostrador"></section>`;
     const lugarVentas = cont.querySelector(".ventas-mostrador");
@@ -33,19 +46,61 @@ export function vistaMostrador(cont, { usuario, datos }) {
                     <p class="tarjeta__quien">${v.renglones.map((r) => `${esc(r.cantidad)} × ${esc(r.nombre)}`).join(" · ")} · ${esc(textoMedio(v, MEDIOS))}${v.vuelto ? ` · vuelto ${esc(pesos(v.vuelto))}` : ""}</p>
                 </li>`).join("")}</ul>` : `<p class="nota">Todavía no hay ventas en el mostrador hoy.</p>`}`;
     };
-    abrirCaja({
+    const catalogo = cont.querySelector(".catalogo-mostrador");
+    const campoBuscar = catalogo.querySelector("[name=q]");
+    const pintarPerfumes = () => {
+        const texto = campoBuscar.value.slice(0, 40).trim();
+        const lista = texto ? datos.listarPerfumes({ texto }) : familia === "mas" ? datos.masVendidos() : datos.listarPerfumes({ familia: familia || null });
+        const productos = datos.productosCaja();
+        catalogo.querySelectorAll("[data-familia]").forEach((b) => {
+            const activo = b.dataset.familia === familia;
+            b.classList.toggle("activo", activo);
+            b.setAttribute("aria-selected", String(activo));
+        });
+        catalogo.querySelector(".perfumes").innerHTML = lista.map((p) => `
+            <li class="perfume perfume--mostrador">
+                ${frasco(p.familia)}
+                <span class="perfume__nombre">${esc(p.nombre)}</span>
+                <small>${esc(p.familiaInfo.texto)} · ${esc(p.paraTexto)}</small>
+                <small class="perfume__notas">${esc(p.notas.salida)} · ${esc(p.notas.corazon)} · ${esc(p.notas.fondo)}</small>
+                <b class="perfume__precio">desde ${esc(pesos(p.desde))}</b>
+                <div class="presentaciones">${productos.filter((x) => x.id.startsWith(`${p.id}/`)).map((x) => `
+                    <button class="presentacion" type="button" data-sumar="${esc(x.id)}"${x.stock > 0 ? "" : " disabled"}>${esc(PRESENTACIONES[x.presentacion].texto)} <b>${x.stock > 0 ? esc(pesos(x.precio)) : "sin stock"}</b></button>`).join("")}
+                </div>
+            </li>`).join("");
+        catalogo.querySelector("[data-sin-perfumes]").hidden = lista.length > 0;
+    };
+    const caja = abrirCaja({
         dentro: cont.querySelector(".lugar-caja"),
         titulo: NEGOCIO,
         prefijo: MARCA.prefijo,
         escaneo: false,
         productos: () => datos.productosCaja(),
-        gondola: () => datos.productosCaja().filter((p) => p.presentacion === "f50" || p.presentacion === "d10"),
-        buscar: (texto) => filtrarPorTexto(datos.productosCaja(), texto, (p) => p.nombre).slice(0, 24),
+        gondola: () => [],
         buscarCodigo: (codigo) => datos.productosCaja().find((p) => p.id === codigo) ?? null,
         medios: MEDIOS_CAJA,
         billetes: [20_000, 50_000, 100_000, 200_000],
         cobrar: ({ items, medio, pagaCon, pagos }) => datos.venderMostrador(usuario, { items, medio, pagaCon, pagos }),
-        despues: () => pintarVentas()
+        despues: () => {
+            pintarVentas();
+            pintarPerfumes();
+        }
     });
+    catalogo.querySelectorAll("[data-familia]").forEach((b) => b.addEventListener("click", () => {
+        familia = b.dataset.familia;
+        pintarPerfumes();
+    }));
+    catalogo.querySelector("form").addEventListener("submit", (e) => e.preventDefault());
+    campoBuscar.addEventListener("input", () => {
+        campoBuscar.value = campoBuscar.value.slice(0, 40);
+        pintarPerfumes();
+    });
+    catalogo.querySelector(".perfumes").addEventListener("click", (e) => {
+        const boton = e.target.closest("[data-sumar]");
+        if (!boton || boton.disabled) return;
+        const producto = datos.productosCaja().find((p) => p.id === boton.dataset.sumar);
+        if (producto) caja.sumar(producto);
+    });
+    pintarPerfumes();
     pintarVentas();
 }

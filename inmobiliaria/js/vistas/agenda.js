@@ -3,8 +3,8 @@
 // visitas del día por agente (Tomás ve las suyas; Graciela, las de los dos). Las pedidas desde la página se
 // confirman desde su consulta; las que ya pasaron se marcan "Visitó" o "No vino".
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=271b0300c9";
-import { pastillaVisita, chipsDias, mayuscula } from "./comunes.js?v=271b0300c9";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=86b90b0105";
+import { pastillaVisita, chipsDias, mayuscula } from "./comunes.js?v=86b90b0105";
 
 let fecha = null; // el día elegido queda mientras se navega
 

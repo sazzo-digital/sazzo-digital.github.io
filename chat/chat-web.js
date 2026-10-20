@@ -13,6 +13,8 @@
     const CADA_PRESENCIA = 30000;
     const ESPERA = 5 * 60000;
     const GRAVEDAD = 0.21;
+    const PAUSA_LIBRE = 12 * 3600000;
+    let pausaBot = null;
     const VALIDO = /^[A-Za-z0-9-]{8,40}$/;
     const TEXTOS = {
         abrir: "Escribinos",
@@ -33,6 +35,7 @@
         saludos: ["¡Hola! Soy Sazzito 🚀", "¡Wiii! ¿Te ayudo a encontrar tu demo?", "Estoy volando, pero te leo 👀"],
         lugar: "Escribí tu consulta…",
         persona: "🙋 Hablar con una persona",
+        libre: "✍️ Consulta libre",
         enVivo: "🟢 Hablar en vivo ahora",
         escribe: "escribiendo",
         muchos: "Recibimos muchos mensajes seguidos. Probá de nuevo en un rato.",
@@ -203,6 +206,7 @@
     let lugar = [0, 0];
     let rumbo = 0;
     let cuadro = 0;
+    let vivido = 0;
 
     const bajar = () => {
         lista.scrollTop = lista.scrollHeight;
@@ -279,6 +283,12 @@
                 b.addEventListener("click", () => mandar({ rubro: r.id }, r.texto));
                 cajaRubros.append(b);
             }
+            const libre = document.createElement("button");
+            libre.type = "button";
+            libre.className = "sazzo-chat__rubro sazzo-chat__rubro--libre";
+            libre.textContent = TEXTOS.libre;
+            libre.addEventListener("click", () => mandar({ libre: true }, TEXTOS.libre));
+            cajaRubros.append(libre);
         }
         cajaRubros.hidden = mandando > 0 || !(ultimo === 0 || ultimoTipo === "rubros");
         $(".sazzo-chat__intro")?.toggleAttribute("hidden", ultimo > 0);
@@ -295,6 +305,7 @@
             if (r.ok) {
                 const d = await r.json();
                 rubros = d.rubros ?? rubros;
+                if (typeof d.pausa === "boolean") pausaBot = d.pausa;
                 if (d.presencia) presencia(d.presencia);
                 for (const m of d.mensajes ?? []) {
                     if (m.id <= ultimo) continue;
@@ -347,8 +358,9 @@
         avisar("");
         const pendiente = globo(texto, "cliente", "sazzo-chat__globo--pendiente");
         const conHumano = humano === "disponible";
+        const enPausa = !cuerpo.libre && (pausaBot ?? (leerDato("sazzo-chat-libre") ?? 0) > Date.now());
         mandando++;
-        esperaBot = Date.now() + 45000;
+        esperaBot = enPausa ? 0 : Date.now() + 45000;
         pintarEscribe();
         pintarRubros();
         bajar();
@@ -360,6 +372,7 @@
             pendiente.classList.replace("sazzo-chat__globo--pendiente", "sazzo-chat__globo--fallo");
             avisar(error);
         }
+        if (cuerpo.libre && !error) guardarDato("sazzo-chat-libre", Date.now() + PAUSA_LIBRE);
         await leer();
         if (cuerpo.persona && !error) {
             guardarDato("sazzo-chat-persona", { cuando: Date.now(), espera: conHumano ? ESPERA : 0, id: ultimo });
@@ -388,9 +401,12 @@
         const ocupado = ultimoHijo ? ultimoHijo.getBoundingClientRect().bottom - cielo.getBoundingClientRect().top + 6 : 0;
         const arriba = alto - ocupado > 24 ? Math.max(0, ocupado) : 0;
         const lento = matchMedia("(max-width: 520px)").matches ? 0.55 : 1;
+        const dt = Math.min(0.1, Math.max(0, t - cuadro));
+        cuadro = t;
         if (quieto.matches) lugar = [ancho - 8, alto - 8];
         else if (t > saludando) {
-            const u = t * lento;
+            vivido += dt;
+            const u = vivido * lento;
             const camino = (k) => [ancho * (0.5 + 0.3 * Math.sin(k * 0.31) + 0.2 * Math.sin(k * 0.83 + 1.3)), arriba + (alto - arriba) * (0.5 + 0.3 * Math.sin(k * 0.47 + 2) + 0.2 * Math.sin(k * 1.1))];
             const [x0, y0] = camino(u - 0.05);
             const [x1, y1] = camino(u);
@@ -398,13 +414,11 @@
             lugar = [x1, y1 + Math.sin(u * 3) * 3];
             const empujeX = (x2 - 2 * x1 + x0) / 0.0025 + (x2 - x0) / 0.1;
             const empujeY = (y2 - 2 * y1 + y0) / 0.0025 + (y2 - y0) / 0.1 - GRAVEDAD * (alto - arriba);
-            const dt = Math.min(0.1, t - cuadro);
-            cuadro = t;
             let giro = (Math.atan2(empujeX, -empujeY) * 180) / Math.PI - rumbo;
             giro %= 360;
             if (giro > 180) giro -= 360;
             if (giro < -180) giro += 360;
-            rumbo += giro * (1 - Math.exp(-Math.max(0, dt) * 7));
+            rumbo += giro * (1 - Math.exp(-dt * 7));
             sazzito.style.setProperty("--rumbo", `${rumbo.toFixed(1)}deg`);
         }
         sazzito.style.transform = `translate(${lugar[0]}px, ${lugar[1]}px)`;

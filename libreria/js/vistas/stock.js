@@ -8,13 +8,14 @@
 //   "Pedidos a proveedores": lo que bajó del mínimo, por proveedor, con el mensaje para copiar y "Llegó".
 //   "Cargar artículo": con costo y margen (el precio sale solo).
 // ============================================
-import { esc, aviso, vacio, mensajeDe } from "../../kit/js/ui.js?v=6a0389f833";
-import { mostrarMensaje } from "../../kit/js/mensaje.js?v=6a0389f833";
-import { bajarExcel, leerExcel } from "../../kit/js/archivos.js?v=6a0389f833";
-import { PROVEEDORES, RUBROS, TOPES, DESCUENTO_MAYOR, nombreRubro, pesos, precioDe } from "../datos.js?v=6a0389f833";
-import { pastillaStock } from "./comunes.js?v=6a0389f833";
-import { htmlConsigna, htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=6a0389f833";
-import { MARCA } from "../marca.js?v=6a0389f833";
+import { esc, aviso, vacio, mensajeDe } from "../../kit/js/ui.js?v=5983ccc313";
+import { mostrarMensaje } from "../../kit/js/mensaje.js?v=5983ccc313";
+import { bajarExcel, leerExcel } from "../../kit/js/archivos.js?v=5983ccc313";
+import { htmlEstante, activarEstantes } from "../../kit/js/estante.js?v=5983ccc313";
+import { PROVEEDORES, RUBROS, TOPES, DESCUENTO_MAYOR, nombreRubro, pesos, precioDe } from "../datos.js?v=5983ccc313";
+import { pastillaStock } from "./comunes.js?v=5983ccc313";
+import { htmlConsigna, htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=5983ccc313";
+import { MARCA } from "../marca.js?v=5983ccc313";
 
 const RAPIDOS = [5, 10, 15, 20];
 let textoBuscado = ""; // el buscador de Stock recuerda lo escrito mientras se navega
@@ -93,10 +94,15 @@ export function vistaStock(cont, { usuario, datos, consulta }) {
         const coinciden = texto ? new Set(datos.listarProductos({ texto }).map((p) => p.id)) : null;
         const lista = (pedir ? aPedir : datos.listarProductos({ rubro })).filter((p) => !coinciden || coinciden.has(p.id));
         const grupos = RUBROS.map((r) => ({ ...r, productos: lista.filter((x) => x.rubro === r.id) })).filter((g) => g.productos.length);
-        lugar.innerHTML = grupos.length ? grupos.map((g) => `
-            <section class="grupo-stock">
-                <h2 class="subtitulo"><i class="ti ${esc(g.icono)}"></i> ${esc(g.nombre)}</h2>
-                <ul class="filas-stock">${g.productos.map((p) => `
+        lugar.innerHTML = grupos.length ? grupos.map((g) => htmlEstante({
+            id: `stock-${g.id}`,
+            titulo: g.nombre,
+            icono: g.icono,
+            cantidad: g.productos.length,
+            sinStock: g.productos.filter((p) => p.estado === "sin").length,
+            pocos: g.productos.filter((p) => p.estado === "pedir").length,
+            abierta: Boolean(texto || pedir || rubro),
+            contenido: `<ul class="filas-stock">${g.productos.map((p) => `
                     <li class="fila-stock">
                         <span class="fila-stock__nombre">${esc(p.nombre)}
                             <small>${duena ? `costo ${esc(pesos(p.costo))} · margen ${esc(p.margen)} %` : esc(p.proveedor)}${p.mayorDesde ? ` · x${esc(p.mayorDesde)}: ${esc(pesos(p.precioMayor))}` : ""}</small>
@@ -119,9 +125,9 @@ export function vistaStock(cont, { usuario, datos, consulta }) {
                                 <button class="boton boton--chico" type="submit"><i class="ti ti-device-floppy"></i> Guardar</button>
                             </form>
                         </details>` : ""}
-                    </li>`).join("")}
-                </ul>
-            </section>`).join("") : vacio(pedir ? "No hay nada para pedir. Todo en orden." : "No hay artículos con ese nombre.", pedir ? "ti-circle-check" : "ti-search");
+                    </li>`).join("")}</ul>`
+        })).join("") : vacio(pedir ? "No hay nada para pedir. Todo en orden." : "No hay artículos con ese nombre.", pedir ? "ti-circle-check" : "ti-search");
+        activarEstantes(lugar);
 
         lugar.querySelectorAll("form[data-producto]").forEach((f) => {
             const previa = () => {
@@ -248,7 +254,7 @@ export function vistaAumento(cont, { usuario, datos }) {
             despuesDeAplicar(cont, { usuario, datos, cambio, alDeshacer: pintar });
             const consigna = cont.querySelector(".consigna");
             if (consigna) {
-                consigna.outerHTML = htmlConsignaFinal(MARCA);
+                consigna.outerHTML = htmlConsignaFinal(MARCA, 4);
                 activarConsigna(cont, MARCA);
             }
         } catch (err) {

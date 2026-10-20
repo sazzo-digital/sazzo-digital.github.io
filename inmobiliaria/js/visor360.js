@@ -7,8 +7,8 @@
 //   abrirRecorrido({ url: "img/360/p1.webp", titulo: "Depto 2 ambientes con balcón" })
 // La foto se baja recién al abrirlo (~0,6 MB). Al cerrar se suelta todo (la placa de video, los sensores).
 // ============================================
-import { esc, aviso, sinMovimiento } from "../kit/js/ui.js?v=271b0300c9";
-import { alSalirDeLaPantalla } from "../kit/js/rutas.js?v=271b0300c9";
+import { esc, aviso, sinMovimiento } from "../kit/js/ui.js?v=86b90b0105";
+import { alSalirDeLaPantalla } from "../kit/js/rutas.js?v=86b90b0105";
 
 const VERTICES = `
 attribute vec2 punto;

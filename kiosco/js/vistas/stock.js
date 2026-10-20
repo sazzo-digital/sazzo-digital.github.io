@@ -4,12 +4,13 @@
 // kiosco y aplicás todo de una, con Deshacer. Y "La lista del proveedor en Excel": subís la lista que te mandó y los
 // precios se actualizan solos (también con Deshacer). El stock se baja a Excel. La empleada solo mira (y baja).
 // ============================================
-import { esc, aviso, vacio, mensajeDe } from "../../kit/js/ui.js?v=3664d1aeb8";
-import { bajarExcel, leerExcel } from "../../kit/js/archivos.js?v=3664d1aeb8";
-import { PROVEEDORES, TOPES, pesos, estadoStock } from "../datos.js?v=3664d1aeb8";
-import { pastillaStock } from "./comunes.js?v=3664d1aeb8";
-import { htmlConsigna, htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=3664d1aeb8";
-import { MARCA } from "../marca.js?v=3664d1aeb8";
+import { esc, aviso, vacio, mensajeDe } from "../../kit/js/ui.js?v=75a51fff75";
+import { bajarExcel, leerExcel } from "../../kit/js/archivos.js?v=75a51fff75";
+import { htmlEstante, activarEstantes } from "../../kit/js/estante.js?v=75a51fff75";
+import { PROVEEDORES, TOPES, pesos, estadoStock } from "../datos.js?v=75a51fff75";
+import { pastillaStock } from "./comunes.js?v=75a51fff75";
+import { htmlConsigna, htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=75a51fff75";
+import { MARCA } from "../marca.js?v=75a51fff75";
 
 const RAPIDOS = [5, 10, 15, 20];
 
@@ -52,7 +53,7 @@ export function vistaStock(cont, { usuario, datos, consulta }) {
     cont.innerHTML = `
         <div class="titulo-con-accion">
             <h1 class="titulo">Stock y precios</h1>
-            ${dueno ? `<a class="boton boton--chico" href="#/stock/aumento"><i class="ti ti-trending-up"></i> Subió un proveedor</a>` : ""}
+            ${dueno ? `<a class="boton boton--chico" href="#/stock/aumento"><i class="ti ti-trending-up"></i> Subir precios por proveedor</a>` : ""}
         </div>
         ${dueno ? htmlUltimoAumento(datos.ultimoAumento()) : `<p class="nota"><i class="ti ti-info-circle"></i> Los precios y el stock los cambia Rubén.</p>`}
         <div class="acciones-excel">
@@ -64,10 +65,15 @@ export function vistaStock(cont, { usuario, datos, consulta }) {
             ${chip("pedir", `Hay que pedir (${datos.hayQuePedir().length})`)}
             ${PROVEEDORES.map((p) => chip(p.id, p.nombre)).join("")}
         </nav>
-        ${grupos.length ? grupos.map((g) => `
-        <section class="grupo-stock">
-            <h2 class="subtitulo"><i class="ti ti-truck-delivery"></i> ${esc(g.nombre)}</h2>
-            <ul class="filas-stock">${g.productos.map((p) => `
+        ${grupos.length ? grupos.map((g) => htmlEstante({
+            id: `stock-${g.id ?? "sin-proveedor"}`,
+            titulo: g.nombre,
+            icono: "ti-truck-delivery",
+            cantidad: g.productos.length,
+            sinStock: g.productos.filter((p) => p.estado === "sin").length,
+            pocos: g.productos.filter((p) => p.estado === "pedir").length,
+            abierta: Boolean(filtro),
+            contenido: `<ul class="filas-stock">${g.productos.map((p) => `
                 <li class="fila-stock">
                     <span class="fila-stock__nombre">${esc(p.nombre)}<small>${esc(p.codigo)}</small></span>
                     <b class="fila-stock__precio">${esc(pesos(p.precio))}</b>
@@ -82,10 +88,10 @@ export function vistaStock(cont, { usuario, datos, consulta }) {
                             <button class="boton boton--chico" type="submit"><i class="ti ti-device-floppy"></i> Guardar</button>
                         </form>
                     </details>` : ""}
-                </li>`).join("")}
-            </ul>
-        </section>`).join("") : vacio("No hay nada para pedir. Todo en orden.", "ti-circle-check")}`;
+                </li>`).join("")}</ul>`
+        })).join("") : vacio("No hay nada para pedir. Todo en orden.", "ti-circle-check")}`;
 
+    activarEstantes(cont);
     const otraVez = () => vistaStock(cont, { usuario, datos, consulta });
     activarDeshacer(cont, usuario, datos, otraVez);
     const ESTADOS = { sin: "Sin stock", pedir: "Hay que pedir", hay: "Hay" };
@@ -142,7 +148,7 @@ export function vistaAumento(cont, { usuario, datos }) {
 
     cont.innerHTML = `
         <a class="volver" href="#/stock"><i class="ti ti-arrow-left"></i> Stock y precios</a>
-        <h1 class="titulo">Subió un proveedor</h1>
+        <h1 class="titulo">Subir los precios de un proveedor</h1>
         ${htmlConsigna({ paso: 3, total: 3, accion: "Te mandó la lista nueva: elegí el proveedor y cuánto subió, mirá cómo quedan y aplicalo.", resultado: "Cambian todos sus precios de una, con Deshacer." })}
         <div class="bloque">
             <p class="rotulo-chico">Proveedor</p>
@@ -187,7 +193,7 @@ export function vistaAumento(cont, { usuario, datos }) {
             });
             const consigna = cont.querySelector(".consigna");
             if (consigna) {
-                consigna.outerHTML = htmlConsignaFinal(MARCA);
+                consigna.outerHTML = htmlConsignaFinal(MARCA, 3);
                 activarConsigna(cont, MARCA);
             }
             aviso(`${a.cambios.length} precios actualizados`);

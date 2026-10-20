@@ -492,7 +492,8 @@ body.guardando .boton:not(.boton--secundario) {
 .cabecera .boton-icono {
   color: var(--texto-suave);
 }
-.cabecera .cabecera__colores {
+.cabecera .cabecera__colores,
+.cabecera .cabecera__instalar {
   color: var(--primario);
 }
 @media (max-width: 399px) {
@@ -1587,6 +1588,17 @@ body.guardando .boton:not(.boton--secundario) {
     --borde-giro: 360deg;
   }
 }
+.ingreso__instalar {
+  min-height: 3.2rem;
+  border-color: var(--primario);
+  color: var(--primario);
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+.ingreso__instalar .ti {
+  font-size: 1.35rem;
+}
+
 .acerca {
   max-width: 26rem;
   margin: 0.5rem auto 1.25rem;
@@ -2258,6 +2270,25 @@ body.guardando .boton:not(.boton--secundario) {
 }
 .consigna--hecha .consigna__accion .ti, .consigna--final .consigna__accion .ti {
   color: #10b981;
+}
+.consigna--final {
+  border-left-color: #10b981;
+  background: color-mix(in srgb, #10b981 10%, var(--superficie-2));
+}
+.consigna__exito {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+.consigna__exito .ti {
+  flex: none;
+  font-size: 1.6rem;
+  color: #10b981;
+}
+.consigna__exito b {
+  color: color-mix(in srgb, #10b981 var(--tinta-mezcla, 70%), var(--texto));
 }
 .consigna__botones {
   display: grid;
@@ -3660,6 +3691,119 @@ input.caja-super__cantidad::-webkit-outer-spin-button, input.caja-super__cantida
   overflow: visible;
 }
 
+.estante {
+  background: var(--superficie);
+  border: 1px solid var(--borde);
+  border-radius: 16px;
+  box-shadow: var(--sombra);
+  margin: 0 0 0.6rem;
+  overflow: hidden;
+}
+.estante__cabeza {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem 0.6rem;
+  min-height: 48px;
+  padding: 0.6rem 0.9rem;
+  cursor: pointer;
+  list-style: none;
+}
+.estante__cabeza::-webkit-details-marker {
+  display: none;
+}
+.estante__cabeza > .ti:first-child {
+  font-size: 1.15rem;
+  color: var(--primario);
+}
+.estante__nombre {
+  flex: 1 1 8rem;
+  font-weight: 600;
+}
+.estante__nombre small {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+  margin-left: 0.2rem;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--texto-suave);
+}
+.estante__avisos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+}
+.estante__aviso {
+  padding: 0.15rem 0.5rem;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.estante__aviso--mal {
+  background: color-mix(in srgb, #ef4444 13%, transparent);
+  border-color: color-mix(in srgb, #ef4444 40%, transparent);
+  color: color-mix(in srgb, #ef4444 var(--tinta-mezcla, 70%), var(--texto));
+}
+.estante__aviso--ojo {
+  background: color-mix(in srgb, #f59e0b 14%, transparent);
+  border-color: color-mix(in srgb, #f59e0b 40%, transparent);
+  color: color-mix(in srgb, #f59e0b var(--tinta-mezcla, 70%), var(--texto));
+}
+.estante__flecha {
+  margin-left: auto;
+  color: var(--texto-suave);
+  transition: rotate 0.2s ease;
+}
+.estante[open] > .estante__cabeza .estante__flecha {
+  rotate: 180deg;
+}
+.estante__contenido {
+  padding: 0 0.9rem 0.2rem;
+  border-top: 1px solid var(--borde);
+}
+.estante__contenido > ul {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  list-style: none;
+}
+.estante__contenido > .tarjetas {
+  padding: 0.75rem 0 0.6rem;
+}
+.estante__fila {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
+  gap: 0.4rem 0.75rem;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid var(--borde);
+}
+.estante__fila:last-child {
+  border-bottom: 0;
+}
+.estante__fila > :first-child {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-width: 0;
+  font-weight: 500;
+}
+.estante__fila > :first-child .ti {
+  flex: none;
+  color: var(--texto-suave);
+}
+.estante__precio {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+
 .contenido.entrando > :not(dialog) {
   animation: entrar-suave 0.48s cubic-bezier(0.22, 0.9, 0.24, 1) both;
 }
@@ -4604,10 +4748,4 @@ details[open] > :not(summary) {
 .lugar-cantina:empty,
 .lugar-cuenta:empty {
   display: none;
-}
-
-.stock-del-dia .stock-cantina {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 15rem), 1fr));
-  gap: 0.6rem;
 }

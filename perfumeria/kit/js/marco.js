@@ -13,14 +13,16 @@
 // Festejo: cuando aparece una confirmación (.hecho: turno reservado, venta cobrada, orden creada…), el ✓ entra con un
 // rebote, salen chispitas del color de la demo y el celular vibra cortito (Android). Quieto con "reducir movimiento".
 // ============================================
-import { $, $$, esc, iniciales } from "./ui.js?v=35edc617e5";
-import { logoSazzo, nombreDemo } from "./marca.js?v=35edc617e5";
-import { interruptorTema, activarInterruptorTema } from "./apariencia.js?v=35edc617e5";
-import { linkOtrasDemos, linkQuieroEsto, botDelChat } from "./enlaces.js?v=35edc617e5";
-import { abrirColores, leerNombre } from "./colores.js?v=35edc617e5";
-import { contar } from "./visita.js?v=35edc617e5";
-import { pintarAvisos } from "./avisos.js?v=35edc617e5";
-import { revisarDetalle, htmlBotonDetalle, activarDetalle } from "./detalle.js?v=35edc617e5";
+import { $, $$, esc, iniciales } from "./ui.js?v=d819d10110";
+import { logoSazzo, nombreDemo } from "./marca.js?v=d819d10110";
+import { interruptorTema, activarInterruptorTema } from "./apariencia.js?v=d819d10110";
+import { linkOtrasDemos, linkQuieroEsto, botDelChat } from "./enlaces.js?v=d819d10110";
+import { abrirColores, leerNombre } from "./colores.js?v=d819d10110";
+import { contar } from "./visita.js?v=d819d10110";
+import { pintarAvisos } from "./avisos.js?v=d819d10110";
+import { revisarDetalle, htmlBotonDetalle, activarDetalle } from "./detalle.js?v=d819d10110";
+import { htmlBotonInstalarCabecera } from "./instalar.js?v=d819d10110";
+import { olvidarDemo } from "./guardado.js?v=d819d10110";
 
 /** La barrita de Sazzo: colores, otras demos y "Quiero esto" (los textos largos solo si hay lugar). */
 export function htmlBarraSazzo(marca, opciones, conDetalle = false) {
@@ -68,6 +70,7 @@ export function htmlMarco({ marca, usuario, menu = [], cambiarPersona = true, de
             <div class="cabecera__lado">
                 ${interruptorTema()}
                 ${htmlBotonColores()}
+                ${htmlBotonInstalarCabecera()}
             </div>
             <a class="cabecera__marca" href="#/inicio" title="Ir al inicio">${logoSazzo()}<span>${nombreDemo(marca)}${htmlNombreNegocio(marca)}</span></a>
             <div class="cabecera__fin">${cambiarPersona ? htmlPersonaCabecera(usuario) : ""}</div>
@@ -104,7 +107,10 @@ export function htmlMarco({ marca, usuario, menu = [], cambiarPersona = true, de
 export function activarBotonesSazzo(raiz, marca, detalle = null) {
     $$("[data-colores]", raiz).forEach((b) => b.addEventListener("click", () => abrirColores(marca.prefijo, { alElegir: () => contar("colores", marca.id) })));
     activarDetalle(raiz, marca, detalle);
-    $$("[data-otras-demos]", raiz).forEach((b) => b.addEventListener("click", () => contar("otras-demos", marca.id)));
+    $$("[data-otras-demos]", raiz).forEach((b) => b.addEventListener("click", () => {
+        contar("otras-demos", marca.id);
+        olvidarDemo(marca.prefijo);
+    }));
     $$("[data-quiero-esto]", raiz).forEach((b) => b.addEventListener("click", () => contar("quiero-esto", marca.id)));
 }
 

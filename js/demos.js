@@ -176,7 +176,7 @@ export const DEMOS = [
         items: ["Orden de trabajo por patente", "Presupuesto con firma del cliente y PDF", "Aviso de \"ya está listo\" y de service vencido"],
         detalle: {
             hace: [
-                "Al mecánico le llegan las órdenes sin precios, y dicta con la voz lo que encontró",
+                "Al mecánico le llegan las órdenes sin precios",
                 "La orden pasa por aprobado, falta repuesto, terminado y entregado",
                 "Historial de cada auto y de cada cliente",
                 "Mensaje listo para escribirle al cliente",

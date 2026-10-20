@@ -1,8 +1,9 @@
-import { esc } from "../../kit/js/ui.js?v=e07e055905";
-import { abrirCaja, htmlMasDeLaCaja } from "../../kit/js/caja.js?v=e07e055905";
-import { MEDIOS_PAGO, mediosParaCaja } from "../../kit/js/pagos.js?v=e07e055905";
-import { pesos, SECCIONES_CANTINA } from "../datos.js?v=e07e055905";
-import { MARCA, NEGOCIO } from "../marca.js?v=e07e055905";
+import { esc } from "../../kit/js/ui.js?v=952176458b";
+import { abrirCaja, htmlMasDeLaCaja } from "../../kit/js/caja.js?v=952176458b";
+import { htmlEstante, activarEstantes } from "../../kit/js/estante.js?v=952176458b";
+import { MEDIOS_PAGO, mediosParaCaja } from "../../kit/js/pagos.js?v=952176458b";
+import { pesos, SECCIONES_CANTINA } from "../datos.js?v=952176458b";
+import { MARCA, NEGOCIO } from "../marca.js?v=952176458b";
 
 const MEDIOS_CAJA = mediosParaCaja(MEDIOS_PAGO);
 
@@ -21,16 +22,25 @@ export function vistaCantina(cont, { usuario, datos }) {
         const productos = datos.cantina();
         lugarStock.innerHTML = `
             <h2 class="subtitulo"><i class="ti ti-package"></i> Stock</h2>
-            <ul class="tarjetas stock-cantina">${productos.map((p) => `
-                <li class="tarjeta">
-                    <div class="tarjeta__fila">
-                        <span class="tarjeta__titulo"><i class="ti ${esc(p.icono)}" aria-hidden="true"></i>${esc(p.nombre)}</span>
-                        <span class="pastilla ${p.stock === 0 ? "pastilla--mal" : p.stock <= 3 ? "pastilla--ojo" : "pastilla--bien"}">${p.stock === 0 ? "No hay" : `Hay ${esc(p.stock)}`}</span>
-                    </div>
-                    <p class="tarjeta__quien">${esc(pesos(p.precio))}</p>
-                </li>`).join("")}
-            </ul>
+            ${SECCIONES_CANTINA.map((s) => {
+                const deEsta = productos.filter((p) => p.seccion === s.id);
+                return deEsta.length ? htmlEstante({
+                    id: `cantina-${s.id}`,
+                    titulo: s.texto,
+                    icono: deEsta[0].icono,
+                    cantidad: deEsta.length,
+                    sinStock: deEsta.filter((p) => p.stock === 0).length,
+                    pocos: deEsta.filter((p) => p.stock > 0 && p.stock <= 3).length,
+                    contenido: `<ul>${deEsta.map((p) => `
+                        <li class="estante__fila">
+                            <span><i class="ti ${esc(p.icono)}" aria-hidden="true"></i>${esc(p.nombre)}</span>
+                            <b class="estante__precio">${esc(pesos(p.precio))}</b>
+                            <span class="pastilla ${p.stock === 0 ? "pastilla--mal" : p.stock <= 3 ? "pastilla--ojo" : "pastilla--bien"}">${p.stock === 0 ? "No hay" : `Hay ${esc(p.stock)}`}</span>
+                        </li>`).join("")}</ul>`
+                }) : "";
+            }).join("")}
             <p class="nota"><i class="ti ti-chart-bar" aria-hidden="true"></i> Hoy en la cantina: <b>${esc(pesos(datos.cantinaDelDia()))}</b></p>`;
+        activarEstantes(lugarStock);
     };
     abrirCaja({
         dentro: cont.querySelector(".lugar-caja"),

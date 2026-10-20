@@ -3,10 +3,10 @@
 // no paga y cuánto del tope usó. En la ficha: el recordatorio armado para mandarle, anotar un pago (todo o una parte),
 // el tope (lo cambia el dueño) y qué se llevó en cada compra. El dueño abre cuentas nuevas.
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=43c5602906";
-import { mostrarMensaje } from "../../kit/js/mensaje.js?v=43c5602906";
-import { TOPES, TOPE_CUENTA_NUEVA, pesos } from "../datos.js?v=43c5602906";
-import { barraTope, haceDias, diasDesde, cuando } from "./comunes.js?v=43c5602906";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=f6723a2a8a";
+import { mostrarMensaje } from "../../kit/js/mensaje.js?v=f6723a2a8a";
+import { TOPES, TOPE_CUENTA_NUEVA, pesos } from "../datos.js?v=f6723a2a8a";
+import { barraTope, haceDias, diasDesde, cuando } from "./comunes.js?v=f6723a2a8a";
 
 const DIAS_ATRASADO = 30; // desde cuántos días sin pagar se marca
 

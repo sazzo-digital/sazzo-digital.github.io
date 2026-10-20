@@ -2,9 +2,9 @@
 // Repuestos (administradora y mecánico): "hay / queda poco / no hay". Se descuentan solos cuando el mecánico
 // cierra un arreglo diciendo qué usó.
 // ============================================
-import { esc, aviso } from "../../kit/js/ui.js?v=b34a203314";
-import { cantidadCon, MOTIVOS_STOCK, TOPES } from "../datos.js?v=b34a203314";
-import { haceCuanto } from "./comunes.js?v=b34a203314";
+import { esc, aviso } from "../../kit/js/ui.js?v=b86ccb1eca";
+import { cantidadCon, MOTIVOS_STOCK, TOPES } from "../datos.js?v=b86ccb1eca";
+import { haceCuanto } from "./comunes.js?v=b86ccb1eca";
 
 const ESTADOS = {
     "no-hay": { texto: "No hay", clase: "problema", icono: "ti-circle-x" },

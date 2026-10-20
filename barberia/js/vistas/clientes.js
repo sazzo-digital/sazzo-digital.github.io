@@ -2,11 +2,11 @@
 // Clientes (barbero): buscador, "no vuelven hace más de 30 / 45 / 60 días" con "Invitarlo" (mensaje para copiar y
 // la fecha en que se lo invitó), y la ficha de cada uno: qué se hace siempre, notas, historial y "Sacarle turno".
 // ============================================
-import { esc, aviso, vacio, fechaCorta } from "../../kit/js/ui.js?v=d7321eabcf";
-import { NO_VUELVEN, TOPES, nombreFecha } from "../datos.js?v=d7321eabcf";
-import { mostrarMensaje } from "./comunes.js?v=d7321eabcf";
-import { htmlConsigna, htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=d7321eabcf";
-import { MARCA } from "../marca.js?v=d7321eabcf";
+import { esc, aviso, vacio, fechaCorta } from "../../kit/js/ui.js?v=3b2eaafd59";
+import { NO_VUELVEN, TOPES, nombreFecha } from "../datos.js?v=3b2eaafd59";
+import { mostrarMensaje } from "./comunes.js?v=3b2eaafd59";
+import { htmlConsigna, htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=3b2eaafd59";
+import { MARCA } from "../marca.js?v=3b2eaafd59";
 
 let noVuelven = null; // null = todos; si no, los días
 let texto = "";
@@ -56,7 +56,7 @@ export function vistaClientes(cont, { usuario, datos }) {
                         pintar();
                         const consigna = cont.querySelector(".consigna");
                         if (consigna) {
-                            consigna.outerHTML = htmlConsignaFinal(MARCA);
+                            consigna.outerHTML = htmlConsignaFinal(MARCA, 3);
                             activarConsigna(cont, MARCA);
                         }
                     }

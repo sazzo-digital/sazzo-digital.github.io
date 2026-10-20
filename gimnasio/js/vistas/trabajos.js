@@ -1,5 +1,5 @@
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=d2c5ed7562";
-import { DIAS, ORDEN_SEMANA, TOPES } from "../datos.js?v=d2c5ed7562";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=be499030eb";
+import { DIAS, ORDEN_SEMANA, TOPES } from "../datos.js?v=be499030eb";
 
 const puntos = (t) => `
     <ol class="trabajo__semana" aria-label="Últimos 7 días: ${esc(t.hechos)} de ${esc(t.meta)}">

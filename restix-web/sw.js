@@ -1,5 +1,5 @@
 const PREFIJO = "sazzo-restix-web";
-const COPIA = `${PREFIJO}-59fd6f5326`;
+const COPIA = `${PREFIJO}-8f333cfcf6`;
 const BASICO = ["./", "manifest.webmanifest"];
 
 self.addEventListener("install", (e) => {

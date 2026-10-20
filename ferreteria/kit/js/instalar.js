@@ -1,4 +1,4 @@
-import { esc, aviso } from "./ui.js?v=43c5602906";
+import { esc, aviso } from "./ui.js?v=f6723a2a8a";
 
 let pedidoDeInstalar = null;
 let nombreApp = "la demo";
@@ -10,7 +10,10 @@ const hayManifest = () => Boolean(document.querySelector('link[rel="manifest"]')
 export const sePuedeInstalar = () => hayManifest() && !yaInstalada();
 
 export const htmlBotonInstalar = (clase = "boton boton--secundario boton--ancho") =>
-    `<button class="${esc(clase)}" type="button" data-instalar${sePuedeInstalar() ? "" : " hidden"}><i class="ti ti-download" aria-hidden="true"></i><span>Instalala como app</span></button>`;
+    `<button class="${esc(clase)}" type="button" data-instalar${sePuedeInstalar() ? "" : " hidden"}><i class="ti ti-download" aria-hidden="true"></i><span>Descargar demo</span></button>`;
+
+export const htmlBotonInstalarCabecera = () =>
+    `<button class="boton-icono cabecera__instalar" type="button" data-instalar title="Descargar demo" aria-label="Descargar demo"${sePuedeInstalar() ? "" : " hidden"}><i class="ti ti-download" aria-hidden="true"></i></button>`;
 
 export function pasosParaInstalar({ agente = "", plataforma = "", toques = 0, chrome = false, brave = false, nombre = "la demo" } = {}) {
     const iphone = /iPad|iPhone|iPod/.test(agente) || (plataforma === "MacIntel" && toques > 1);
@@ -18,7 +21,7 @@ export function pasosParaInstalar({ agente = "", plataforma = "", toques = 0, ch
         return [
             "Estás viéndola adentro de otra app (WhatsApp, Instagram…), y desde ahí no se puede instalar.",
             iphone ? 'Tocá los tres puntos o el ícono de compartir y elegí "Abrir en Safari".' : 'Tocá los tres puntos (⋮) de arriba a la derecha y elegí "Abrir en Chrome".',
-            'Ya en el navegador, tocá de nuevo "Instalala como app".'
+            'Ya en el navegador, tocá de nuevo "Descargar demo".'
         ];
     }
     if (iphone) {

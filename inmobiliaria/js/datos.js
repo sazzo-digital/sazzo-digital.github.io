@@ -9,11 +9,11 @@
 // Reglas del kit: exigir() en lo que modifica, topes en todo lo que se carga, nada se borra y se devuelven copias.
 // Si cambia la forma de los datos, subir VERSION_DATOS (se regeneran solos).
 // ============================================
-import { crearGuardado, exigir, copia, nuevoId, buscar } from "../kit/js/guardado.js?v=271b0300c9";
-import { enteroHasta, sinPasarse } from "../kit/js/topes.js?v=271b0300c9";
-import { esFechaISO } from "../kit/js/fechas.js?v=271b0300c9";
-import { aHora, aMinutos, diaSemana, libres, revisarLibre } from "../kit/js/turnos.js?v=271b0300c9";
-import { MARCA, NEGOCIO, buscarPersona } from "./marca.js?v=271b0300c9";
+import { crearGuardado, exigir, copia, nuevoId, buscar } from "../kit/js/guardado.js?v=86b90b0105";
+import { enteroHasta, sinPasarse } from "../kit/js/topes.js?v=86b90b0105";
+import { esFechaISO } from "../kit/js/fechas.js?v=86b90b0105";
+import { aHora, aMinutos, diaSemana, libres, revisarLibre } from "../kit/js/turnos.js?v=86b90b0105";
+import { MARCA, NEGOCIO, buscarPersona } from "./marca.js?v=86b90b0105";
 
 export const VERSION_DATOS = 2; // 2: las propiedades de fábrica traen fotos y dos, el recorrido 360
 

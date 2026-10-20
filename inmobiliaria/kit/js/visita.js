@@ -12,7 +12,7 @@
 // La dirección de la planilla la pone el script de armar el sitio (medicion\direccion.txt). En la PC (localhost)
 // nunca se manda nada.
 // ============================================
-import { MEDICION } from "./config.js?v=271b0300c9";
+import { MEDICION } from "./config.js?v=86b90b0105";
 
 const ORIGEN_VALIDO = /^[a-z0-9-]{1,30}$/; // igual que el catálogo
 export const EVENTOS = ["abrio-demo", "entro", "pantalla", "quiero-esto", "otras-demos", "colores", "error", "velocidad", "detalle"];

@@ -1,7 +1,7 @@
-import { esc } from "./ui.js?v=3664d1aeb8";
-import { linkQuieroEsto } from "./enlaces.js?v=3664d1aeb8";
-import { abrirColores } from "./colores.js?v=3664d1aeb8";
-import { contar } from "./visita.js?v=3664d1aeb8";
+import { esc } from "./ui.js?v=75a51fff75";
+import { linkQuieroEsto } from "./enlaces.js?v=75a51fff75";
+import { abrirColores } from "./colores.js?v=75a51fff75";
+import { contar } from "./visita.js?v=75a51fff75";
 
 export const TOPE_CONSIGNA = { pasos: 9, letras: 160 };
 
@@ -28,12 +28,12 @@ export function htmlConsigna({ paso, total, accion, resultado = "", hecho = "", 
         </aside>`;
 }
 
-export function htmlConsignaFinal(marca) {
+export function htmlConsignaFinal(marca, total) {
+    if (!Number.isInteger(total) || total < 1 || total > TOPE_CONSIGNA.pasos) throw new Error(`El final de la consigna necesita cuántos pasos hubo (de 1 a ${TOPE_CONSIGNA.pasos}).`);
     const quiero = linkQuieroEsto(marca);
     return `
-        <aside class="consigna consigna--final" aria-label="Qué probar">
-            <p class="consigna__paso">Listo</p>
-            <p class="consigna__accion" role="status"><i class="ti ti-circle-check" aria-hidden="true"></i><span>Ya viste el circuito completo.</span></p>
+        <aside class="consigna consigna--final" aria-label="Terminaste los pasos">
+            <p class="consigna__exito" role="status"><i class="ti ti-circle-check" aria-hidden="true"></i><span><b>¡Éxito!</b> Terminaste ${total === 1 ? "el paso" : `los ${esc(total)} pasos`}.</span></p>
             <div class="consigna__botones">
                 <button class="boton" type="button" data-consigna-colores><i class="ti ti-palette" aria-hidden="true"></i> Ahora probala con tus colores</button>
                 <a class="boton consigna__quiero" href="${esc(quiero.href)}" data-consigna-quiero${quiero.externo ? ' target="_blank" rel="noopener"' : ""}><i class="ti ti-brand-whatsapp" aria-hidden="true"></i> Quiero esto</a>
