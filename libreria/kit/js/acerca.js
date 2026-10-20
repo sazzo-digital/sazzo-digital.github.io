@@ -4,8 +4,9 @@
 // - Con alguien adentro: la pantalla entera (vistaAcerca), desde el menú o la cabecera de la demo.
 // Nada de datos personales: firma Sazzo. El contacto ("Quiero esto para mi negocio") llega en el paso 2.
 // ============================================
-import { esc } from "./ui.js?v=5983ccc313";
-import { logoSazzo, nombreDemo } from "./marca.js?v=5983ccc313";
+import { esc } from "./ui.js?v=53dafd0799";
+import { logoSazzo, nombreDemo } from "./marca.js?v=53dafd0799";
+import { htmlInterruptorPasos, activarInterruptorPasos } from "./consigna.js?v=53dafd0799";
 
 const AVISO_DEMO =
     "Es una demo: los datos son inventados y quedan guardados solo en este navegador. No te pedimos ningún dato. La versión real se arma a medida de cada negocio.";
@@ -42,7 +43,9 @@ export function vistaAcerca(cont, { marca, volver = ["#/inicio", "Inicio"] }) {
                 ${marca.lema ? `<p class="lema">${esc(marca.lema)}</p>` : ""}
             </div>
             ${textoAcerca(marca)}
+            ${htmlInterruptorPasos(marca)}
         </section>`;
+    activarInterruptorPasos(cont, marca);
 }
 
 // El globito del pie se cierra tocando afuera o con Escape (se conecta una sola vez, al cargar el kit)

@@ -1,16 +1,16 @@
+import { conConsigna } from "./comunes.js?v=569102ff5e";
 // ============================================
 // Inicio de Sazzo Contable: el tablero de la empresa. Vendido y comprado en el mes, IVA estimado y cuándo vence,
 // quién te debe y a quién le debés, y lo último que se facturó. Arriba, el paso del recorrido de cada persona
 // (Silvina arranca facturando; Hernán y Patricia, mirando).
 // ============================================
-import { esc } from "../../kit/js/ui.js?v=929def1556";
-import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=929def1556";
-import { htmlConsigna } from "../../kit/js/consigna.js?v=929def1556";
-import { pesos, pesosRedondo, nombrePeriodo, periodoActual, correrPeriodo, signo, numeroComprobante } from "../reglas.js?v=929def1556";
-import { buscarPersona } from "../marca.js?v=929def1556";
-import { logoEmpresa, haceDias, pastillaTipo, diaMes, fechaCorta } from "./comunes.js?v=929def1556";
+import { esc } from "../../kit/js/ui.js?v=569102ff5e";
+import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=569102ff5e";
+import { pesos, pesosRedondo, nombrePeriodo, periodoActual, correrPeriodo, signo, numeroComprobante } from "../reglas.js?v=569102ff5e";
+import { buscarPersona } from "../marca.js?v=569102ff5e";
+import { logoEmpresa, haceDias, pastillaTipo, diaMes, fechaCorta } from "./comunes.js?v=569102ff5e";
 
-export function vistaInicio(cont, { usuario, datos, irA }) {
+function pintarInicio(cont, { usuario, datos, irA }) {
     const e = datos.leerEmpresa();
     const periodo = periodoActual();
     const historial = datos.historialIva(2);
@@ -82,7 +82,7 @@ function pasoDelRecorrido(usuario, pendientesArca) {
         return `
             <div class="paso-recorrido">
                 <a class="boton boton--grande" href="#/facturar/nueva?wow=1"><i class="ti ti-file-invoice"></i> Empezá: hacé una factura A</a>
-                ${htmlConsigna({ paso: 1, total: 3, accion: "Hacé una factura A a Ferretería El Tornillo, que es Responsable Inscripta.", resultado: "La letra sale sola según el cliente, con CAE de prueba.", guia: pendientesArca ? "" : htmlGuia({ persona: buscarPersona("u-contadora"), ruta: "/iva", texto: "Mirá lo que ve la contadora" }) })}
+                ${pendientesArca ? "" : htmlGuia({ persona: buscarPersona("u-contadora"), ruta: "/iva", texto: "Mirá lo que ve la contadora" })}
             </div>`;
     }
     if (usuario.rol === "dueno") {
@@ -116,3 +116,5 @@ function htmlMonotributo(m) {
             </details>
         </section>`;
 }
+
+export const vistaInicio = conConsigna(pintarInicio);

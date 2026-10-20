@@ -10,15 +10,15 @@
 // Las ventas guardan el precio y el costo del momento: si después sube un proveedor, lo vendido no cambia.
 // Si cambia la forma de los datos, subir VERSION_DATOS (se regeneran solos).
 // ============================================
-import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=5983ccc313";
-import { enteroHasta, sinPasarse } from "../kit/js/topes.js?v=5983ccc313";
-import { diaLocalDe, fechaLocalISO } from "../kit/js/fechas.js?v=5983ccc313";
-import { columnasDe, numeroDe, textoParaComparar } from "../kit/js/tablas.js?v=5983ccc313";
-import { filtrarPorTexto, comoSuena } from "../kit/js/buscar.js?v=5983ccc313";
-import { MARCA, NEGOCIO, buscarPersona } from "./marca.js?v=5983ccc313";
-import { MEDIOS_PAGO, DIVIDIDO, revisarPagos, sumarPorMedio } from "../kit/js/pagos.js?v=5983ccc313";
+import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=53dafd0799";
+import { enteroHasta, sinPasarse } from "../kit/js/topes.js?v=53dafd0799";
+import { diaLocalDe, fechaLocalISO } from "../kit/js/fechas.js?v=53dafd0799";
+import { columnasDe, numeroDe, textoParaComparar } from "../kit/js/tablas.js?v=53dafd0799";
+import { filtrarPorTexto, comoSuena } from "../kit/js/buscar.js?v=53dafd0799";
+import { MARCA, NEGOCIO, PERSONAS, buscarPersona } from "./marca.js?v=53dafd0799";
+import { MEDIOS_PAGO, DIVIDIDO, revisarPagos, sumarPorMedio } from "../kit/js/pagos.js?v=53dafd0799";
 
-export const VERSION_DATOS = 3; // 2: los libros con ISBN
+export const VERSION_DATOS = 5;
 
 // ---------- Topes (cada uno con su prueba de valor absurdo) ----------
 export const TOPES = {
@@ -386,7 +386,11 @@ export function semilla() {
     ventas.push(ventaBenja);
     ventas.sort((a, b) => a.fecha.localeCompare(b.fecha));
 
-    return { productos, listas, pedidos: [ortiz, benja], ventas, cambios: [], entradas: [], cierres: [] };
+    const rios = pedidoDe(100, "l-2", "Familia Ríos · 4° A", "web", "nueva", 0);
+    rios.items = rios.items.filter((i) => i.nombre === "Lápiz negro HB");
+    rios.separado = null;
+    rios.avisado = null;
+    return { productos, listas, pedidos: [ortiz, benja, rios], ventas, cambios: [], entradas: [], cierres: [], pasosPersonas: {} };
 }
 
 // ---------- Permisos ----------
@@ -401,6 +405,26 @@ const ORDEN_ESTADO = { nueva: 0, separada: 1, entregada: 2, anulada: 3 };
 export function crearDatos(prefijo = MARCA.prefijo) {
     const guardado = crearGuardado({ prefijo, version: VERSION_DATOS, semilla });
     const db = () => guardado.db();
+    const series = { duena: ["aumento", "margen", "recibo"], clienta: ["lista", "destildada", "pedido"] };
+    const cerrada = (pe) => ["entregada", "anulada"].includes(pe?.estado);
+
+    function pasos(usuario) {
+        exigir(PERSONAS.some((p) => p.id === usuario?.id && p.rol === usuario?.rol), "Esa persona no tiene pasos.");
+        if (usuario.rol === "empleado") {
+            const pe = db().pedidos.find((p) => p.id === "pe-100");
+            return [pe?.estado !== "nueva", !!pe?.avisado || cerrada(pe), cerrada(pe)];
+        }
+        return series[usuario.rol].map((id) => !!db().pasosPersonas?.[usuario.id]?.includes(id));
+    }
+
+    function registrarPaso(usuario, id) {
+        if (!series[usuario?.rol]?.includes(id)) return;
+        const hechos = db().pasosPersonas ??= {};
+        const persona = hechos[usuario.id] ??= [];
+        if (persona.includes(id)) return;
+        persona.push(id);
+        guardado.persistir();
+    }
     const proveedor = (id) => PROVEEDORES.find((p) => p.id === id) ?? null;
     const armarProducto = (p) => ({
         ...copia(p),
@@ -560,14 +584,18 @@ export function crearDatos(prefijo = MARCA.prefijo) {
         exigir(esDuena(usuario), "Solo la dueña cambia los precios.");
         const cambios = verAumento(proveedorId, porcentaje);
         exigir(porcentaje !== 0, "Con 0 % no cambia nada.");
-        return guardarCambio(usuario, "aumento", { proveedorId, porcentaje }, cambios);
+        const cambio = guardarCambio(usuario, "aumento", { proveedorId, porcentaje }, cambios);
+        registrarPaso(usuario, "aumento");
+        return cambio;
     }
 
     function aplicarMargen(usuario, rubro, margen) {
         exigir(esDuena(usuario), "Solo la dueña cambia los márgenes.");
         const cambios = verMargen(rubro, margen);
         exigir(cambios.some((c) => c.margenAntes !== c.margenDespues), `Todo ${nombreRubro(rubro)} ya tiene ${margen} % de margen.`);
-        return guardarCambio(usuario, "margen", { rubro, margen }, cambios);
+        const cambio = guardarCambio(usuario, "margen", { rubro, margen }, cambios);
+        registrarPaso(usuario, "margen");
+        return cambio;
     }
 
     /** Deshacer: solo el último cambio de precios, y vuelve cada costo, margen y precio a como estaba. */
@@ -692,6 +720,7 @@ export function crearDatos(prefijo = MARCA.prefijo) {
         });
         const entrada = { id: nuevoId("en"), proveedorId, fecha: ahora(), por: usuario.nombre, items };
         db().entradas.push(entrada);
+        registrarPaso(usuario, "recibo");
         guardado.persistir();
         return copia(entrada);
     }
@@ -762,6 +791,7 @@ export function crearDatos(prefijo = MARCA.prefijo) {
             separado: null, avisado: null, entregado: null, ventaId: null, anulado: null
         };
         db().pedidos.push(pe);
+        registrarPaso(usuario, "pedido");
         guardado.persistir();
         return armarPedido(pe);
     }
@@ -982,6 +1012,7 @@ export function crearDatos(prefijo = MARCA.prefijo) {
 
     return {
         guardado,
+        pasos, registrarPaso,
         listarProductos, producto, rapidos, porCodigo, hayQuePedir, margenDeRubro, cargarProducto, corregirProducto,
         verAumento, aplicarAumento, verMargen, aplicarMargen, deshacerCambio, ultimoCambio,
         verLista, aplicarLista, listaDeEjemplo,

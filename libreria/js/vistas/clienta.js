@@ -1,12 +1,12 @@
+import { pintarConsigna } from "./comunes.js?v=53dafd0799";
 // ============================================
 // Lo de Paula (clienta), desde el celular: elegir la lista del colegio, destildar lo que ya tiene en casa, ver el total
 // y pedirla; después, en "Mis pedidos", ver cómo va (pedida → separada → retirada).
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=5983ccc313";
-import { TOPES, pesos } from "../datos.js?v=5983ccc313";
-import { NEGOCIO } from "../marca.js?v=5983ccc313";
-import { guia, activarGuias, pasos, pastillaEstado, cuando } from "./comunes.js?v=5983ccc313";
-import { htmlConsigna } from "../../kit/js/consigna.js?v=5983ccc313";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=53dafd0799";
+import { TOPES, pesos } from "../datos.js?v=53dafd0799";
+import { NEGOCIO } from "../marca.js?v=53dafd0799";
+import { guia, activarGuias, pasos, pastillaEstado, cuando } from "./comunes.js?v=53dafd0799";
 
 // La lista elegida y lo destildado quedan en memoria mientras se navega
 let listaId = "l-1";
@@ -29,7 +29,6 @@ export function vistaPedirLista(cont, { usuario, datos, irA }) {
             <h1 class="titulo">Tu lista escolar</h1>
             <span class="negocio"><i class="ti ti-building-store" aria-hidden="true"></i>${esc(NEGOCIO)}</span>
         </div>
-        ${htmlConsigna({ paso: 1, total: 4, accion: "Elegí la lista, destildá lo que ya tenés en casa y pedila.", resultado: "La librería te la separa." })}
         <button class="ticket-barra" type="button"></button>
         <p class="rotulo-chico">¿De qué colegio y grado?</p>
         <div class="chips" role="radiogroup" aria-label="Lista del colegio">
@@ -57,6 +56,7 @@ export function vistaPedirLista(cont, { usuario, datos, irA }) {
                 <p class="nota"><i class="ti ti-info-circle"></i> La pagás cuando la retirás. Si algo no hay, la librería te ofrece otra opción.</p>
             </form>
         </div>`;
+    pintarConsigna(cont, datos, usuario);
 
     const form = cont.querySelector(".resumen-lista");
     const barra = cont.querySelector(".ticket-barra");
@@ -75,13 +75,18 @@ export function vistaPedirLista(cont, { usuario, datos, irA }) {
 
     cont.querySelectorAll("[data-lista]").forEach((b) => b.addEventListener("click", () => {
         listaId = b.dataset.lista;
+        datos.registrarPaso(usuario, "lista");
         sin.clear();
         para = null;
         vistaPedirLista(cont, { usuario, datos, irA });
     }));
     cont.querySelectorAll("[data-producto]").forEach((c) => c.addEventListener("change", () => {
         if (c.checked) sin.delete(c.dataset.producto);
-        else sin.add(c.dataset.producto);
+        else {
+            sin.add(c.dataset.producto);
+            datos.registrarPaso(usuario, "destildada");
+        }
+        pintarConsigna(cont, datos, usuario);
         actualizar();
     }));
     form.para.addEventListener("input", () => (para = form.para.value));
@@ -107,8 +112,9 @@ export function vistaPedirLista(cont, { usuario, datos, irA }) {
                 <p class="vuelto vuelto--grande"><b>${esc(pesos(pe.total))}</b></p>
                 <p class="nota"><i class="ti ti-bell"></i> ${esc(NEGOCIO)} la arma y te avisa cuando esté separada. La pagás al retirarla.</p>
             </div>
-            ${htmlConsigna({ paso: 1, total: 4, accion: "Pedí la lista.", hecho: "lista pedida", guia: guia("u-empleado", `/listas/${pe.id}`, "Mirá lo que le llega a Joaquín") })}
+            ${guia("u-empleado", `/listas/${pe.id}`, "Mirá lo que le llega a Joaquín")}
             <a class="boton boton--secundario boton--ancho" href="#/mis-pedidos"><i class="ti ti-list"></i> Ver mis pedidos</a>`;
+        pintarConsigna(cont, datos, usuario);
         activarGuias(cont, irA);
         window.scrollTo(0, 0);
     }
@@ -144,8 +150,8 @@ export function vistaMisPedidos(cont, { usuario, datos, irA }) {
                         <b class="monto">${i.falta ? "—" : esc(pesos(i.precio * i.cantidad))}</b>
                     </li>`).join("")}</ul>
             </details>
-            ${pe.estado === "nueva" ? htmlConsigna({ paso: 1, total: 4, accion: "Pedí la lista.", hecho: "lista pedida", guia: guia("u-empleado", `/listas/${pe.id}`, "Mirá lo que le llega a Joaquín") }) : ""}
         </section>`).join("")
         : `${vacio("Todavía no pediste ninguna lista.", "ti-school")}<p class="sin-pedidos"><a class="boton" href="#/inicio"><i class="ti ti-backpack"></i> Pedir mi lista</a></p>`}`;
+    pintarConsigna(cont, datos, usuario);
     activarGuias(cont, irA);
 }

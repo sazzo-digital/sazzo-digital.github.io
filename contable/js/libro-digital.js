@@ -4,7 +4,8 @@
 // Largos por renglón: ventas 266 y 62; compras 325 y 84 (se controlan en las pruebas).
 // Números: a la derecha con ceros, en centavos. Textos: a la izquierda con espacios, en mayúsculas y sin tildes.
 // ============================================
-import { COMPROBANTES, ALICUOTAS, ORDEN_ALICUOTAS } from "./reglas.js?v=929def1556";
+import { mostrarArchivoDeDemo } from "../kit/js/archivos.js?v=569102ff5e";
+import { COMPROBANTES, ALICUOTAS, ORDEN_ALICUOTAS } from "./reglas.js?v=569102ff5e";
 
 const num = (n, largo) => String(Math.max(0, Math.round(n))).padStart(largo, "0").slice(-largo);
 const txt = (t, largo) =>
@@ -68,14 +69,7 @@ export function libroDigitalCompras(compras) {
     return { cbte: cbte.join("\r\n"), alicuotas: alic.join("\r\n") };
 }
 
-/** Baja un texto como archivo .txt. */
+/** En la demo no baja el .txt: muestra la hoja del kit con su nombre y su tamaño. */
 export function bajarTexto(nombre, texto) {
-    const url = URL.createObjectURL(new Blob([texto], { type: "text/plain;charset=windows-1252" }));
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = nombre;
-    document.body.append(a);
-    a.click();
-    a.remove();
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    return mostrarArchivoDeDemo(nombre, new Blob([texto]).size);
 }

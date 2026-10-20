@@ -1,16 +1,16 @@
+import { pintarConsigna } from "./comunes.js?v=dd1f695466";
 // ============================================
 // Pantallas del barbero (Leo): la agenda del día (un renglón por turno y los huecos libres a la vista; Leo, Fran o
 // los dos; en la compu, una columna por barbero) y "+ Turno" (cargar a mano el que pidió por mensaje o entró sin
 // turno). El turno que sacó un cliente desde el celular aparece resaltado hasta que Leo hace algo con él.
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=3b2eaafd59";
-import { aHora } from "../../kit/js/turnos.js?v=3b2eaafd59";
-import { fechaLocalISO } from "../../kit/js/fechas.js?v=3b2eaafd59";
-import { SERVICIOS, BARBEROS, TOPES, HORARIO, pesos, nombreFecha, grillaDelDia, textoLibre } from "../datos.js?v=3b2eaafd59";
-import { pastillaEstado, chipsDias, mostrarMensaje } from "./comunes.js?v=3b2eaafd59";
-import { htmlConsigna } from "../../kit/js/consigna.js?v=3b2eaafd59";
-import { htmlBotonTV, abrirModoTV } from "../../kit/js/modo-tv.js?v=3b2eaafd59";
-import { NEGOCIO } from "../marca.js?v=3b2eaafd59";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=dd1f695466";
+import { aHora } from "../../kit/js/turnos.js?v=dd1f695466";
+import { fechaLocalISO } from "../../kit/js/fechas.js?v=dd1f695466";
+import { SERVICIOS, BARBEROS, TOPES, HORARIO, pesos, nombreFecha, grillaDelDia, textoLibre } from "../datos.js?v=dd1f695466";
+import { pastillaEstado, chipsDias, mostrarMensaje } from "./comunes.js?v=dd1f695466";
+import { htmlBotonTV, abrirModoTV } from "../../kit/js/modo-tv.js?v=dd1f695466";
+import { NEGOCIO } from "../marca.js?v=dd1f695466";
 
 let ver = "todos"; // "todos" o el id de un barbero
 
@@ -79,7 +79,7 @@ export function vistaAgenda(cont, { usuario, datos, consulta }) {
                 <span><b>${esc(t.cliente)} sacó turno · ${esc(nombreFecha(t.fecha))} ${esc(t.hora)} con ${esc(t.barbero)}</b><small>${esc(t.servicio)} · desde el celular</small></span>
                 <a class="boton boton--chico boton--secundario" href="#/inicio?fecha=${esc(t.fecha)}" data-ir-nuevo="${esc(t.id)}">Ver</a>
             </li>`).join("")}</ul>
-        ${htmlConsigna({ paso: 2, total: 3, accion: "Ahí está el turno que sacaste desde el celu. Ahora andá a Clientes.", resultado: "Ves quiénes hace rato que no vienen." })}` : ""}
+        ` : ""}
         ${chipsDias(dias, fecha)}
         ${salteoHoy ? `<p class="nota"><i class="ti ti-moon" aria-hidden="true"></i> <span>Hoy ya no queda nada: te mostramos ${esc(nombreFecha(fecha))}.</span></p>` : ""}
         <div class="tira">
@@ -132,6 +132,7 @@ export function vistaAgenda(cont, { usuario, datos, consulta }) {
     }));
     // El primer turno nuevo del día, a la vista
     cont.querySelector(".renglon--nuevo")?.scrollIntoView({ block: "center" });
+    pintarConsigna(cont, datos, usuario);
 }
 
 /** "+ Turno": cliente de la lista o nuevo (solo el nombre), servicio, barbero, día y hora libre. */
@@ -193,6 +194,7 @@ export function vistaNuevoTurno(cont, { usuario, datos, consulta }) {
             aviso(err, "error");
         }
     });
+    pintarConsigna(cont, datos, usuario);
 }
 
 export function htmlTurnero({ abierto, barberos }) {

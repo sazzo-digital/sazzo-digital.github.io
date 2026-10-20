@@ -1,9 +1,10 @@
+import { conConsigna } from "./comunes.js?v=569102ff5e";
 // ============================================
 // Más: todas las pantallas en una lista (en el celular el menú de abajo tiene lugar para 5).
 // ============================================
-import { esc } from "../../kit/js/ui.js?v=929def1556";
+import { esc } from "../../kit/js/ui.js?v=569102ff5e";
 
-export function vistaMas(cont, { secciones }) {
+function pintarMas(cont, { secciones }) {
     cont.innerHTML = `
         <h1 class="titulo">Todo</h1>
         <ul class="mas-lista">
@@ -15,3 +16,5 @@ export function vistaMas(cont, { secciones }) {
             </a></li>`).join("")}
         </ul>`;
 }
+
+export const vistaMas = conConsigna(pintarMas);

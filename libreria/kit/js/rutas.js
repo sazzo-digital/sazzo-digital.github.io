@@ -9,7 +9,7 @@
 //     `ancho`: en la PC usa más ancho (en el celular no cambia nada).
 // Cada vista recibe (contenedor, { usuario, params, consulta }) y dibuja adentro.
 // ============================================
-import { $$, esc, vacio, mensajeDe } from "./ui.js?v=5983ccc313";
+import { $$, esc, vacio, mensajeDe } from "./ui.js?v=53dafd0799";
 
 /** Lo que hay después del # → { ruta: "/producto/p-1", consulta: URLSearchParams }. Sin hash: la de inicio. */
 export function leerHash(inicio = "/inicio") {
@@ -52,7 +52,16 @@ export function soltarPantalla() {
 
 let tituloDeLaDemo = null; // el del index.html ("Sazzo Kiosco"): cada pantalla le suma el suyo adelante
 
+let ultimaRuta = null;
+
+/** Vuelve a mostrar la pantalla actual con los mismos datos de la última vez (null si no hay una a la vista). */
+export function repintarRuta() {
+    if (!ultimaRuta?.contenido?.isConnected) return null;
+    return mostrarRuta(ultimaRuta);
+}
+
 export async function mostrarRuta({ rutas, contenido, usuario, inicio = "/inicio" }) {
+    ultimaRuta = { rutas, contenido, usuario, inicio };
     soltarPantalla();
     const { ruta, consulta } = leerHash(inicio);
     const r = buscarRuta(rutas, ruta);

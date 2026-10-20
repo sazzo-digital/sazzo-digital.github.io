@@ -3,11 +3,43 @@
 // de estado de un pedido, los pasos de una lista (pedida → separada → entregada) y "hace cuánto".
 // Todo dato que entra a HTML pasa por esc().
 // ============================================
-import { esc } from "../../kit/js/ui.js?v=5983ccc313";
-import { diaLocalDe, fechaLocalISO } from "../../kit/js/fechas.js?v=5983ccc313";
-import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=5983ccc313";
-import { ESTADOS_PEDIDO, pesos } from "../datos.js?v=5983ccc313";
-import { buscarPersona } from "../marca.js?v=5983ccc313";
+import { esc } from "../../kit/js/ui.js?v=53dafd0799";
+import { diaLocalDe, fechaLocalISO } from "../../kit/js/fechas.js?v=53dafd0799";
+import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=53dafd0799";
+import { ESTADOS_PEDIDO, pesos } from "../datos.js?v=53dafd0799";
+import { MARCA, buscarPersona } from "../marca.js?v=53dafd0799";
+import { htmlConsigna, htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=53dafd0799";
+
+const CONSIGNAS = {
+    duena: [
+        ["En “Stock”, tocá “Subir precios por proveedor”, elegí uno y tocá “Aplicar”.", "Los precios de ese proveedor suben y cada artículo mantiene su margen."],
+        ["En “Stock”, tocá “Cambiar margen”, elegí un rubro, cambiá el margen y tocá “Aplicar”.", "Los precios del rubro se recalculan sobre el costo."],
+        ["En “Stock”, tocá “Pedidos a proveedores” y, en uno, “Llegó: sumar al stock”.", "La mercadería que llegó se suma al stock."]
+    ],
+    empleado: [
+        ["Tocá “Listas”, entrá a “N° 100 · Familia Ríos · 4° A” y tocá “Separar la lista”.", "Los lápices quedan separados y se descuentan del stock."],
+        ["En esa lista, tocá “Avisar que está lista” y, en la ventana, “Sí, lo mandé”.", "Queda anotado que la familia ya sabe que pasa a buscarla."],
+        ["En esa lista, elegí cómo paga y tocá “Cobrar … y entregar” (dice el total).", "La venta entra a la caja del día y la lista queda entregada."]
+    ],
+    clienta: [
+        ["Elegí la lista de tu hijo: tocá un colegio y grado, abajo de “¿De qué colegio y grado?”.", "Ves lo que pide ese colegio y el total."],
+        ["Destildá un artículo que ya tengas en casa.", "Ese artículo sale del total de tu lista."],
+        ["Tocá “Pedir la lista”.", "Tu pedido queda anotado en la librería."]
+    ]
+};
+
+export function consignaPersona(datos, usuario) {
+    const paso = datos.pasos(usuario).findIndex((hecho) => !hecho);
+    if (paso < 0) return htmlConsignaFinal(MARCA, 3);
+    const [accion, resultado] = CONSIGNAS[usuario.rol][paso];
+    return htmlConsigna({ paso: paso + 1, total: 3, accion, resultado });
+}
+
+export function pintarConsigna(cont, datos, usuario) {
+    cont.querySelector(".consigna")?.remove();
+    cont.insertAdjacentHTML("afterbegin", consignaPersona(datos, usuario));
+    activarConsigna(cont, MARCA);
+}
 
 /** Botón del recorrido con la persona de Librería: guia("u-empleado", "/listas", "Mirá lo que le llega a Joaquín"). */
 export const guia = (personaId, ruta, texto) => htmlGuia({ persona: buscarPersona(personaId), ruta, texto });

@@ -5,15 +5,14 @@
 // - Vane (dueña): la cuota y los pagos (registrar, confirmar el aviso de transferencia, deshacer, recordatorio armado),
 //   el apto físico y el reglamento firmado en pantalla, si viene o no (invitar a volver) y la baja.
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=be499030eb";
-import { MEDIOS_PAGO, DIVIDIDO, textoMedio, partesIniciales, htmlDosMedios, activarDosMedios } from "../../kit/js/pagos.js?v=be499030eb";
-import { pedirFirma } from "../../kit/js/firma.js?v=be499030eb";
-import { armarPdf, pdfListo } from "../../kit/js/pdf.js?v=be499030eb";
-import { NEGOCIO, MARCA } from "../marca.js?v=be499030eb";
-import { htmlConsigna, htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=be499030eb";
-import { TOPES, REINVITAR_DIAS, pesos, kilos, cuanto, fechaCorta, nombreFecha } from "../datos.js?v=be499030eb";
-import { guia, activarGuias, pastilla, pastillaCuota, cara, haceDias, graficoPeso, barrasSemanas, mostrarMensaje } from "./comunes.js?v=be499030eb";
-import { htmlTrabajosProfe, activarTrabajosProfe } from "./trabajos.js?v=be499030eb";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=0ae8c6cc93";
+import { MEDIOS_PAGO, DIVIDIDO, textoMedio, partesIniciales, htmlDosMedios, activarDosMedios } from "../../kit/js/pagos.js?v=0ae8c6cc93";
+import { pedirFirma } from "../../kit/js/firma.js?v=0ae8c6cc93";
+import { armarPdf, pdfListo } from "../../kit/js/pdf.js?v=0ae8c6cc93";
+import { NEGOCIO, MARCA } from "../marca.js?v=0ae8c6cc93";
+import { TOPES, REINVITAR_DIAS, pesos, kilos, cuanto, fechaCorta, nombreFecha } from "../datos.js?v=0ae8c6cc93";
+import { activarConsignaPersona, guia, activarGuias, pastilla, pastillaCuota, cara, haceDias, graficoPeso, barrasSemanas, mostrarMensaje } from "./comunes.js?v=0ae8c6cc93";
+import { htmlTrabajosProfe, activarTrabajosProfe } from "./trabajos.js?v=0ae8c6cc93";
 
 let ajustando = null; // "diaId|ejercicioId" del ejercicio que el profe está ajustando
 let medio = "efectivo"; // lo último elegido al registrar un pago
@@ -39,6 +38,7 @@ export function vistaFicha(cont, opciones) {
         </div>
         ${esProfe ? htmlProfe(a, datos) : htmlDuena(a, datos)}`;
 
+    activarConsignaPersona(cont, datos, usuario);
     if (esProfe) activarProfe(cont, opciones, a);
     else activarDuena(cont, opciones, a);
     activarGuias(cont, opciones.irA);
@@ -113,7 +113,7 @@ function htmlProfe(a, datos) {
             <button class="boton" type="submit"><i class="ti ti-send" aria-hidden="true"></i> Dejar nota</button>
         </form>
         ${a.notas.length ? `<ul class="notas-profe">${a.notas.slice(0, 6).map((n) => `<li>${esc(n.texto)}<small>${esc(nombreFecha(n.fecha, datos.hoy()))}</small></li>`).join("")}</ul>` : ""}
-        ${a.id === "s-franco" ? htmlConsigna({ paso: 2, total: 5, accion: "Dejale una nota a Franco y, si querés, ajustale el peso.", resultado: "Franco lo ve en su celu.", guia: guia("u-duena", "/inicio", "Ahora mirá lo que ve Vane") }) : ""}`;
+        ${a.id === "s-franco" ? guia("u-duena", "/inicio", "Ahora mirá lo que ve Vane") : ""}`;
 }
 
 function activarProfe(cont, opciones, a) {
@@ -190,7 +190,11 @@ function activarProfe(cont, opciones, a) {
                 filas: r.filas,
                 aviso: "Rutina de ejemplo: ante cualquier molestia, consultá con tu profe."
             });
-            if (cont.isConnected) pdfListo(blob, `Rutina ${r.socio} ${NEGOCIO}`);
+            if (cont.isConnected) {
+                pdfListo(blob, `Rutina ${r.socio} ${NEGOCIO}`);
+                datos.rutinaBajada(usuario, a.id);
+                activarConsignaPersona(cont, datos, usuario);
+            }
         } catch (e) {
             console.warn(e);
             aviso("No se pudo armar el PDF. Probá de nuevo con mejor señal.", "error");
@@ -269,14 +273,11 @@ function htmlDuena(a, datos) {
                 </section>
             </div>
         </div>
-        ${a.id !== "s-franco" ? "" : a.avisoPago
-            ? htmlConsigna({ paso: 5, total: 5, accion: "Fijate si llegó la transferencia y tocá “Llegó: confirmar”.", resultado: "Franco queda al día y la caja sube." })
-            : `${a.pagos.some((p) => p.estado === "confirmado" && p.confirmadoEl === datos.hoy()) ? htmlConsignaFinal(MARCA, 5) : ""}${guia("u-socio", "/cuota", "Mirá lo que ve Franco")}`}`;
+        ${a.id === "s-franco" ? guia("u-socio", "/cuota", "Mirá lo que ve Franco") : ""}`;
 }
 
 function activarDuena(cont, opciones, a) {
     const { usuario, datos } = opciones;
-    activarConsigna(cont, MARCA);
     const hacer = (fn, mensaje) => () => {
         try {
             const r = fn();

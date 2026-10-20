@@ -1,19 +1,19 @@
+import { conConsigna } from "./comunes.js?v=569102ff5e";
 // ============================================
 // Compras: las facturas de los proveedores del mes, "Traer de ARCA" (simulado: trae de un toque las que ARCA tiene
 // en Mis Comprobantes y faltan cargar) y cargar una a mano, con el IVA calculado solo. Una compra mal cargada se
 // anula (no se borra). Solo administración carga; Hernán y Patricia miran.
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=929def1556";
-import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=929def1556";
-import { htmlConsigna } from "../../kit/js/consigna.js?v=929def1556";
-import { TOPES } from "../datos.js?v=929def1556";
-import { ALICUOTAS, ORDEN_ALICUOTAS, pesos, numeroComprobante, nombrePeriodo, periodoActual, fechaISO, aCentavos } from "../reglas.js?v=929def1556";
-import { buscarPersona } from "../marca.js?v=929def1556";
-import { diaMes, periodoPedido, htmlSelectorMes, activarSelectorMes, conEspera, nombreDe } from "./comunes.js?v=929def1556";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=569102ff5e";
+import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=569102ff5e";
+import { TOPES } from "../datos.js?v=569102ff5e";
+import { ALICUOTAS, ORDEN_ALICUOTAS, pesos, numeroComprobante, nombrePeriodo, periodoActual, fechaISO, aCentavos } from "../reglas.js?v=569102ff5e";
+import { buscarPersona } from "../marca.js?v=569102ff5e";
+import { diaMes, periodoPedido, htmlSelectorMes, activarSelectorMes, conEspera, nombreDe } from "./comunes.js?v=569102ff5e";
 
 const puedeCargar = (u) => u.rol === "admin";
 
-export function vistaCompras(cont, { usuario, datos, consulta, irA }) {
+function pintarCompras(cont, { usuario, datos, consulta, irA }) {
     const periodo = periodoPedido(consulta);
     const lista = datos.listarCompras({ periodo });
     const vigentes = lista.filter((c) => !c.anulada);
@@ -34,7 +34,7 @@ export function vistaCompras(cont, { usuario, datos, consulta, irA }) {
             <h2 class="titulo">Listo: ${esc(traidas)} facturas traídas de ARCA</h2>
             <p>El crédito fiscal del mes ya las incluye.</p>
         </div>
-        ${htmlConsigna({ paso: 2, total: 3, accion: "Traé las compras de ARCA.", hecho: "el IVA de las compras ya está sumado", guia: htmlGuia({ persona: patricia, ruta: "/iva", texto: "Mirá cómo la contadora ya tiene el IVA del mes" }) })}` : ""}
+        ${htmlGuia({ persona: patricia, ruta: "/iva", texto: "Mirá cómo la contadora ya tiene el IVA del mes" })}` : ""}
         ${pendientes.length ? `
         <div class="bloque aviso-arca">
             <h2 class="subtitulo"><i class="ti ti-cloud-download"></i> ARCA tiene ${pendientes.length} facturas tuyas sin cargar</h2>
@@ -87,7 +87,7 @@ export function vistaCompras(cont, { usuario, datos, consulta, irA }) {
     );
 }
 
-export function vistaNuevaCompra(cont, { usuario, datos }) {
+function pintarNuevaCompra(cont, { usuario, datos }) {
     if (!puedeCargar(usuario)) {
         cont.innerHTML = `<a class="volver" href="#/compras"><i class="ti ti-arrow-left"></i> Compras</a>${vacio("Las compras las carga Silvina (administración).", "ti-lock")}`;
         return;
@@ -209,3 +209,7 @@ export function vistaNuevaCompra(cont, { usuario, datos }) {
         }
     });
 }
+
+export const vistaCompras = conConsigna(pintarCompras);
+
+export const vistaNuevaCompra = conConsigna(pintarNuevaCompra);

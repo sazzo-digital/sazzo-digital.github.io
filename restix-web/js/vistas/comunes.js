@@ -2,11 +2,11 @@
 // Piezas que comparten las pantallas de Restix Sazzo: el botón del recorrido (del kit), el ticket de una comanda
 // (cocina o barra) y "hace cuánto". Todo dato que entra a HTML pasa por esc().
 // ============================================
-import { esc } from "../../kit/js/ui.js?v=8f333cfcf6";
-import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=8f333cfcf6";
-import { MARCA, buscarPersona } from "../marca.js?v=8f333cfcf6";
+import { esc } from "../../kit/js/ui.js?v=06810dfe3c";
+import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=06810dfe3c";
+import { MARCA, buscarPersona } from "../marca.js?v=06810dfe3c";
 
-import { htmlConsigna, htmlConsignaFinal } from "../../kit/js/consigna.js?v=8f333cfcf6";
+import { htmlConsigna, htmlConsignaFinal } from "../../kit/js/consigna.js?v=06810dfe3c";
 
 const CONSIGNAS = {
     moza: [
@@ -20,9 +20,9 @@ const CONSIGNAS = {
         ["Abrí Pedidos en la tele", "Ves los pedidos en una pantalla grande."]
     ],
     cliente: [
-        ["Tocá “Pizzas” para mirar los platos.", "La carta te lleva a las pizzas."],
-        ["Tocá “Hamburguesas” para ver qué hay.", "Ves las hamburguesas y sus ingredientes."],
-        ["Tocá “Minutas” para mirar las opciones.", "Recorrés la carta sin mandar ningún pedido."]
+        ["Tocá “Pizzas” en la carta.", "La carta baja a las pizzas, con sus ingredientes y precios."],
+        ["Tocá “Ver en 3D” en la Hamburguesa clásica.", "Se abre el plato en 3D y lo girás con el dedo."],
+        ["Tocá “Minutas” en la carta.", "La carta baja a las minutas. Para pedir, llamás a la moza."]
     ]
 };
 

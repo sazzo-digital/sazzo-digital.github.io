@@ -1,14 +1,14 @@
+import { consignaPersona, activarSerie } from "./comunes.js?v=4438010c31";
 // ============================================
 // Lo de Claudia (clienta), desde el celular: elegir los cortes (por animal, o tocando la vaca), cuánto (de a medio
 // kilo, "en plata" o por unidad) y cómo lo quiere ("milanesas finitas"), el combo del asado, el horario de retiro y
 // pedir. El total es aproximado: la carnicería lo pesa y se ajusta. Después, en "Mis pedidos", cómo va.
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=55764424c5";
-import { TOPES, ANIMALES, RETIROS, COMBO_ASADO, pesos, kilos, precioPorPeso, gramosPara } from "../datos.js?v=55764424c5";
-import { NEGOCIO } from "../marca.js?v=55764424c5";
-import { htmlMediaRes, activarMediaRes } from "../media-res.js?v=55764424c5";
-import { guia, activarGuias, pasos, pastillaEstado, cuando, precioDe, loPedido } from "./comunes.js?v=55764424c5";
-import { htmlConsigna } from "../../kit/js/consigna.js?v=55764424c5";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=4438010c31";
+import { TOPES, ANIMALES, RETIROS, COMBO_ASADO, pesos, kilos, precioPorPeso, gramosPara } from "../datos.js?v=4438010c31";
+import { NEGOCIO } from "../marca.js?v=4438010c31";
+import { htmlMediaRes, activarMediaRes } from "../media-res.js?v=4438010c31";
+import { guia, activarGuias, pasos, pastillaEstado, cuando, precioDe, loPedido } from "./comunes.js?v=4438010c31";
 
 // Lo elegido queda en memoria mientras se navega
 const carrito = new Map(); // articuloId → { modo, cantidad, aclaracion }
@@ -37,11 +37,11 @@ export function vistaPedir(cont, { usuario, datos, irA }) {
         const lista = datos.listarArticulos({ animal }).filter((a) => !zona || zona.cortes.includes(a.nombre));
         const enVaca = animal === "vaca";
         cont.innerHTML = `
+        ${consignaPersona(datos, usuario)}
             <div class="titulo-con-accion">
                 <h1 class="titulo">Hacé tu pedido</h1>
                 <span class="negocio"><i class="ti ti-building-store" aria-hidden="true"></i>${esc(NEGOCIO)}</span>
             </div>
-            ${htmlConsigna({ paso: 1, total: 3, accion: "Tocá el asado en la vaca, pedí 1,5 kg, sumá picada y milanesas “finitas”, y pedilo.", resultado: "La carnicería lo pesa y te avisa." })}
             <button class="ticket-barra" type="button"${carrito.size ? "" : " hidden"}></button>
             <div class="pedir">
                 <section>
@@ -56,6 +56,7 @@ export function vistaPedir(cont, { usuario, datos, irA }) {
                 </section>
                 <form class="bloque formulario resumen-lista mi-carrito" novalidate></form>
             </div>`;
+    activarSerie(cont);
 
         cont.querySelectorAll("[data-animal]").forEach((b) => b.addEventListener("click", () => {
             animal = b.dataset.animal;
@@ -155,6 +156,8 @@ export function vistaPedir(cont, { usuario, datos, irA }) {
             if (c.modo === "plata" && !(Number.isInteger(c.cantidad) && c.cantidad >= TOPES.plataMin && c.cantidad <= TOPES.plata)) return aviso(`La plata tiene que estar entre ${pesos(TOPES.plataMin)} y ${pesos(TOPES.plata)}.`, "error");
             if (!carrito.has(a.id) && carrito.size >= TOPES.renglones) return aviso(`Un pedido puede tener hasta ${TOPES.renglones} cortes.`, "error");
             carrito.set(a.id, { ...c, aclaracion: f.aclaracion.value.slice(0, TOPES.aclaracion) });
+            const paso = { vaca: "vaca", cerdo: "otro", pollo: "otro" }[a.animal];
+            if (paso) datos.registrarPaso(usuario, paso);
             aviso(`${a.nombre} en tu pedido`);
             abierto = null;
             pintar();
@@ -237,6 +240,7 @@ export function vistaPedir(cont, { usuario, datos, irA }) {
     /** Después de pedir: el número, qué sigue y el paso del recorrido. */
     function pedido(pe) {
         cont.innerHTML = `
+        ${consignaPersona(datos, usuario)}
             <div class="hecho">
                 <i class="ti ti-circle-check" aria-hidden="true"></i>
                 <h1 class="titulo">Pedido hecho</h1>
@@ -244,8 +248,9 @@ export function vistaPedir(cont, { usuario, datos, irA }) {
                 <p class="vuelto vuelto--grande"><b>${esc(pesos(pe.estimado))}</b> aprox.</p>
                 <p class="nota"><i class="ti ti-bell"></i> ${esc(NEGOCIO)} lo pesa, te avisa cuando está listo y te dice el total justo. Lo pagás al retirarlo.</p>
             </div>
-            ${htmlConsigna({ paso: 1, total: 3, accion: "Pedí.", hecho: "pedido enviado", guia: guia("u-empleado", `/pedidos/${pe.id}`, "Mirá lo que le llega a Darío") })}
+            ${guia("u-empleado", `/pedidos/${pe.id}`, "Mirá lo que le llega a Darío")}
             <a class="boton boton--secundario boton--ancho" href="#/mis-pedidos"><i class="ti ti-list"></i> Ver mis pedidos</a>`;
+    activarSerie(cont);
         activarGuias(cont, irA);
         window.scrollTo(0, 0);
     }
@@ -273,6 +278,7 @@ const QUE_PASA = {
 export function vistaMisPedidos(cont, { usuario, datos, irA }) {
     const lista = datos.misPedidos(usuario);
     cont.innerHTML = `
+        ${consignaPersona(datos, usuario)}
         <h1 class="titulo">Mis pedidos</h1>
         ${lista.length ? lista.map((pe) => `
         <section class="bloque mi-pedido">
@@ -290,9 +296,10 @@ export function vistaMisPedidos(cont, { usuario, datos, irA }) {
                 </li>`).join("")}</ul>
             <div class="total"><span>${pe.estado === "entregado" ? "Pagaste" : pe.real === null ? "Total aproximado" : "Total"}</span><b>${esc(pesos(pe.total))}</b></div>
             ${pe.diferencia ? `<p class="nota"><i class="ti ti-scale"></i> Con el peso justo: ${pe.diferencia > 0 ? "+" : "−"}${esc(pesos(Math.abs(pe.diferencia)))} de lo que calculaste.</p>` : ""}
-            ${pe.estado === "nuevo" ? htmlConsigna({ paso: 1, total: 3, accion: "Pedí.", hecho: "pedido enviado", guia: guia("u-empleado", `/pedidos/${pe.id}`, "Mirá lo que le llega a Darío") }) : ""}
+            ${guia("u-empleado", `/pedidos/${pe.id}`, "Mirá lo que le llega a Darío")}
         </section>`).join("")
         : `${vacio("Todavía no hiciste ningún pedido.", "ti-clipboard-list")}<p class="sin-pedidos"><a class="boton" href="#/inicio"><i class="ti ti-shopping-bag"></i> Hacer un pedido</a></p>`}`;
+    activarSerie(cont);
     activarGuias(cont, irA);
 }
 

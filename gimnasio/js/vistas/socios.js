@@ -3,13 +3,12 @@
 // filtros que importan (cuota vencida, vence esta semana, avisaron que pagaron, no vienen hace +3 semanas, sin apto,
 // bajas) con la acción de cada uno a mano (recordatorio, confirmar, invitar), el buscador, Excel y el alta.
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=be499030eb";
-import { MEDIOS_PAGO } from "../../kit/js/pagos.js?v=be499030eb";
-import { bajarExcel } from "../../kit/js/archivos.js?v=be499030eb";
-import { NEGOCIO } from "../marca.js?v=be499030eb";
-import { PLANES_CUOTA, HORAS, DIAS_CORTOS, ORDEN_SEMANA, TOPES, REAVISAR_DIAS, REINVITAR_DIAS, pesos, fechaCorta } from "../datos.js?v=be499030eb";
-import { guia, activarGuias, pastilla, pastillaCuota, cara, haceDias, mostrarMensaje } from "./comunes.js?v=be499030eb";
-import { htmlConsigna } from "../../kit/js/consigna.js?v=be499030eb";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=0ae8c6cc93";
+import { MEDIOS_PAGO } from "../../kit/js/pagos.js?v=0ae8c6cc93";
+import { bajarExcel } from "../../kit/js/archivos.js?v=0ae8c6cc93";
+import { NEGOCIO } from "../marca.js?v=0ae8c6cc93";
+import { PLANES_CUOTA, HORAS, DIAS_CORTOS, ORDEN_SEMANA, TOPES, REAVISAR_DIAS, REINVITAR_DIAS, pesos, fechaCorta } from "../datos.js?v=0ae8c6cc93";
+import { activarConsignaPersona, guia, activarGuias, pastilla, pastillaCuota, cara, haceDias, mostrarMensaje } from "./comunes.js?v=0ae8c6cc93";
 
 let filtro = "pronto"; // de entrada, los que vencen esta semana: lo primero que mira la dueña
 let texto = "";
@@ -49,17 +48,6 @@ export function vistaSocios(cont, opciones) {
     if (pedido && FILTROS.some(([k]) => k === pedido)) filtro = pedido;
     const t = datos.tablero();
     const cuantos = datos.contarFiltros();
-    // El momento wow: Franco vence esta semana → recordatorio → "Mirá lo que le llega a Franco"
-    const franco = datos.listarSocios({ filtro: "todos" }).find((a) => a.id === "s-franco");
-    const francoDebe = franco && franco.estadoCuota !== "al-dia" && !franco.avisoPago;
-    const consigna = filtro === "pronto" && francoDebe && !hacePoco(franco.recordadoEn, REAVISAR_DIAS)
-        ? htmlConsigna({ paso: 3, total: 5, accion: "Mandale el recordatorio a Franco: le vence en unos días.", resultado: "Le llega el mensaje armado." })
-        : francoDebe && hacePoco(franco.recordadoEn, REAVISAR_DIAS)
-            ? htmlConsigna({ paso: 3, total: 5, accion: "Mandale el recordatorio a Franco.", hecho: "recordatorio mandado", guia: guia("u-socio", "/cuota", "Mirá lo que le llega a Franco") })
-            : filtro === "avisaron" && franco?.avisoPago
-                ? htmlConsigna({ paso: 5, total: 5, accion: "Abrí a Franco y confirmá el pago.", resultado: "Franco queda al día y la caja sube." })
-                : "";
-
     cont.innerHTML = `
         <div class="titulo-con-accion">
             <h1 class="titulo">Socios</h1>
@@ -79,7 +67,7 @@ export function vistaSocios(cont, opciones) {
         <div class="chips filtros" role="tablist" aria-label="Más filtros">
             ${FILTROS.filter(([k]) => !CUADROS.some(([c]) => c === k)).map(([k, txt, clase]) => `<button class="chip ${clase}${filtro === k ? " activo" : ""}" type="button" role="tab" aria-selected="${filtro === k}" data-filtro="${esc(k)}">${esc(txt)} <b>${esc(cuantos[k])}</b></button>`).join("")}
         </div>
-        ${consigna || (PISTA[filtro] ? `<p class="nota"><i class="ti ti-info-circle" aria-hidden="true"></i><span>${esc(PISTA[filtro])}</span></p>` : "")}
+        ${PISTA[filtro] ? `<p class="nota"><i class="ti ti-info-circle" aria-hidden="true"></i><span>${esc(PISTA[filtro])}</span></p>` : ""}
         <label class="buscador">
             <i class="ti ti-search" aria-hidden="true"></i>
             <span class="solo-lector">Buscar socio</span>
@@ -87,6 +75,7 @@ export function vistaSocios(cont, opciones) {
         </label>
         <ul class="tarjetas lista-socios"></ul>`;
 
+    activarConsignaPersona(cont, datos, usuario);
     const lista = cont.querySelector(".lista-socios");
     const otraVez = () => vistaSocios(cont, { ...opciones, consulta: null });
 
@@ -208,6 +197,7 @@ export function vistaAlta(cont, { usuario, datos }) {
             <button class="boton boton--ancho" type="submit"><i class="ti ti-user-plus" aria-hidden="true"></i> Dar de alta y cobrar el primer mes</button>
         </form>`;
 
+    activarConsignaPersona(cont, datos, usuario);
     cont.querySelectorAll("[data-medio]").forEach((b) => b.addEventListener("click", () => {
         medioAlta = b.dataset.medio;
         cont.querySelectorAll("[data-medio]").forEach((x) => {

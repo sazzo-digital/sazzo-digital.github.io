@@ -1,7 +1,7 @@
-import { esc, aviso, sinMovimiento } from "./ui.js?v=86b90b0105";
-import { puedeEscanear, escanearSeguido } from "./escaner.js?v=86b90b0105";
-import { pip, vibrar, htmlBotonSonido, activarBotonSonido, htmlCopiable, activarCopiables } from "./celular.js?v=86b90b0105";
-import { DIVIDIDO, revisarPagos } from "./pagos.js?v=86b90b0105";
+import { esc, aviso, sinMovimiento } from "./ui.js?v=34a23b46ed";
+import { puedeEscanear, escanearSeguido } from "./escaner.js?v=34a23b46ed";
+import { pip, vibrar, htmlBotonSonido, activarBotonSonido, htmlCopiable, activarCopiables } from "./celular.js?v=34a23b46ed";
+import { DIVIDIDO, revisarPagos } from "./pagos.js?v=34a23b46ed";
 
 export const TOPE_RENGLONES = 30;
 export const TOPE_CANTIDAD = 99;
@@ -562,7 +562,7 @@ export const MAS_DE_LA_CAJA = [
     "Varias cajas o puestos a la vez, con su usuario cada uno",
     "Factura electrónica de cada venta, conectada a ARCA",
     "Impresora de tickets y cajón de dinero que se abre solo",
-    "Reportes del día, la semana y el mes, para bajar a Excel"
+    "Reportes del día, la semana y el mes, para pasar a Excel"
 ];
 
 export function htmlMasDeLaCaja({ extra = [], cajaDelDia = true } = {}) {

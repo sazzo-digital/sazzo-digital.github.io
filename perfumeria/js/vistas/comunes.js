@@ -3,15 +3,15 @@
 // marcas reales), el carrito de Julieta (queda mientras se navega), el botón del recorrido y el mensaje para copiar
 // (del kit). Todo dato que entra a HTML pasa por esc().
 // ============================================
-import { esc } from "../../kit/js/ui.js?v=d819d10110";
-import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=d819d10110";
-import { FAMILIAS } from "../datos.js?v=d819d10110";
-import { buscarPersona } from "../marca.js?v=d819d10110";
-import { EVENTO_REINICIO } from "../../kit/js/guardado.js?v=d819d10110";
+import { esc } from "../../kit/js/ui.js?v=a61469be59";
+import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=a61469be59";
+import { FAMILIAS } from "../datos.js?v=a61469be59";
+import { MARCA, buscarPersona } from "../marca.js?v=a61469be59";
+import { EVENTO_REINICIO } from "../../kit/js/guardado.js?v=a61469be59";
 
 export const guia = (personaId, ruta, texto) => htmlGuia({ persona: buscarPersona(personaId), ruta, texto });
 export { activarGuias };
-export { mostrarMensaje } from "../../kit/js/mensaje.js?v=d819d10110";
+export { mostrarMensaje } from "../../kit/js/mensaje.js?v=a61469be59";
 
 /** Un frasco de perfume dibujado, del color de su familia. */
 export function frasco(familia, grande = false) {
@@ -43,4 +43,34 @@ const ESTADOS = {
 export function pastillaPedido(o) {
     const e = ESTADOS[o.estado];
     return `<span class="pastilla pastilla--${e.clase}">${esc(e.texto)}${o.estado === "preparado" && o.avisado ? " · avisada" : ""}</span>`;
+}
+
+
+import { htmlConsigna, htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=a61469be59";
+
+const CONSIGNAS = {
+    duena: [
+        ["Tocá “Preparado” en un pedido nuevo.", "Se descuenta el frasco o los ml necesarios."],
+        ["Tocá “Avisar que está listo” y confirmá el mensaje.", "El pedido queda marcado como avisado."],
+        ["En “Clientas”, tocá “Cumplen en…”, después “Saludarla” y confirmá el mensaje.", "La clienta queda saludada y anotada."]
+    ],
+    cliente: [
+        ["Tocá “Ver recomendados”.", "Ves perfumes según los gustos elegidos."],
+        ["Abrí un perfume y tocá “Sumar” en una presentación.", "La presentación se agrega a tu pedido."],
+        ["En “Tu pedido”, tocá “Mandar pedido”.", "Carolina recibe el pedido para prepararlo."]
+    ]
+};
+export function consignaPersona(datos, usuario) {
+    const paso = datos.pasos(usuario).findIndex((hecho) => !hecho);
+    if (paso < 0) return htmlConsignaFinal(MARCA, 3);
+    const [accion, resultado] = CONSIGNAS[usuario.rol][paso];
+    return htmlConsigna({ paso: paso + 1, total: 3, accion, resultado });
+}
+
+export function pintarConsigna(cont, datos, usuario) {
+    const html = consignaPersona(datos, usuario);
+    const anterior = cont.querySelector(".consigna");
+    if (anterior) anterior.outerHTML = html;
+    else cont.insertAdjacentHTML("afterbegin", html);
+    activarConsigna(cont, MARCA);
 }

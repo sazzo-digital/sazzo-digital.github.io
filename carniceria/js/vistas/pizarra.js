@@ -1,18 +1,20 @@
+import { consignaPersona, activarSerie } from "./comunes.js?v=4438010c31";
 // ============================================
 // Pizarra para la tele: los precios por kilo de cada animal en letra enorme y la oferta del día. Para poner en una
 // tele del local (pantalla completa): cuando cambian los precios (desposte o "Subió la hacienda"), ya está al día.
 // El dueño elige la oferta del día.
 // ============================================
-import { esc, aviso } from "../../kit/js/ui.js?v=55764424c5";
-import { pesos } from "../datos.js?v=55764424c5";
-import { NEGOCIO } from "../marca.js?v=55764424c5";
-import { precioDe } from "./comunes.js?v=55764424c5";
+import { esc, aviso } from "../../kit/js/ui.js?v=4438010c31";
+import { pesos } from "../datos.js?v=4438010c31";
+import { NEGOCIO } from "../marca.js?v=4438010c31";
+import { precioDe } from "./comunes.js?v=4438010c31";
 
 export function vistaPizarra(cont, { usuario, datos }) {
     const dueno = usuario.rol === "dueno";
     const { oferta, grupos } = datos.pizarra();
     const puedeCompleta = typeof document.documentElement.requestFullscreen === "function";
     cont.innerHTML = `
+        ${consignaPersona(datos, usuario)}
         <a class="volver" href="#/stock"><i class="ti ti-arrow-left"></i> Precios y stock</a>
         <div class="titulo-con-accion">
             <h1 class="titulo">Pizarra para la tele</h1>
@@ -48,6 +50,7 @@ export function vistaPizarra(cont, { usuario, datos }) {
                 </select>
             </label>
         </form>` : ""}`;
+    activarSerie(cont);
 
     const pizarra = cont.querySelector(".pizarra");
     cont.querySelector("[data-completa]")?.addEventListener("click", () => {

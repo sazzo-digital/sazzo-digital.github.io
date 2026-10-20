@@ -6,13 +6,14 @@
 // Reglas del kit: exigir() en lo que modifica, topes en todo lo que se carga y se devuelven copias.
 // Si cambia la forma de los datos, subir VERSION_DATOS (se regeneran solos).
 // ============================================
-import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=8f333cfcf6";
-import { enteroHasta } from "../kit/js/topes.js?v=8f333cfcf6";
-import { fechaLocalISO, diaLocalDe } from "../kit/js/fechas.js?v=8f333cfcf6";
-import { MARCA } from "./marca.js?v=8f333cfcf6";
-import { MEDIOS_PAGO } from "../kit/js/pagos.js?v=8f333cfcf6";
+import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=06810dfe3c";
+import { enteroHasta } from "../kit/js/topes.js?v=06810dfe3c";
+import { fechaLocalISO, diaLocalDe } from "../kit/js/fechas.js?v=06810dfe3c";
+import { MARCA } from "./marca.js?v=06810dfe3c";
+import { MEDIOS_PAGO } from "../kit/js/pagos.js?v=06810dfe3c";
 
 export const VERSION_DATOS = 4;
+export const PASOS_CARTA = ["pizzas", "hamburguesa-3d", "minutas"];
 
 export const TOPES = {
     personas: 20,
@@ -172,7 +173,7 @@ export function crearDatos(prefijo = MARCA.prefijo) {
     }
 
     function pasos(usuario) {
-        if (usuario?.rol === "cliente") return ["pizzas", "burgers", "minutas"].map((id) => db().cartaVista.includes(id));
+        if (usuario?.rol === "cliente") return PASOS_CARTA.map((id) => db().cartaVista.includes(id));
         if (esMoza(usuario)) {
             const cobrada = db().cobros.some((c) => c.mesa === "Mesa 4");
             return [!!mesa("m4").abierta || cobrada, db().comandas.some((c) => c.mesaId === "m4") || cobrada, cobrada];
@@ -189,7 +190,7 @@ export function crearDatos(prefijo = MARCA.prefijo) {
 
     function mirarCategoria(usuario, id) {
         exigir(usuario?.rol === "cliente", "La carta la recorre el cliente.");
-        exigir(["pizzas", "burgers", "minutas"].includes(id), "Esa categoría no es un paso de la carta.");
+        exigir(PASOS_CARTA.includes(id), "Ese no es un paso de la carta.");
         if (!db().cartaVista.includes(id)) db().cartaVista.push(id);
         guardado.persistir();
     }

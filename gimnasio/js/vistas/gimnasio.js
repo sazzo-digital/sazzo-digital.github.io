@@ -3,10 +3,11 @@
 // (cuadro de calor de las últimas 4 semanas: "de 19 a 21 se llena"), las clases de la semana con su ocupación, los
 // socios por plan de cuota y pasar socios y pagos a Excel.
 // ============================================
-import { esc, vacio } from "../../kit/js/ui.js?v=be499030eb";
-import { bajarExcel } from "../../kit/js/archivos.js?v=be499030eb";
-import { NEGOCIO } from "../marca.js?v=be499030eb";
-import { pesos } from "../datos.js?v=be499030eb";
+import { esc, vacio } from "../../kit/js/ui.js?v=0ae8c6cc93";
+import { bajarExcel } from "../../kit/js/archivos.js?v=0ae8c6cc93";
+import { NEGOCIO } from "../marca.js?v=0ae8c6cc93";
+import { pesos } from "../datos.js?v=0ae8c6cc93";
+import { activarConsignaPersona } from "./comunes.js?v=0ae8c6cc93";
 
 /** Cuánto color lleva cada casillero del calor: pocos escalones, para que el número siempre se lea (contraste). */
 function escalon(valor, maximo) {
@@ -19,7 +20,7 @@ function escalon(valor, maximo) {
     return [100, true];
 }
 
-export function vistaGimnasio(cont, { datos }) {
+export function vistaGimnasio(cont, { usuario, datos }) {
     const g = datos.gimnasio();
     const maximo = Math.max(...g.calor.flatMap((f) => f.porDia), 1);
     const pico = g.calor.flatMap((f) => f.porDia.map((v, i) => ({ v, franja: f.texto, dia: g.dias[i] }))).sort((a, b) => b.v - a.v)[0];
@@ -85,6 +86,7 @@ export function vistaGimnasio(cont, { datos }) {
             </section>
         </div>`;
 
+    activarConsignaPersona(cont, datos, usuario);
     cont.querySelectorAll("[data-excel]").forEach((b) => b.addEventListener("click", async () => {
         b.disabled = true;
         if (b.dataset.excel === "socios") await bajarExcel(`Socios ${NEGOCIO}`, datos.filasSocios(), { hoja: "Socios", anchos: [24, 20, 8, 24, 22, 16, 7, 10, 14] });

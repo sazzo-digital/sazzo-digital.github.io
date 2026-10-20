@@ -1,9 +1,10 @@
-import { esc, aviso, fechaHora } from "../../kit/js/ui.js?v=f6723a2a8a";
-import { TOPES, MEDIOS, RUBROS, UNIDADES, pesos, cantidadTexto, precioPara } from "../datos.js?v=f6723a2a8a";
-import { textoMedio, mediosParaCaja } from "../../kit/js/pagos.js?v=f6723a2a8a";
-import { NEGOCIO, MARCA } from "../marca.js?v=f6723a2a8a";
-import { EVENTO_REINICIO } from "../../kit/js/guardado.js?v=f6723a2a8a";
-import { abrirCaja, htmlMasDeLaCaja } from "../../kit/js/caja.js?v=f6723a2a8a";
+import { pintarConsigna } from "./comunes.js?v=12c89e832a";
+import { esc, aviso, fechaHora } from "../../kit/js/ui.js?v=12c89e832a";
+import { TOPES, MEDIOS, RUBROS, UNIDADES, pesos, cantidadTexto, precioPara } from "../datos.js?v=12c89e832a";
+import { textoMedio, mediosParaCaja } from "../../kit/js/pagos.js?v=12c89e832a";
+import { NEGOCIO, MARCA } from "../marca.js?v=12c89e832a";
+import { EVENTO_REINICIO } from "../../kit/js/guardado.js?v=12c89e832a";
+import { abrirCaja, htmlMasDeLaCaja } from "../../kit/js/caja.js?v=12c89e832a";
 
 export const ticket = new Map();
 addEventListener(EVENTO_REINICIO, () => ticket.clear());
@@ -16,7 +17,7 @@ const paraCaja = (p) => {
     };
 };
 
-export function vistaVender(cont, { usuario, datos }) {
+function pintarVender(cont, { usuario, datos }) {
     cont.innerHTML = `
         <div class="titulo-con-accion">
             <h1 class="titulo">Vender</h1>
@@ -66,6 +67,7 @@ export function vistaVender(cont, { usuario, datos }) {
             return v.cuenta ? { ...v, cliente: v.cuenta } : v;
         },
         despues: (v, lugar) => {
+            pintarConsigna(cont, { usuario, datos });
             if (v.cuenta) lugar.insertAdjacentHTML("beforeend", `<p class="nota"><i class="ti ti-user-dollar"></i> ${esc(v.cuenta.nombre)} debe ahora ${esc(pesos(v.cuenta.deuda))}.</p>`);
             lugar.insertAdjacentHTML("beforeend", `<details class="ticket-previa"><summary><i class="ti ti-printer"></i> Vista previa del ticket</summary>${htmlTicketPrevia(v)}</details>`);
             const paraArmar = datos.listarPresupuestos(usuario, { estado: "pedido" }).length;
@@ -134,4 +136,10 @@ function htmlTicketPrevia(v) {
             <hr>
             <small>Demo de Sazzo · no válido como factura</small>
         </div>`;
+}
+
+export function vistaVender(cont, opciones, ...args) {
+    const resultado = pintarVender(cont, opciones, ...args);
+    pintarConsigna(cont, opciones);
+    return resultado;
 }

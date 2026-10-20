@@ -5,8 +5,8 @@
 // Quién lo hizo sale del "por" de cada cosa. Acá solo se dice qué pasó y a quién le importa; el kit decide qué es
 // nuevo para cada uno.
 // ============================================
-import { PERSONAS } from "../marca.js?v=75a51fff75";
-import { PROVEEDORES, pesos } from "../datos.js?v=75a51fff75";
+import { PERSONAS } from "../marca.js?v=ab9b8e0e7d";
+import { PROVEEDORES, pesos } from "../datos.js?v=ab9b8e0e7d";
 
 export function avisosDe(datos) {
     const db = datos.guardado.db();

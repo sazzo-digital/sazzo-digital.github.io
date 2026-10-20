@@ -1,14 +1,15 @@
-import { esc, aviso } from "../../kit/js/ui.js?v=be499030eb";
-import { puedeEscanear, escanearSeguido } from "../../kit/js/escaner.js?v=be499030eb";
-import { pip, vibrar } from "../../kit/js/celular.js?v=be499030eb";
-import { MARCA, NEGOCIO } from "../marca.js?v=be499030eb";
+import { esc, aviso } from "../../kit/js/ui.js?v=0ae8c6cc93";
+import { puedeEscanear, escanearSeguido } from "../../kit/js/escaner.js?v=0ae8c6cc93";
+import { pip, vibrar } from "../../kit/js/celular.js?v=0ae8c6cc93";
+import { MARCA, NEGOCIO } from "../marca.js?v=0ae8c6cc93";
+import { activarConsignaPersona } from "./comunes.js?v=0ae8c6cc93";
 
 let pararCamara = null;
 
 export function vistaEntrada(cont, { usuario, datos }) {
     pararCamara?.();
     pararCamara = null;
-    const socios = datos.listarSocios().slice(0, 8);
+    const socios = datos.listarSocios().sort((a, b) => Number(b.id === "s-franco") - Number(a.id === "s-franco")).slice(0, 8);
     cont.innerHTML = `
         <div class="titulo-con-accion">
             <h1 class="titulo">Entrada</h1>
@@ -29,10 +30,12 @@ export function vistaEntrada(cont, { usuario, datos }) {
             <button class="entrada__socio" type="button" data-socio="${esc(s.id)}"><span class="avatar">${esc((s.nombre?.[0] ?? "?") + (s.apellido?.[0] ?? ""))}</span>${esc(s.nombre)}</button>`).join("")}
         </div>`;
 
+    activarConsignaPersona(cont, datos, usuario);
     const bienvenida = cont.querySelector(".entrada__bienvenida");
     const recibir = (codigo) => {
         try {
             const r = datos.entradaConQR(usuario, codigo);
+            activarConsignaPersona(cont, datos, usuario);
             pip(MARCA.prefijo);
             vibrar(40);
             const clase = r.estadoCuota === "vencida" ? "mal" : r.estadoCuota === "pronto" ? "ojo" : "bien";

@@ -1,11 +1,12 @@
+import { pintarConsigna } from "./comunes.js?v=ab9b8e0e7d";
 // ============================================
 // Fiados: la libreta. Quién debe, cuánto y desde cuándo; anotar un cliente nuevo; en la ficha, cobrar (todo o una
 // parte) y ver qué se llevó en cada fiado. El tope de cada cliente lo cambia el dueño.
 // ============================================
-import { esc, aviso, vacio, fechaCorta } from "../../kit/js/ui.js?v=75a51fff75";
-import { diaLocalDe, fechaLocalISO } from "../../kit/js/fechas.js?v=75a51fff75";
-import { TOPES, pesos } from "../datos.js?v=75a51fff75";
-import { haceDias, hora } from "./comunes.js?v=75a51fff75";
+import { esc, aviso, vacio, fechaCorta } from "../../kit/js/ui.js?v=ab9b8e0e7d";
+import { diaLocalDe, fechaLocalISO } from "../../kit/js/fechas.js?v=ab9b8e0e7d";
+import { TOPES, pesos } from "../datos.js?v=ab9b8e0e7d";
+import { haceDias, hora } from "./comunes.js?v=ab9b8e0e7d";
 
 const barraTope = (c) => {
     const pct = c.tope ? Math.min(100, Math.round((c.deuda / c.tope) * 100)) : 100;
@@ -53,6 +54,7 @@ export function vistaFiados(cont, { usuario, datos }) {
             aviso(err, "error");
         }
     });
+    pintarConsigna(cont, datos, usuario);
 }
 
 export function vistaCliente(cont, { usuario, datos, params: [id] }) {
@@ -121,6 +123,7 @@ export function vistaCliente(cont, { usuario, datos, params: [id] }) {
             aviso(err, "error");
         }
     });
+    pintarConsigna(cont, datos, usuario);
 }
 
 /** "hoy 15:20" o "06/10/2026". */

@@ -2,10 +2,9 @@
 // Pantallas del mecánico (Diego): los problemas abiertos (los que tienen que parar y los nuevos primero),
 // "Me hago cargo" y "Listo, arreglado" con los repuestos que usó (se descuentan solos).
 // ============================================
-import { esc, vacio, aviso } from "../../kit/js/ui.js?v=b86ccb1eca";
-import { TOPES, cantidadCon } from "../datos.js?v=b86ccb1eca";
-import { haceCuanto, pastillaVehiculo, pastillaUrgencia, pastillaProblema, guia, activarGuias, textoRepuestos } from "./comunes.js?v=b86ccb1eca";
-import { htmlConsigna } from "../../kit/js/consigna.js?v=b86ccb1eca";
+import { esc, vacio, aviso } from "../../kit/js/ui.js?v=144fda0e5d";
+import { TOPES, cantidadCon } from "../datos.js?v=144fda0e5d";
+import { haceCuanto, pastillaVehiculo, pastillaUrgencia, pastillaProblema, guia, activarGuias, textoRepuestos, consignaPersona, activarPasos } from "./comunes.js?v=144fda0e5d";
 
 export function vistaInicioMecanico(cont, { usuario, datos, irA }) {
     const abiertos = datos.problemasAbiertos();
@@ -15,7 +14,7 @@ export function vistaInicioMecanico(cont, { usuario, datos, irA }) {
         <p class="resumen-linea">${abiertos.length
             ? `${abiertos.length} ${abiertos.length === 1 ? "problema abierto" : "problemas abiertos"}${nuevos ? ` · <b>${nuevos} ${nuevos === 1 ? "nuevo" : "nuevos"}</b>` : ""}`
             : "Sin problemas abiertos"}</p>
-        ${nuevos ? htmlConsigna({ paso: 2, total: 3, accion: "Tocá “Me hago cargo” en el problema nuevo y después “Listo, arreglado”.", resultado: "Marta lo ve en su tablero y el chofer se entera." }) : ""}
+        ${consignaPersona(datos, usuario)}
         ${abiertos.length ? `<ul class="tarjetas">${abiertos.map((p) => `
             <li class="tarjeta${p.estado === "avisado" ? " tarjeta--nuevo" : ""}${p.urgencia === "parar" ? " tarjeta--urgente" : ""}">
                 <div class="tarjeta__fila">
@@ -42,6 +41,7 @@ export function vistaInicioMecanico(cont, { usuario, datos, irA }) {
         }
     }));
     activarGuias(cont, irA);
+    activarPasos(cont);
 }
 
 /** "Listo, arreglado": qué repuestos usó (con − y +) y una nota opcional. */
@@ -97,7 +97,7 @@ export function vistaArreglar(cont, { usuario, datos, irA, params: [id] }) {
         const lista = Object.entries(usados).filter(([, n]) => n > 0).map(([repuestoId, cantidad]) => ({ repuestoId, cantidad }));
         try {
             const hecho = datos.cerrarProblema(usuario, p.id, { repuestos: lista, nota: e.target.nota.value });
-            arreglado(cont, hecho, datos, irA);
+            arreglado(cont, hecho, { usuario, datos, irA });
         } catch (err) {
             aviso(err, "error");
         }
@@ -105,7 +105,7 @@ export function vistaArreglar(cont, { usuario, datos, irA, params: [id] }) {
 }
 
 /** Después de arreglar: qué pasó con el vehículo y los repuestos, y el paso siguiente del recorrido (Marta). */
-function arreglado(cont, p, datos, irA) {
+function arreglado(cont, p, { usuario, datos, irA }) {
     const repuestos = datos.listarRepuestos();
     const avisosStock = p.repuestos
         .map((u) => repuestos.find((r) => r.id === u.repuestoId))
@@ -120,8 +120,10 @@ function arreglado(cont, p, datos, irA) {
             ${avisosStock.length ? `<ul class="hecho__avisos">${avisosStock.join("")}</ul>` : ""}
             ${pastillaProblema(p.estado)}
         </div>
-        ${htmlConsigna({ paso: 2, total: 3, accion: "Arreglá el problema.", hecho: "el vehículo vuelve a andar", guia: guia("u-admin", "/inicio", "Mirá lo que ve Marta") })}
+        ${consignaPersona(datos, usuario)}
+        ${guia("u-admin", "/inicio", "Mirá lo que ve Marta")}
         <a class="boton boton--secundario boton--ancho" href="#/inicio"><i class="ti ti-list"></i> Volver a mis problemas</a>`;
     activarGuias(cont, irA);
+    activarPasos(cont);
     window.scrollTo(0, 0);
 }

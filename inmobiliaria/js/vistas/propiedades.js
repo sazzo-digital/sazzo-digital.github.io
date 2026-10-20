@@ -3,19 +3,18 @@
 // el mapa, nunca la dirección; Valeria pide la visita, la inmobiliaria ve quiénes buscan algo así y baja el PDF) y
 // "Cargar propiedad" (con fotos sacadas con el celu, que no se suben a ningún lado).
 // ============================================
-import { esc, aviso, vacio, mensajeDe, fechaCorta } from "../../kit/js/ui.js?v=86b90b0105";
-import { fechaLocalISO, diaLocalDe } from "../../kit/js/fechas.js?v=86b90b0105";
-import { mostrarMapa } from "../../kit/js/mapa.js?v=86b90b0105";
-import { armarPdf, pdfListo, fotoParaPdf } from "../../kit/js/pdf.js?v=86b90b0105";
-import { TOPES, TIPOS, ZONAS, OPERACIONES, CARACTERISTICAS, RADIO_ZONA, pesos, dolares } from "../datos.js?v=86b90b0105";
-import { NEGOCIO } from "../marca.js?v=86b90b0105";
-import { htmlConsigna } from "../../kit/js/consigna.js?v=86b90b0105";
-import { fotosDe, urlRecorrido, achicarFoto, guardarFotosEnMemoria, revisarArchivoFoto } from "../fotos.js?v=86b90b0105";
-import { abrirRecorrido } from "../visor360.js?v=86b90b0105";
+import { esc, aviso, vacio, mensajeDe, fechaCorta } from "../../kit/js/ui.js?v=34a23b46ed";
+import { fechaLocalISO, diaLocalDe } from "../../kit/js/fechas.js?v=34a23b46ed";
+import { mostrarMapa } from "../../kit/js/mapa.js?v=34a23b46ed";
+import { armarPdf, pdfListo, fotoParaPdf } from "../../kit/js/pdf.js?v=34a23b46ed";
+import { TOPES, TIPOS, ZONAS, OPERACIONES, CARACTERISTICAS, RADIO_ZONA, pesos, dolares } from "../datos.js?v=34a23b46ed";
+import { NEGOCIO } from "../marca.js?v=34a23b46ed";
+import { fotosDe, urlRecorrido, achicarFoto, guardarFotosEnMemoria, revisarArchivoFoto } from "../fotos.js?v=34a23b46ed";
+import { abrirRecorrido } from "../visor360.js?v=34a23b46ed";
 import {
     guia, activarGuias, tarjetaPropiedad, htmlFoto, medidas, hrefPropiedad, pastillaPropiedad, pastillaVisita,
-    pastillaConsulta, mostrarMensaje, mayuscula
-} from "./comunes.js?v=86b90b0105";
+    pastillaConsulta, mostrarMensaje, mayuscula, consignaPersona, activarPasos
+} from "./comunes.js?v=34a23b46ed";
 
 // Lo elegido en los filtros queda mientras se navega
 const filtro = { operacion: null, zona: null, ambientes: null, hasta: null, mapa: false };
@@ -74,7 +73,7 @@ export function vistaPropiedades(cont, { usuario, datos }) {
             <h1 class="titulo">${staff ? "Propiedades" : "Encontrá tu lugar"}</h1>
             ${staff ? `<a class="boton" href="#/propiedades/nueva"><i class="ti ti-plus"></i> Cargar propiedad</a>` : `<span class="negocio"><i class="ti ti-key" aria-hidden="true"></i>${esc(NEGOCIO)}</span>`}
         </div>
-        ${staff ? "" : htmlConsigna({ paso: 1, total: 3, accion: "Tocá “Alquiler” y “2+ ambientes”, abrí el depto con balcón y pedí una visita.", resultado: "Le llega a la inmobiliaria al toque." })}
+        ${consignaPersona(datos, usuario)}
         <div class="filtros-props__controles">
             <div class="chips filtros-props" role="group" aria-label="Operación">
                 <button class="chip" type="button" data-operacion="">Todas</button>
@@ -99,6 +98,7 @@ export function vistaPropiedades(cont, { usuario, datos }) {
             </div>
         </div>
         <div class="resultados"></div>`;
+    activarPasos(cont);
     cont.querySelectorAll("[data-operacion]").forEach((b) => b.addEventListener("click", () => {
         filtro.operacion = b.dataset.operacion || null;
         filtro.hasta = null;

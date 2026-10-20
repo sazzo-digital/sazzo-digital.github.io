@@ -6,12 +6,12 @@
 // Reglas del kit: exigir() en lo que modifica, topes en todo lo que se carga, nada se borra (se cancela) y se
 // devuelven copias. Si cambia la forma de los datos, subir VERSION_DATOS (se regeneran solos).
 // ============================================
-import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=d819d10110";
-import { filtrarPorTexto } from "../kit/js/buscar.js?v=d819d10110";
-import { enteroHasta } from "../kit/js/topes.js?v=d819d10110";
-import { fechaLocalISO, diaLocalDe } from "../kit/js/fechas.js?v=d819d10110";
-import { MARCA, NEGOCIO } from "./marca.js?v=d819d10110";
-import { MEDIOS_PAGO, DIVIDIDO, revisarPagos } from "../kit/js/pagos.js?v=d819d10110";
+import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=a61469be59";
+import { filtrarPorTexto } from "../kit/js/buscar.js?v=a61469be59";
+import { enteroHasta } from "../kit/js/topes.js?v=a61469be59";
+import { fechaLocalISO, diaLocalDe } from "../kit/js/fechas.js?v=a61469be59";
+import { MARCA, NEGOCIO, PERSONAS } from "./marca.js?v=a61469be59";
+import { MEDIOS_PAGO, DIVIDIDO, revisarPagos } from "../kit/js/pagos.js?v=a61469be59";
 
 export const VERSION_DATOS = 4;
 
@@ -190,6 +190,36 @@ export function semilla() {
 export function crearDatos(prefijo = MARCA.prefijo) {
     const guardado = crearGuardado({ prefijo, version: VERSION_DATOS, semilla });
     const db = () => guardado.db();
+
+    const series = {"duena": ["preparar", "avisar", "saludar"], "cliente": ["recomendar", "sumar", "pedido"]};
+    const miradas = {"duena": [], "cliente": ["recomendar", "sumar"]};
+
+    function sinQuienSaludar() {
+        const mes = new Date().getMonth() + 1;
+        return !db().clientas.some((c) => Number(c.cumple.split("-")[0]) === mes && puedeSaludarYa(c));
+    }
+
+    function pasos(usuario) {
+        exigir(PERSONAS.some((p) => p.id === usuario?.id && p.rol === usuario?.rol), "Esa persona no tiene una serie.");
+        const marcados = db().pasosPersonas?.[usuario.id] ?? [];
+        return series[usuario.rol].map((id) => marcados.includes(id) || (id === "saludar" && sinQuienSaludar()));
+    }
+
+    function registrarPaso(usuario, id) {
+        if (!series[usuario.rol].includes(id)) return;
+        const hechos = db().pasosPersonas ??= {};
+        const persona = hechos[usuario.id] ??= [];
+        if (persona.includes(id)) return;
+        persona.push(id);
+        guardado.persistir();
+    }
+
+    function mirarPaso(usuario, id) {
+        pasos(usuario);
+        exigir(miradas[usuario.rol].includes(id), "Esa mirada no es un paso de esta persona.");
+        registrarPaso(usuario, id);
+    }
+
     const esDuena = (u) => u?.rol === "duena";
     const esClienta = (u) => u?.rol === "cliente";
     const clientaDe = (u) => db().clientas.find((c) => c.id === CLIENTA_DE[u?.id]);
@@ -268,6 +298,7 @@ export function crearDatos(prefijo = MARCA.prefijo) {
         db().numero += 1;
         const o = { id: nuevoId("pd"), numero: db().numero, clientaId: c.id, renglones, estado: "nuevo", avisado: false, visto: false, creadoEn: ahora(), historial: [{ estado: "nuevo", en: ahora() }] };
         db().pedidos.push(o);
+        registrarPaso(usuario, "pedido");
         guardado.persistir();
         return armarPedido(o);
     }
@@ -326,7 +357,9 @@ export function crearDatos(prefijo = MARCA.prefijo) {
             }
         });
         descontar(o.renglones);
-        return pasar(o, "preparado");
+        const preparado = pasar(o, "preparado");
+        registrarPaso(usuario, "preparar");
+        return preparado;
     }
 
     function mensajeListo(usuario, id) {
@@ -346,6 +379,7 @@ export function crearDatos(prefijo = MARCA.prefijo) {
             o.historial.push({ estado: "avisado", en: ahora() });
             guardado.persistir();
         }
+        registrarPaso(usuario, "avisar");
         return { pedido: armarPedido(o), mensaje };
     }
 
@@ -482,11 +516,12 @@ export function crearDatos(prefijo = MARCA.prefijo) {
         const c = buscar(db().clientas, id);
         c.saludadaEn = ahora();
         guardado.persistir();
+        registrarPaso(usuario, "saludar");
         return { clienta: armarClienta(c), mensaje };
     }
 
     return {
-        guardado,
+        guardado, pasos, mirarPaso,
         listarPerfumes, perfume, recomendar, armarCarrito, mandarPedido, misPedidos,
         masVendidos: () => masVendidos(listarPerfumes(), db().ventas),
         pedidos, preparar, mensajeListo, avisarListo, entregar, cancelar, productosCaja, venderMostrador, ventasDeHoy,

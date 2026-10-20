@@ -8,13 +8,13 @@
 //       foto: { imagen: "data:image/jpeg;base64,…", alto: 60 },   // opcional: arriba, sin deformar (esFoto, TOPE_FOTO)
 //       pie: "Hecho con Sazzo Taller (demo)"
 //   });
-//   pdfListo(blob, "Presupuesto N° 104")   // ventanita Compartir / Descargar
+//   pdfListo(blob, "Presupuesto N° 104")   // en la demo: una hoja, no se baja nada
 // Siempre lleva "DEMO · datos inventados" cruzado. Letra Helvetica del PDF (sin bajar letras): los textos se
 // pasan a los caracteres que esa letra tiene (tildes, ñ, ¿¡, °, comillas sí; emojis no).
-// Librería: jsPDF (kit\libs\, MIT, ~410 KB), se baja recién al tocar el botón.
+// Librería: jsPDF (kit\libs\, MIT, ~410 KB), se carga recién al tocar el botón.
 // ============================================
-import { cargarLibreria, entregarArchivo, nombreDeArchivo } from "./archivos.js?v=55764424c5";
-import { esFirma } from "./firma.js?v=55764424c5";
+import { cargarLibreria, entregarArchivo, nombreDeArchivo } from "./archivos.js?v=4438010c31";
+import { esFirma } from "./firma.js?v=4438010c31";
 
 const TOPE_TEXTO = 600;
 const TOPE_FILAS = 200;
@@ -238,7 +238,7 @@ export async function armarPdf({
     return doc.output("blob");
 }
 
-/** El PDF ya armado: Compartir (WhatsApp, mail…) o Descargar. */
+/** El PDF ya armado: en la demo no se baja, se muestra la hoja del kit. */
 export function pdfListo(blob, nombre) {
-    return entregarArchivo(blob, nombreDeArchivo(nombre, "pdf"), { titulo: "Tu PDF está listo", texto: nombre });
+    return entregarArchivo(blob, nombreDeArchivo(nombre, "pdf"));
 }

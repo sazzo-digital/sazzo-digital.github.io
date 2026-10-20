@@ -4,13 +4,13 @@
 // repeticiones, descanso y peso de arranque, sacar), copiar una rutina y asignarla a un alumno.
 // Cambiar una rutina cambia la de todos los que la usan; para uno solo está "Ajustar" en su ficha.
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=be499030eb";
-import { EJERCICIOS, TOPES, kilos, cuanto } from "../datos.js?v=be499030eb";
-import { pastilla } from "./comunes.js?v=be499030eb";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=0ae8c6cc93";
+import { EJERCICIOS, TOPES, kilos, cuanto } from "../datos.js?v=0ae8c6cc93";
+import { activarConsignaPersona, pastilla } from "./comunes.js?v=0ae8c6cc93";
 
 let editando = null; // "nombre", "dia|A" o "ej|A|banca": lo que está abierto para cambiar
 
-export function vistaPlanes(cont, { datos }) {
+export function vistaPlanes(cont, { usuario, datos }) {
     const planes = datos.listarPlanes();
     cont.innerHTML = `
         <h1 class="titulo">Rutinas</h1>
@@ -25,6 +25,7 @@ export function vistaPlanes(cont, { datos }) {
                 <p class="tarjeta__quien"><b>${esc(p.socios)}</b> ${p.socios === 1 ? "socio la usa" : "socios la usan"}</p>
             </li>`).join("")}
         </ul>`;
+    activarConsignaPersona(cont, datos, usuario);
 }
 
 const GRUPOS = [...new Set(EJERCICIOS.map((e) => e.grupo))];
@@ -147,6 +148,7 @@ export function vistaPlan(cont, opciones) {
             <button class="boton" type="submit"><i class="ti ti-check" aria-hidden="true"></i> Asignar</button>
         </form>`;
 
+    activarConsignaPersona(cont, datos, usuario);
     cont.querySelectorAll("[data-editar]").forEach((b) => b.addEventListener("click", () => {
         editando = editando === b.dataset.editar ? null : b.dataset.editar;
         otraVez();

@@ -2,10 +2,9 @@
 // Lo de Valeria (la que busca), pensado para el celular: "Pedir visita" (día y hora libre, sin cargar ningún dato:
 // la inmobiliaria asigna quién la acompaña) y "Mis visitas" (pedida → confirmada, con Cancelar).
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=86b90b0105";
-import { aHora } from "../../kit/js/turnos.js?v=86b90b0105";
-import { guia, activarGuias, chipsDias, htmlFoto, medidas, pastillaVisita, mayuscula } from "./comunes.js?v=86b90b0105";
-import { htmlConsigna } from "../../kit/js/consigna.js?v=86b90b0105";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=34a23b46ed";
+import { aHora } from "../../kit/js/turnos.js?v=34a23b46ed";
+import { guia, activarGuias, chipsDias, htmlFoto, medidas, pastillaVisita, mayuscula, consignaPersona, activarPasos } from "./comunes.js?v=34a23b46ed";
 
 let fecha = null; // el día elegido queda mientras se navega
 
@@ -60,9 +59,11 @@ export function vistaPedirVisita(cont, { usuario, datos, params: [id], irA }) {
                 <p><b>${esc(mayuscula(v.fechaNombre))} a las ${esc(v.hora)}</b> · ${esc(v.propiedad)}</p>
                 <p class="nota"><i class="ti ti-brand-whatsapp"></i><span>Te confirman por WhatsApp. Te acompaña ${esc(v.agente)}.</span></p>
             </div>
-            ${htmlConsigna({ paso: 1, total: 3, accion: "Pedí una visita.", hecho: "visita pedida", guia: guia(v.agenteId, "/inicio", `Mirá lo que le llega a ${v.agente}`) })}
+            ${consignaPersona(datos, usuario)}
+            ${guia(v.agenteId, "/inicio", `Mirá lo que le llega a ${v.agente}`)}
             <a class="boton boton--secundario boton--ancho" href="#/mis-visitas"><i class="ti ti-calendar-event"></i> Mis visitas</a>`;
         activarGuias(cont, irA);
+        activarPasos(cont);
         window.scrollTo(0, 0);
     }
 
@@ -73,12 +74,13 @@ export function vistaPedirVisita(cont, { usuario, datos, params: [id], irA }) {
             ${htmlFoto(p, { clase: "foto--chica", tamanos: "80px" })}
             <span><b>${esc(p.titulo)}</b><small>${esc(p.precioTexto)} · ${esc(p.zonaNombre)} · ${esc(medidas(p))}</small></span>
         </div>
-        ${htmlConsigna({ paso: 1, total: 3, accion: "Elegí un día y una hora libre, y pedila.", resultado: "Le llega a Tomás para confirmarla." })}
+        ${consignaPersona(datos, usuario)}
         <p class="rotulo-chico">Día</p>
         ${chipsDias(dias, fecha)}
         <p class="rotulo-chico">Hora</p>
         <div class="horas"></div>
         <div class="confirmar"></div>`;
+    activarPasos(cont);
     cont.querySelectorAll("[data-dia]").forEach((b) => b.addEventListener("click", () => {
         fecha = b.dataset.dia;
         elegido = null;
@@ -102,6 +104,7 @@ export function vistaMisVisitas(cont, { usuario, datos }) {
         </li>`;
     cont.innerHTML = `
         <h1 class="titulo">Mis visitas</h1>
+        ${consignaPersona(datos, usuario)}
         ${vienen.length ? `<ul class="tarjetas">${vienen.map((v) => tarjeta(v, true)).join("")}</ul>` : vacio("Todavía no pediste ninguna visita.", "ti-calendar")}
         <a class="boton boton--ancho" href="#/inicio"><i class="ti ti-search"></i> Ver propiedades</a>
         ${anteriores.length ? `
@@ -109,6 +112,7 @@ export function vistaMisVisitas(cont, { usuario, datos }) {
             <summary>Anteriores y canceladas</summary>
             <ul class="tarjetas">${anteriores.map((v) => tarjeta(v, false)).join("")}</ul>
         </details>` : ""}`;
+    activarPasos(cont);
     cont.querySelectorAll("[data-cancelar]").forEach((b) => b.addEventListener("click", () => {
         if (!confirm("¿Cancelar la visita? El horario queda libre.")) return;
         try {

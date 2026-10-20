@@ -5,12 +5,11 @@
 // - "Mi cuota": cuándo vence, el pago de ejemplo (alias para copiar y "Ya transferí") y sus pagos anteriores.
 //   Nada de tarjetas ni cobro de verdad: es una demo.
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=be499030eb";
-import { MEDIOS_PAGO, textoMedio } from "../../kit/js/pagos.js?v=be499030eb";
-import { htmlCopiable, activarCopiables } from "../../kit/js/celular.js?v=be499030eb";
-import { SOCIO_DE, pesos, fechaCorta, nombreFecha } from "../datos.js?v=be499030eb";
-import { guia, activarGuias, pastilla, pastillaCuota, chipsDias, graficoPeso, barrasSemanas } from "./comunes.js?v=be499030eb";
-import { htmlConsigna } from "../../kit/js/consigna.js?v=be499030eb";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=0ae8c6cc93";
+import { MEDIOS_PAGO, textoMedio } from "../../kit/js/pagos.js?v=0ae8c6cc93";
+import { htmlCopiable, activarCopiables } from "../../kit/js/celular.js?v=0ae8c6cc93";
+import { SOCIO_DE, pesos, fechaCorta, nombreFecha } from "../datos.js?v=0ae8c6cc93";
+import { activarConsignaPersona, guia, activarGuias, pastilla, pastillaCuota, chipsDias, graficoPeso, barrasSemanas } from "./comunes.js?v=0ae8c6cc93";
 
 let fechaClases = null; // el día elegido en "Clases" queda mientras se navega
 
@@ -69,6 +68,7 @@ export function vistaSemana(cont, { usuario, datos, irA }) {
             <li>${esc(n.texto)}<small>${esc(ficha.profe)} · ${esc(nombreFecha(n.fecha, hoy))}</small></li>`).join("")}</ul>` : vacio("Todavía no te dejó notas.", "ti-message-2")}`;
 
     const otraVez = () => vistaSemana(cont, { usuario, datos, irA });
+    activarConsignaPersona(cont, datos, usuario);
     cont.querySelectorAll("[data-dia]").forEach((b) => b.addEventListener("click", () => {
         fechaClases = b.dataset.dia;
         otraVez();
@@ -111,9 +111,9 @@ export function vistaCuota(cont, { usuario, datos, irA }) {
             <div class="hecho hecho--chico">
                 <p>${pastilla("Avisaste que pagaste", "alerta", "ti-clock")}</p>
                 <p class="nota"><span>${esc(pesos(avisado.monto))} por transferencia. Falta que lo confirmen en el gimnasio.</span></p>
-                ${htmlConsigna({ paso: 4, total: 5, accion: "Avisá que transferiste.", hecho: "le avisaste al gimnasio", guia: guia("u-duena", "/inicio?filtro=avisaron", "Mirá cómo le llega a Vane") })}
+                ${guia("u-duena", "/inicio?filtro=avisaron", "Mirá cómo le llega a Vane")}
             </div>` : `
-            ${socio.estadoCuota === "al-dia" ? "" : htmlConsigna({ paso: 4, total: 5, accion: "Tocá “Pagar”, copiá el alias y avisá que transferiste.", resultado: "Le llega a Vane para confirmarlo." })}
+
             <details class="pagar">
                 <summary class="boton boton--ancho"><i class="ti ti-cash" aria-hidden="true"></i> Pagar (de ejemplo)</summary>
                 <div class="pagar__adentro">
@@ -133,6 +133,7 @@ export function vistaCuota(cont, { usuario, datos, irA }) {
             </li>`).join("")}</ul>` : vacio("Todavía no hay pagos.", "ti-receipt")}`;
 
     activarCopiables(cont, "Alias copiado");
+    activarConsignaPersona(cont, datos, usuario);
     activarGuias(cont, irA);
     cont.querySelector("[data-avise]")?.addEventListener("click", () => {
         try {

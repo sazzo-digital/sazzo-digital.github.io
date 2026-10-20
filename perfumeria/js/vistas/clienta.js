@@ -1,14 +1,14 @@
+import { consignaPersona, pintarConsigna } from "./comunes.js?v=a61469be59";
 // ============================================
 // Pantallas de la clienta (Julieta), pensadas para el celular: el catálogo (filtros por familia y para quién,
 // "Recomendame uno"), cada perfume con sus notas y presentaciones, "Tu pedido" (el carrito) y "Mis pedidos".
 // El pedido no pide ningún dato: Julieta ya entró como ella. Retiro en el local.
 // ============================================
-import { esc, aviso, vacio, fechaCorta, mensajeDe } from "../../kit/js/ui.js?v=d819d10110";
-import { verEn3D } from "../../kit/js/modelo3d.js?v=d819d10110";
-import { FAMILIAS, PARA, PRESENTACIONES, TOPES, pesos, frasco3D, notaFrasco } from "../datos.js?v=d819d10110";
-import { NEGOCIO } from "../marca.js?v=d819d10110";
-import { frasco, carrito, itemsDelCarrito, unidadesEnCarrito, guia, activarGuias, pastillaPedido } from "./comunes.js?v=d819d10110";
-import { htmlConsigna } from "../../kit/js/consigna.js?v=d819d10110";
+import { esc, aviso, vacio, fechaCorta, mensajeDe } from "../../kit/js/ui.js?v=a61469be59";
+import { verEn3D } from "../../kit/js/modelo3d.js?v=a61469be59";
+import { FAMILIAS, PARA, PRESENTACIONES, TOPES, pesos, frasco3D, notaFrasco } from "../datos.js?v=a61469be59";
+import { NEGOCIO } from "../marca.js?v=a61469be59";
+import { frasco, carrito, itemsDelCarrito, unidadesEnCarrito, guia, activarGuias, pastillaPedido } from "./comunes.js?v=a61469be59";
 
 let familia = null;
 let para = null;
@@ -35,7 +35,7 @@ const tarjetaPerfume = (p) => `
         <b class="perfume__precio">desde ${esc(pesos(p.desde))}</b>
     </a></li>`;
 
-export function vistaCatalogo(cont, { datos }) {
+export function vistaCatalogo(cont, { datos, usuario }) {
     const lista = datos.listarPerfumes({ familia, para });
     cont.innerHTML = `
         <div class="titulo-con-accion">
@@ -43,7 +43,7 @@ export function vistaCatalogo(cont, { datos }) {
             <span class="negocio"><i class="ti ti-sparkles" aria-hidden="true"></i>${esc(NEGOCIO)}</span>
         </div>
         ${barraPedido(datos)}
-        ${htmlConsigna({ paso: 1, total: 3, accion: "Tocá “Recomendame uno”, elegí un perfume y mandá el pedido.", resultado: "Le llega a Carolina para prepararlo." })}
+        ${consignaPersona(datos, usuario)}
         <details class="recomendar bloque"${unidadesEnCarrito() ? "" : " open"}>
             <summary><i class="ti ti-wand"></i> Recomendame uno</summary>
             <form class="recomendar__form" novalidate>
@@ -72,7 +72,7 @@ export function vistaCatalogo(cont, { datos }) {
         </div>
         ${lista.length ? `<ul class="perfumes">${lista.map(tarjetaPerfume).join("")}</ul>` : vacio("No hay perfumes con ese filtro.", "ti-search")}`;
 
-    const otraVez = () => vistaCatalogo(cont, { datos });
+    const otraVez = () => vistaCatalogo(cont, { datos, usuario });
     cont.querySelectorAll("[data-familia]").forEach((b) => b.addEventListener("click", () => {
         familia = b.dataset.familia || null;
         otraVez();
@@ -88,11 +88,14 @@ export function vistaCatalogo(cont, { datos }) {
             const recos = datos.recomendar({ para: f.get("para"), momento: f.get("momento"), gusto: f.get("gusto") });
             const lugar = cont.querySelector(".sugeridos");
             lugar.innerHTML = recos.map(tarjetaPerfume).join("");
+            datos.mirarPaso(usuario, "recomendar");
+            pintarConsigna(cont, datos, usuario);
             lugar.scrollIntoView({ block: "nearest", behavior: "smooth" });
         } catch (err) {
             aviso(err, "error");
         }
     });
+    pintarConsigna(cont, datos, usuario);
 }
 
 export function vistaPerfume(cont, { datos, usuario, params: [id] }) {
@@ -135,6 +138,7 @@ export function vistaPerfume(cont, { datos, usuario, params: [id] }) {
         carrito.set(clave, antes + 1);
         try {
             datos.armarCarrito(itemsDelCarrito());
+            datos.mirarPaso(usuario, "sumar");
             aviso(`${p.nombre} (${PRESENTACIONES[b.dataset.agregar].texto.toLowerCase()}) en tu pedido`);
         } catch (err) {
             if (antes) carrito.set(clave, antes);
@@ -143,6 +147,7 @@ export function vistaPerfume(cont, { datos, usuario, params: [id] }) {
         }
         vistaPerfume(cont, { datos, usuario, params: [id] });
     }));
+    pintarConsigna(cont, datos, usuario);
 }
 
 export function vistaPedido(cont, { usuario, datos, irA }) {
@@ -196,14 +201,16 @@ export function vistaPedido(cont, { usuario, datos, irA }) {
                     <p>Pedido N° ${esc(o.numero)} · ${esc(pesos(o.total))}</p>
                     <p class="nota">Carolina lo prepara y te avisa cuando esté listo para retirar.</p>
                 </div>
-                ${htmlConsigna({ paso: 1, total: 3, accion: "Mandá un pedido.", hecho: "pedido enviado", guia: guia("u-duena", "/inicio", "Mirá lo que le llega a Carolina") })}
+                ${consignaPersona(datos, usuario)}
                 <a class="boton boton--secundario boton--ancho" href="#/mis-pedidos"><i class="ti ti-list"></i> Mis pedidos</a>`;
             activarGuias(cont, irA);
+            pintarConsigna(cont, datos, usuario);
             window.scrollTo(0, 0);
         } catch (err) {
             aviso(err, "error");
         }
     });
+    pintarConsigna(cont, datos, usuario);
 }
 
 export function vistaMisPedidos(cont, { usuario, datos }) {
@@ -216,4 +223,5 @@ export function vistaMisPedidos(cont, { usuario, datos }) {
                 <p class="tarjeta__quien">${esc(o.renglones.map((r) => `${r.nombre} (${r.presentacionTexto.toLowerCase()})`).join(", "))}</p>
                 <p class="tarjeta__quien"><b>${esc(pesos(o.total))}</b></p>
             </li>`).join("")}</ul>` : vacio("Todavía no hiciste pedidos.", "ti-shopping-bag")}`;
+    pintarConsigna(cont, datos, usuario);
 }

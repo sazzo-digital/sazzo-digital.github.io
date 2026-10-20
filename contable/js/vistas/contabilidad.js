@@ -1,18 +1,19 @@
+import { conConsigna } from "./comunes.js?v=569102ff5e";
 // ============================================
 // Contabilidad: libro diario (los asientos salen solos de cada factura, compra, cobro y pago), mayor de cada cuenta
 // y balance de sumas y saldos. Solo para mirar: en la demo no hay asientos manuales.
 // ============================================
-import { esc } from "../../kit/js/ui.js?v=929def1556";
-import { htmlEstante, activarEstantes } from "../../kit/js/estante.js?v=929def1556";
-import { agruparPorMes } from "../estantes.js?v=929def1556";
-import { pesos, nombrePeriodo, periodoActual, correrPeriodo } from "../reglas.js?v=929def1556";
-import { nombreCuenta } from "../contabilidad.js?v=929def1556";
-import { periodoPedido, htmlSelectorMes, activarSelectorMes, htmlTabla, fechaCorta, diaMes } from "./comunes.js?v=929def1556";
+import { esc } from "../../kit/js/ui.js?v=569102ff5e";
+import { htmlEstante, activarEstantes } from "../../kit/js/estante.js?v=569102ff5e";
+import { agruparPorMes } from "../estantes.js?v=569102ff5e";
+import { pesos, nombrePeriodo, periodoActual, correrPeriodo } from "../reglas.js?v=569102ff5e";
+import { nombreCuenta } from "../contabilidad.js?v=569102ff5e";
+import { periodoPedido, htmlSelectorMes, activarSelectorMes, htmlTabla, fechaCorta, diaMes } from "./comunes.js?v=569102ff5e";
 
 const VISTAS = { diario: "Libro diario", mayor: "Mayor", balance: "Balance" };
 const MAX_ASIENTOS = 60; // en pantalla (el resto, cambiando de mes)
 
-export function vistaContabilidad(cont, { datos, consulta }) {
+function pintarContabilidad(cont, { datos, consulta }) {
     const ver = Object.hasOwn(VISTAS, consulta?.get("ver")) ? consulta.get("ver") : "diario";
     const periodo = periodoPedido(consulta);
     const todos = ver === "diario" && (!consulta?.get("p") || consulta.get("p") === "todos");
@@ -109,3 +110,5 @@ function diaAnterior(fecha) {
     const f = new Date(a, m - 1, d - 1);
     return `${f.getFullYear()}-${String(f.getMonth() + 1).padStart(2, "0")}-${String(f.getDate()).padStart(2, "0")}`;
 }
+
+export const vistaContabilidad = conConsigna(pintarContabilidad);

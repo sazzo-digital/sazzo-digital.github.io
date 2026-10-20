@@ -9,16 +9,16 @@
 // se devuelven copias. Sin teléfonos, mails ni documentos: nada de datos personales. Pagos de ejemplo, sin tarjetas.
 // Si cambia la forma de los datos, subir VERSION_DATOS (se regeneran solos).
 // ============================================
-import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=be499030eb";
-import { filtrarPorTexto } from "../kit/js/buscar.js?v=be499030eb";
-import { sinPasarse } from "../kit/js/topes.js?v=be499030eb";
-import { fechaLocalISO } from "../kit/js/fechas.js?v=be499030eb";
-import { aMinutos, aHora, diaSemana } from "../kit/js/turnos.js?v=be499030eb";
-import { esFirma } from "../kit/js/firma.js?v=be499030eb";
-import { MEDIOS_PAGO, DIVIDIDO, revisarPagos, sumarPorMedio, textoMedio } from "../kit/js/pagos.js?v=be499030eb";
-import { MARCA, NEGOCIO } from "./marca.js?v=be499030eb";
+import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=0ae8c6cc93";
+import { filtrarPorTexto } from "../kit/js/buscar.js?v=0ae8c6cc93";
+import { sinPasarse } from "../kit/js/topes.js?v=0ae8c6cc93";
+import { fechaLocalISO } from "../kit/js/fechas.js?v=0ae8c6cc93";
+import { aMinutos, aHora, diaSemana } from "../kit/js/turnos.js?v=0ae8c6cc93";
+import { esFirma } from "../kit/js/firma.js?v=0ae8c6cc93";
+import { MEDIOS_PAGO, DIVIDIDO, revisarPagos, sumarPorMedio, textoMedio } from "../kit/js/pagos.js?v=0ae8c6cc93";
+import { MARCA, NEGOCIO } from "./marca.js?v=0ae8c6cc93";
 
-export const VERSION_DATOS = 2;
+export const VERSION_DATOS = 4;
 
 export const TOPES = {
     nombre: 40,
@@ -502,7 +502,7 @@ export function semilla(hoy = fechaLocalISO(0), minuto = new Date().getHours() *
         trabajo(id, s.id, ["Estirar 10 minutos después de entrenar", "Caminar 20 minutos", "Abdominales 3 x 15"][i], "semana", { veces: 2 + i });
         [6, 3, 1].slice(0, i + 1).forEach((n, k) => marca(id, s.id, n, i !== 1 || k > 0));
     });
-    return { planes, socios, asistencias, entrenos, pagos, reservas, trabajos, marcas };
+    return { planes, socios, asistencias, entrenos, pagos, reservas, trabajos, marcas, pasosPersonas: {}, inicioDemo: hoy };
 }
 
 // ---------- Funciones de datos ----------
@@ -539,6 +539,33 @@ export function crearDatos(prefijo = MARCA.prefijo, { reloj = () => new Date() }
     const entrenosDe = (id) => db().entrenos.filter((e) => e.socioId === id).sort((a, b) => a.fecha.localeCompare(b.fecha) || a.inicio.localeCompare(b.inicio));
     const entrenoDeHoy = (id) => db().entrenos.find((e) => e.socioId === id && e.fecha === hoy()) ?? null;
     const llegoHoy = (id) => db().asistencias.find((a) => a.socioId === id && a.fecha === hoy()) ?? null;
+
+    const marcables = { profe: ["asignar", "pdf"], duena: ["entrada", "recordatorio", "alta"] };
+    const hecho = (usuario, id) => !!db().pasosPersonas?.[usuario.id]?.includes(id);
+
+    function pasos(usuario) {
+        if (esSocio(usuario)) {
+            const id = socioDe(usuario)?.id;
+            const entrenos = entrenosDe(id).filter((e) => e.fecha >= db().inicioDemo);
+            return [asistenciasDe(id).some((a) => a.fecha >= db().inicioDemo), entrenos.some((e) => Object.values(e.series).some((s) => s.length)), entrenos.some((e) => e.terminado)];
+        }
+        if (esProfe(usuario)) return [hecho(usuario, "asignar"), db().socios.some((s) => s.notas.some((n) => n.id !== "nt-franco-1" && n.profeId === profeDe(usuario))), hecho(usuario, "pdf")];
+        if (esDuena(usuario)) return [hecho(usuario, "entrada"), hecho(usuario, "recordatorio"), hecho(usuario, "alta")];
+        exigir(false, "Esta serie no está disponible para esa persona.");
+    }
+
+    function registrarPaso(usuario, id) {
+        if (!marcables[usuario?.rol]?.includes(id) || hecho(usuario, id)) return;
+        const hechos = db().pasosPersonas ??= {};
+        (hechos[usuario.id] ??= []).push(id);
+        guardado.persistir();
+    }
+
+    function rutinaBajada(usuario, socioId) {
+        exigir(esProfe(usuario), "La rutina en PDF la arma el profe.");
+        exigir(socio(socioId).rutina, "Ese socio no tiene rutina.");
+        registrarPaso(usuario, "pdf");
+    }
 
     function ultimaVez(id) {
         const f = asistenciasDe(id).reduce((m, a) => (a.fecha > m ? a.fecha : m), "");
@@ -737,6 +764,7 @@ export function crearDatos(prefijo = MARCA.prefijo, { reloj = () => new Date() }
         const s = db().socios.find((x) => x.id === String(codigo ?? "").trim());
         exigir(s, "Ese QR no es de un socio de este gimnasio.");
         const { nueva } = marcarLlegada(s, "qr");
+        if (s.id === "s-franco") registrarPaso(usuario, "entrada");
         let toca = null;
         try {
             toca = hoyLeToca(s.id);
@@ -1054,6 +1082,7 @@ export function crearDatos(prefijo = MARCA.prefijo, { reloj = () => new Date() }
             exigir(dias >= REAVISAR_DIAS, `A ${s.nombre} ya le mandaste el recordatorio hace poco: esperá unos días.`);
         }
         s.recordadoEn = reloj().toISOString();
+        if (s.id === "s-franco") registrarPaso(usuario, "recordatorio");
         guardado.persistir();
         const e = estadoCuota(s.vence, hoy());
         const cuando = e.estado === "vencida" ? `venció el ${nombreFecha(s.vence, hoy())}` : e.dias === 0 ? "vence hoy" : `vence el ${nombreFecha(s.vence, hoy())}`;
@@ -1184,6 +1213,7 @@ export function crearDatos(prefijo = MARCA.prefijo, { reloj = () => new Date() }
         const p = { id: nuevoId("pg"), socioId: s.id, fecha: hoy(), confirmadoEl: null, monto: c.monto, cuotaId: c.id, medio, estado: "", venciaAntes: null, hasta: null, clasesAntes: null, creadoEn: ahora() };
         acreditar(s, p);
         db().pagos.push(p);
+        registrarPaso(usuario, "alta");
         guardado.persistir();
         return armarSocio(s);
     }
@@ -1381,6 +1411,7 @@ export function crearDatos(prefijo = MARCA.prefijo, { reloj = () => new Date() }
         const p = plan(planId);
         s.planId = p.id;
         s.profeId = profeDe(usuario);
+        registrarPaso(usuario, "asignar");
         guardado.persistir();
         return socio(s.id);
     }
@@ -1505,7 +1536,7 @@ export function crearDatos(prefijo = MARCA.prefijo, { reloj = () => new Date() }
     }
 
     return {
-        guardado, hoy,
+        guardado, hoy, pasos, rutinaBajada,
         // socio
         hoyLeToca, llegue, entradaConQR, entrenarOtroDia, anotarSerie, deshacerSerie, terminarEntreno, miSemana, progreso,
         dias, clasesDelDia, reservar, cancelarReserva, misReservas, miCuota, avisarPago, misTrabajos, marcarTrabajo,

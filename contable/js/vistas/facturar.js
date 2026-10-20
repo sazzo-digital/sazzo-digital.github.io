@@ -1,30 +1,30 @@
+import { conConsigna } from "./comunes.js?v=569102ff5e";
 // ============================================
 // Facturar: la lista de comprobantes del mes, la factura nueva (la letra sale sola según el cliente, los totales se
 // ven mientras se carga y "Pidiendo CAE a ARCA…" simulado) y el comprobante emitido, listo para imprimir con la marca
 // de agua "DEMO · SIN VALIDEZ FISCAL", el CAE de prueba y el lugar del QR dibujado. Desde ahí, la nota de crédito.
 // Solo administración carga; Hernán y Patricia miran.
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=929def1556";
-import { htmlEstante, activarEstantes } from "../../kit/js/estante.js?v=929def1556";
-import { agruparPorEstado } from "../estantes.js?v=929def1556";
-import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=929def1556";
-import { htmlConsigna } from "../../kit/js/consigna.js?v=929def1556";
-import { TOPES, CUENTAS, ID_CONSUMIDOR_FINAL } from "../datos.js?v=929def1556";
-import { PRODUCTOS } from "../semilla.js?v=929def1556";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=569102ff5e";
+import { htmlEstante, activarEstantes } from "../../kit/js/estante.js?v=569102ff5e";
+import { agruparPorEstado } from "../estantes.js?v=569102ff5e";
+import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=569102ff5e";
+import { TOPES, CUENTAS, ID_CONSUMIDOR_FINAL } from "../datos.js?v=569102ff5e";
+import { PRODUCTOS } from "../semilla.js?v=569102ff5e";
 import {
     COMPROBANTES, ALICUOTAS, ORDEN_ALICUOTAS, TOPE_CF_IDENTIFICAR, pesos, numeroComprobante, formatoCuit, nombrePeriodo, signo
-} from "../reglas.js?v=929def1556";
-import { buscarPersona } from "../marca.js?v=929def1556";
+} from "../reglas.js?v=569102ff5e";
+import { buscarPersona } from "../marca.js?v=569102ff5e";
 import {
     fechaCorta, diaMes, pastillaTipo, periodoPedido, htmlSelectorMes, activarSelectorMes, documento, condicionTexto,
     logoEmpresa, conEspera, nombreDe
-} from "./comunes.js?v=929def1556";
+} from "./comunes.js?v=569102ff5e";
 
 const puedeCargar = (u) => u.rol === "admin";
 const OPCIONES_ALICUOTA = [...ORDEN_ALICUOTAS, "ex"];
 
 // ---------- Lista ----------
-export function vistaFacturar(cont, { usuario, datos, consulta }) {
+function pintarFacturar(cont, { usuario, datos, consulta }) {
     const periodo = periodoPedido(consulta);
     const lista = datos.listarComprobantes({ periodo });
     const anulados = new Set(lista.filter((c) => signo(c.tipo) > 0 && datos.restanteDeFactura(c.id).total <= 0).map((c) => c.id));
@@ -57,7 +57,7 @@ export function vistaFacturar(cont, { usuario, datos, consulta }) {
 }
 
 // ---------- Factura nueva ----------
-export function vistaNuevaFactura(cont, { usuario, datos, consulta }) {
+function pintarNuevaFactura(cont, { usuario, datos, consulta }) {
     if (!puedeCargar(usuario)) {
         cont.innerHTML = `<a class="volver" href="#/facturar"><i class="ti ti-arrow-left"></i> Facturar</a>${vacio("Las facturas las hace Silvina (administración).", "ti-lock")}`;
         return;
@@ -260,7 +260,7 @@ function motivoLetra(datos, clienteId, tipo) {
 }
 
 // ---------- Comprobante emitido ----------
-export function vistaComprobante(cont, { usuario, datos, params: [id], consulta, irA }) {
+function pintarComprobante(cont, { usuario, datos, params: [id], consulta, irA }) {
     const c = datos.buscarComprobante(id);
     const e = datos.leerEmpresa();
     const t = COMPROBANTES[c.tipo];
@@ -289,7 +289,7 @@ export function vistaComprobante(cont, { usuario, datos, params: [id], consulta,
         ${usuario.rol === "admin" && c.tipo === "FA" ? `
         <div class="siguiente-paso no-imprimir">
             <a class="boton boton--grande" href="#/compras"><i class="ti ti-cloud-download"></i> Ahora traé las compras de ARCA</a>
-            ${htmlConsigna({ paso: 2, total: 3, accion: "Ahora traé las compras de ARCA.", resultado: "El IVA de las compras del mes se suma solo.", guia: htmlGuia({ persona: patricia, ruta: "/iva", texto: "O mirá cómo ya lo ve la contadora" }) })}
+            ${htmlGuia({ persona: patricia, ruta: "/iva", texto: "O mirá cómo ya lo ve la contadora" })}
         </div>` : ""}` : `<h1 class="titulo no-imprimir">${esc(t.nombre)} ${esc(numeroComprobante(c.puntoVenta, c.numero))}</h1>`}
 
         <article class="factura" aria-label="${esc(t.nombre)}">
@@ -423,3 +423,9 @@ function htmlNotaCredito(c, queda) {
             </form>
         </details>`;
 }
+
+export const vistaFacturar = conConsigna(pintarFacturar);
+
+export const vistaNuevaFactura = conConsigna(pintarNuevaFactura);
+
+export const vistaComprobante = conConsigna(pintarComprobante);

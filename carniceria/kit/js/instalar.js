@@ -1,4 +1,4 @@
-import { esc, aviso } from "./ui.js?v=55764424c5";
+import { esc, aviso } from "./ui.js?v=4438010c31";
 
 let pedidoDeInstalar = null;
 let nombreApp = "la demo";
@@ -33,9 +33,10 @@ export function pasosParaInstalar({ agente = "", plataforma = "", toques = 0, ch
     }
     if (/Android/.test(agente)) {
         return [
-            "Abrila con Chrome. Si es la primera vez, recargá la página y tocá de nuevo: casi siempre ahí ya instala directo.",
-            "Si no, tocá los tres puntos (⋮) de arriba a la derecha.",
+            `${brave ? "" : "Abrila con Chrome. "}Si es la primera vez, recargá la página y tocá de nuevo: casi siempre ahí ya instala directo.`,
+            brave ? "Si no, tocá los tres puntos (⋮) del menú de Brave, abajo o arriba a la derecha." : "Si no, tocá los tres puntos (⋮) de arriba a la derecha.",
             'Tocá "Instalar app" o "Agregar a la pantalla principal" y confirmá.',
+            'Si te pregunta otra vez "Agregar a pantalla principal", tocá "Agregar": si cancelás, no queda el ícono.',
             `Si no aparece ninguna de las dos, puede que ya esté instalada: buscá ${nombre} entre tus apps.`
         ];
     }

@@ -6,7 +6,7 @@
 // - La clave ("sazzo-tema") es compartida a propósito: el tema elegido sigue en todas las demos de Sazzo.
 // kit/js/tema.js lo aplica antes de dibujar, para que no parpadee.
 // ============================================
-import { $, $$ } from "./ui.js?v=f6723a2a8a";
+import { $, $$ } from "./ui.js?v=12c89e832a";
 
 export const CLAVE_TEMA = "sazzo-tema";
 

@@ -1,16 +1,16 @@
+import { pintarConsigna } from "./comunes.js?v=ab9b8e0e7d";
 // ============================================
 // Stock y precios: productos por proveedor con "hay que pedir"; el dueño corrige precio y stock ("llegó
 // mercadería") y tiene "Subió un proveedor": elegís el proveedor y el %, ves antes → después con el redondeo de
 // kiosco y aplicás todo de una, con Deshacer. Y "La lista del proveedor en Excel": subís la lista que te mandó y los
 // precios se actualizan solos (también con Deshacer). El stock se baja a Excel. La empleada solo mira (y baja).
 // ============================================
-import { esc, aviso, vacio, mensajeDe } from "../../kit/js/ui.js?v=75a51fff75";
-import { bajarExcel, leerExcel } from "../../kit/js/archivos.js?v=75a51fff75";
-import { htmlEstante, activarEstantes } from "../../kit/js/estante.js?v=75a51fff75";
-import { PROVEEDORES, TOPES, pesos, estadoStock } from "../datos.js?v=75a51fff75";
-import { pastillaStock } from "./comunes.js?v=75a51fff75";
-import { htmlConsigna, htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=75a51fff75";
-import { MARCA } from "../marca.js?v=75a51fff75";
+import { esc, aviso, vacio, mensajeDe } from "../../kit/js/ui.js?v=ab9b8e0e7d";
+import { bajarExcel, leerExcel } from "../../kit/js/archivos.js?v=ab9b8e0e7d";
+import { htmlEstante, activarEstantes } from "../../kit/js/estante.js?v=ab9b8e0e7d";
+import { PROVEEDORES, TOPES, pesos, estadoStock } from "../datos.js?v=ab9b8e0e7d";
+import { pastillaStock } from "./comunes.js?v=ab9b8e0e7d";
+import { MARCA } from "../marca.js?v=ab9b8e0e7d";
 
 const RAPIDOS = [5, 10, 15, 20];
 
@@ -58,7 +58,7 @@ export function vistaStock(cont, { usuario, datos, consulta }) {
         ${dueno ? htmlUltimoAumento(datos.ultimoAumento()) : `<p class="nota"><i class="ti ti-info-circle"></i> Los precios y el stock los cambia Rubén.</p>`}
         <div class="acciones-excel">
             ${dueno ? `<a class="boton boton--chico boton--secundario" href="#/stock/lista"><i class="ti ti-file-spreadsheet"></i> Lista del proveedor en Excel</a>` : ""}
-            <button class="boton boton--chico boton--secundario" type="button" data-bajar-stock><i class="ti ti-download"></i> Bajar el stock a Excel</button>
+            <button class="boton boton--chico boton--secundario" type="button" data-bajar-stock><i class="ti ti-file-spreadsheet"></i> Stock a Excel</button>
         </div>
         <nav class="chips" aria-label="Filtrar">
             ${chip(null, "Todos")}
@@ -113,6 +113,7 @@ export function vistaStock(cont, { usuario, datos, consulta }) {
             aviso(err, "error");
         }
     }));
+    pintarConsigna(cont, datos, usuario);
 }
 
 /** "Subió un proveedor": proveedor + % → antes y después → Aplicar (con Deshacer). */
@@ -149,7 +150,6 @@ export function vistaAumento(cont, { usuario, datos }) {
     cont.innerHTML = `
         <a class="volver" href="#/stock"><i class="ti ti-arrow-left"></i> Stock y precios</a>
         <h1 class="titulo">Subir los precios de un proveedor</h1>
-        ${htmlConsigna({ paso: 3, total: 3, accion: "Te mandó la lista nueva: elegí el proveedor y cuánto subió, mirá cómo quedan y aplicalo.", resultado: "Cambian todos sus precios de una, con Deshacer." })}
         <div class="bloque">
             <p class="rotulo-chico">Proveedor</p>
             <div class="chips">${PROVEEDORES.map((p) => `<button class="chip" type="button" data-proveedor="${esc(p.id)}">${esc(p.nombre)}</button>`).join("")}</div>
@@ -191,11 +191,7 @@ export function vistaAumento(cont, { usuario, datos }) {
                 lugar.innerHTML = "";
                 pintar();
             });
-            const consigna = cont.querySelector(".consigna");
-            if (consigna) {
-                consigna.outerHTML = htmlConsignaFinal(MARCA, 3);
-                activarConsigna(cont, MARCA);
-            }
+            pintarConsigna(cont, datos, usuario);
             aviso(`${a.cambios.length} precios actualizados`);
             pintar();
             lugar.scrollIntoView({ block: "center" });
@@ -204,10 +200,11 @@ export function vistaAumento(cont, { usuario, datos }) {
         }
     });
     pintar();
+    pintarConsigna(cont, datos, usuario);
 }
 
 /**
- * "La lista del proveedor en Excel": bajás la de ejemplo (o usás la que te mandó), la subís, mirás antes → después
+ * "La lista del proveedor en Excel": usás la de ejemplo (o subís la que te mandó), mirás antes → después
  * con el redondeo de kiosco y aplicás todo de una (con Deshacer). Todo pasa en el navegador: el archivo no se sube.
  */
 export function vistaLista(cont, { usuario, datos }) {
@@ -218,8 +215,8 @@ export function vistaLista(cont, { usuario, datos }) {
         <p class="nota"><i class="ti ti-file-spreadsheet"></i> ¿Te mandó la lista nueva en Excel? Subila y los precios se actualizan solos, con tu redondeo. Probá con la de ejemplo.</p>
         <ol class="pasos-lista">
             <li>
-                <span>Bajá la lista de ejemplo de Bebidas Norte (sube un 12 %).</span>
-                <button class="boton boton--chico boton--secundario" type="button" data-ejemplo><i class="ti ti-download"></i> Lista de ejemplo</button>
+                <span>Usá la lista de ejemplo de Bebidas Norte (sube un 12 %).</span>
+                <button class="boton boton--chico boton--secundario" type="button" data-ejemplo><i class="ti ti-file-spreadsheet"></i> Usar la lista de ejemplo</button>
             </li>
             <li>
                 <span>Subila (o la que te mandó tu proveedor: con una columna "Precio" y otra "Código" o "Producto").</span>
@@ -271,10 +268,14 @@ export function vistaLista(cont, { usuario, datos }) {
         });
     }
 
-    cont.querySelector("[data-ejemplo]").addEventListener("click", (e) => {
-        e.currentTarget.disabled = true;
-        bajarExcel("Lista Bebidas Norte (ejemplo)", datos.listaDeEjemplo("pr-norte"), { hoja: "Lista", anchos: [16, 32, 16] })
-            .finally(() => cont.querySelector("[data-ejemplo]")?.removeAttribute("disabled"));
+    cont.querySelector("[data-ejemplo]").addEventListener("click", () => {
+        try {
+            filas = datos.listaDeEjemplo("pr-norte");
+            pintar("Lista de ejemplo");
+        } catch (err) {
+            filas = null;
+            lugar.innerHTML = `<p class="alerta alerta--alerta"><i class="ti ti-alert-triangle"></i> ${esc(mensajeDe(err))}</p>`;
+        }
     });
     cont.querySelector("[data-archivo]").addEventListener("change", async (e) => {
         const archivo = e.target.files?.[0];
@@ -289,4 +290,5 @@ export function vistaLista(cont, { usuario, datos }) {
             lugar.innerHTML = `<p class="alerta alerta--alerta"><i class="ti ti-alert-triangle"></i> ${esc(mensajeDe(err))}</p>`;
         }
     });
+    pintarConsigna(cont, datos, usuario);
 }

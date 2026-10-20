@@ -1,3 +1,4 @@
+import { consignaPersona, activarSerie } from "./comunes.js?v=4438010c31";
 // ============================================
 // Desposte: lo que entra (media res, media res de cerdo o cajón de pollo) se despieza y se pesa corte por corte.
 //   Lista: los despostes abiertos (lo que falta pesar), "Entró mercadería" (el dueño) y el historial con la merma de
@@ -7,13 +8,12 @@
 //   El dueño ve además el costo real por kilo de cada corte y el precio sugerido con su margen ("Aplicar", con
 //   Deshacer) y lo baja en PDF. Darío carga los pesos; los costos los ve Ricardo.
 // ============================================
-import { esc, aviso, vacio, fechaCorta } from "../../kit/js/ui.js?v=55764424c5";
-import { armarPdf, pdfListo } from "../../kit/js/pdf.js?v=55764424c5";
-import { TOPES, TIPOS_INGRESO, PROVEEDORES, pesos, kilos, aGramos, mermaEsperada } from "../datos.js?v=55764424c5";
-import { NEGOCIO, MARCA } from "../marca.js?v=55764424c5";
-import { htmlConsigna, htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=55764424c5";
-import { htmlMediaRes, activarMediaRes, ZONAS } from "../media-res.js?v=55764424c5";
-import { guia, activarGuias, cuando, campoKg, kgEnCampo, porcentaje, unDecimal } from "./comunes.js?v=55764424c5";
+import { esc, aviso, vacio, fechaCorta } from "../../kit/js/ui.js?v=4438010c31";
+import { armarPdf, pdfListo } from "../../kit/js/pdf.js?v=4438010c31";
+import { TOPES, TIPOS_INGRESO, PROVEEDORES, pesos, kilos, aGramos, mermaEsperada } from "../datos.js?v=4438010c31";
+import { NEGOCIO, MARCA } from "../marca.js?v=4438010c31";
+import { htmlMediaRes, activarMediaRes, ZONAS } from "../media-res.js?v=4438010c31";
+import { guia, activarGuias, cuando, campoKg, kgEnCampo, porcentaje, unDecimal } from "./comunes.js?v=4438010c31";
 
 /** La merma contra la esperada: pastilla verde (igual o menos), amarilla (hasta 1,5 puntos más) o roja. */
 function pastillaMerma(merma, esperada) {
@@ -29,6 +29,7 @@ export function vistaDespostes(cont, { usuario, datos }) {
     const abiertos = todos.filter((d) => d.estado === "abierto");
     const h = datos.historial();
     cont.innerHTML = `
+        ${consignaPersona(datos, usuario)}
         <div class="titulo-con-accion">
             <h1 class="titulo">Desposte</h1>
             ${dueno ? `<a class="boton boton--chico" href="#/desposte/nuevo"><i class="ti ti-truck-delivery"></i> Entró mercadería</a>` : ""}
@@ -68,6 +69,7 @@ export function vistaDespostes(cont, { usuario, datos }) {
                     ${pastillaMerma(d.merma, d.esperada)}
                 </li>`).join("")}</ul>` : `<p class="nota">Todavía no hay despostes terminados.</p>`}
         </section>`;
+    activarSerie(cont);
 }
 
 /** "Entró mercadería": qué, de qué proveedor, tropa o lote, kilos y costo por kilo. */
@@ -76,6 +78,7 @@ export function vistaIngreso(cont, { usuario, datos }) {
     function pintar() {
         const t = TIPOS_INGRESO[tipo];
         cont.innerHTML = `
+        ${consignaPersona(datos, usuario)}
             <a class="volver" href="#/desposte"><i class="ti ti-arrow-left"></i> Desposte</a>
             <h1 class="titulo">Entró mercadería</h1>
             <form class="formulario bloque" novalidate>
@@ -94,6 +97,7 @@ export function vistaIngreso(cont, { usuario, datos }) {
                 <p class="nota costo-total" aria-live="polite"></p>
                 <button class="boton boton--ancho" type="submit"><i class="ti ti-check"></i> Anotar y empezar a despostar</button>
             </form>`;
+    activarSerie(cont);
         const f = cont.querySelector("form");
         const total = () => {
             const g = aGramos(f.kg.value);
@@ -167,6 +171,7 @@ export function vistaDesposte(cont, opciones, recien = null) {
     const picadas = filas.filter((f) => /^Picada/.test(f.nombre) && f.gramos);
 
     cont.innerHTML = `
+        ${consignaPersona(datos, usuario)}
         <a class="volver" href="#/desposte"><i class="ti ti-arrow-left"></i> Desposte</a>
         <div class="titulo-con-accion">
             <h1 class="titulo">N° ${esc(d.numero)} · ${esc(d.tipoNombre)}</h1>
@@ -179,7 +184,6 @@ export function vistaDesposte(cont, opciones, recien = null) {
             <h2 class="titulo">Desposte terminado</h2>
             <p>Los kilos de cada corte pasaron al stock${dueno ? " y cada corte tiene su costo real" : ""}.</p>
         </div>` : ""}
-        ${abierto && sinPesar.length && sinPesar.length <= 3 ? htmlConsigna({ paso: 3, total: 3, accion: `${d.despostadoPor && d.despostadoPor !== usuario.nombre ? `${d.despostadoPor} ya pesó casi todo. ` : ""}Falta: ${sinPesar.map((f) => f.nombre.toLowerCase()).join(" y ")}. Escribí lo que pesó (${sinPesar.map((f) => kgEnCampo(Math.round(f.esperadoG / 100) * 100)).join(" y ")}) y tocá Terminar.`, resultado: "Te calcula la merma, el costo real y el precio sugerido." }) : ""}
         <div class="desposte">
             <div>
                 ${d.animal === "vaca" ? `${htmlMediaRes({ estados, titulo: "Los cortes de la media res: tocá uno para pesarlo" })}
@@ -228,8 +232,9 @@ export function vistaDesposte(cont, opciones, recien = null) {
                     <b class="despues">${esc(pesos(s.despues))}</b>
                 </li>`).join("")}</ul>
             <div class="acciones-desposte"></div>` : `<p class="nota"><i class="ti ti-info-circle"></i> Los costos reales y los precios sugeridos los ve Ricardo.</p>`}
-            <button class="boton boton--secundario" type="button" data-pdf><i class="ti ti-file-type-pdf"></i> Bajar el desposte en PDF</button>
+            <button class="boton boton--secundario" type="button" data-pdf><i class="ti ti-file-type-pdf"></i> Desposte en PDF</button>
         </section>` : ""}`;
+    activarSerie(cont);
 
     // Pesar: al salir de cada campo se guarda y se pasa al siguiente sin pesar
     cont.querySelectorAll(".pesaje input[name=kg]").forEach((campo) => {
@@ -288,11 +293,9 @@ export function vistaDesposte(cont, opciones, recien = null) {
                 <button class="boton boton--chico boton--secundario" type="button" data-deshacer="${esc(ultimo.id)}"><i class="ti ti-arrow-back-up"></i> Deshacer</button>
             </div>
             <a class="boton boton--ancho" href="#/pizarra"><i class="ti ti-device-tv"></i> Ver la pizarra con los precios nuevos</a>
-            ${htmlConsignaFinal(MARCA, 3)}
             ${guia("u-dueno", "/caja", "Mirá la caja del día y la ganancia")}`
             : cambian.length ? `<button class="boton boton--ancho boton--grande" type="button" data-aplicar><i class="ti ti-check"></i> Aplicar los ${esc(cambian.length)} precios sugeridos</button>`
                 : `<p class="nota"><i class="ti ti-circle-check"></i> Los precios ya son los sugeridos.</p>`;
-        activarConsigna(lugar, MARCA);
         lugar.querySelector("[data-aplicar]")?.addEventListener("click", () => {
             try {
                 const c = datos.aplicarSugeridos(usuario, d.id);

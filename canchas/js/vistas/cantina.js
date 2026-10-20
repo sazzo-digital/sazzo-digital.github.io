@@ -1,9 +1,10 @@
-import { esc } from "../../kit/js/ui.js?v=952176458b";
-import { abrirCaja, htmlMasDeLaCaja } from "../../kit/js/caja.js?v=952176458b";
-import { htmlEstante, activarEstantes } from "../../kit/js/estante.js?v=952176458b";
-import { MEDIOS_PAGO, mediosParaCaja } from "../../kit/js/pagos.js?v=952176458b";
-import { pesos, SECCIONES_CANTINA } from "../datos.js?v=952176458b";
-import { MARCA, NEGOCIO } from "../marca.js?v=952176458b";
+import { pintarConsigna } from "./comunes.js?v=ff14c7e9df";
+import { esc } from "../../kit/js/ui.js?v=ff14c7e9df";
+import { abrirCaja, htmlMasDeLaCaja } from "../../kit/js/caja.js?v=ff14c7e9df";
+import { htmlEstante, activarEstantes } from "../../kit/js/estante.js?v=ff14c7e9df";
+import { MEDIOS_PAGO, mediosParaCaja } from "../../kit/js/pagos.js?v=ff14c7e9df";
+import { pesos, SECCIONES_CANTINA } from "../datos.js?v=ff14c7e9df";
+import { MARCA, NEGOCIO } from "../marca.js?v=ff14c7e9df";
 
 const MEDIOS_CAJA = mediosParaCaja(MEDIOS_PAGO);
 
@@ -55,4 +56,5 @@ export function vistaCantina(cont, { usuario, datos }) {
         despues: () => pintarStock()
     });
     pintarStock();
+    pintarConsigna(cont, datos, usuario);
 }

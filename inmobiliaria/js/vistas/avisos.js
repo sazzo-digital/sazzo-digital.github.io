@@ -4,8 +4,8 @@
 //   El agente la confirma → a Valeria le salta "¡Te confirmaron la visita!". Si alguno la cancela, el otro se entera.
 // Acá solo se dice qué pasó y a quién le importa; el kit decide qué es nuevo para cada uno.
 // ============================================
-import { fechaCorta } from "../../kit/js/ui.js?v=86b90b0105";
-import { aHora } from "../../kit/js/turnos.js?v=86b90b0105";
+import { fechaCorta } from "../../kit/js/ui.js?v=34a23b46ed";
+import { aHora } from "../../kit/js/turnos.js?v=34a23b46ed";
 
 export function avisosDe(datos) {
     const db = datos.guardado.db();

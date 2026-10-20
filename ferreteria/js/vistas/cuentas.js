@@ -1,16 +1,17 @@
+import { pintarConsigna } from "./comunes.js?v=12c89e832a";
 // ============================================
 // Cuentas corrientes (los del oficio que compran todo el mes y pagan después): quién debe, cuánto, hace cuánto que
 // no paga y cuánto del tope usó. En la ficha: el recordatorio armado para mandarle, anotar un pago (todo o una parte),
 // el tope (lo cambia el dueño) y qué se llevó en cada compra. El dueño abre cuentas nuevas.
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=f6723a2a8a";
-import { mostrarMensaje } from "../../kit/js/mensaje.js?v=f6723a2a8a";
-import { TOPES, TOPE_CUENTA_NUEVA, pesos } from "../datos.js?v=f6723a2a8a";
-import { barraTope, haceDias, diasDesde, cuando } from "./comunes.js?v=f6723a2a8a";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=12c89e832a";
+import { mostrarMensaje } from "../../kit/js/mensaje.js?v=12c89e832a";
+import { TOPES, TOPE_CUENTA_NUEVA, pesos } from "../datos.js?v=12c89e832a";
+import { barraTope, haceDias, diasDesde, cuando } from "./comunes.js?v=12c89e832a";
 
 const DIAS_ATRASADO = 30; // desde cuántos días sin pagar se marca
 
-export function vistaCuentas(cont, { usuario, datos }) {
+function pintarCuentas(cont, { usuario, datos }) {
     const cuentas = datos.listarCuentas(usuario);
     const total = cuentas.reduce((t, c) => t + c.deuda, 0);
     const atrasada = cuentas.find((c) => c.deuda > 0 && diasDesde(c.desde) >= DIAS_ATRASADO);
@@ -58,7 +59,7 @@ export function vistaCuentas(cont, { usuario, datos }) {
     });
 }
 
-export function vistaCuenta(cont, { usuario, datos, params: [id] }) {
+function pintarCuenta(cont, { usuario, datos, params: [id] }) {
     const c = datos.cuenta(usuario, id);
     const dueno = usuario.rol === "dueno";
     const otraVez = () => vistaCuenta(cont, { usuario, datos, params: [id] });
@@ -136,4 +137,16 @@ export function vistaCuenta(cont, { usuario, datos, params: [id] }) {
             aviso(err, "error");
         }
     });
+}
+
+export function vistaCuentas(cont, opciones, ...args) {
+    const resultado = pintarCuentas(cont, opciones, ...args);
+    pintarConsigna(cont, opciones);
+    return resultado;
+}
+
+export function vistaCuenta(cont, opciones, ...args) {
+    const resultado = pintarCuenta(cont, opciones, ...args);
+    pintarConsigna(cont, opciones);
+    return resultado;
 }

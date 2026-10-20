@@ -1,13 +1,13 @@
 // ============================================
-// Excel y archivos para bajar o mandar. Todo se arma en el celular o la compu: nada se sube a ningún lado.
+// Excel y archivos de las demos. Todo se arma en el celular o la compu: nada se sube ni se baja a ningún lado.
 //   await bajarExcel("stock", [["Producto", "Precio"], ["Alfajor", 1500]], { hoja: "Stock", anchos: [30, 12] });
 //   const filas = await leerExcel(archivo);          // [[celda, celda…], …] (texto, número o vacío), con topes
-//   entregarArchivo(blob, "presupuesto-104.pdf");    // "Compartir" (WhatsApp, mail…) o "Descargar"
+//   entregarArchivo(blob, "presupuesto-104.pdf");    // en la demo: una hoja, no se baja nada
 // Las librerías (kit\libs\, ver su LEEME) se bajan recién la primera vez que alguien toca el botón.
 // ============================================
-import { esc, aviso, mensajeDe } from "./ui.js?v=5983ccc313";
-import { alSalirDeLaPantalla } from "./rutas.js?v=5983ccc313";
-import { RUTA_LIBS } from "./config.js?v=5983ccc313";
+import { esc, aviso, mensajeDe } from "./ui.js?v=53dafd0799";
+import { alSalirDeLaPantalla } from "./rutas.js?v=53dafd0799";
+import { RUTA_LIBS } from "./config.js?v=53dafd0799";
 
 const VERSIONES = {
     "write-excel-file.min.js": "4.1.1",
@@ -40,7 +40,7 @@ export function cargarLibreria(archivo, global) {
     return cargando.get(archivo);
 }
 
-// ---------- Bajar o compartir ----------
+// ---------- Archivos (en la demo no se baja nada) ----------
 
 /** "Presupuesto N° 104" → "presupuesto-n-104" (sin tildes, espacios ni nada raro: así viaja bien por WhatsApp). */
 export function nombreDeArchivo(texto, extension) {
@@ -55,53 +55,29 @@ export function nombreDeArchivo(texto, extension) {
     return `${base}.${extension}`;
 }
 
-/** Baja el archivo con el nombre dado (en el celular queda en Descargas). */
-export function descargar(blob, nombre) {
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = nombre;
-    document.body.append(a);
-    a.click();
-    a.remove();
-    setTimeout(() => URL.revokeObjectURL(url), 4000);
-}
-
-/** ¿El navegador puede mandar este archivo con el menú de compartir del celular? */
-export function puedeCompartirArchivo(archivo) {
-    try {
-        return typeof navigator.canShare === "function" && typeof navigator.share === "function" && navigator.canShare({ files: [archivo] });
-    } catch {
-        return false;
-    }
+/** Cuánto pesa, escrito corto: "1 KB", "12 KB". */
+function pesoCorto(bytes) {
+    return `${Math.max(1, Math.round(Number(bytes) / 1024) || 1)} KB`;
 }
 
 /**
- * El archivo ya armado: si el celular puede compartirlo, una ventanita con "Compartir" (WhatsApp, mail…) y
- * "Descargar" (compartir necesita un toque nuevo: armar el archivo tarda y el navegador ya no lo cuenta como toque).
- * Si no puede, lo baja directo.
+ * En la demo no se baja ni se comparte nada: una hoja avisa que no se descargó nada, con el nombre y el tamaño del archivo.
+ * La usan entregarArchivo (Excel y PDF), descargarCSV y todo botón de "bajar" de las demos.
  */
-export function entregarArchivo(blob, nombre, { titulo = "Listo", texto = "" } = {}) {
-    if (!/^[a-z0-9-]{1,60}\.[a-z0-9]{2,5}$/.test(nombre)) throw new Error("Nombre de archivo inválido.");
-    const archivo = new File([blob], nombre, { type: blob.type });
-    if (!puedeCompartirArchivo(archivo)) {
-        descargar(blob, nombre);
-        aviso(`Bajado: ${nombre}`);
-        return null;
-    }
+export function mostrarArchivoDeDemo(nombre, bytes) {
     document.querySelector("dialog.archivo-listo")?.remove();
     const hoja = document.createElement("dialog");
     hoja.className = "hoja archivo-listo";
     hoja.innerHTML = `
         <div class="hoja__caja">
             <div class="hoja__titulos">
-                <h2><i class="ti ti-file-check" aria-hidden="true"></i> ${esc(titulo)}</h2>
+                <h2><i class="ti ti-info-circle" aria-hidden="true"></i> No se descargó nada: es una demo</h2>
                 <button class="boton-icono" type="button" data-cerrar aria-label="Cerrar"><i class="ti ti-x"></i></button>
             </div>
-            <p class="archivo-listo__nombre"><i class="ti ti-file" aria-hidden="true"></i> ${esc(nombre)} <small>${esc(Math.max(1, Math.round(blob.size / 1024)))} KB</small></p>
+            <p class="archivo-listo__nombre"><i class="ti ti-file" aria-hidden="true"></i> ${esc(nombre)} <small>${esc(pesoCorto(bytes))}</small></p>
+            <p>En tu versión, al tocar este botón se guarda este archivo en tu celu o en tu compu. Acá no se guardó nada.</p>
             <div class="archivo-listo__acciones">
-                <button class="boton" type="button" data-compartir><i class="ti ti-share"></i> Compartir</button>
-                <button class="boton boton--secundario" type="button" data-descargar><i class="ti ti-download"></i> Descargar</button>
+                <button class="boton" type="button" data-entendido>Entendido</button>
             </div>
         </div>`;
     document.body.append(hoja);
@@ -110,26 +86,20 @@ export function entregarArchivo(blob, nombre, { titulo = "Listo", texto = "" } =
         hoja.remove();
     };
     hoja.querySelector("[data-cerrar]").addEventListener("click", cerrar);
+    hoja.querySelector("[data-entendido]").addEventListener("click", cerrar);
     hoja.addEventListener("close", () => hoja.remove());
     hoja.addEventListener("click", (e) => {
         if (e.target === hoja) cerrar();
     });
-    hoja.querySelector("[data-descargar]").addEventListener("click", () => {
-        descargar(blob, nombre);
-        aviso(`Bajado: ${nombre}`);
-        cerrar();
-    });
-    hoja.querySelector("[data-compartir]").addEventListener("click", async () => {
-        try {
-            await navigator.share({ files: [archivo], title: texto || titulo });
-            cerrar();
-        } catch (e) {
-            if (e?.name !== "AbortError") aviso("No se pudo compartir: probá con Descargar.", "error");
-        }
-    });
     alSalirDeLaPantalla(cerrar);
     hoja.showModal();
     return hoja;
+}
+
+/** El archivo ya armado: en la demo no se baja ni se comparte, se muestra la hoja (mostrarArchivoDeDemo). */
+export function entregarArchivo(blob, nombre) {
+    if (!/^[a-z0-9-]{1,60}\.[a-z0-9]{2,5}$/.test(nombre)) throw new Error("Nombre de archivo inválido.");
+    return mostrarArchivoDeDemo(nombre, blob.size);
 }
 
 // ---------- Excel ----------
@@ -239,11 +209,11 @@ export async function armarExcel(filas, { hoja = "Hoja 1", anchos = [] } = {}) {
     return escribir(datos, { columns: columnas, sheet: String(hoja).replace(/[\\/?*[\]:]/g, "").slice(0, 31) || "Hoja 1" }).toBlob();
 }
 
-/** Arma el Excel y lo entrega (Compartir / Descargar). "nombre" sin extensión: "Stock del kiosco". */
+/** Arma el Excel y lo entrega (en la demo, la hoja de mostrarArchivoDeDemo). "nombre" sin extensión: "Stock del kiosco". */
 export async function bajarExcel(nombre, filas, opciones = {}) {
     try {
         const blob = await armarExcel(filas, opciones);
-        return entregarArchivo(blob, nombreDeArchivo(nombre, "xlsx"), { titulo: "Tu Excel está listo", texto: nombre });
+        return entregarArchivo(blob, nombreDeArchivo(nombre, "xlsx"));
     } catch (e) {
         aviso(mensajeDe(e), "error");
         return null;
@@ -251,4 +221,4 @@ export async function bajarExcel(nombre, filas, opciones = {}) {
 }
 
 // Encontrar columnas y leer precios de lo que vino en el Excel: en tablas.js (sin pantalla, para los datos)
-export { columnasDe, numeroDe, textoParaComparar } from "./tablas.js?v=5983ccc313";
+export { columnasDe, numeroDe, textoParaComparar } from "./tablas.js?v=53dafd0799";

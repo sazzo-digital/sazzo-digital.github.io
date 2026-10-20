@@ -6,14 +6,14 @@
 // Reglas del kit: exigir() en lo que modifica, topes en todo lo que se carga, nada se borra (se anula o se libera)
 // y se devuelven copias. Si cambia la forma de los datos, subir VERSION_DATOS (se regeneran solos).
 // ============================================
-import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=952176458b";
-import { sinPasarse } from "../kit/js/topes.js?v=952176458b";
-import { fechaLocalISO, diaLocalDe } from "../kit/js/fechas.js?v=952176458b";
-import { aMinutos, aHora, diaSemana, proximosDias, franjas, fijosDelDia, ocupados, libres, revisarLibre, sePisan } from "../kit/js/turnos.js?v=952176458b";
-import { MARCA } from "./marca.js?v=952176458b";
-import { MEDIOS_PAGO, DIVIDIDO, revisarPagos } from "../kit/js/pagos.js?v=952176458b";
+import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=ff14c7e9df";
+import { sinPasarse } from "../kit/js/topes.js?v=ff14c7e9df";
+import { fechaLocalISO, diaLocalDe } from "../kit/js/fechas.js?v=ff14c7e9df";
+import { aMinutos, aHora, diaSemana, proximosDias, franjas, fijosDelDia, ocupados, libres, revisarLibre, sePisan } from "../kit/js/turnos.js?v=ff14c7e9df";
+import { MARCA, PERSONAS } from "./marca.js?v=ff14c7e9df";
+import { MEDIOS_PAGO, DIVIDIDO, revisarPagos } from "../kit/js/pagos.js?v=ff14c7e9df";
 
-export const VERSION_DATOS = 4;
+export const VERSION_DATOS = 5;
 
 export const TOPES = {
     grupo: 30, // letras del nombre del grupo
@@ -165,6 +165,10 @@ export function semilla() {
             }
         }
     });
+    dias.slice(0, 2).forEach((dia) => {
+        const delDia = turnos.filter((t) => t.fecha === dia && t.estado === "reservado");
+        if (delDia.length && !delDia.some((t) => t.sena === "pendiente")) delDia[0].sena = "pendiente";
+    });
     // El turno que ya tiene Fede (para que "Mis turnos" no arranque vacío)
     const fecha = dias[3];
     const cancha = CANCHAS[0];
@@ -183,6 +187,27 @@ export function semilla() {
 export function crearDatos(prefijo = MARCA.prefijo, { reloj = () => new Date() } = {}) {
     const guardado = crearGuardado({ prefijo, version: VERSION_DATOS, semilla });
     const db = () => guardado.db();
+
+    const series = {"dueno": ["sena", "llegaron", "fijo"], "cliente": ["reserva", "pedido", "cancelar"]};
+
+    const sinSenaPendiente = () => !db().turnos.some((t) => t.sena === "pendiente" && !t.anulado);
+    const sinDondePedir = (usuario) => !db().turnos.some((t) => t.jugadorId === usuario.id && !t.anulado && t.estado === "reservado" && !t.pago && !terminado(t));
+    const dadosPorHecho = { sena: sinSenaPendiente, pedido: sinDondePedir };
+
+    function pasos(usuario) {
+        exigir(PERSONAS.some((p) => p.id === usuario?.id && p.rol === usuario?.rol), "Esa persona no tiene una serie.");
+        return series[usuario.rol].map((id) => !!db().pasosPersonas?.[usuario.id]?.includes(id) || !!dadosPorHecho[id]?.(usuario));
+    }
+
+    function registrarPaso(usuario, id) {
+        if (!series[usuario.rol].includes(id)) return;
+        const hechos = db().pasosPersonas ??= {};
+        const persona = hechos[usuario.id] ??= [];
+        if (persona.includes(id)) return;
+        persona.push(id);
+        guardado.persistir();
+    }
+
     const hoy = () => {
         const d = reloj();
         return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
@@ -264,7 +289,9 @@ export function crearDatos(prefijo = MARCA.prefijo, { reloj = () => new Date() }
         exigir(esJugador(usuario), "Desde acá reservan los jugadores.");
         const activos = db().turnos.filter((t) => t.jugadorId === usuario.id && !t.anulado && t.estado === "reservado" && horasHasta(t) > 0);
         exigir(activos.length < TOPES.activosJugador, `Ya tenés ${TOPES.activosJugador} turnos por venir: es el máximo.`);
-        return crearTurno(usuario, datosTurno, { jugadorId: usuario.id, origen: "app", sena: "pagada", visto: false });
+        const turno = crearTurno(usuario, datosTurno, { jugadorId: usuario.id, origen: "app", sena: "pagada", visto: false });
+        registrarPaso(usuario, "reserva");
+        return turno;
     }
 
     /** Los turnos del jugador: los que vienen (el más cercano primero) y los anteriores. */
@@ -291,6 +318,7 @@ export function crearDatos(prefijo = MARCA.prefijo, { reloj = () => new Date() }
         t.estado = "cancelado";
         t.anulado = true;
         devolverSinEntregar(t);
+        registrarPaso(usuario, "cancelar");
         guardado.persistir();
         return armar(t);
     }
@@ -364,6 +392,7 @@ export function crearDatos(prefijo = MARCA.prefijo, { reloj = () => new Date() }
             t.estado = estado;
             t.visto = true;
         }
+        if (estado === "llegaron") registrarPaso(usuario, "llegaron");
         guardado.persistir();
         return armar(fijo ? fijosDelDia([fijo], fecha)[0] : t);
     }
@@ -374,6 +403,7 @@ export function crearDatos(prefijo = MARCA.prefijo, { reloj = () => new Date() }
         exigir(!fijo, "Los turnos fijos no llevan seña.");
         exigir(t.sena === "pendiente" && !t.anulado, "Ese turno no tiene seña a cobrar.");
         t.sena = "pagada";
+        registrarPaso(usuario, "sena");
         guardado.persistir();
         return armar(t);
     }
@@ -465,6 +495,7 @@ export function crearDatos(prefijo = MARCA.prefijo, { reloj = () => new Date() }
         exigir(!otroFijo, `Ese horario ya es fijo de ${otroFijo?.grupo} los ${DIAS[dia]}: elegí otro.`);
         const f = { id: nuevoId("f"), lugarId: cancha.id, dia, inicio, duracion: TIPOS[cancha.tipo].duracion, grupo: g, liberadas: [], asistencia: {}, precio: TIPOS[cancha.tipo].precio, desde: fecha };
         db().fijos.push(f);
+        registrarPaso(usuario, "fijo");
         guardado.persistir();
         return listarFijos().find((x) => x.id === f.id);
     }
@@ -521,6 +552,7 @@ export function crearDatos(prefijo = MARCA.prefijo, { reloj = () => new Date() }
             p.stock -= cantidad;
             t.consumos.push({ id: nuevoId("k"), productoId: p.id, nombre: p.nombre, precio: p.precio, cantidad, por: usuario.nombre, delJugador: esJugador(usuario), cuando: ahora(), entregado: esDueno(usuario) });
         });
+        if (esJugador(usuario)) registrarPaso(usuario, "pedido");
         guardado.persistir();
         return cuenta(id);
     }
@@ -545,7 +577,10 @@ export function crearDatos(prefijo = MARCA.prefijo, { reloj = () => new Date() }
         const { falta } = cuenta(id);
         const partesPago = medio === DIVIDIDO ? revisarPagos(falta, pagos) : null;
         t.pago = { total: falta, medio, partes: dividir(falta, partes), cuando: ahora(), por: usuario.nombre, ...(partesPago ? { pagos: partesPago } : {}) };
-        if (lugar.turno?.sena === "pendiente") lugar.turno.sena = "pagada";
+        if (lugar.turno?.sena === "pendiente") {
+            lugar.turno.sena = "pagada";
+            registrarPaso(usuario, "sena");
+        }
         (t.consumos ?? []).forEach((c) => (c.entregado = true));
         guardado.persistir();
         return cuenta(id);
@@ -578,7 +613,7 @@ export function crearDatos(prefijo = MARCA.prefijo, { reloj = () => new Date() }
     }
 
     return {
-        guardado,
+        guardado, pasos,
         dias, libresDe, reservar, misTurnos, cancelar, seDevuelve: (id) => seDevuelve(buscar(db().turnos, id)),
         grilla, nuevos, turno, marcarVisto, anotar, marcar, cobrarSena, liberar,
         listarFijos, liberarFijo, volverFijo, nuevoFijo,

@@ -15,15 +15,15 @@
 // Reglas del kit: exigir() en lo que modifica, topes en todo lo que se carga, nada se borra y se devuelven copias.
 // Las ventas guardan el precio y el costo del momento. Si cambia la forma de los datos, subir VERSION_DATOS.
 // ============================================
-import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=f6723a2a8a";
-import { enteroHasta, sinPasarse } from "../kit/js/topes.js?v=f6723a2a8a";
-import { diaLocalDe, fechaLocalISO } from "../kit/js/fechas.js?v=f6723a2a8a";
-import { columnasDe, numeroDe, textoParaComparar } from "../kit/js/tablas.js?v=f6723a2a8a";
-import { filtrarPorTexto, comoSuena } from "../kit/js/buscar.js?v=f6723a2a8a";
-import { MARCA, NEGOCIO, buscarPersona } from "./marca.js?v=f6723a2a8a";
-import { MEDIOS_PAGO, DIVIDIDO, revisarPagos, sumarPorMedio } from "../kit/js/pagos.js?v=f6723a2a8a";
+import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=12c89e832a";
+import { enteroHasta, sinPasarse } from "../kit/js/topes.js?v=12c89e832a";
+import { diaLocalDe, fechaLocalISO } from "../kit/js/fechas.js?v=12c89e832a";
+import { columnasDe, numeroDe, textoParaComparar } from "../kit/js/tablas.js?v=12c89e832a";
+import { filtrarPorTexto, comoSuena } from "../kit/js/buscar.js?v=12c89e832a";
+import { MARCA, NEGOCIO, buscarPersona } from "./marca.js?v=12c89e832a";
+import { MEDIOS_PAGO, DIVIDIDO, revisarPagos, sumarPorMedio } from "../kit/js/pagos.js?v=12c89e832a";
 
-export const VERSION_DATOS = 2;
+export const VERSION_DATOS = 4;
 
 // ---------- Topes (cada uno con su prueba de valor absurdo) ----------
 export const TOPES = {
@@ -559,9 +559,19 @@ export function semilla() {
         itemDe("Látex interior blanco 20 L", 1, "latex 20 litros"),
         itemDe("Rodillo de lana 22 cm", 2, "2 rodillos")
     ], 2, { enviadoDias: 2, vendidoDias: 1 });
+    presupuestoDe(199, "c-marcos", "Baño de abajo", "web", [
+        itemDe("Canilla esférica 1/2\"", 1, "una canilla de 1/2"),
+        itemDe("Flexible para canilla 30 cm", 2, "2 flexibles"),
+        itemDe("Cuerito para canilla 1/2\" (x10)", 1, "cueritos")
+    ], 3, { enviadoDias: 1 });
+    presupuestoDe(200, "c-marcos", "Terraza", "web", [
+        itemDe("Silicona transparente 280 ml", 2, "2 siliconas"),
+        itemDe("Sellador acrílico blanco 280 ml", 1, "un sellador blanco"),
+        itemDe("Cinta de papel 24 mm", 2, "2 cintas de papel")
+    ], 1);
     ventas.sort((a, b) => a.fecha.localeCompare(b.fecha));
 
-    return { productos, cuentas, presupuestos, ventas, cambios: [], entradas: [], cierres: [] };
+    return { productos, cuentas, presupuestos, ventas, cambios: [], entradas: [], cierres: [], pasosPersonas: {} };
 }
 
 // ---------- Permisos ----------
@@ -585,6 +595,33 @@ export function crearDatos(prefijo = MARCA.prefijo) {
         proveedor: proveedor(p.proveedorId)?.nombre ?? (p.servicio ? "Servicio" : "Sin proveedor")
     });
     const revisarTope = (lista, tope, que) => exigir(lista.length < tope, `Ya hay ${tope} ${que}. Es una demo: tocá "Empezar de cero" arriba.`);
+
+    const series = { dueno: ["lista", "aumento", "tope"], empleado: ["mandar", "aceptar", "venta"], cliente: ["pedido", "aceptar", "foto"] };
+
+    function pasos(usuario) {
+        const persona = buscarPersona(usuario?.id);
+        exigir(persona && persona.rol === usuario.rol, "Elegí una persona de la demo.");
+        const hechos = db().pasosPersonas?.[usuario.id] ?? [];
+        const presupuestoDe = (id) => db().presupuestos.find((p) => p.id === id);
+        const gastado = (id) => {
+            const pr = presupuestoDe(id);
+            return !pr || pr.estado !== "enviado" || vencido(pr);
+        };
+        const dados = {
+            empleado: [() => presupuestoDe("pr-200")?.estado !== "pedido", () => gastado("pr-201"), () => false],
+            cliente: [() => false, () => gastado("pr-199"), () => false]
+        };
+        return series[usuario.rol].map((id, i) => hechos.includes(id) || !!dados[usuario.rol]?.[i]());
+    }
+
+    function registrarPaso(usuario, id) {
+        if (!series[usuario?.rol]?.includes(id) || buscarPersona(usuario.id)?.rol !== usuario.rol) return;
+        const hechos = db().pasosPersonas ??= {};
+        const persona = hechos[usuario.id] ??= [];
+        if (persona.includes(id)) return;
+        persona.push(id);
+        guardado.persistir();
+    }
 
     // ----- Artículos -----
 
@@ -744,7 +781,9 @@ export function crearDatos(prefijo = MARCA.prefijo) {
         exigir(esDueno(usuario), "Solo el dueño cambia los precios.");
         const cambios = verAumento(proveedorId, porcentaje);
         exigir(porcentaje !== 0, "Con 0 % no cambia nada.");
-        return guardarCambio(usuario, "aumento", { proveedorId, porcentaje }, cambios);
+        const cambio = guardarCambio(usuario, "aumento", { proveedorId, porcentaje }, cambios);
+        registrarPaso(usuario, "aumento");
+        return cambio;
     }
 
     function aplicarMargen(usuario, rubro, margen) {
@@ -821,7 +860,9 @@ export function crearDatos(prefijo = MARCA.prefijo) {
         exigir(esDueno(usuario), "Solo el dueño cambia los precios.");
         const { cambios } = verLista(filas);
         exigir(cambios.length, "Con esta lista no cambia ningún costo.");
-        return guardarCambio(usuario, "excel", {}, cambios);
+        const cambio = guardarCambio(usuario, "excel", {}, cambios);
+        registrarPaso(usuario, "lista");
+        return cambio;
     }
 
     /**
@@ -927,6 +968,7 @@ export function crearDatos(prefijo = MARCA.prefijo) {
         const c = buscar(db().cuentas, cuentaId, "Esa cuenta no existe.");
         c.tope = enteroHasta(tope, "El tope", { hasta: TOPES.tope });
         guardado.persistir();
+        registrarPaso(usuario, "tope");
         return armarCuenta(c);
     }
 
@@ -1135,6 +1177,7 @@ export function crearDatos(prefijo = MARCA.prefijo) {
         };
         db().presupuestos.push(pr);
         guardado.persistir();
+        if (esCliente(usuario)) registrarPaso(usuario, foto && db().pasosPersonas?.[usuario.id]?.includes("pedido") ? "foto" : "pedido");
         return armarPresupuesto(pr);
     }
 
@@ -1254,6 +1297,7 @@ export function crearDatos(prefijo = MARCA.prefijo) {
         const { pr, cambios, mensaje } = prepararEnvio(usuario, presupuestoId);
         Object.assign(pr, cambios);
         guardado.persistir();
+        if (pr.origen === "web") registrarPaso(usuario, "mandar");
         return { presupuesto: armarPresupuesto(pr), mensaje };
     }
 
@@ -1266,6 +1310,7 @@ export function crearDatos(prefijo = MARCA.prefijo) {
         // Si lo aceptó el cliente desde su celu, al mostrador le llega el aviso; si lo anotó la ferretería, no
         Object.assign(pr, { estado: "aceptado", aceptado: ahora(), aceptadoPorCliente: esCliente(usuario) });
         guardado.persistir();
+        registrarPaso(usuario, "aceptar");
         return armarPresupuesto(pr);
     }
 
@@ -1332,6 +1377,7 @@ export function crearDatos(prefijo = MARCA.prefijo) {
         const venta = guardarVenta(usuario, renglones, total, medio, pago);
         if (partes) venta.pagos = partes;
         guardado.persistir();
+        registrarPaso(usuario, "venta");
         return { ...copia(venta), cuenta: pago.clienteId ? armarCuenta(buscar(db().cuentas, pago.clienteId)) : null };
     }
 
@@ -1393,7 +1439,7 @@ export function crearDatos(prefijo = MARCA.prefijo) {
     }
 
     return {
-        guardado,
+        guardado, pasos,
         listarProductos, producto, rapidos, porCodigo, hayQuePedir, margenDeRubro, cargarProducto, corregirProducto,
         verAumento, aplicarAumento, verMargen, aplicarMargen, deshacerCambio, ultimoCambio,
         verLista, aplicarLista, listaDeEjemplo,

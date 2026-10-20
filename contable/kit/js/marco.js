@@ -13,16 +13,17 @@
 // Festejo: cuando aparece una confirmación (.hecho: turno reservado, venta cobrada, orden creada…), el ✓ entra con un
 // rebote, salen chispitas del color de la demo y el celular vibra cortito (Android). Quieto con "reducir movimiento".
 // ============================================
-import { $, $$, esc, iniciales } from "./ui.js?v=929def1556";
-import { logoSazzo, nombreDemo } from "./marca.js?v=929def1556";
-import { interruptorTema, activarInterruptorTema } from "./apariencia.js?v=929def1556";
-import { linkOtrasDemos, linkQuieroEsto, botDelChat } from "./enlaces.js?v=929def1556";
-import { abrirColores, leerNombre } from "./colores.js?v=929def1556";
-import { contar } from "./visita.js?v=929def1556";
-import { pintarAvisos } from "./avisos.js?v=929def1556";
-import { revisarDetalle, htmlBotonDetalle, activarDetalle } from "./detalle.js?v=929def1556";
-import { htmlBotonInstalarCabecera } from "./instalar.js?v=929def1556";
-import { olvidarDemo } from "./guardado.js?v=929def1556";
+import { $, $$, esc, iniciales } from "./ui.js?v=569102ff5e";
+import { logoSazzo, nombreDemo } from "./marca.js?v=569102ff5e";
+import { interruptorTema, activarInterruptorTema } from "./apariencia.js?v=569102ff5e";
+import { linkOtrasDemos, linkQuieroEsto, botDelChat } from "./enlaces.js?v=569102ff5e";
+import { abrirColores, leerNombre } from "./colores.js?v=569102ff5e";
+import { contar } from "./visita.js?v=569102ff5e";
+import { pintarAvisos } from "./avisos.js?v=569102ff5e";
+import { revisarDetalle, htmlBotonDetalle, activarDetalle } from "./detalle.js?v=569102ff5e";
+import { htmlBotonInstalarCabecera } from "./instalar.js?v=569102ff5e";
+import { olvidarDemo } from "./guardado.js?v=569102ff5e";
+import { htmlInterruptorPasos, activarInterruptorPasos } from "./consigna.js?v=569102ff5e";
 
 /** La barrita de Sazzo: colores, otras demos y "Quiero esto" (los textos largos solo si hay lugar). */
 export function htmlBarraSazzo(marca, opciones, conDetalle = false) {
@@ -84,6 +85,7 @@ export function htmlMarco({ marca, usuario, menu = [], cambiarPersona = true, de
             <button class="banda-prueba__cambiar" id="cambiar-persona" type="button">
                 <i class="ti ti-switch-horizontal" aria-hidden="true"></i><span>Cambiar persona</span>
             </button>` : ""}
+            ${htmlInterruptorPasos(marca, "banda-prueba__cambiar")}
             <p class="banda-prueba__modo">
                 <span><i class="ti ti-flask" aria-hidden="true"></i> Modo prueba: datos inventados<span class="banda-prueba__mas">, guardados solo en este navegador</span>.</span>
                 <button class="boton-link" id="reiniciar" type="button">Empezar de cero</button>
@@ -245,6 +247,7 @@ export function pintarMarco(app, { marca, usuario, menu = [], alCambiarPersona, 
     app.classList.toggle("sin-menu", !menu.length);
     activarInterruptorTema();
     activarBotonesSazzo(app, marca, detalle);
+    activarInterruptorPasos(app, marca);
     ubicarBarraSazzo(app);
     seguirElAncho(app);
     medirPie(app);

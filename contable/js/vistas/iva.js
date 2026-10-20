@@ -1,22 +1,23 @@
+import { conConsigna } from "./comunes.js?v=569102ff5e";
 // ============================================
 // IVA: la posición del mes (débito − crédito − percepciones − saldo a favor anterior = a pagar o a favor, con el
 // vencimiento según el CUIT), el gráfico de los últimos 12 meses, los libros IVA Ventas y Compras, y los archivos
 // para bajar (Excel/CSV para el contador y los .txt del Libro IVA Digital, de prueba). La ven todos; bajar archivos
 // es cosa de Patricia (los demás también pueden mirarlos).
 // ============================================
-import { esc, descargarCSV, fechaCorta } from "../../kit/js/ui.js?v=929def1556";
-import { htmlEstante, activarEstantes } from "../../kit/js/estante.js?v=929def1556";
-import { estantesIva } from "../estantes.js?v=929def1556";
-import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=929def1556";
-import { htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=929def1556";
-import { ALICUOTAS, ORDEN_ALICUOTAS, pesos, pesosRedondo, nombrePeriodo, mesCorto, formatoCuit } from "../reglas.js?v=929def1556";
-import { buscarPersona, MARCA } from "../marca.js?v=929def1556";
-import { libroDigitalVentas, libroDigitalCompras, bajarTexto } from "../libro-digital.js?v=929def1556";
-import { periodoPedido, htmlSelectorMes, activarSelectorMes, htmlTabla, diaMes } from "./comunes.js?v=929def1556";
+import { esc, descargarCSV, fechaCorta } from "../../kit/js/ui.js?v=569102ff5e";
+import { htmlEstante, activarEstantes } from "../../kit/js/estante.js?v=569102ff5e";
+import { estantesIva } from "../estantes.js?v=569102ff5e";
+import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=569102ff5e";
+import { ALICUOTAS, ORDEN_ALICUOTAS, pesos, pesosRedondo, nombrePeriodo, mesCorto, formatoCuit, periodoActual } from "../reglas.js?v=569102ff5e";
+import { buscarPersona, MARCA } from "../marca.js?v=569102ff5e";
+import { libroDigitalVentas, libroDigitalCompras, bajarTexto } from "../libro-digital.js?v=569102ff5e";
+import { periodoPedido, htmlSelectorMes, activarSelectorMes, htmlTabla, diaMes, pintarConsigna } from "./comunes.js?v=569102ff5e";
 
-export function vistaIva(cont, { usuario, datos, consulta, irA }) {
+function pintarIva(cont, { usuario, datos, consulta, irA }) {
     const e = datos.leerEmpresa();
     const periodo = periodoPedido(consulta);
+    if (consulta?.get("p") === periodo && periodo !== periodoActual()) datos.registrarPaso(usuario, "mes");
     const libro = consulta?.get("libro") === "compras" ? "compras" : "ventas";
 
     if (e.condicionIva !== "RI") {
@@ -48,7 +49,7 @@ export function vistaIva(cont, { usuario, datos, consulta, irA }) {
                 <p class="cuenta-iva__total"><span>${pos.resultado >= 0 ? "A pagar" : "A favor"}</span><b>${esc(pesos(Math.abs(pos.resultado)))}</b></p>
             </div>
         </div>
-        ${usuario.rol === "contadora" ? `${htmlConsignaFinal(MARCA, 3)}${htmlGuia({ persona: hernan, ruta: "/inicio", texto: "Mirá cómo lo ve el dueño" })}` : ""}
+        ${usuario.rol === "contadora" ? `${htmlGuia({ persona: hernan, ruta: "/inicio", texto: "Mirá cómo lo ve el dueño" })}` : ""}
 
         <div class="bloque">
             <h2 class="subtitulo"><i class="ti ti-chart-bar"></i> IVA a pagar por mes</h2>
@@ -80,7 +81,6 @@ export function vistaIva(cont, { usuario, datos, consulta, irA }) {
     activarSelectorMes(cont, "/iva", `&libro=${libro}`);
     activarEstantes(cont);
     activarGuias(cont, irA);
-    activarConsigna(cont, MARCA);
     cont.querySelector("[data-imprimir]").addEventListener("click", () => window.print());
 
     cont.querySelector("[data-csv]").addEventListener("click", () => {
@@ -99,16 +99,17 @@ export function vistaIva(cont, { usuario, datos, consulta, irA }) {
             ["", "", "Totales", "", plata(c.totales.neto), plata(c.totales.iva), plata(c.totales.exento), plata(c.totales.percepIva), plata(c.totales.percepIibb), plata(c.totales.total)]
         ];
         descargarCSV(`libros-iva-${periodo}.csv`, filas);
+        datos.registrarPaso(usuario, "csv");
+        pintarConsigna(cont, datos, usuario);
     });
 
     cont.querySelector("[data-lid]").addEventListener("click", () => {
         const sufijo = periodo.replace("-", "");
         const v = libroDigitalVentas(datos.listarComprobantes({ periodo }).reverse());
         const c = libroDigitalCompras(datos.listarCompras({ periodo }).reverse());
-        bajarTexto(`PRUEBA_LIBRO_IVA_DIGITAL_VENTAS_CBTE_${sufijo}.txt`, v.cbte);
-        bajarTexto(`PRUEBA_LIBRO_IVA_DIGITAL_VENTAS_ALICUOTAS_${sufijo}.txt`, v.alicuotas);
-        bajarTexto(`PRUEBA_LIBRO_IVA_DIGITAL_COMPRAS_CBTE_${sufijo}.txt`, c.cbte);
-        bajarTexto(`PRUEBA_LIBRO_IVA_DIGITAL_COMPRAS_ALICUOTAS_${sufijo}.txt`, c.alicuotas);
+        bajarTexto(`PRUEBA_LIBRO_IVA_DIGITAL_${sufijo}.txt`, [v.cbte, v.alicuotas, c.cbte, c.alicuotas].join("\r\n"));
+        datos.registrarPaso(usuario, "txt");
+        pintarConsigna(cont, datos, usuario);
     });
 }
 
@@ -177,3 +178,5 @@ function tablaCompras(libro) {
     const pie = ["", "", "<b>Totales</b>", "", p(t.neto), p(t.iva), p(t.exento), p(t.percepIva), p(t.percepIibb), `<b>${p(t.total)}</b>`];
     return htmlTabla(columnas, filas, { pie, vacia: "No hay compras cargadas en este mes.", etiqueta: "Libro IVA Compras" });
 }
+
+export const vistaIva = conConsigna(pintarIva);

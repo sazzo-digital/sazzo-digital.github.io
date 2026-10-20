@@ -1,3 +1,4 @@
+import { pintarConsigna } from "./comunes.js?v=12c89e832a";
 // ============================================
 // Lo de Marcos (cliente con cuenta corriente), desde el celular:
 //   "Pedir presupuesto": escribe lo que necesita como habla, un artículo por renglón ("cano de 1/2 x 3", "teflon"),
@@ -5,13 +6,12 @@
 //   "Mis presupuestos": cómo va cada uno (pedido → te lo mandaron → aceptado → retirado), el PDF, "Aceptar" y su
 //   cuenta corriente (lo que debe y los últimos movimientos).
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=f6723a2a8a";
-import { armarPdf, pdfListo } from "../../kit/js/pdf.js?v=f6723a2a8a";
-import { TOPES, pesos, cantidadTexto } from "../datos.js?v=f6723a2a8a";
-import { NEGOCIO } from "../marca.js?v=f6723a2a8a";
-import { guia, activarGuias, pasos, pastillaEstado, cuando, validez, barraTope, haceDias, htmlFoto } from "./comunes.js?v=f6723a2a8a";
-import { htmlConsigna } from "../../kit/js/consigna.js?v=f6723a2a8a";
-import { datosPdf } from "./presupuestos.js?v=f6723a2a8a";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=12c89e832a";
+import { armarPdf, pdfListo } from "../../kit/js/pdf.js?v=12c89e832a";
+import { TOPES, pesos, cantidadTexto } from "../datos.js?v=12c89e832a";
+import { NEGOCIO } from "../marca.js?v=12c89e832a";
+import { guia, activarGuias, pasos, pastillaEstado, cuando, validez, barraTope, haceDias, htmlFoto } from "./comunes.js?v=12c89e832a";
+import { datosPdf } from "./presupuestos.js?v=12c89e832a";
 
 // Lo que va escribiendo queda en memoria mientras se navega
 const EJEMPLO = ["cano de 1/2 x 3", "4 codos de 1/2", "2 llaves de paso 1/2", "teflon"];
@@ -19,13 +19,13 @@ let borrador = null; // null = el de ejemplo
 let conFoto = true;
 let obra = null;
 
-export function vistaPedirPresupuesto(cont, { usuario, datos, irA }) {
+function pintarPedirPresupuesto(cont, { usuario, datos, irA }) {
     cont.innerHTML = `
         <div class="titulo-con-accion">
             <h1 class="titulo">Pedir presupuesto</h1>
             <span class="negocio"><i class="ti ti-building-store" aria-hidden="true"></i>${esc(NEGOCIO)}</span>
         </div>
-        ${htmlConsigna({ paso: 1, total: 5, accion: "Escribí como le hablás al de la ferretería, un artículo por renglón (ya hay un ejemplo), y pedilo.", resultado: "Le llega a Nahuel para armar el presupuesto." })}
+        
         <button class="ticket-barra" type="button"></button>
         <div class="pedir-presupuesto">
             <form class="bloque formulario escribir" novalidate>
@@ -118,8 +118,8 @@ export function vistaPedirPresupuesto(cont, { usuario, datos, irA }) {
                 <p>N° ${esc(pr.numero)}${pr.obra ? ` · ${esc(pr.obra)}` : ""} · ${esc(pr.items.length)} renglones</p>
                 <p class="nota"><i class="ti ti-bell"></i> ${esc(NEGOCIO)} lo revisa${pr.sinResolver ? ", mira la foto" : ""} y te lo manda con el precio final.</p>
             </div>
-            ${htmlConsigna({ paso: 1, total: 5, accion: "Pedí el presupuesto.", hecho: "presupuesto pedido", guia: guia("u-empleado", `/presupuestos/${pr.id}`, "Mirá lo que le llega a Nahuel") })}
             <a class="boton boton--secundario boton--ancho" href="#/mis-presupuestos"><i class="ti ti-list"></i> Ver mis presupuestos</a>`;
+        pintarConsigna(cont, { usuario, datos });
         activarGuias(cont, irA);
         window.scrollTo(0, 0);
     }
@@ -133,7 +133,7 @@ const QUE_PASA = {
     anulado: "Este presupuesto se anuló."
 };
 
-export function vistaMisPresupuestos(cont, { usuario, datos, irA }, recien = null) {
+function pintarMisPresupuestos(cont, { usuario, datos, irA }, recien = null) {
     const lista = datos.misPresupuestos(usuario);
     lista.forEach((pr) => datos.marcarVisto(usuario, pr.id)); // los está mirando: "Te mandaron…" no vuelve a saltar
     const c = datos.miCuenta(usuario);
@@ -176,9 +176,6 @@ export function vistaMisPresupuestos(cont, { usuario, datos, irA }, recien = nul
                 ${pr.estado === "enviado" && !pr.vencido ? `<button class="boton" type="button" data-aceptar="${esc(pr.id)}"><i class="ti ti-thumb-up"></i> Aceptar el presupuesto</button>` : ""}
                 ${["enviado", "aceptado", "vendido"].includes(pr.estado) ? `<button class="boton boton--secundario" type="button" data-pdf="${esc(pr.id)}"><i class="ti ti-file-type-pdf"></i> PDF</button>` : ""}
             </div>
-            ${pr.estado === "pedido" ? htmlConsigna({ paso: 1, total: 5, accion: "Pedí el presupuesto.", hecho: "presupuesto pedido", guia: guia("u-empleado", `/presupuestos/${pr.id}`, "Mirá lo que le llega a Nahuel") }) : ""}
-            ${pr.estado === "enviado" && !pr.vencido && recien !== pr.id ? htmlConsigna({ paso: 3, total: 5, accion: "Tocá “Aceptar el presupuesto”.", resultado: "Va a tu cuenta corriente y Nahuel lo prepara." }) : ""}
-            ${recien === pr.id ? htmlConsigna({ paso: 3, total: 5, accion: "Aceptá el presupuesto.", hecho: "aceptado, a tu cuenta", guia: guia("u-empleado", `/presupuestos/${pr.id}`, "Pasá a Nahuel: que lo pase a venta") }) : ""}
         </section>`).join("")
         : `${vacio("Todavía no pediste ningún presupuesto.", "ti-file-text")}<p class="sin-pedidos"><a class="boton" href="#/inicio"><i class="ti ti-clipboard-list"></i> Pedir un presupuesto</a></p>`}`;
 
@@ -205,4 +202,16 @@ export function vistaMisPresupuestos(cont, { usuario, datos, irA }, recien = nul
         }
     }));
     activarGuias(cont, irA);
+}
+
+export function vistaPedirPresupuesto(cont, opciones, ...args) {
+    const resultado = pintarPedirPresupuesto(cont, opciones, ...args);
+    pintarConsigna(cont, opciones);
+    return resultado;
+}
+
+export function vistaMisPresupuestos(cont, opciones, ...args) {
+    const resultado = pintarMisPresupuestos(cont, opciones, ...args);
+    pintarConsigna(cont, opciones);
+    return resultado;
 }

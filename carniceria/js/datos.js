@@ -11,14 +11,14 @@
 // Reglas del kit: exigir() en lo que modifica, topes en todo lo que se carga, nada se borra y se devuelven copias.
 // Las ventas guardan el precio y el costo del momento. Si cambia la forma de los datos, subir VERSION_DATOS.
 // ============================================
-import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=55764424c5";
-import { enteroHasta, sinPasarse } from "../kit/js/topes.js?v=55764424c5";
-import { diaLocalDe, fechaLocalISO } from "../kit/js/fechas.js?v=55764424c5";
-import { filtrarPorTexto, comoSuena } from "../kit/js/buscar.js?v=55764424c5";
-import { MARCA, NEGOCIO, buscarPersona } from "./marca.js?v=55764424c5";
-import { MEDIOS_PAGO, DIVIDIDO, revisarPagos, sumarPorMedio } from "../kit/js/pagos.js?v=55764424c5";
+import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=4438010c31";
+import { enteroHasta, sinPasarse } from "../kit/js/topes.js?v=4438010c31";
+import { diaLocalDe, fechaLocalISO } from "../kit/js/fechas.js?v=4438010c31";
+import { filtrarPorTexto, comoSuena } from "../kit/js/buscar.js?v=4438010c31";
+import { MARCA, NEGOCIO, buscarPersona } from "./marca.js?v=4438010c31";
+import { MEDIOS_PAGO, DIVIDIDO, revisarPagos, sumarPorMedio } from "../kit/js/pagos.js?v=4438010c31";
 
-export const VERSION_DATOS = 2;
+export const VERSION_DATOS = 4;
 
 // ---------- Topes (cada uno con su prueba de valor absurdo) ----------
 export const TOPES = {
@@ -441,9 +441,14 @@ export function semilla() {
         items: [item("Vacío", { pedido: 2000, real: 2085, aclaracion: "Entero, para la parrilla" }), item("Chorizo", { pedido: 1000, real: 980 }), item("Carbón 4 kg", { modo: "unidad", pedido: 1 })],
         creado: momento(1, 20.4), listo: momento(0, 8.7), avisado: momento(0, 8.7), entregado: null, ventaId: null, anulado: null, preparadoPor: "Darío"
     };
+    const elena = {
+        id: "pe-18", numero: 18, para: "Elena", clienteId: null, origen: "web", estado: "nuevo", retiro: "19:30",
+        items: [item("Asado", { pedido: 1000, real: 1050 })],
+        creado: momento(0, 9), listo: null, avisado: null, entregado: null, ventaId: null, anulado: null, preparadoPor: null
+    };
     ventas.sort((a, b) => a.fecha.localeCompare(b.fecha));
 
-    return { articulos, despostes, pedidos: [norma, omar], ventas, cambios: [], cierres: [] };
+    return { articulos, despostes, pedidos: [norma, omar, elena], ventas, cambios: [], cierres: [], pasosPersonas: {} };
 }
 
 const dias = (iso) => Math.round((new Date(fechaLocalISO(0)) - new Date(diaLocalDe(iso))) / 864e5);
@@ -527,6 +532,32 @@ export function crearDatos(prefijo = MARCA.prefijo) {
     const armarArticulo = (a) => ({ ...copia(a), estado: estadoStock(a), animalNombre: nombreAnimal(a.animal) });
     const ordenNombre = (a, b) => a.nombre.localeCompare(b.nombre, "es");
 
+    const series = { dueno: ["peso", "aumento", "oferta"], empleado: ["anotar", "listo", "entrega"], clienta: ["vaca", "otro", "pedir"] };
+
+    function registrarPaso(usuario, id) {
+        if (!series[usuario?.rol]?.includes(id)) return;
+        const hechos = db().pasosPersonas ??= {};
+        const persona = hechos[usuario.id] ??= [];
+        if (persona.includes(id)) return;
+        persona.push(id);
+        guardado.persistir();
+    }
+
+    function pasos(usuario) {
+        exigir(!!series[usuario?.rol], "Esta persona no tiene una serie.");
+        const hechos = series[usuario.rol].map((id) => !!db().pasosPersonas?.[usuario.id]?.includes(id));
+        const estado = (id) => db().pedidos.find((p) => p.id === id)?.estado;
+        if (usuario.rol === "dueno") {
+            const hoy = db().despostes.find((x) => x.id === "d-47");
+            hechos[0] ||= !hoy || hoy.estado !== "abierto" || hoy.cortes.every((c) => c.gramos !== null);
+        }
+        if (usuario.rol === "empleado") {
+            hechos[1] ||= estado("pe-18") !== "nuevo";
+            hechos[2] ||= estado("pe-17") !== "listo";
+        }
+        return hechos;
+    }
+
     // ----- Artículos -----
 
     /**
@@ -592,6 +623,7 @@ export function crearDatos(prefijo = MARCA.prefijo) {
         exigir(esDueno(usuario), "La oferta del día la elige el dueño.");
         if (id) buscar(db().articulos, id, "Ese artículo no existe.");
         db().articulos.forEach((a) => (a.oferta = a.id === id));
+        if (id) registrarPaso(usuario, "oferta");
         guardado.persistir();
         return id ? articulo(id) : null;
     }
@@ -641,7 +673,9 @@ export function crearDatos(prefijo = MARCA.prefijo) {
         exigir(esDueno(usuario), "Solo el dueño cambia los precios.");
         const cambios = verAumento(animal, porcentaje);
         exigir(porcentaje !== 0, "Con 0 % no cambia nada.");
-        return guardarCambio(usuario, "aumento", { animal, porcentaje }, cambios);
+        const cambio = guardarCambio(usuario, "aumento", { animal, porcentaje }, cambios);
+        registrarPaso(usuario, "aumento");
+        return cambio;
     }
 
     /** Deshacer: solo el último cambio de precios; vuelve cada precio y costo a como estaba. */
@@ -723,6 +757,7 @@ export function crearDatos(prefijo = MARCA.prefijo) {
         if (corte) corte.gramos = g;
         else d[clave] = g;
         d.despostadoPor ??= usuario.nombre;
+        if (corte && g !== null) registrarPaso(usuario, "peso");
         guardado.persistir();
         return armarDesposte(d);
     }
@@ -890,6 +925,7 @@ export function crearDatos(prefijo = MARCA.prefijo) {
             items: renglones, creado: ahora(), listo: null, avisado: null, entregado: null, ventaId: null, anulado: null, preparadoPor: null
         };
         db().pedidos.push(pe);
+        registrarPaso(usuario, esClienta(usuario) ? "pedir" : "anotar");
         guardado.persistir();
         return armarPedido(pe);
     }
@@ -950,6 +986,7 @@ export function crearDatos(prefijo = MARCA.prefijo) {
             i.costo = a.costo;
         });
         Object.assign(pe, { estado: "listo", listo: ahora(), preparadoPor: usuario.nombre });
+        registrarPaso(usuario, "listo");
         guardado.persistir();
         const a = armarPedido(pe);
         return { pedido: a, mensaje: mensajeListo(a) };
@@ -987,6 +1024,7 @@ export function crearDatos(prefijo = MARCA.prefijo) {
         const venta = { id: nuevoId("v"), fecha: ahora(), items, total, medio, ...pago, por: usuario.nombre, pedidoId: pe.id };
         db().ventas.push(venta);
         Object.assign(pe, { estado: "entregado", entregado: venta.fecha, ventaId: venta.id });
+        registrarPaso(usuario, "entrega");
         guardado.persistir();
         return { pedido: armarPedido(pe), venta: copia(venta) };
     }
@@ -1064,7 +1102,7 @@ export function crearDatos(prefijo = MARCA.prefijo) {
     }
 
     return {
-        guardado,
+        guardado, pasos, registrarPaso,
         listarArticulos, articulo, rapidos, porPlu, faltantes, corregirArticulo, cargarArticulo, elegirOferta, pizarra,
         verAumento, aplicarAumento, deshacerCambio, ultimoCambio,
         listarDespostes, desposte, ingresar, cargarPeso, terminarDesposte, verSugeridos, aplicarSugeridos, historial,

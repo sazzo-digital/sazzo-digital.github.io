@@ -7,11 +7,11 @@
 // Reglas del kit: exigir() en lo que modifica, topes en todo lo que se carga y se devuelven copias.
 // Si cambia la forma de los datos, subir VERSION_DATOS (se regeneran solos).
 // ============================================
-import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=1c786e0170";
-import { filtrarPorTexto } from "../kit/js/buscar.js?v=1c786e0170";
-import { enteroHasta, sinPasarse } from "../kit/js/topes.js?v=1c786e0170";
-import { fechaLocalISO, esFechaISO, diaLocalDe } from "../kit/js/fechas.js?v=1c786e0170";
-import { MARCA, NEGOCIO } from "./marca.js?v=1c786e0170";
+import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=fba34fb3d2";
+import { filtrarPorTexto } from "../kit/js/buscar.js?v=fba34fb3d2";
+import { enteroHasta, sinPasarse } from "../kit/js/topes.js?v=fba34fb3d2";
+import { fechaLocalISO, esFechaISO, diaLocalDe } from "../kit/js/fechas.js?v=fba34fb3d2";
+import { MARCA, NEGOCIO } from "./marca.js?v=fba34fb3d2";
 
 export const VERSION_DATOS = 3;
 
@@ -168,6 +168,7 @@ export function semilla() {
 export function crearDatos(prefijo = MARCA.prefijo) {
     const guardado = crearGuardado({ prefijo, version: VERSION_DATOS, semilla });
     const db = () => guardado.db();
+    const inicial = semilla();
     const esDueno = (u) => u?.rol === "dueno";
     const esMecanico = (u) => u?.rol === "mecanico";
     const mecanicoDe = (u) => MECANICOS.find((m) => m.personaId === u?.id) ?? null;
@@ -488,8 +489,25 @@ export function crearDatos(prefijo = MARCA.prefijo) {
         return { auto: armarAuto(a), mensaje };
     }
 
+    function pasos(usuario) {
+        const deHoy = (autoId) => {
+            const id = inicial.ordenes.find((o) => o.autoId === autoId && ABIERTOS.includes(o.estado)).id;
+            return db().ordenes.find((o) => o.id === id);
+        };
+        if (esDueno(usuario)) return [
+            db().ordenes.some((o) => !inicial.ordenes.some((i) => i.id === o.id)),
+            deHoy("a-palio").estado !== "presupuestado",
+            deHoy("a-kangoo").avisado || deHoy("a-kangoo").estado !== "listo"
+        ];
+        if (esMecanico(usuario)) {
+            const corsa = deHoy("a-corsa");
+            return [Boolean(corsa.encontro || corsa.renglones.length) || corsa.estado === "anulado", deHoy("a-onix").estado !== "esperando", !["reparacion", "esperando"].includes(deHoy("a-ka").estado)];
+        }
+        exigir(false, "Esa persona no tiene pasos.");
+    }
+
     return {
-        guardado,
+        guardado, pasos,
         buscarPatente, entroUnAuto, pizarra, orden, anotar, agregarRenglon, quitarRenglon, cambiarPrecio,
         mandarPresupuesto, aprobar, faltaRepuesto, llegoRepuesto, terminado, mensajeListo, avisarListo, entregar, anular,
         listarAutos, auto, paraLlamar, mensajeLlamar, llamar,

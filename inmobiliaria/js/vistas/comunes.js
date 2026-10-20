@@ -3,11 +3,12 @@
 // la foto de cada propiedad (o su dibujo mientras no tenga), la tarjeta de una propiedad, los días en pastillas y la
 // ventanita del mensaje para copiar (del kit). Todo dato que entra a HTML pasa por esc().
 // ============================================
-import { esc } from "../../kit/js/ui.js?v=86b90b0105";
-import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=86b90b0105";
-import { mostrarMensaje as ventanaMensaje } from "../../kit/js/mensaje.js?v=86b90b0105";
-import { buscarPersona } from "../marca.js?v=86b90b0105";
-import { fotosDe } from "../fotos.js?v=86b90b0105";
+import { esc } from "../../kit/js/ui.js?v=34a23b46ed";
+import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=34a23b46ed";
+import { htmlConsigna, htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=34a23b46ed";
+import { mostrarMensaje as ventanaMensaje } from "../../kit/js/mensaje.js?v=34a23b46ed";
+import { buscarPersona, MARCA } from "../marca.js?v=34a23b46ed";
+import { fotosDe } from "../fotos.js?v=34a23b46ed";
 
 /** Botón del recorrido con la persona de la inmobiliaria: guia("u-agente", "/inicio", "Mirá lo que le llega a Tomás"). */
 export const guia = (personaId, ruta, texto) => htmlGuia({ persona: buscarPersona(personaId), ruta, texto });
@@ -103,3 +104,30 @@ export function hace(iso, hoyISO) {
     const dias = Math.round((new Date(a, m - 1, d) - new Date(t.getFullYear(), t.getMonth(), t.getDate())) / 864e5);
     return dias === 1 ? "ayer" : `hace ${dias} días`;
 }
+
+const CONSIGNAS = {
+    duena: [
+        ["En “Este mes”, tocá “Aplicar y avisar” en el alquiler de Martín.", "El aumento se aplica y el aviso al inquilino sale armado."],
+        ["En los que deben, tocá “Pagó” en uno.", "Se anota el pago y deja de figurar como deuda."],
+        ["En Propiedades, tocá “Cargar propiedad” y guardá una nueva.", "Queda en la lista, lista para ofrecer."]
+    ],
+    agente: [
+        ["Abrí la consulta de Lucía, que pidió visita desde la página, y tocá “Confirmar visita”.", "La visita queda en tu agenda."],
+        ["Abrí la consulta de Rodrigo Funes, tocá “Escribirle” y copiá el mensaje.", "Deja de figurar sin contestar."],
+        ["En una consulta, escribí una nota y tocá “Anotar”.", "Queda en el historial de la consulta."]
+    ],
+    cliente: [
+        ["Abrí una propiedad, tocá “Pedir visita”, elegí día y hora, y pedila.", "Le llega a la inmobiliaria para confirmarla."],
+        ["Pedí visita en otra propiedad más.", "Las ves juntas en “Mis visitas”."],
+        ["En “Mis visitas”, tocá “Cancelar visita” en una.", "El horario queda libre para otro."]
+    ]
+};
+
+export function consignaPersona(datos, usuario) {
+    const paso = datos.pasos(usuario).findIndex((hecho) => !hecho);
+    if (paso < 0) return htmlConsignaFinal(MARCA, 3);
+    const [accion, resultado] = CONSIGNAS[usuario.rol][paso];
+    return htmlConsigna({ paso: paso + 1, total: 3, accion, resultado });
+}
+
+export const activarPasos = (cont) => activarConsigna(cont, MARCA);

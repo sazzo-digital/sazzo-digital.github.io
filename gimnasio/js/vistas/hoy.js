@@ -4,14 +4,13 @@
 // descanso (con "ding" y vibración al terminar, si prendió el sonido). Si levanta más que nunca: "¡Nuevo récord!".
 // Si hoy descansa, le dice cuándo le toca y puede entrenar igual otro día de su rutina.
 // ============================================
-import { esc, aviso } from "../../kit/js/ui.js?v=be499030eb";
-import { alSalirDeLaPantalla } from "../../kit/js/rutas.js?v=be499030eb";
-import { mantenerPantallaPrendida, vibrar, ding, htmlBotonSonido, activarBotonSonido } from "../../kit/js/celular.js?v=be499030eb";
-import { MARCA, NEGOCIO } from "../marca.js?v=be499030eb";
-import { SOCIO_DE, kilos, cuanto } from "../datos.js?v=be499030eb";
-import { guia, activarGuias, pastilla, pastillaCuota } from "./comunes.js?v=be499030eb";
-import { htmlConsigna } from "../../kit/js/consigna.js?v=be499030eb";
-import { htmlTrabajosSocio, activarTrabajosSocio } from "./trabajos.js?v=be499030eb";
+import { esc, aviso } from "../../kit/js/ui.js?v=0ae8c6cc93";
+import { alSalirDeLaPantalla } from "../../kit/js/rutas.js?v=0ae8c6cc93";
+import { mantenerPantallaPrendida, vibrar, ding, htmlBotonSonido, activarBotonSonido } from "../../kit/js/celular.js?v=0ae8c6cc93";
+import { MARCA, NEGOCIO } from "../marca.js?v=0ae8c6cc93";
+import { SOCIO_DE, kilos, cuanto } from "../datos.js?v=0ae8c6cc93";
+import { activarConsignaPersona, guia, activarGuias, pastilla, pastillaCuota } from "./comunes.js?v=0ae8c6cc93";
+import { htmlTrabajosSocio, activarTrabajosSocio } from "./trabajos.js?v=0ae8c6cc93";
 
 // Lo que queda mientras se navega: lo escrito en cada ejercicio, el último récord (para festejarlo una vez) y el descanso
 const borrador = {};
@@ -75,7 +74,7 @@ function htmlEjercicio(e, i, h, actual) {
                 <i class="ti ti-trophy" aria-hidden="true"></i>
                 <b>¡Nuevo récord!</b>
                 <span class="record__chip"><i class="ti ti-trophy" aria-hidden="true"></i> Récord · ${esc(kilos(ultimoRecord.peso))} (antes ${esc(kilos(ultimoRecord.antes))})</span>
-                ${htmlConsigna({ paso: 1, total: 5, accion: "Hacé tu récord.", hecho: `${kilos(ultimoRecord.peso)} en ${e.nombre}`, guia: guia("u-profe", "/inicio", "Mirá cómo lo ve Mauro") })}
+                ${guia("u-profe", "/inicio", "Mirá cómo lo ve Mauro")}
             </div>` : ""}
             ${!e.listo && !terminado ? `
             <form class="serie-nueva" data-ej="${esc(e.ejercicioId)}" novalidate>
@@ -147,7 +146,7 @@ export function vistaHoy(cont, { usuario, datos, irA }) {
     const pendientes = h.ejercicios.filter((e) => !e.listo).length;
     const actual = h.ejercicios.find((e) => !e.listo)?.ejercicioId;
     cont.innerHTML = `${cabeza}
-        ${!anoto && !terminado ? htmlConsigna({ paso: 1, total: 5, accion: "Tocá “Llegué”, subile la sentadilla a 60 kg y tocá “Hecha”.", resultado: "Es récord, y Mauro lo ve en el momento." }) : ""}
+
         ${terminado ? `
         <div class="hecho">
             <i class="ti ti-circle-check" aria-hidden="true"></i>
@@ -155,7 +154,7 @@ export function vistaHoy(cont, { usuario, datos, irA }) {
             <p>${esc(plural(h.ejercicios.filter((e) => e.hechas.length).length, "ejercicio", "ejercicios"))} · ${esc(plural(h.ejercicios.reduce((t, e) => t + e.hechas.length, 0), "serie", "series"))}${h.records ? ` · ${esc(plural(h.records, "récord", "récords"))}` : ""}</p>
             <p class="nota"><span>${esc(h.semana.hechos)} de ${esc(h.semana.tocan)} esta semana. Mauro ya lo ve.</span></p>
         </div>
-        ${htmlConsigna({ paso: 1, total: 5, accion: "Terminá el entreno.", hecho: "entreno anotado", guia: guia("u-profe", "/inicio", "Mirá cómo lo ve Mauro") })}` : ""}
+        ${guia("u-profe", "/inicio", "Mirá cómo lo ve Mauro")}` : ""}
         <ol class="ejercicios">${h.ejercicios.map((e, i) => htmlEjercicio(e, i, h, actual)).join("")}</ol>
         ${anoto && !terminado ? `
         <button class="boton boton--secundario boton--ancho" type="button" data-terminar><i class="ti ti-circle-check" aria-hidden="true"></i> Terminar el entreno${pendientes ? ` (faltan ${pendientes})` : ""}</button>
@@ -170,6 +169,7 @@ export function vistaHoy(cont, { usuario, datos, irA }) {
     }
 
     function activar() {
+        activarConsignaPersona(cont, datos, usuario);
         activarGuias(cont, irA);
         activarBotonSonido(cont, MARCA.prefijo);
         activarTrabajosSocio(cont, { usuario, datos, alCambiar: otraVez });

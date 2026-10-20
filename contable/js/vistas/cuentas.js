@@ -1,17 +1,19 @@
+import { conConsigna } from "./comunes.js?v=569102ff5e";
 // ============================================
 // Cuentas: quién te debe (clientes), a quién le debés (proveedores) y caja y banco. En la ficha de cada uno, su
 // cuenta corriente con el saldo renglón por renglón y, para administración, cobrar o pagar. Desde acá también se
 // suman clientes y proveedores.
 // ============================================
-import { esc, aviso } from "../../kit/js/ui.js?v=929def1556";
-import { TOPES, CUENTAS } from "../datos.js?v=929def1556";
-import { CONDICIONES, pesos, formatoCuit } from "../reglas.js?v=929def1556";
-import { diaMes, haceDias, htmlTabla, documento, condicionTexto, fechaCorta } from "./comunes.js?v=929def1556";
+import { esc, aviso } from "../../kit/js/ui.js?v=569102ff5e";
+import { TOPES, CUENTAS, ROLES_QUE_COBRAN } from "../datos.js?v=569102ff5e";
+import { CONDICIONES, pesos, formatoCuit } from "../reglas.js?v=569102ff5e";
+import { diaMes, haceDias, htmlTabla, documento, condicionTexto, fechaCorta } from "./comunes.js?v=569102ff5e";
 
 const puedeCargar = (u) => u.rol === "admin";
+const puedeCobrar = (u) => ROLES_QUE_COBRAN.includes(u.rol);
 const PESTANAS = { clientes: "Clientes", proveedores: "Proveedores", plata: "Caja y banco" };
 
-export function vistaCuentas(cont, { usuario, datos, consulta }) {
+function pintarCuentas(cont, { usuario, datos, consulta }) {
     const pestana = Object.hasOwn(PESTANAS, consulta?.get("ver")) ? consulta.get("ver") : "clientes";
     cont.innerHTML = `
         <h1 class="titulo">Cuentas</h1>
@@ -109,7 +111,7 @@ function conectarNuevo(lugar, usuario, datos, tipo) {
 }
 
 // ---------- Ficha de un cliente o un proveedor ----------
-export function vistaFicha(cont, { usuario, datos, params: [tipo, id] }) {
+function pintarFicha(cont, { usuario, datos, params: [tipo, id] }) {
     const esCliente = tipo === "cliente";
     const quien = esCliente ? datos.buscarCliente(id) : datos.buscarProveedor(id);
     const saldo = esCliente ? datos.saldoCliente(id) : datos.saldoProveedor(id);
@@ -123,7 +125,7 @@ export function vistaFicha(cont, { usuario, datos, params: [tipo, id] }) {
             <span class="panel__rotulo">${esCliente ? (saldo >= 0 ? "Te debe" : "Tiene a favor") : saldo >= 0 ? "Le debés" : "Te queda a favor"}</span>
             <span class="panel__numero">${esc(pesos(Math.abs(saldo)))}</span>
         </div>
-        ${puedeCargar(usuario) && saldo > 0 ? `
+        ${(esCliente ? puedeCobrar(usuario) : puedeCargar(usuario)) && saldo > 0 ? `
         <form class="formulario bloque cobrar" novalidate>
             <h2 class="subtitulo"><i class="ti ti-cash"></i> ${esCliente ? "Cobrar" : "Pagar"}</h2>
             <div class="formulario__fila">
@@ -171,3 +173,7 @@ export function vistaFicha(cont, { usuario, datos, params: [tipo, id] }) {
         }
     });
 }
+
+export const vistaCuentas = conConsigna(pintarCuentas);
+
+export const vistaFicha = conConsigna(pintarFicha);

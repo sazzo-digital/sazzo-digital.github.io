@@ -9,13 +9,13 @@
 // Reglas del kit: exigir() en lo que modifica, topes en todo lo que se carga, nada se borra y se devuelven copias.
 // Si cambia la forma de los datos, subir VERSION_DATOS (se regeneran solos).
 // ============================================
-import { crearGuardado, exigir, copia, nuevoId, buscar } from "../kit/js/guardado.js?v=86b90b0105";
-import { enteroHasta, sinPasarse } from "../kit/js/topes.js?v=86b90b0105";
-import { esFechaISO } from "../kit/js/fechas.js?v=86b90b0105";
-import { aHora, aMinutos, diaSemana, libres, revisarLibre } from "../kit/js/turnos.js?v=86b90b0105";
-import { MARCA, NEGOCIO, buscarPersona } from "./marca.js?v=86b90b0105";
+import { crearGuardado, exigir, copia, nuevoId, buscar } from "../kit/js/guardado.js?v=34a23b46ed";
+import { enteroHasta, sinPasarse } from "../kit/js/topes.js?v=34a23b46ed";
+import { esFechaISO } from "../kit/js/fechas.js?v=34a23b46ed";
+import { aHora, aMinutos, diaSemana, libres, revisarLibre } from "../kit/js/turnos.js?v=34a23b46ed";
+import { MARCA, NEGOCIO, buscarPersona } from "./marca.js?v=34a23b46ed";
 
-export const VERSION_DATOS = 2; // 2: las propiedades de fábrica traen fotos y dos, el recorrido 360
+export const VERSION_DATOS = 3; // 2: las propiedades de fábrica traen fotos y dos, el recorrido 360
 
 // ---------- Topes (cada uno con su prueba de valor absurdo) ----------
 export const TOPES = {
@@ -331,7 +331,9 @@ export function semilla(base = new Date()) {
         consulta("q-9", "Ezequiel Rojas", "instagram", "p-8", { operacion: "venta", tipo: "depto", ambientes: 2, hasta: 80_000, zona: null },
             "Me interesa el de pozo, ¿es apto crédito?", "agendada", momento(base, 4, 21), momento(base, 1, 11), "u-agente"),
         consulta("q-10", "Natalia Duarte", "cartel", "p-4", { operacion: "alquiler", tipo: "ph", ambientes: 2, hasta: 650_000, zona: null },
-            "Quiero ver el PH, ¿aceptan mascotas?", "descartada", momento(base, 44, 19), momento(base, 41, 12), "u-duena")
+            "Quiero ver el PH, ¿aceptan mascotas?", "descartada", momento(base, 44, 19), momento(base, 41, 12), "u-duena"),
+        consulta("q-11", "Lucía Paz", "web", "p-2", { operacion: "alquiler", tipo: "depto", ambientes: 1, hasta: 380_000, zona: null },
+            "Pidió una visita desde la página.", "nueva", haceHoras(base, 2), null, "u-agente")
     ];
     // Agustina y Micaela tienen notas para que se vea el historial
     consultas[3].notas.push({ texto: "Le gustó, pero le queda lejos del trabajo. Mandarle si entra algo en el centro.", por: "u-agente", fecha: momento(base, 6, 12.5) });
@@ -349,7 +351,8 @@ export function semilla(base = new Date()) {
         // Las que vienen (confirmadas)
         visita("v-5", "p-3", "q-1", "Bruno Herrera", diaDeVisitas(hoy, 1, true), aMinutos("18:00"), "u-agente", "confirmada", haceHoras(base, 26)),
         visita("v-6", "p-5", "q-5", "Gabriel Correa", diaDeVisitas(hoy, 2), aMinutos("10:00"), "u-duena", "confirmada", momento(base, 2, 10)),
-        visita("v-7", "p-8", "q-9", "Ezequiel Rojas", diaDeVisitas(hoy, 2, true), aMinutos("11:00"), "u-agente", "confirmada", momento(base, 1, 11))
+        visita("v-7", "p-8", "q-9", "Ezequiel Rojas", diaDeVisitas(hoy, 2, true), aMinutos("11:00"), "u-agente", "confirmada", momento(base, 1, 11)),
+        { ...visita("v-8", "p-2", "q-11", "Lucía Paz", diaDeVisitas(hoy, 1, true), aMinutos("12:00"), "u-agente", "pedida", haceHoras(base, 2)), visto: false }
     ];
 
     const mesQueViene = primeroDelMes(hoy, 1);
@@ -413,6 +416,7 @@ export function buscaTexto(b) {
 export function crearDatos(prefijo = MARCA.prefijo, { reloj = () => new Date() } = {}) {
     const guardado = crearGuardado({ prefijo, version: VERSION_DATOS, semilla: () => semilla(reloj()) });
     const db = () => guardado.db();
+    const inicial = semilla(reloj());
     const hoy = () => isoDe(reloj());
     const ahoraISO = () => reloj().toISOString();
     const minutoActual = () => reloj().getHours() * 60 + reloj().getMinutes();
@@ -908,7 +912,7 @@ export function crearDatos(prefijo = MARCA.prefijo, { reloj = () => new Date() }
         exigir(periodosDe(c, hoy()).includes(periodo), "Ese mes no es de este alquiler.");
         exigir(!c.pagos.some((p) => p.periodo === periodo), `El mes de ${nombreMes(periodo)} ya está pago.`);
         exigir(db().alquileres.reduce((t, x) => t + x.pagos.length, 0) < TOPES.pagos, `Ya hay ${TOPES.pagos} pagos. Es una demo: tocá "Empezar de cero" arriba.`);
-        c.pagos.push({ periodo, fecha: ahoraISO(), monto: montoEn(c, `${periodo}-01`), por: usuario.id });
+        c.pagos.push({ periodo, fecha: ahoraISO(), monto: montoEn(c, `${periodo}-01`), por: usuario.id, anotado: true });
         guardado.persistir();
         return armarAlquiler(c);
     }
@@ -955,8 +959,32 @@ export function crearDatos(prefijo = MARCA.prefijo, { reloj = () => new Date() }
         };
     }
 
+    function pasos(usuario) {
+        if (esDuena(usuario)) {
+            return [
+                db().alquileres.find((c) => c.id === "c-1").ajustes.length > 0,
+                db().alquileres.some((c) => c.pagos.some((x) => x.anotado)),
+                db().propiedades.some((x) => x.nueva)
+            ];
+        }
+        if (usuario?.rol === "agente") {
+            const notas = (lista) => lista.reduce((t, c) => t + c.notas.filter((n) => n.por === usuario.id).length, 0);
+            return [
+                db().visitas.find((v) => v.id === "v-8")?.estado !== "pedida",
+                Boolean(db().consultas.find((c) => c.id === "q-3")?.ultimoContacto),
+                notas(db().consultas) > notas(inicial.consultas)
+            ];
+        }
+        if (esCliente(usuario)) {
+            const mias = db().consultas.filter((c) => c.clienteId === usuario.id).map((c) => c.id);
+            const visitas = db().visitas.filter((v) => mias.includes(v.consultaId));
+            return [visitas.length > 0, new Set(visitas.map((v) => v.propiedadId)).size > 1, visitas.some((v) => v.estado === "cancelada")];
+        }
+        exigir(false, "Esa persona no tiene pasos.");
+    }
+
     return {
-        guardado, hoy,
+        guardado, hoy, pasos,
         listarPropiedades, propiedad, quienesBuscan, leSirvenA, cargarPropiedad, cambiarEstadoPropiedad,
         dias, libresParaVisita, pedirVisita, misVisitas, visita, confirmarVisita, cancelarVisita, marcarVisita, agendarVisita, agenda, visitasPorDia,
         listarConsultas, consulta, pedidasSinVer, marcarVisto, nuevaConsulta, cambiarEstadoConsulta, anotar, marcarContacto,

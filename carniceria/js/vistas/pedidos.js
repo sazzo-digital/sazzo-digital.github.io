@@ -1,17 +1,17 @@
+import { consignaPersona, activarSerie } from "./comunes.js?v=4438010c31";
 // ============================================
 // Pedidos (Ricardo y Darío): los que llegan del celu o se anotan en el mostrador, los del día por hora de retiro.
 // En cada pedido: se escribe lo que pesó cada corte (pidió 1,5, pesó 1,62): el total se ajusta solo y dice la
 // diferencia. "Listo: avisarle" lo separa (se descuenta del stock) y arma el mensaje para WhatsApp; "Cobrar y
 // entregar" lo pasa a la caja; o se anula (lo separado vuelve al stock).
 // ============================================
-import { DIVIDIDO, partesIniciales, htmlDosMedios, activarDosMedios } from "../../kit/js/pagos.js?v=55764424c5";
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=55764424c5";
-import { mostrarMensaje } from "../../kit/js/mensaje.js?v=55764424c5";
-import { htmlCopiable, activarCopiables, ding } from "../../kit/js/celular.js?v=55764424c5";
-import { ESTADOS_PEDIDO, MEDIOS, RETIROS, TOPES, ALIAS, pesos, kilos, aGramos, precioPorPeso } from "../datos.js?v=55764424c5";
-import { MARCA } from "../marca.js?v=55764424c5";
-import { guia, activarGuias, pasos, pastillaEstado, tarjetaPedido, cuando, campoKg, kgEnCampo, loPedido } from "./comunes.js?v=55764424c5";
-import { htmlConsigna } from "../../kit/js/consigna.js?v=55764424c5";
+import { DIVIDIDO, partesIniciales, htmlDosMedios, activarDosMedios } from "../../kit/js/pagos.js?v=4438010c31";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=4438010c31";
+import { mostrarMensaje } from "../../kit/js/mensaje.js?v=4438010c31";
+import { htmlCopiable, activarCopiables, ding } from "../../kit/js/celular.js?v=4438010c31";
+import { ESTADOS_PEDIDO, MEDIOS, RETIROS, TOPES, ALIAS, pesos, kilos, aGramos, precioPorPeso } from "../datos.js?v=4438010c31";
+import { MARCA } from "../marca.js?v=4438010c31";
+import { guia, activarGuias, pasos, pastillaEstado, tarjetaPedido, cuando, campoKg, kgEnCampo, loPedido } from "./comunes.js?v=4438010c31";
 
 /** Billetes "redondos" para cobrar un pedido: el próximo múltiplo de $10.000, de $20.000 y $50.000. */
 const billetesPara = (total) => [...new Set([10_000, 20_000, 50_000].map((b) => Math.ceil(Math.max(1, total) / b) * b))].slice(0, 3);
@@ -27,11 +27,11 @@ export function vistaPedidos(cont, { usuario, datos, consulta }) {
     const chip = (ver, texto) => `<a class="chip${(filtro ?? "") === (ver ?? "") ? " activo" : ""}" href="#/pedidos${ver ? `?ver=${ver}` : ""}">${esc(texto)}</a>`;
 
     cont.innerHTML = `
+        ${consignaPersona(datos, usuario)}
         <div class="titulo-con-accion">
             <h1 class="titulo">Pedidos</h1>
             <a class="boton boton--chico" href="#/pedidos/nuevo"><i class="ti ti-plus"></i> Anotar uno del teléfono</a>
         </div>
-        ${nuevoWeb ? htmlConsigna({ paso: 2, total: 3, accion: `Te llegó el pedido de ${nuevoWeb.para}: tocalo para pesarlo y avisarle.`, resultado: "El precio se ajusta al peso real." }) : ""}
         <div class="numeros-caja">
             <div class="numero-caja"><span>Para preparar</span><b>${esc(cuenta("nuevo"))}</b></div>
             <div class="numero-caja"><span>Listos</span><b>${esc(cuenta("listo"))}</b><small>esperando que los busquen</small></div>
@@ -46,6 +46,7 @@ export function vistaPedidos(cont, { usuario, datos, consulta }) {
         </nav>
         ${lista.length ? `<ul class="tarjetas">${lista.map((pe) => tarjetaPedido(pe, `#/pedidos/${pe.id}`)).join("")}</ul>`
             : vacio("No hay pedidos con ese filtro.", "ti-clipboard-list")}`;
+    activarSerie(cont);
 }
 
 /** Anotar un pedido que llegó por teléfono o WhatsApp: los cortes, cuánto, para quién y cuándo lo retira. */
@@ -56,6 +57,7 @@ export function vistaNuevoPedido(cont, { usuario, datos }) {
     function pintar() {
         const articulos = datos.listarArticulos().filter((a) => a.stock > 0);
         cont.innerHTML = `
+        ${consignaPersona(datos, usuario)}
             <a class="volver" href="#/pedidos"><i class="ti ti-arrow-left"></i> Pedidos</a>
             <h1 class="titulo">Anotar un pedido</h1>
             <p class="nota"><i class="ti ti-info-circle"></i> Para los que llaman o mandan un mensaje: anotalo acá y se prepara igual que los del celu.</p>
@@ -75,6 +77,7 @@ export function vistaNuevoPedido(cont, { usuario, datos }) {
                 const a = datos.articulo(id);
                 return `<li class="movimiento"><span><b>${esc(a.nombre)}</b><small>${esc(a.venta === "kg" ? kilos(c.cantidad) : `${c.cantidad} u.`)}${c.aclaracion ? ` · “${esc(c.aclaracion)}”` : ""}</small></span>
                     <button class="boton-icono" type="button" data-quitar="${esc(id)}" aria-label="Sacar ${esc(a.nombre)}"><i class="ti ti-x"></i></button></li>`;
+    activarSerie(cont);
             }).join("")}</ul>` : ""}
             <form class="formulario bloque confirmar" novalidate>
                 <label>¿Para quién es?<input name="para" maxlength="${TOPES.para}" required placeholder="Ej: Marta, la del 3° B"></label>
@@ -159,6 +162,7 @@ export function vistaPedido(cont, opciones, recien = null) {
     const abierto = datos.listarDespostes().find((d) => d.estado === "abierto");
 
     cont.innerHTML = `
+        ${consignaPersona(datos, usuario)}
         <a class="volver" href="#/pedidos"><i class="ti ti-arrow-left"></i> Pedidos</a>
         <div class="titulo-con-accion">
             <h1 class="titulo">N° ${esc(pe.numero)} · ${esc(pe.para)}</h1>
@@ -178,7 +182,6 @@ export function vistaPedido(cont, opciones, recien = null) {
             <h2 class="titulo">Entregado y cobrado</h2>
             <p>${esc(pesos(pe.total))}${opciones.vuelto != null ? ` · vuelto <b>${esc(pesos(opciones.vuelto))}</b>` : ""}</p>
         </div>` : ""}
-        ${pe.estado === "nuevo" && empleado ? htmlConsigna({ paso: 2, total: 3, accion: "Cortá y pesá cada cosa, escribí lo que marcó la balanza (asado 1kg 620g, picada 980g, milanesas 1kg 50g) y avisale que está listo.", resultado: "El total se ajusta solo." }) : ""}
         <ul class="filas-stock items-pedido">${pe.items.map(filaItem).join("")}</ul>
         <div class="total total--pedido">
             <span>${pe.real === null ? "Total aproximado" : "Total"}${pe.sinPesar ? ` <small>falta pesar ${esc(pe.sinPesar)}</small>` : ""}</span>
@@ -186,6 +189,7 @@ export function vistaPedido(cont, opciones, recien = null) {
         </div>
         ${pe.diferencia ? `<p class="nota diferencia"><i class="ti ti-scale"></i> Pesó ${pe.diferencia > 0 ? "un poco más" : "un poco menos"}: ${pe.diferencia > 0 ? "+" : "−"}${esc(pesos(Math.abs(pe.diferencia)))} de lo que calculó ${esc(pe.para)} (${esc(pesos(pe.estimado))}).</p>` : ""}
         <div class="acciones-pedido"></div>`;
+    activarSerie(cont);
 
     // Pesar: al salir de cada campo se guarda y se pasa al siguiente sin pesar
     cont.querySelectorAll(".pesaje input[name=kg]").forEach((campo) => {
@@ -246,7 +250,7 @@ export function vistaPedido(cont, opciones, recien = null) {
                 <button class="boton boton--secundario" type="button" data-avisar><i class="ti ti-message-circle"></i> ${pe.avisado ? "Avisar de nuevo" : "Avisarle"}</button>
                 ${pe.avisado ? `<span class="nota avisado"><i class="ti ti-check"></i> Avisado ${esc(cuando(pe.avisado))}</span>` : ""}
             </div>
-            ${empleado && recien === "listo" ? htmlConsigna({ paso: 2, total: 3, accion: "Pesalo y avisale.", hecho: "listo para retirar", guia: guia("u-dueno", abierto ? `/desposte/${abierto.id}` : "/caja", abierto ? "Pasá a Ricardo: terminá el desposte de hoy" : "Pasá a Ricardo: mirá la caja") }) : ""}
+            ${empleado && recien === "listo" ? guia("u-dueno", "/caja", "Mirá la caja del día") : ""}
             <form class="formulario bloque entregar" novalidate>
                 <h2 class="subtitulo"><i class="ti ti-cash"></i> Vinieron a buscarlo: cobrar y entregar</h2>
                 <div class="chips medios" role="radiogroup" aria-label="Cómo paga"></div>

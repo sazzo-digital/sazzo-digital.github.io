@@ -3,10 +3,11 @@
 // el botón del recorrido ("Mirá lo que le llega a Diego →", del kit).
 // Todo dato que entra a HTML pasa por esc().
 // ============================================
-import { esc, cuandoFue } from "../../kit/js/ui.js?v=b86ccb1eca";
-import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=b86ccb1eca";
-import { ESTADOS_VEHICULO, ESTADOS_PROBLEMA, URGENCIAS } from "../datos.js?v=b86ccb1eca";
-import { buscarPersona } from "../marca.js?v=b86ccb1eca";
+import { esc, cuandoFue } from "../../kit/js/ui.js?v=144fda0e5d";
+import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=144fda0e5d";
+import { htmlConsigna, htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=144fda0e5d";
+import { ESTADOS_VEHICULO, ESTADOS_PROBLEMA, URGENCIAS } from "../datos.js?v=144fda0e5d";
+import { buscarPersona, MARCA } from "../marca.js?v=144fda0e5d";
 
 /** "recién", "hace 5 minutos", "hace 3 horas" o, si fue antes de ayer, "el lunes 5/10 a las 15:20". */
 export function haceCuanto(iso) {
@@ -51,3 +52,30 @@ export const textoRepuestos = (repuestos = []) => repuestos.map((u) => `${u.nomb
 export const guia = (personaId, ruta, texto) => htmlGuia({ persona: buscarPersona(personaId), ruta, texto });
 
 export { activarGuias };
+
+const CONSIGNAS = {
+    chofer: [
+        ["Tocá “Avisar un problema”, elegí qué pasa y si podés seguir, y tocá “Enviar al mecánico”.", "Le llega a Diego, el mecánico, en el momento."],
+        ["Avisá otro y contalo en pocas palabras (por ejemplo: chillan al frenar).", "Diego lee lo que escribiste."],
+        ["Avisá uno con “Tengo que parar”.", "A Diego le aparece primero, como urgente."]
+    ],
+    mecanico: [
+        ["Tocá “Me hago cargo” en la Moto 8.", "Pasa a “En el taller” y Marta lo ve en su tablero."],
+        ["Tocá “Listo, arreglado” en la Moto 8 y confirmalo.", "La moto vuelve a andar y queda en su historia."],
+        ["Arreglá el embrague del Camión 2: “Listo, arreglado”, una nota y confirmalo.", "Si usaste repuestos, se descuentan solos."]
+    ],
+    admin: [
+        ["En Vehículos, abrí el Camión 1, poné 149100 en “Actualizar kilómetros” y tocá “Guardar”.", "Te avisa que ya se pasó del service."],
+        ["Tocá “Hacer el service”, sumá aceite y un filtro, y tocá “Service hecho”.", "Se descuenta del stock y el próximo service se calcula solo."],
+        ["En Repuestos, tocá “Entró” en Lámparas y anotá 4.", "Deja de decir “No hay”."]
+    ]
+};
+
+export function consignaPersona(datos, usuario) {
+    const paso = datos.pasos(usuario).findIndex((hecho) => !hecho);
+    if (paso < 0) return htmlConsignaFinal(MARCA, 3);
+    const [accion, resultado] = CONSIGNAS[usuario.rol][paso];
+    return htmlConsigna({ paso: paso + 1, total: 3, accion, resultado });
+}
+
+export const activarPasos = (cont) => activarConsigna(cont, MARCA);

@@ -3,9 +3,47 @@
 // tipo de comprobante, tablas con scroll propio (la página nunca se corre de costado) y el "Pidiendo CAE a ARCA…".
 // Todo lo que viene de los datos pasa por esc().
 // ============================================
-import { esc, fechaCorta } from "../../kit/js/ui.js?v=929def1556";
-import { ultimosPeriodos, nombrePeriodo, periodoActual, COMPROBANTES, CONDICIONES, formatoCuit } from "../reglas.js?v=929def1556";
-import { buscarPersona } from "../marca.js?v=929def1556";
+import { esc, fechaCorta } from "../../kit/js/ui.js?v=569102ff5e";
+import { ultimosPeriodos, nombrePeriodo, periodoActual, COMPROBANTES, CONDICIONES, formatoCuit } from "../reglas.js?v=569102ff5e";
+import { buscarPersona, MARCA } from "../marca.js?v=569102ff5e";
+import { htmlConsigna, htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=569102ff5e";
+
+const CONSIGNAS = {
+    admin: [
+        ["En la factura de “Empezá: hacé una factura A”, tocá “Emitir factura”.", "La factura preparada sale con CAE de prueba."],
+        ["En “Compras”, tocá “Traer de ARCA”.", "Las compras de ejemplo se suman al IVA del mes."],
+        ["En “Cuentas”, abrí un cliente que debe, tocá “Todo” y “Registrar el cobro”.", "Su saldo baja y el cobro queda en su cuenta corriente."]
+    ],
+    dueno: [
+        ["En “Más” → “Tu empresa”, escribí el nombre de tu negocio y tocá “Guardar los datos”.", "El nombre nuevo sale arriba y en tus facturas."],
+        ["En “Tu empresa”, tocá “Subir logo” o “Elegir colores”.", "La demo toma tu logo o tus colores."],
+        ["En “Cuentas”, abrí un cliente que debe, tocá “Todo” y “Registrar el cobro”.", "Su saldo baja y el cobro queda anotado."]
+    ],
+    contadora: [
+        ["En “IVA”, elegí otro mes.", "Ves la posición de IVA y los libros de ese mes."],
+        ["En “IVA”, tocá “Libros en Excel (CSV)”.", "Ves qué archivo le llega al contador (en la demo no se baja nada)."],
+        ["En “IVA”, tocá “Libro IVA Digital (.txt)”.", "Ves qué archivos de prueba le llegan al contador para ARCA (en la demo no se baja nada)."]
+    ]
+};
+
+export function consignaPersona(datos, usuario) {
+    const paso = datos.pasos(usuario).findIndex((hecho) => !hecho);
+    if (paso < 0) return htmlConsignaFinal(MARCA, 3);
+    const [accion, resultado] = CONSIGNAS[usuario.rol][paso];
+    return htmlConsigna({ paso: paso + 1, total: 3, accion, resultado });
+}
+
+export function pintarConsigna(cont, datos, usuario) {
+    cont.querySelector("[data-pasos]")?.remove();
+    cont.insertAdjacentHTML("afterbegin", `<div data-pasos>${consignaPersona(datos, usuario)}</div>`);
+    activarConsigna(cont, MARCA);
+}
+
+export const conConsigna = (vista) => (cont, opciones) => {
+    const resultado = vista(cont, opciones);
+    pintarConsigna(cont, opciones.datos, opciones.usuario);
+    return resultado;
+};
 
 export { fechaCorta };
 

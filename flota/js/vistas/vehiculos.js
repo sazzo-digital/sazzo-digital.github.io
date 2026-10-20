@@ -2,10 +2,10 @@
 // Vehículos (administradora y mecánico): lista con filtro por estado y la ficha de cada uno
 // (estado, chofer de hoy, km y service, papeles con vencimiento e historia de problemas).
 // ============================================
-import { esc, vacio, aviso, fechaCorta } from "../../kit/js/ui.js?v=b86ccb1eca";
-import { mostrarMapa } from "../../kit/js/mapa.js?v=b86ccb1eca";
-import { ESTADOS_VEHICULO, TOPES, UBICACIONES, COLOR_ESTADO, SERVICE_CADA_KM, cantidadCon } from "../datos.js?v=b86ccb1eca";
-import { haceCuanto, pastillaVehiculo, pastillaProblema, historiaProblema, textoRepuestos } from "./comunes.js?v=b86ccb1eca";
+import { esc, vacio, aviso, fechaCorta } from "../../kit/js/ui.js?v=144fda0e5d";
+import { mostrarMapa } from "../../kit/js/mapa.js?v=144fda0e5d";
+import { ESTADOS_VEHICULO, TOPES, UBICACIONES, COLOR_ESTADO, SERVICE_CADA_KM, cantidadCon } from "../datos.js?v=144fda0e5d";
+import { haceCuanto, pastillaVehiculo, pastillaProblema, historiaProblema, textoRepuestos, consignaPersona, activarPasos } from "./comunes.js?v=144fda0e5d";
 
 const km = (n) => `${n.toLocaleString("es-AR")} km`;
 
@@ -71,6 +71,7 @@ export function vistaFicha(cont, { usuario, datos, params: [id] }) {
             <h1 class="titulo"><i class="ti ${esc(v.tipoInfo.icono)}" aria-hidden="true"></i> ${esc(v.nombre)}</h1>
             ${pastillaVehiculo(v.estado)}
         </div>
+        ${consignaPersona(datos, usuario)}
         <dl class="datos">
             <div><dt>Chofer de hoy</dt><dd>${esc(v.chofer ?? "Nadie")}</dd></div>
             <div><dt>Kilómetros</dt><dd>${esc(km(v.km))}</dd></div>
@@ -100,6 +101,7 @@ export function vistaFicha(cont, { usuario, datos, params: [id] }) {
                 ${pastillaProblema(p.estado)}
             </li>`).join("")}</ul>` : vacio("Este vehículo no tuvo problemas.", "ti-mood-smile")}`;
 
+    activarPasos(cont);
     cont.querySelector(".km").addEventListener("submit", (e) => {
         e.preventDefault();
         const valor = e.target.km.value.trim();

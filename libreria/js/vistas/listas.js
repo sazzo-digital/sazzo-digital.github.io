@@ -1,13 +1,13 @@
+import { pintarConsigna } from "./comunes.js?v=53dafd0799";
 // ============================================
 // Listas escolares (Mariela y Joaquín): los pedidos de listas que llegan del celu o se arman en el mostrador.
 // En cada pedido: si alcanza el stock de cada artículo (y, si no, otro de la misma familia: el cuaderno rojo por el
 // azul), "Separar" (se descuenta del stock), "Avisar" (mensaje para copiar) y "Cobrar y entregar" (queda como venta).
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=5983ccc313";
-import { mostrarMensaje } from "../../kit/js/mensaje.js?v=5983ccc313";
-import { ESTADOS_PEDIDO, MEDIOS, TOPES, pesos } from "../datos.js?v=5983ccc313";
-import { guia, activarGuias, pasos, pastillaEstado, tarjetaPedido, cuando } from "./comunes.js?v=5983ccc313";
-import { htmlConsigna } from "../../kit/js/consigna.js?v=5983ccc313";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=53dafd0799";
+import { mostrarMensaje } from "../../kit/js/mensaje.js?v=53dafd0799";
+import { ESTADOS_PEDIDO, MEDIOS, TOPES, pesos } from "../datos.js?v=53dafd0799";
+import { guia, activarGuias, pasos, pastillaEstado, tarjetaPedido, cuando } from "./comunes.js?v=53dafd0799";
 
 /** Billetes "redondos" para cobrar una lista: el próximo múltiplo de $10.000, de $50.000 y $100.000. */
 const billetesPara = (total) => [...new Set([10_000, 50_000, 100_000].map((b) => Math.ceil(Math.max(1, total) / b) * b))].slice(0, 3);
@@ -18,7 +18,6 @@ export function vistaListas(cont, { usuario, datos, consulta }) {
     const todos = datos.listarPedidos(usuario);
     const lista = estado ? todos.filter((p) => p.estado === estado) : todos.filter((p) => p.estado !== "anulada");
     const cuenta = (e) => todos.filter((p) => p.estado === e).length;
-    const nuevaWeb = todos.find((p) => p.estado === "nueva" && p.origen === "web");
     const chip = (ver, texto) => `<a class="chip${(filtro ?? "") === (ver ?? "") ? " activo" : ""}" href="#/listas${ver ? `?ver=${ver}` : ""}">${esc(texto)}</a>`;
 
     cont.innerHTML = `
@@ -26,7 +25,6 @@ export function vistaListas(cont, { usuario, datos, consulta }) {
             <h1 class="titulo">Listas escolares</h1>
             <a class="boton boton--chico" href="#/listas/nueva"><i class="ti ti-plus"></i> Armar una en el mostrador</a>
         </div>
-        ${nuevaWeb ? htmlConsigna({ paso: 2, total: 4, accion: `Te llegó la lista de ${nuevaWeb.para}: tocala para armarla y separarla.`, resultado: "Se descuenta del stock." }) : ""}
         <div class="numeros-caja">
             <div class="numero-caja"><span>Para armar</span><b>${esc(cuenta("nueva"))}</b></div>
             <div class="numero-caja"><span>Separadas</span><b>${esc(cuenta("separada"))}</b><small>esperando que las busquen</small></div>
@@ -42,6 +40,7 @@ export function vistaListas(cont, { usuario, datos, consulta }) {
         </nav>
         ${lista.length ? `<ul class="tarjetas">${lista.map((pe) => tarjetaPedido(pe, `#/listas/${pe.id}`)).join("")}</ul>`
             : vacio("No hay listas con ese filtro.", "ti-school")}`;
+    pintarConsigna(cont, datos, usuario);
 }
 
 /** Armar una lista en el mostrador: elegir la del colegio, sacar lo que ya tienen y para quién es. */
@@ -79,6 +78,7 @@ export function vistaNuevaLista(cont, { usuario, datos }) {
                     <button class="boton boton--ancho" type="submit"><i class="ti ti-check"></i> Anotar la lista</button>
                 </form>
             </div>`;
+        pintarConsigna(cont, datos, usuario);
         cont.querySelectorAll("[data-lista]").forEach((b) => b.addEventListener("click", () => {
             listaId = b.dataset.lista;
             sin.clear();
@@ -156,10 +156,10 @@ export function vistaPedido(cont, opciones, recien = null) {
             <h2 class="titulo">Entregada y cobrada</h2>
             <p>${esc(pesos(pe.total))}${opciones.vuelto != null ? ` · vuelto <b>${esc(pesos(opciones.vuelto))}</b>` : ""}</p>
         </div>` : ""}
-        ${pe.estado === "nueva" && empleado ? htmlConsigna({ paso: 2, total: 4, accion: `Fijate que haya de todo${sinAlcanzar ? ": hay algo que no alcanza, cambialo por otro" : ""} y separala.`, resultado: "Se descuenta del stock." }) : ""}
         <ul class="filas-stock items-pedido">${pe.items.map(filaItem).join("")}</ul>
         <div class="total"><span>${pe.estado === "nueva" && sinAlcanzar ? "Si la separás así" : "Total"}</span><b>${esc(pesos(pe.estado === "nueva" ? pe.totalSiSepara : pe.total))}</b></div>
         <div class="acciones-pedido"></div>`;
+    pintarConsigna(cont, datos, usuario);
 
     const acciones = cont.querySelector(".acciones-pedido");
 
@@ -182,7 +182,6 @@ export function vistaPedido(cont, opciones, recien = null) {
                 <button class="boton boton--secundario" type="button" data-avisar><i class="ti ti-message-circle"></i> Avisar${pe.cliente ? ` a ${esc(pe.cliente)}` : ""} que está lista</button>
                 ${pe.avisado ? `<span class="nota avisado"><i class="ti ti-check"></i> Avisado ${esc(cuando(pe.avisado))}</span>` : ""}
             </div>
-            ${empleado && recien === "separada" ? htmlConsigna({ paso: 2, total: 4, accion: "Separá la lista.", hecho: "lista separada", guia: guia("u-duena", "/stock?ver=pedir", "Pasá a Mariela: mirá qué hay que reponer") }) : ""}
             <form class="formulario bloque entregar" novalidate>
                 <h2 class="subtitulo"><i class="ti ti-cash"></i> Vinieron a buscarla: cobrar y entregar</h2>
                 <div class="chips medios" role="radiogroup" aria-label="Cómo paga"></div>
@@ -196,6 +195,7 @@ export function vistaPedido(cont, opciones, recien = null) {
                 mostrarMensaje(`Avisar${pe.cliente ? ` a ${pe.cliente}` : ""}`, mensaje, {
                     alConfirmar: () => {
                         datos.avisarPedido(usuario, pe.id);
+                        pintarConsigna(cont, datos, usuario);
                         const marca = acciones.querySelector(".avisado");
                         if (marca) marca.innerHTML = `<i class="ti ti-check"></i> Avisado recién`;
                         else acciones.querySelector("[data-avisar]").insertAdjacentHTML("afterend", `<span class="nota avisado"><i class="ti ti-check"></i> Avisado recién</span>`);

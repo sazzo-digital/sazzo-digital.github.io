@@ -5,7 +5,7 @@
 //   Mauro le deja una nota o le ajusta un peso → a Franco le salta "Mauro te dejó una nota" / "…te ajustó la rutina".
 // Acá solo se dice qué pasó y a quién le importa; el kit decide qué es nuevo para cada uno.
 // ============================================
-import { SOCIO_DE, pesos } from "../datos.js?v=be499030eb";
+import { SOCIO_DE, pesos } from "../datos.js?v=0ae8c6cc93";
 
 export function avisosDe(datos) {
     const db = datos.guardado.db();

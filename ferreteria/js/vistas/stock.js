@@ -1,3 +1,4 @@
+import { pintarConsigna } from "./comunes.js?v=12c89e832a";
 // ============================================
 // Stock y precios. Todos ven el stock por rubro, con "hay que pedir" y el precio (y el de por mayor).
 // El dueño además ve el costo y el margen de cada artículo y los corrige ahí mismo, y tiene:
@@ -9,14 +10,12 @@
 //   "Pedidos a proveedores": lo que bajó del mínimo, por proveedor, con el mensaje para copiar y "Llegó".
 //   "Cargar artículo": con costo y margen (el precio sale solo).
 // ============================================
-import { esc, aviso, vacio, mensajeDe } from "../../kit/js/ui.js?v=f6723a2a8a";
-import { mostrarMensaje } from "../../kit/js/mensaje.js?v=f6723a2a8a";
-import { bajarExcel, leerExcel } from "../../kit/js/archivos.js?v=f6723a2a8a";
-import { htmlEstante, activarEstantes } from "../../kit/js/estante.js?v=f6723a2a8a";
-import { PROVEEDORES, RUBROS, TOPES, UNIDADES, DESCUENTO_MAYOR, nombreRubro, pesos, precioDe, precioConUnidad, cantidadTexto } from "../datos.js?v=f6723a2a8a";
-import { pastillaStock, etiquetaUnidad } from "./comunes.js?v=f6723a2a8a";
-import { htmlConsigna, htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=f6723a2a8a";
-import { MARCA } from "../marca.js?v=f6723a2a8a";
+import { esc, aviso, vacio, mensajeDe } from "../../kit/js/ui.js?v=12c89e832a";
+import { mostrarMensaje } from "../../kit/js/mensaje.js?v=12c89e832a";
+import { leerExcel } from "../../kit/js/archivos.js?v=12c89e832a";
+import { htmlEstante, activarEstantes } from "../../kit/js/estante.js?v=12c89e832a";
+import { PROVEEDORES, RUBROS, TOPES, UNIDADES, DESCUENTO_MAYOR, nombreRubro, pesos, precioDe, precioConUnidad, cantidadTexto } from "../datos.js?v=12c89e832a";
+import { pastillaStock, etiquetaUnidad } from "./comunes.js?v=12c89e832a";
 
 const RAPIDOS = [5, 10, 15, 20];
 let textoBuscado = ""; // el buscador de Stock recuerda lo escrito mientras se navega
@@ -50,7 +49,7 @@ function activarDeshacer(cont, usuario, datos, alTerminar) {
 
 const num = (v) => (v === "" ? NaN : Number(v));
 
-export function vistaStock(cont, { usuario, datos, consulta }) {
+function pintarStock(cont, { usuario, datos, consulta }) {
     const dueno = usuario.rol === "dueno";
     const filtro = consulta.get("ver");
     const rubro = RUBROS.some((r) => r.id === filtro) ? filtro : null;
@@ -64,7 +63,7 @@ export function vistaStock(cont, { usuario, datos, consulta }) {
         </div>
         ${dueno ? `
         <div class="acciones-stock">
-            <a class="boton boton--chico" href="#/stock/aumento"><i class="ti ti-trending-up"></i> Subió un proveedor</a>
+            <a class="boton boton--chico" href="#/stock/aumento"><i class="ti ti-trending-up"></i> Subir precios por proveedor</a>
             <a class="boton boton--chico boton--secundario" href="#/stock/lista"><i class="ti ti-file-spreadsheet"></i> Lista del proveedor en Excel</a>
             <a class="boton boton--chico boton--secundario" href="#/stock/margen"><i class="ti ti-percentage"></i> Cambiar margen</a>
             <a class="boton boton--chico boton--secundario" href="#/stock/pedidos"><i class="ti ti-truck-delivery"></i> Pedidos a proveedores</a>
@@ -196,7 +195,7 @@ function despuesDeAplicar(cont, { usuario, datos, cambio, alDeshacer }) {
 }
 
 /** "Subió un proveedor": proveedor + % → costo y precio antes y después → Aplicar (con Deshacer). */
-export function vistaAumento(cont, { usuario, datos }) {
+function pintarAumento(cont, { usuario, datos }) {
     let proveedorId = "pr-bulonera";
     let porcentaje = 15;
 
@@ -220,7 +219,7 @@ export function vistaAumento(cont, { usuario, datos }) {
 
     cont.innerHTML = `
         <a class="volver" href="#/stock"><i class="ti ti-arrow-left"></i> Stock y precios</a>
-        <h1 class="titulo">Subió un proveedor</h1>
+        <h1 class="titulo">Subir los precios de un proveedor</h1>
         <p class="nota"><i class="ti ti-trending-up"></i> Te mandó la lista nueva: elegí el proveedor y cuánto subió. Sube el costo y cada precio se recalcula con tu margen.</p>
         <div class="bloque">
             <p class="rotulo-chico">Proveedor</p>
@@ -255,6 +254,7 @@ export function vistaAumento(cont, { usuario, datos }) {
         try {
             const cambio = datos.aplicarAumento(usuario, proveedorId, porcentaje);
             aviso(`${cambio.cambios.length} precios actualizados`);
+            pintarConsigna(cont, { usuario, datos });
             pintar();
             despuesDeAplicar(cont, { usuario, datos, cambio, alDeshacer: pintar });
         } catch (err) {
@@ -265,7 +265,7 @@ export function vistaAumento(cont, { usuario, datos }) {
 }
 
 /** "Cambiar margen": rubro + margen nuevo → precios antes y después → Aplicar (con Deshacer). */
-export function vistaMargen(cont, { usuario, datos }) {
+function pintarMargen(cont, { usuario, datos }) {
     let rubro = "bulones";
     let margen = datos.margenDeRubro(rubro);
 
@@ -327,20 +327,20 @@ export function vistaMargen(cont, { usuario, datos }) {
 }
 
 /**
- * "La lista del proveedor en Excel": bajás la de ejemplo (o usás la que te mandó), la subís, mirás costo y precio antes
+ * "La lista del proveedor en Excel": usás la de ejemplo (o subís la que te mandó), mirás costo y precio antes
  * → después (cada artículo con su margen) y aplicás todo de una, con Deshacer. Todo pasa en el navegador: el archivo
  * no se sube a ningún lado.
  */
-export function vistaLista(cont, { usuario, datos }) {
+function pintarLista(cont, { usuario, datos }) {
     let filas = null;
     cont.innerHTML = `
         <a class="volver" href="#/stock"><i class="ti ti-arrow-left"></i> Stock y precios</a>
         <h1 class="titulo">La lista del proveedor en Excel</h1>
-        ${htmlConsigna({ paso: 5, total: 5, accion: "¿Te mandó la lista nueva en Excel? Bajá la de ejemplo, subila y aplicala.", resultado: "Se actualiza el costo de cada artículo y el precio sale solo, con tu margen." })}
+        
         <ol class="pasos-lista">
             <li>
-                <span>Bajá la lista de ejemplo de Sanitarios del Centro (sube un 12 %).</span>
-                <button class="boton boton--chico boton--secundario" type="button" data-ejemplo><i class="ti ti-download"></i> Lista de ejemplo</button>
+                <span>Usá la lista de ejemplo de Sanitarios del Centro (sube un 12 %).</span>
+                <button class="boton boton--chico boton--secundario" type="button" data-ejemplo><i class="ti ti-file-spreadsheet"></i> Usar la lista de ejemplo</button>
             </li>
             <li>
                 <span>Subila (o la que te mandó tu proveedor: con una columna "Costo" o "Precio" y otra "Código" o "Artículo").</span>
@@ -375,23 +375,23 @@ export function vistaLista(cont, { usuario, datos }) {
                 const cambio = datos.aplicarLista(usuario, filas);
                 filas = null;
                 aviso(`${cambio.cambios.length} precios actualizados`);
+                pintarConsigna(cont, { usuario, datos });
                 // Muestra el aviso con Deshacer en el mismo lugar (es también .resultado-aumento)
                 despuesDeAplicar(cont, { usuario, datos, cambio, alDeshacer: () => (lugar.innerHTML = "") });
-                const consigna = cont.querySelector(".consigna");
-                if (consigna) {
-                    consigna.outerHTML = htmlConsignaFinal(MARCA, 5);
-                    activarConsigna(cont, MARCA);
-                }
             } catch (err) {
                 aviso(err, "error");
             }
         });
     }
 
-    cont.querySelector("[data-ejemplo]").addEventListener("click", (e) => {
-        e.currentTarget.disabled = true;
-        bajarExcel("Lista Sanitarios del Centro (ejemplo)", datos.listaDeEjemplo("pr-sanitarios"), { hoja: "Lista", anchos: [16, 40, 10, 14] })
-            .finally(() => cont.querySelector("[data-ejemplo]")?.removeAttribute("disabled"));
+    cont.querySelector("[data-ejemplo]").addEventListener("click", () => {
+        try {
+            filas = datos.listaDeEjemplo("pr-sanitarios");
+            pintar("Lista de ejemplo");
+        } catch (err) {
+            filas = null;
+            lugar.innerHTML = `<p class="alerta alerta--alerta"><i class="ti ti-alert-triangle"></i> ${esc(mensajeDe(err))}</p>`;
+        }
     });
     cont.querySelector("[data-archivo]").addEventListener("change", async (e) => {
         const archivo = e.target.files?.[0];
@@ -409,7 +409,7 @@ export function vistaLista(cont, { usuario, datos }) {
 }
 
 /** Pedidos a los proveedores: lo que bajó del mínimo, el mensaje para mandar y "Llegó" (suma al stock). */
-export function vistaPedidosProveedor(cont, { usuario, datos }) {
+function pintarPedidosProveedor(cont, { usuario, datos }) {
     const pedidos = datos.pedidosSugeridos();
     cont.innerHTML = `
         <a class="volver" href="#/stock?ver=pedir"><i class="ti ti-arrow-left"></i> Stock y precios</a>
@@ -432,7 +432,7 @@ export function vistaPedidosProveedor(cont, { usuario, datos }) {
             </div>
         </section>`).join("")
         : vacio("No hay nada para pedir: todo está sobre el mínimo.", "ti-circle-check")}
-        <a class="boton boton--secundario boton--ancho siguiente" href="#/stock/aumento"><i class="ti ti-trending-up"></i> Ahora probá: subió un proveedor</a>`;
+        <a class="boton boton--secundario boton--ancho siguiente" href="#/stock/aumento"><i class="ti ti-trending-up"></i> Ahora probá: subir precios por proveedor</a>`;
 
     cont.querySelectorAll("[data-copiar]").forEach((b) => b.addEventListener("click", () => {
         try {
@@ -454,7 +454,7 @@ export function vistaPedidosProveedor(cont, { usuario, datos }) {
 }
 
 /** Cargar un artículo nuevo (el dueño): con costo y margen, el precio sale solo. Por unidad, por metro o por kilo. */
-export function vistaNuevoProducto(cont, { usuario, datos }) {
+function pintarNuevoProducto(cont, { usuario, datos }) {
     cont.innerHTML = `
         <a class="volver" href="#/stock"><i class="ti ti-arrow-left"></i> Stock y precios</a>
         <h1 class="titulo">Cargar artículo</h1>
@@ -518,3 +518,39 @@ export function vistaNuevoProducto(cont, { usuario, datos }) {
     });
 }
 
+
+export function vistaStock(cont, opciones, ...args) {
+    const resultado = pintarStock(cont, opciones, ...args);
+    pintarConsigna(cont, opciones);
+    return resultado;
+}
+
+export function vistaAumento(cont, opciones, ...args) {
+    const resultado = pintarAumento(cont, opciones, ...args);
+    pintarConsigna(cont, opciones);
+    return resultado;
+}
+
+export function vistaMargen(cont, opciones, ...args) {
+    const resultado = pintarMargen(cont, opciones, ...args);
+    pintarConsigna(cont, opciones);
+    return resultado;
+}
+
+export function vistaLista(cont, opciones, ...args) {
+    const resultado = pintarLista(cont, opciones, ...args);
+    pintarConsigna(cont, opciones);
+    return resultado;
+}
+
+export function vistaPedidosProveedor(cont, opciones, ...args) {
+    const resultado = pintarPedidosProveedor(cont, opciones, ...args);
+    pintarConsigna(cont, opciones);
+    return resultado;
+}
+
+export function vistaNuevoProducto(cont, opciones, ...args) {
+    const resultado = pintarNuevoProducto(cont, opciones, ...args);
+    pintarConsigna(cont, opciones);
+    return resultado;
+}

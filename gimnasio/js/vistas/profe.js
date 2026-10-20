@@ -3,12 +3,11 @@
 // quién está entrenando, quién terminó y qué día de la rutina le toca), los avisos (récords de hoy y ayer, y los que
 // vienen pero hace rato que no anotan lo que hacen) y un buscador para llegar a la ficha de cualquiera de sus alumnos.
 // ============================================
-import { esc, vacio } from "../../kit/js/ui.js?v=be499030eb";
-import { kilos } from "../datos.js?v=be499030eb";
-import { NEGOCIO } from "../marca.js?v=be499030eb";
-import { pastilla, cara } from "./comunes.js?v=be499030eb";
-import { htmlConsigna } from "../../kit/js/consigna.js?v=be499030eb";
-import { htmlBotonTV, abrirModoTV } from "../../kit/js/modo-tv.js?v=be499030eb";
+import { esc, vacio } from "../../kit/js/ui.js?v=0ae8c6cc93";
+import { kilos } from "../datos.js?v=0ae8c6cc93";
+import { NEGOCIO } from "../marca.js?v=0ae8c6cc93";
+import { activarConsignaPersona, pastilla, cara } from "./comunes.js?v=0ae8c6cc93";
+import { htmlBotonTV, abrirModoTV } from "../../kit/js/modo-tv.js?v=0ae8c6cc93";
 
 let texto = ""; // lo buscado queda mientras se navega
 
@@ -42,7 +41,6 @@ function htmlAlumno(a) {
 
 export function vistaGimnasioHoy(cont, { usuario, datos }) {
     const g = datos.hoyEnElGimnasio(usuario);
-    const recordFranco = g.records.find((r) => r.socioId === "s-franco" && r.fecha === datos.hoy());
     // Un aviso por socio y por día (si hizo récord en varios ejercicios, el primero y "y 2 más")
     const porSocio = new Map();
     g.records.forEach((r) => porSocio.set(`${r.socioId}|${r.fecha}`, [...(porSocio.get(`${r.socioId}|${r.fecha}`) ?? []), r]));
@@ -67,7 +65,6 @@ export function vistaGimnasioHoy(cont, { usuario, datos }) {
                 <span><b>${esc(s.socio)}</b> viene, pero ${s.desde ? `hace ${esc(s.desde)} días que no anota lo que hace` : "nunca anotó lo que hace"}</span>
             </a></li>`).join("")}
         </ul>` : ""}
-        ${recordFranco ? htmlConsigna({ paso: 2, total: 5, accion: "Tocá a Franco, dejale una nota y subile la sentadilla para la próxima.", resultado: "Franco lo ve en su celu." }) : ""}
         ${g.horarios.length ? g.horarios.map((h) => `
         <section class="horario">
             <h2 class="horario__hora"><i class="ti ti-clock" aria-hidden="true"></i>${esc(h.hora)} <small>${esc(h.alumnos.length)} ${h.alumnos.length === 1 ? "alumno" : "alumnos"} · ${(() => {
@@ -83,7 +80,10 @@ export function vistaGimnasioHoy(cont, { usuario, datos }) {
             <input type="search" name="q" maxlength="40" placeholder="Buscar por nombre" value="${esc(texto)}" autocomplete="off">
         </label>
         <ul class="tarjetas lista-alumnos"></ul>`;
-    cont.querySelector("[data-modo-tv]").addEventListener("click", () => abrirModoTV({ titulo: NEGOCIO, icono: "ti-trophy", armar: () => htmlTVGimnasio(datos.hoyEnElGimnasio(usuario)) }));
+    activarConsignaPersona(cont, datos, usuario);
+    cont.querySelector("[data-modo-tv]").addEventListener("click", () => {
+        abrirModoTV({ titulo: NEGOCIO, icono: "ti-trophy", armar: () => htmlTVGimnasio(datos.hoyEnElGimnasio(usuario)) });
+    });
 
     const lista = cont.querySelector(".lista-alumnos");
     function pintar() {

@@ -1,12 +1,13 @@
+import { consignaPersona, activarSerie } from "./comunes.js?v=4438010c31";
 // ============================================
 // Caja del día: lo vendido hoy en plata y en kilos, por medio de pago, por animal, los cortes más vendidos (en kilos),
 // los pedidos entregados y cuánto tiene que haber en el cajón. "Cerrar caja": contás la plata y te dice si sobra o
 // falta. El dueño ve además la ganancia (venta menos el costo real, que ya trae la merma) y los últimos 7 días.
 // ============================================
-import { esc, aviso, fechaCorta } from "../../kit/js/ui.js?v=55764424c5";
-import { FONDO_CAJA, MEDIOS, TOPES, pesos, kilos } from "../datos.js?v=55764424c5";
-import { textoMedio } from "../../kit/js/pagos.js?v=55764424c5";
-import { hora } from "./comunes.js?v=55764424c5";
+import { esc, aviso, fechaCorta } from "../../kit/js/ui.js?v=4438010c31";
+import { FONDO_CAJA, MEDIOS, TOPES, pesos, kilos } from "../datos.js?v=4438010c31";
+import { textoMedio } from "../../kit/js/pagos.js?v=4438010c31";
+import { hora } from "./comunes.js?v=4438010c31";
 
 const DIAS = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
 const nombreDia = (dia) => {
@@ -36,6 +37,7 @@ export function vistaCaja(cont, { usuario, datos }) {
     const maxAnimal = Math.max(1, ...c.porAnimal.map((r) => r.plata));
 
     cont.innerHTML = `
+        ${consignaPersona(datos, usuario)}
         <h1 class="titulo">Caja del día</h1>
         <div class="panel cajon">
             <span class="panel__rotulo">En el cajón tiene que haber</span>
@@ -98,6 +100,7 @@ export function vistaCaja(cont, { usuario, datos }) {
                 </li>`).join("")}</ul>
         </section>` : `<p class="nota"><i class="ti ti-info-circle"></i> La ganancia y los últimos 7 días los ve Ricardo.</p>`}
         <p class="nota acerca-link"><i class="ti ti-info-circle"></i> <a href="#/acerca">Acerca de esta demo</a>.</p>`;
+    activarSerie(cont);
 
     cont.querySelector(".cerrar").addEventListener("submit", (e) => {
         e.preventDefault();

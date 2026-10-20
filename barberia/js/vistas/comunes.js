@@ -2,9 +2,9 @@
 // Piezas que comparten las pantallas de Sazzo Barbería: el botón del recorrido (del kit), pastillas, los días en
 // pastillas y la ventanita del mensaje para copiar (del kit). Todo dato que entra a HTML pasa por esc().
 // ============================================
-import { esc } from "../../kit/js/ui.js?v=3b2eaafd59";
-import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=3b2eaafd59";
-import { buscarPersona } from "../marca.js?v=3b2eaafd59";
+import { esc } from "../../kit/js/ui.js?v=dd1f695466";
+import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=dd1f695466";
+import { MARCA, buscarPersona } from "../marca.js?v=dd1f695466";
 
 export const guia = (personaId, ruta, texto) => htmlGuia({ persona: buscarPersona(personaId), ruta, texto });
 export { activarGuias };
@@ -31,4 +31,34 @@ export function chipsDias(dias, actual) {
 }
 
 // La ventanita del mensaje para copiar es del kit (kit/mensaje.js)
-export { mostrarMensaje } from "../../kit/js/mensaje.js?v=3b2eaafd59";
+export { mostrarMensaje } from "../../kit/js/mensaje.js?v=dd1f695466";
+
+
+import { htmlConsigna, htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=dd1f695466";
+
+const CONSIGNAS = {
+    barbero: [
+        ["En “Clientes”, tocá “No vuelven hace +45 días”.", "Ves a quiénes podés invitar a volver."],
+        ["Tocá “Invitarlo” en un cliente y confirmá el mensaje.", "Queda anotado que lo invitaste."],
+        ["En “Agenda”, tocá “Llegó” en un turno.", "El turno queda marcado como atendido y suma al día."]
+    ],
+    cliente: [
+        ["Elegí una hora libre y tocá “Sacar turno”.", "Tu turno queda confirmado con el servicio elegido."],
+        ["Sacá otro turno para otro día: elegí el día, una hora libre y tocá “Sacar turno”.", "Queda un segundo turno anotado en otro día."],
+        ["En “Mis turnos”, tocá “Cancelar turno” y confirmá.", "El horario queda libre para otro cliente."]
+    ]
+};
+export function consignaPersona(datos, usuario) {
+    const paso = datos.pasos(usuario).findIndex((hecho) => !hecho);
+    if (paso < 0) return htmlConsignaFinal(MARCA, 3);
+    const [accion, resultado] = CONSIGNAS[usuario.rol][paso];
+    return htmlConsigna({ paso: paso + 1, total: 3, accion, resultado });
+}
+
+export function pintarConsigna(cont, datos, usuario) {
+    const html = consignaPersona(datos, usuario);
+    const anterior = cont.querySelector(".consigna");
+    if (anterior) anterior.outerHTML = html;
+    else cont.insertAdjacentHTML("afterbegin", html);
+    activarConsigna(cont, MARCA);
+}

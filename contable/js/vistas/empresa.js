@@ -1,19 +1,20 @@
+import { conConsigna } from "./comunes.js?v=569102ff5e";
 // ============================================
 // Tu empresa: todo se modifica. Razón social, CUIT, condición frente al IVA, domicilio, punto de venta, logo
 // (se achica en el navegador antes de guardarlo), colores (la ventanita del kit) y qué pantallas se usan.
 // Lo cambian Silvina y Hernán; Patricia lo ve. Nada de esto viene del link: se escribe acá.
 // ============================================
-import { esc, aviso } from "../../kit/js/ui.js?v=929def1556";
-import { abrirColores } from "../../kit/js/colores.js?v=929def1556";
-import { TOPES, MODULOS } from "../datos.js?v=929def1556";
-import { MARCA } from "../marca.js?v=929def1556";
-import { formatoCuit, CONDICIONES, fechaISO } from "../reglas.js?v=929def1556";
-import { logoEmpresa, condicionTexto } from "./comunes.js?v=929def1556";
+import { esc, aviso } from "../../kit/js/ui.js?v=569102ff5e";
+import { abrirColores } from "../../kit/js/colores.js?v=569102ff5e";
+import { TOPES, MODULOS } from "../datos.js?v=569102ff5e";
+import { MARCA } from "../marca.js?v=569102ff5e";
+import { formatoCuit, CONDICIONES, fechaISO } from "../reglas.js?v=569102ff5e";
+import { logoEmpresa, condicionTexto, pintarConsigna } from "./comunes.js?v=569102ff5e";
 
 const puedeCambiar = (u) => u.rol === "admin" || u.rol === "dueno";
 const LADO_LOGO = 240; // px: el logo se guarda chico (pesa poco y se ve bien en la factura)
 
-export function vistaEmpresa(cont, { usuario, datos, alCambiarModulos }) {
+function pintarEmpresa(cont, { usuario, datos, alCambiarModulos }) {
     const e = datos.leerEmpresa();
     const puede = puedeCambiar(usuario);
     const des = puede ? "" : " disabled";
@@ -111,7 +112,14 @@ export function vistaEmpresa(cont, { usuario, datos, alCambiarModulos }) {
         datos.guardarLogo(null, usuario);
         vistaEmpresa(cont, { usuario, datos, alCambiarModulos });
     });
-    cont.querySelector("[data-colores]").addEventListener("click", () => abrirColores(MARCA.prefijo));
+    cont.querySelector("[data-colores]").addEventListener("click", () =>
+        abrirColores(MARCA.prefijo, {
+            alElegir: () => {
+                datos.registrarPaso(usuario, "marca");
+                pintarConsigna(cont, datos, usuario);
+            }
+        })
+    );
     cont.querySelectorAll("[data-modulo]").forEach((c) =>
         c.addEventListener("change", () => {
             try {
@@ -160,3 +168,5 @@ function achicar(archivo) {
         img.src = url;
     });
 }
+
+export const vistaEmpresa = conConsigna(pintarEmpresa);

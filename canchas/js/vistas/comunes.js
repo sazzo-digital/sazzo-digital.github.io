@@ -2,10 +2,10 @@
 // Piezas que comparten las pantallas de Sazzo Canchas: el botón del recorrido (del kit), las pastillas de la seña
 // y del estado, y los días en pastillas. Todo dato que entra a HTML pasa por esc().
 // ============================================
-import { esc } from "../../kit/js/ui.js?v=952176458b";
-import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=952176458b";
-import { SENAS } from "../datos.js?v=952176458b";
-import { buscarPersona } from "../marca.js?v=952176458b";
+import { esc } from "../../kit/js/ui.js?v=ff14c7e9df";
+import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=ff14c7e9df";
+import { SENAS } from "../datos.js?v=ff14c7e9df";
+import { MARCA, buscarPersona } from "../marca.js?v=ff14c7e9df";
 
 export const guia = (personaId, ruta, texto) => htmlGuia({ persona: buscarPersona(personaId), ruta, texto });
 export { activarGuias };
@@ -32,4 +32,34 @@ export function chipsDias(dias, actual, atributo = "data-dia") {
     return `<div class="chips dias" role="tablist" aria-label="Día">${dias.map((d) => `
         <button class="chip${d.fecha === actual ? " activo" : ""}" type="button" role="tab" aria-selected="${d.fecha === actual}" ${atributo}="${esc(d.fecha)}">${esc(d.nombre[0].toUpperCase() + d.nombre.slice(1))}</button>`).join("")}
     </div>`;
+}
+
+
+import { htmlConsigna, htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=ff14c7e9df";
+
+const CONSIGNAS = {
+    dueno: [
+        ["Tocá un turno con seña a cobrar (hoy o mañana) y apretá “Cobrar seña”.", "La seña queda pagada y el turno deja de figurar como pendiente."],
+        ["Tocá “Llegaron” en un turno.", "El turno queda marcado en la grilla."],
+        ["Abrí “Turnos fijos”, desplegá “Nuevo turno fijo”, escribí el grupo y tocá “Crear fijo”.", "El grupo juega todas las semanas en ese horario."]
+    ],
+    cliente: [
+        ["Elegí una hora libre, completá “Nombre del grupo” y tocá “Pagar seña”.", "Tu reserva queda confirmada en esta demo."],
+        ["Abrí “Mis turnos”, tocá “Pedir a la cantina”, sumá algo y tocá “Pedir”.", "El pedido le llega a la cantina y queda en la cuenta de tu turno."],
+        ["Tocá “Cancelar” en tu reserva y confirmá.", "El horario queda libre de nuevo."]
+    ]
+};
+export function consignaPersona(datos, usuario) {
+    const paso = datos.pasos(usuario).findIndex((hecho) => !hecho);
+    if (paso < 0) return htmlConsignaFinal(MARCA, 3);
+    const [accion, resultado] = CONSIGNAS[usuario.rol][paso];
+    return htmlConsigna({ paso: paso + 1, total: 3, accion, resultado });
+}
+
+export function pintarConsigna(cont, datos, usuario) {
+    const html = consignaPersona(datos, usuario);
+    const anterior = cont.querySelector(".consigna");
+    if (anterior) anterior.outerHTML = html;
+    else cont.insertAdjacentHTML("afterbegin", html);
+    activarConsigna(cont, MARCA);
 }

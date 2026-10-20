@@ -6,12 +6,12 @@
 // Reglas del kit: exigir() en lo que modifica, topes en todo lo que se carga, nada se borra (se cancela) y se
 // devuelven copias. Si cambia la forma de los datos, subir VERSION_DATOS (se regeneran solos).
 // ============================================
-import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=3b2eaafd59";
-import { filtrarPorTexto } from "../kit/js/buscar.js?v=3b2eaafd59";
-import { sinPasarse } from "../kit/js/topes.js?v=3b2eaafd59";
-import { fechaLocalISO } from "../kit/js/fechas.js?v=3b2eaafd59";
-import { aMinutos, aHora, diaSemana, proximosDias, ocupados, libres, revisarLibre } from "../kit/js/turnos.js?v=3b2eaafd59";
-import { MARCA } from "./marca.js?v=3b2eaafd59";
+import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=dd1f695466";
+import { filtrarPorTexto } from "../kit/js/buscar.js?v=dd1f695466";
+import { sinPasarse } from "../kit/js/topes.js?v=dd1f695466";
+import { fechaLocalISO } from "../kit/js/fechas.js?v=dd1f695466";
+import { aMinutos, aHora, diaSemana, proximosDias, ocupados, libres, revisarLibre } from "../kit/js/turnos.js?v=dd1f695466";
+import { MARCA, PERSONAS } from "./marca.js?v=dd1f695466";
 
 export const VERSION_DATOS = 2;
 
@@ -230,6 +230,30 @@ export function textoLibre(minutos) {
 export function crearDatos(prefijo = MARCA.prefijo, { reloj = () => new Date() } = {}) {
     const guardado = crearGuardado({ prefijo, version: VERSION_DATOS, semilla });
     const db = () => guardado.db();
+
+    const series = {"barbero": ["filtro", "invitar", "llego"], "cliente": ["reserva", "otro", "cancelar"]};
+    const miradas = {"barbero": ["filtro"], "cliente": []};
+
+    function pasos(usuario) {
+        exigir(PERSONAS.some((p) => p.id === usuario?.id && p.rol === usuario?.rol), "Esa persona no tiene una serie.");
+        return series[usuario.rol].map((id) => !!db().pasosPersonas?.[usuario.id]?.includes(id));
+    }
+
+    function registrarPaso(usuario, id) {
+        if (!series[usuario.rol].includes(id)) return;
+        const hechos = db().pasosPersonas ??= {};
+        const persona = hechos[usuario.id] ??= [];
+        if (persona.includes(id)) return;
+        persona.push(id);
+        guardado.persistir();
+    }
+
+    function mirarPaso(usuario, id) {
+        pasos(usuario);
+        exigir(miradas[usuario.rol].includes(id), "Esa mirada no es un paso de esta persona.");
+        registrarPaso(usuario, id);
+    }
+
     const hoy = () => {
         const d = reloj();
         return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
@@ -306,7 +330,14 @@ export function crearDatos(prefijo = MARCA.prefijo, { reloj = () => new Date() }
         const dura = SERVICIOS.find((s) => s.id === datosTurno?.servicioId)?.duracion ?? 0;
         const encima = porVenir.find((t) => t.fecha === datosTurno?.fecha && t.inicio < datosTurno.inicio + dura && datosTurno.inicio < t.inicio + t.duracion);
         exigir(!encima, `Ya tenés un turno a esa hora (${aHora(encima?.inicio ?? 0)}).`);
-        return crearTurno({ ...datosTurno, clienteId: c.id }, { origen: "app", visto: false });
+        const turno = crearTurno({ ...datosTurno, clienteId: c.id }, { origen: "app", visto: false });
+        const fechas = db().fechasReservadas ??= {};
+        const reservadas = fechas[usuario.id] ??= [];
+        if (!reservadas.includes(turno.fecha)) reservadas.push(turno.fecha);
+        registrarPaso(usuario, "reserva");
+        if (reservadas.length > 1) registrarPaso(usuario, "otro");
+        guardado.persistir();
+        return turno;
     }
 
     function misTurnos(usuario) {
@@ -327,6 +358,7 @@ export function crearDatos(prefijo = MARCA.prefijo, { reloj = () => new Date() }
         exigir(!empezo(t), "Ese turno ya empezó.");
         t.estado = "cancelado";
         t.anulado = true;
+        registrarPaso(usuario, "cancelar");
         guardado.persistir();
         return armar(t);
     }
@@ -396,6 +428,7 @@ export function crearDatos(prefijo = MARCA.prefijo, { reloj = () => new Date() }
         exigir(!t.anulado, "Ese turno está cancelado.");
         t.estado = estado;
         t.visto = true;
+        if (estado === "llego") registrarPaso(usuario, "llego");
         guardado.persistir();
         return armar(t);
     }
@@ -505,12 +538,13 @@ export function crearDatos(prefijo = MARCA.prefijo, { reloj = () => new Date() }
         const { mensaje } = mensajeInvitar(usuario, id);
         const c = buscar(db().clientes, id);
         c.invitadoEn = reloj().toISOString();
+        registrarPaso(usuario, "invitar");
         guardado.persistir();
         return { cliente: armarCliente(c), mensaje };
     }
 
     return {
-        guardado,
+        guardado, pasos, mirarPaso,
         dias, libresPara, horasDelDia, sacarTurno, misTurnos, cancelarTurno,
         agenda, turnero, nuevos, turno, marcarVisto, marcar, liberarTurno, recordatorio, anotarTurno,
         listarClientes, cliente, nuevoCliente, guardarFicha, mensajeInvitar, invitar

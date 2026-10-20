@@ -3,11 +3,9 @@
 // monto nuevo calculado y el aviso armado), los que vencen, los que no pagaron, las propiedades que nadie visita y
 // las consultas que esperan respuesta. Nada de esto es un contrato ni un recibo: es la lista para no olvidarse.
 // ============================================
-import { esc, aviso, animarNumeros } from "../../kit/js/ui.js?v=86b90b0105";
-import { INDICE_MENSUAL, pesos, porcentajeTexto, diaMes } from "../datos.js?v=86b90b0105";
-import { mostrarMensaje, mayuscula } from "./comunes.js?v=86b90b0105";
-import { htmlConsigna, htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=86b90b0105";
-import { MARCA } from "../marca.js?v=86b90b0105";
+import { esc, aviso, animarNumeros } from "../../kit/js/ui.js?v=34a23b46ed";
+import { INDICE_MENSUAL, pesos, porcentajeTexto, diaMes } from "../datos.js?v=34a23b46ed";
+import { mostrarMensaje, mayuscula, consignaPersona, activarPasos } from "./comunes.js?v=34a23b46ed";
 
 // "$ 2.805.700" sin cortarse entre el signo y el número
 const plata = (n) => pesos(n).replace(" ", String.fromCharCode(160));
@@ -27,7 +25,7 @@ export function vistaEsteMes(cont, { usuario, datos }) {
             <h1 class="titulo">Este mes <span class="titulo__extra">${esc(t.mes)}</span></h1>
             <a class="boton boton--secundario" href="#/propiedades"><i class="ti ti-building"></i> Propiedades</a>
         </div>
-        ${htmlConsigna({ paso: 3, total: 3, accion: "Tocá “Aplicar y avisar” en el alquiler de Martín y copiá el aviso.", resultado: "El aumento se aplica y el aviso al inquilino sale armado." })}
+        ${consignaPersona(datos, usuario)}
         <div class="paneles">
             <div class="panel"><span class="panel__rotulo">Cobrado de ${esc(t.mes)}</span><span class="panel__numero panel__numero--plata">${esc(plata(t.cobrado))}</span></div>
             <div class="panel"><span class="panel__rotulo">Falta cobrar</span><span class="panel__numero panel__numero--plata">${esc(plata(t.porCobrar))}</span></div>
@@ -91,6 +89,7 @@ export function vistaEsteMes(cont, { usuario, datos }) {
                         <span class="pastilla pastilla--ojo">${c.pedida ? "Pidió visita" : c.sinContestar ? "Sin contestar" : `${esc(c.diasSinContacto)} días sin escribirle`}</span></div>
                     <p class="tarjeta__quien">${esc(c.propiedad ?? c.buscaTexto)} · la atiende ${esc(c.agente)}</p>
                 </li>`).join("")}</ul>` : nada("Todas las consultas tienen respuesta."))}`;
+    activarPasos(cont);
 
     animarNumeros(cont);
     const conMensaje = (titulo, texto, alCopiar) => {
@@ -108,11 +107,6 @@ export function vistaEsteMes(cont, { usuario, datos }) {
             conMensaje(`Avisarle a ${c.inquilino.split(" ")[0]}`, datos.mensajeAumento(usuario, c.id), () => {
                 datos.marcarAvisado(usuario, c.id);
                 recargar();
-                const consigna = cont.querySelector(".consigna");
-                if (consigna) {
-                    consigna.outerHTML = htmlConsignaFinal(MARCA, 3);
-                    activarConsigna(cont, MARCA);
-                }
             });
         } catch (e) {
             aviso(e, "error");

@@ -3,7 +3,8 @@
 // Solo lo genérico: lo propio de cada rubro (estados, pastillas, unidades…) va en cada demo.
 // Todo dato que entra a HTML pasa por esc().
 // ============================================
-import { esDeProgramacion, contarFalla } from "./visita.js?v=f6723a2a8a";
+import { esDeProgramacion, contarFalla } from "./visita.js?v=12c89e832a";
+import { mostrarArchivoDeDemo } from "./archivos.js?v=12c89e832a";
 
 export const $ = (selector, raiz = document) => raiz.querySelector(selector);
 export const $$ = (selector, raiz = document) => [...raiz.querySelectorAll(selector)];
@@ -83,16 +84,9 @@ export function textoCSV(filas) {
     return "﻿" + filas.map((f) => f.map(celda).join(";")).join("\r\n");
 }
 
-/** Baja una tabla como .csv (ver textoCSV). */
+/** En la demo no baja el .csv: muestra la hoja del kit (ver textoCSV para el contenido). */
 export function descargarCSV(nombreArchivo, filas) {
-    const url = URL.createObjectURL(new Blob([textoCSV(filas)], { type: "text/csv;charset=utf-8" }));
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = nombreArchivo;
-    document.body.append(a);
-    a.click();
-    a.remove();
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    return mostrarArchivoDeDemo(nombreArchivo, new Blob([textoCSV(filas)]).size);
 }
 
 /** "2026-10-06" → "06/10/2026" */

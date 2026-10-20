@@ -3,12 +3,11 @@
 // una columna por estado; en el celu, uno abajo del otro con pastillas para filtrar. El mecánico ve solo sus autos.
 // "+ Entró un auto": se escribe la patente y, si ya vino, completa solo el auto, el cliente y la última vez.
 // ============================================
-import { esc, aviso } from "../../kit/js/ui.js?v=1c786e0170";
-import { fechaLocalISO } from "../../kit/js/fechas.js?v=1c786e0170";
-import { TOPES, NAFTA, MECANICOS, esPatente, formatoPatente } from "../datos.js?v=1c786e0170";
-import { NEGOCIO } from "../marca.js?v=1c786e0170";
-import { guia, activarGuias, chapa, pastillaEstado, textoPromesa } from "./comunes.js?v=1c786e0170";
-import { htmlConsigna } from "../../kit/js/consigna.js?v=1c786e0170";
+import { esc, aviso } from "../../kit/js/ui.js?v=fba34fb3d2";
+import { fechaLocalISO } from "../../kit/js/fechas.js?v=fba34fb3d2";
+import { TOPES, NAFTA, MECANICOS, esPatente, formatoPatente } from "../datos.js?v=fba34fb3d2";
+import { NEGOCIO } from "../marca.js?v=fba34fb3d2";
+import { guia, activarGuias, chapa, pastillaEstado, textoPromesa, consignaPersona, activarPasos } from "./comunes.js?v=fba34fb3d2";
 
 let filtro = "todos";
 
@@ -30,7 +29,7 @@ export function vistaPizarra(cont, { usuario, datos }) {
             <h1 class="titulo">${dueno ? "Taller" : "Mis autos"}</h1>
             ${dueno ? `<a class="boton" href="#/entro"><i class="ti ti-car"></i> Entró un auto</a>` : `<span class="negocio"><i class="ti ti-tool"></i>${esc(NEGOCIO)}</span>`}
         </div>
-        ${dueno ? htmlConsigna({ paso: 1, total: 5, accion: "Tocá “Entró un auto” y escribí la patente AB 123 CD.", resultado: "Se arma la orden y le llega al mecánico." }) : ""}
+        ${consignaPersona(datos, usuario)}
         <div class="tira">
             <span><b>${esc(p.contadores.adentro)}</b> adentro</span>
             <span><b>${esc(p.contadores.reparacion)}</b> en reparación</span>
@@ -47,6 +46,7 @@ export function vistaPizarra(cont, { usuario, datos }) {
                 ${g.ordenes.length ? `<ul class="ordenes">${g.ordenes.map(tarjeta).join("")}</ul>` : `<p class="pizarra__vacio">—</p>`}
             </section>`).join("")}
         </div>`;
+    activarPasos(cont);
 
     cont.querySelectorAll("[data-filtro]").forEach((b) => b.addEventListener("click", () => {
         filtro = b.dataset.filtro;
@@ -128,9 +128,11 @@ export function vistaEntro(cont, { usuario, datos, irA, consulta }) {
                     <p>${chapa(o.auto.patenteTexto)} ${esc(o.auto.modelo)} de ${esc(o.cliente.nombre)}</p>
                     <p class="nota">“${esc(o.dijo)}” · se la diste a ${esc(o.mecanico)}</p>
                 </div>
-                ${htmlConsigna({ paso: 1, total: 5, accion: "Cargá el auto que entró.", hecho: `orden N° ${o.numero} para ${o.mecanico}`, guia: o.mecanico === "Seba" ? guia("u-mecanico", `/orden/${o.id}`, "Mirá lo que le llega a Seba") : "" })}
+                ${consignaPersona(datos, usuario)}
+                ${o.mecanico === "Seba" ? guia("u-mecanico", `/orden/${o.id}`, "Mirá lo que le llega a Seba") : ""}
                 <a class="boton boton--secundario boton--ancho" href="#/orden/${esc(o.id)}"><i class="ti ti-file-text"></i> Ver la orden</a>`;
             activarGuias(cont, irA);
+            activarPasos(cont);
             aviso("Orden guardada");
         } catch (err) {
             aviso(err, "error");

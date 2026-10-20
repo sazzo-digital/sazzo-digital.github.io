@@ -5,10 +5,10 @@
 // Reglas del kit: exigir() en lo que modifica, topes en todo lo que se carga, nada se borra y se devuelven copias.
 // Si cambia la forma de los datos, subir VERSION_DATOS (se regeneran solos).
 // ============================================
-import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=b86ccb1eca";
-import { enteroHasta, sinPasarse } from "../kit/js/topes.js?v=b86ccb1eca";
-import { fechaLocalISO, diasHasta } from "../kit/js/fechas.js?v=b86ccb1eca";
-import { MARCA, PERSONAS } from "./marca.js?v=b86ccb1eca";
+import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=144fda0e5d";
+import { enteroHasta, sinPasarse } from "../kit/js/topes.js?v=144fda0e5d";
+import { fechaLocalISO, diasHasta } from "../kit/js/fechas.js?v=144fda0e5d";
+import { MARCA, PERSONAS } from "./marca.js?v=144fda0e5d";
 
 export const VERSION_DATOS = 3;
 
@@ -203,6 +203,7 @@ export function ordenProblemas(a, b) {
 export function crearDatos(prefijo = MARCA.prefijo) {
     const guardado = crearGuardado({ prefijo, version: VERSION_DATOS, semilla });
     const db = () => guardado.db();
+    const inicial = semilla();
 
     const nombreChofer = (id) => db().choferes.find((c) => c.id === id)?.nombre ?? null;
     const nombreVehiculo = (id) => db().vehiculos.find((v) => v.id === id)?.nombre ?? "Vehículo";
@@ -444,8 +445,26 @@ export function crearDatos(prefijo = MARCA.prefijo) {
 
     const movimientosStock = (cuantos = 8) => (db().movimientosStock ?? []).slice(-cuantos).reverse().map(copia);
 
+    function pasos(usuario) {
+        const problema = (id) => db().problemas.find((p) => p.id === id);
+        if (usuario?.rol === "chofer") {
+            const mios = db().problemas.filter((p) => p.avisoPor === usuario.nombre && !inicial.problemas.some((q) => q.id === p.id));
+            return [mios.length > 0, mios.some((p) => p.comentario), mios.some((p) => p.urgencia === "parar")];
+        }
+        if (usuario?.rol === "mecanico") return [problema("p-5")?.estado !== "avisado", problema("p-5")?.estado === "arreglado", problema("p-4")?.estado === "arreglado"];
+        if (usuario?.rol === "admin") {
+            const camion = (v) => v.id === "v-1";
+            return [
+                db().vehiculos.find(camion).km > inicial.vehiculos.find(camion).km,
+                db().vehiculos.some((v) => v.ultimoService),
+                (db().movimientosStock ?? []).some((m) => m.motivo === "entrada")
+            ];
+        }
+        exigir(false, "Esa persona no tiene pasos.");
+    }
+
     return {
-        guardado,
+        guardado, pasos,
         listarVehiculos, ficha, vehiculoDe, problemasAbiertos, avisosDe, listarRepuestos,
         resumen, paraMirar, movimientos,
         avisarProblema, tomarProblema, cerrarProblema, cargarKm,

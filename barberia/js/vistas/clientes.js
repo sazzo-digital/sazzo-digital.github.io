@@ -1,12 +1,12 @@
+import { pintarConsigna } from "./comunes.js?v=dd1f695466";
 // ============================================
 // Clientes (barbero): buscador, "no vuelven hace más de 30 / 45 / 60 días" con "Invitarlo" (mensaje para copiar y
 // la fecha en que se lo invitó), y la ficha de cada uno: qué se hace siempre, notas, historial y "Sacarle turno".
 // ============================================
-import { esc, aviso, vacio, fechaCorta } from "../../kit/js/ui.js?v=3b2eaafd59";
-import { NO_VUELVEN, TOPES, nombreFecha } from "../datos.js?v=3b2eaafd59";
-import { mostrarMensaje } from "./comunes.js?v=3b2eaafd59";
-import { htmlConsigna, htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=3b2eaafd59";
-import { MARCA } from "../marca.js?v=3b2eaafd59";
+import { esc, aviso, vacio, fechaCorta } from "../../kit/js/ui.js?v=dd1f695466";
+import { NO_VUELVEN, TOPES, nombreFecha } from "../datos.js?v=dd1f695466";
+import { mostrarMensaje } from "./comunes.js?v=dd1f695466";
+import { MARCA } from "../marca.js?v=dd1f695466";
 
 let noVuelven = null; // null = todos; si no, los días
 let texto = "";
@@ -26,9 +26,6 @@ export function vistaClientes(cont, { usuario, datos }) {
             <button class="chip${noVuelven ? "" : " activo"}" type="button" data-nv="">Todos</button>
             ${NO_VUELVEN.map((d) => `<button class="chip chip--alerta${noVuelven === d ? " activo" : ""}" type="button" data-nv="${d}">No vuelven hace +${d} días <b>${contar(d)}</b></button>`).join("")}
         </div>
-        ${noVuelven
-            ? htmlConsigna({ paso: 3, total: 3, accion: "Estos hace rato que no vienen y no tienen turno: tocá “Invitarlo” en uno.", resultado: "Te arma el mensaje para mandarle." })
-            : htmlConsigna({ paso: 3, total: 3, accion: "Tocá “No vuelven hace +45 días”.", resultado: "Te muestra a quién conviene invitar a volver." })}
         <ul class="tarjetas lista-clientes"></ul>`;
 
     const lista = cont.querySelector(".lista-clientes");
@@ -54,11 +51,7 @@ export function vistaClientes(cont, { usuario, datos }) {
                     alConfirmar: () => {
                         datos.invitar(usuario, b.dataset.invitar);
                         pintar();
-                        const consigna = cont.querySelector(".consigna");
-                        if (consigna) {
-                            consigna.outerHTML = htmlConsignaFinal(MARCA, 3);
-                            activarConsigna(cont, MARCA);
-                        }
+                        pintarConsigna(cont, datos, usuario);
                     }
                 });
             } catch (err) {
@@ -73,9 +66,11 @@ export function vistaClientes(cont, { usuario, datos }) {
     });
     cont.querySelectorAll("[data-nv]").forEach((b) => b.addEventListener("click", () => {
         noVuelven = b.dataset.nv ? Number(b.dataset.nv) : null;
+        if (noVuelven === 45) datos.mirarPaso(usuario, "filtro");
         vistaClientes(cont, { usuario, datos });
     }));
     pintar();
+    pintarConsigna(cont, datos, usuario);
 }
 
 export function vistaFicha(cont, { usuario, datos, params: [id] }) {
@@ -117,4 +112,5 @@ export function vistaFicha(cont, { usuario, datos, params: [id] }) {
             aviso(err, "error");
         }
     });
+    pintarConsigna(cont, datos, usuario);
 }

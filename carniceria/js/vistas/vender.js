@@ -1,3 +1,4 @@
+import { consignaPersona, activarSerie } from "./comunes.js?v=4438010c31";
 // ============================================
 // Vender (Ricardo y Darío), en el mostrador: los cortes que más salen y los de cada animal a mano, y un buscador que
 // entiende cómo pide la gente ("chori", "molida") y perdona errores ("bacio"). Pesaje: se toca el corte y se escribe
@@ -6,17 +7,17 @@
 // peso. Ticket con vuelto, alias para la transferencia, "ding" al cobrar y la vista previa del ticket.
 // En la compu, dos columnas (cortes | ticket); en el celular, el ticket abajo con una barrita arriba que lleva a él.
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=55764424c5";
-import { puedeEscanear, escanear } from "../../kit/js/escaner.js?v=55764424c5";
-import { mantenerPantallaPrendida, htmlCopiable, activarCopiables, htmlBotonSonido, activarBotonSonido, ding } from "../../kit/js/celular.js?v=55764424c5";
-import { TOPES, MEDIOS, ALIAS, ANIMALES, ETIQUETA, pesos, kilos, aGramos, precioPorPeso, gramosPara, leerEtiqueta } from "../datos.js?v=55764424c5";
-import { textoMedio, DIVIDIDO, partesIniciales, htmlDosMedios, activarDosMedios } from "../../kit/js/pagos.js?v=55764424c5";
-import { MARCA, NEGOCIO } from "../marca.js?v=55764424c5";
-import { campoKg, kgEnCampo, precioDe, hora } from "./comunes.js?v=55764424c5";
-import { EVENTO_REINICIO } from "../../kit/js/guardado.js?v=55764424c5";
-import { puedeConectarBalanza, conectarBalanza } from "../../kit/js/balanza.js?v=55764424c5";
-import { abrirModoTV } from "../../kit/js/modo-tv.js?v=55764424c5";
-import { htmlMasDeLaCaja } from "../../kit/js/caja.js?v=55764424c5";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=4438010c31";
+import { puedeEscanear, escanear } from "../../kit/js/escaner.js?v=4438010c31";
+import { mantenerPantallaPrendida, htmlCopiable, activarCopiables, htmlBotonSonido, activarBotonSonido, ding } from "../../kit/js/celular.js?v=4438010c31";
+import { TOPES, MEDIOS, ALIAS, ANIMALES, ETIQUETA, pesos, kilos, aGramos, precioPorPeso, gramosPara, leerEtiqueta } from "../datos.js?v=4438010c31";
+import { textoMedio, DIVIDIDO, partesIniciales, htmlDosMedios, activarDosMedios } from "../../kit/js/pagos.js?v=4438010c31";
+import { MARCA, NEGOCIO } from "../marca.js?v=4438010c31";
+import { campoKg, kgEnCampo, precioDe, hora } from "./comunes.js?v=4438010c31";
+import { EVENTO_REINICIO } from "../../kit/js/guardado.js?v=4438010c31";
+import { puedeConectarBalanza, conectarBalanza } from "../../kit/js/balanza.js?v=4438010c31";
+import { abrirModoTV } from "../../kit/js/modo-tv.js?v=4438010c31";
+import { htmlMasDeLaCaja } from "../../kit/js/caja.js?v=4438010c31";
 
 // El ticket en curso queda en memoria mientras se navega (se vacía al cobrar)
 export const ticket = new Map(); // articuloId → { gramos } o { unidades }
@@ -45,6 +46,7 @@ const avisarPeso = (g) => {
 
 export function vistaVender(cont, { usuario, datos }) {
     cont.innerHTML = `
+        ${consignaPersona(datos, usuario)}
         <div class="titulo-con-accion">
             <h1 class="titulo">Vender</h1>
             <span class="negocio"><i class="ti ti-building-store" aria-hidden="true"></i>${esc(NEGOCIO)}</span>
@@ -91,6 +93,7 @@ export function vistaVender(cont, { usuario, datos }) {
             <section class="ticket" id="ticket" aria-label="Ticket"></section>
         </div>
         ${htmlMasDeLaCaja({ extra: ["La balanza conectada a la caja, o leyendo su etiqueta (ver «¿Cómo funciona la balanza?»)"] })}`;
+    activarSerie(cont);
 
     const q = cont.querySelector("[name=q]");
     const grilla = cont.querySelector(".grilla-productos");

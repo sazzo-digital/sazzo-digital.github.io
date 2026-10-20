@@ -3,14 +3,46 @@
 // los días en pastillas, la cara de cada socio, el gráfico de progreso (SVG, sin librerías) y la ventanita del
 // mensaje para copiar (del kit). Todo dato que entra a HTML pasa por esc().
 // ============================================
-import { esc } from "../../kit/js/ui.js?v=be499030eb";
-import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=be499030eb";
-import { buscarPersona } from "../marca.js?v=be499030eb";
-import { kilos } from "../datos.js?v=be499030eb";
+import { esc } from "../../kit/js/ui.js?v=0ae8c6cc93";
+import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=0ae8c6cc93";
+import { MARCA, buscarPersona } from "../marca.js?v=0ae8c6cc93";
+import { kilos } from "../datos.js?v=0ae8c6cc93";
+import { htmlConsigna, htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=0ae8c6cc93";
+
+const CONSIGNAS = {
+    socio: [
+        ["En “Hoy”, tocá “Llegué”.", "Tu llegada queda anotada en el gimnasio."],
+        ["Tocá “Hecha” en una serie de tu rutina de “Hoy”.", "Se guarda la serie con el peso y las repeticiones que ves."],
+        ["Tocá “Terminar el entreno” y confirmá si faltan ejercicios.", "El entreno queda terminado aunque hayas probado una sola serie."]
+    ],
+    profe: [
+        ["En “Rutinas”, abrí una rutina, elegí un alumno y tocá “Asignar”.", "El alumno pasa a esa rutina y la ve en su celu."],
+        ["En “Hoy”, abrí a Franco, escribí una nota y tocá “Dejar nota”.", "La nota queda guardada para que Franco la vea en su celu."],
+        ["En la ficha de Franco, tocá “Rutina en PDF”.", "Se arma su rutina en PDF para imprimir o mandar."]
+    ],
+    duena: [
+        ["En “Entrada”, tocá a Franco.", "Su llegada queda anotada y ves si tiene la cuota al día."],
+        ["En “Socios”, abrí a Franco y tocá “Mandar recordatorio de la cuota”.", "Se arma el mensaje de la cuota para copiarlo y mandárselo."],
+        ["En “Socios”, tocá “Socio nuevo”, escribí un nombre y tocá “Dar de alta y cobrar el primer mes”.", "Queda como socio con el primer mes cobrado."]
+    ]
+};
+
+export function consignaPersona(datos, usuario) {
+    const paso = datos.pasos(usuario).findIndex((hecho) => !hecho);
+    if (paso < 0) return htmlConsignaFinal(MARCA, 3);
+    const [accion, resultado] = CONSIGNAS[usuario.rol][paso];
+    return htmlConsigna({ paso: paso + 1, total: 3, accion, resultado });
+}
+
+export function activarConsignaPersona(cont, datos, usuario) {
+    cont.querySelectorAll(".consigna").forEach((cartel) => cartel.remove());
+    cont.insertAdjacentHTML("afterbegin", consignaPersona(datos, usuario));
+    activarConsigna(cont, MARCA);
+}
 
 export const guia = (personaId, ruta, texto) => htmlGuia({ persona: buscarPersona(personaId), ruta, texto });
 export { activarGuias };
-export { mostrarMensaje } from "../../kit/js/mensaje.js?v=be499030eb";
+export { mostrarMensaje } from "../../kit/js/mensaje.js?v=0ae8c6cc93";
 
 const CLASE_CUOTA = { "al-dia": "bien", pronto: "alerta", vencida: "mal" };
 

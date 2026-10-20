@@ -6,13 +6,13 @@
 // Las ventas guardan el precio del momento: si después sube un proveedor, lo vendido no cambia.
 // Si cambia la forma de los datos, subir VERSION_DATOS (se regeneran solos).
 // ============================================
-import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=75a51fff75";
-import { enteroHasta, sinPasarse } from "../kit/js/topes.js?v=75a51fff75";
-import { diaLocalDe, fechaLocalISO } from "../kit/js/fechas.js?v=75a51fff75";
-import { columnasDe, numeroDe, textoParaComparar } from "../kit/js/tablas.js?v=75a51fff75";
-import { filtrarPorTexto } from "../kit/js/buscar.js?v=75a51fff75";
-import { MARCA } from "./marca.js?v=75a51fff75";
-import { MEDIOS_PAGO, DIVIDIDO, revisarPagos, sumarPorMedio } from "../kit/js/pagos.js?v=75a51fff75";
+import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=ab9b8e0e7d";
+import { enteroHasta, sinPasarse } from "../kit/js/topes.js?v=ab9b8e0e7d";
+import { diaLocalDe, fechaLocalISO } from "../kit/js/fechas.js?v=ab9b8e0e7d";
+import { columnasDe, numeroDe, textoParaComparar } from "../kit/js/tablas.js?v=ab9b8e0e7d";
+import { filtrarPorTexto } from "../kit/js/buscar.js?v=ab9b8e0e7d";
+import { MARCA, PERSONAS } from "./marca.js?v=ab9b8e0e7d";
+import { MEDIOS_PAGO, DIVIDIDO, revisarPagos, sumarPorMedio } from "../kit/js/pagos.js?v=ab9b8e0e7d";
 
 export const VERSION_DATOS = 3;
 
@@ -278,6 +278,23 @@ const esDelKiosco = (u) => u?.rol === "dueno" || u?.rol === "empleada";
 export function crearDatos(prefijo = MARCA.prefijo) {
     const guardado = crearGuardado({ prefijo, version: VERSION_DATOS, semilla });
     const db = () => guardado.db();
+
+    const series = {"dueno": ["aumento", "lista", "tope"], "empleada": ["venta", "fiado", "cobro"]};
+
+    function pasos(usuario) {
+        exigir(PERSONAS.some((p) => p.id === usuario?.id && p.rol === usuario?.rol), "Esa persona no tiene una serie.");
+        return series[usuario.rol].map((id) => !!db().pasosPersonas?.[usuario.id]?.includes(id));
+    }
+
+    function registrarPaso(usuario, id) {
+        if (!series[usuario.rol].includes(id)) return;
+        const hechos = db().pasosPersonas ??= {};
+        const persona = hechos[usuario.id] ??= [];
+        if (persona.includes(id)) return;
+        persona.push(id);
+        guardado.persistir();
+    }
+
     const proveedor = (id) => PROVEEDORES.find((p) => p.id === id) ?? null;
     const armarProducto = (p) => ({ ...copia(p), estado: estadoStock(p), proveedor: proveedor(p.proveedorId)?.nombre ?? "Sin proveedor" });
     const armarCliente = (c) => ({ ...copia(c), deuda: deudaDe(c), desde: debeDesde(c), ultimo: c.movimientos.at(-1)?.fecha ?? null });
@@ -367,6 +384,7 @@ export function crearDatos(prefijo = MARCA.prefijo) {
         cambios.forEach((c) => (buscar(db().productos, c.id).precio = c.despues));
         const a = { id: nuevoId("a"), proveedorId, porcentaje, fecha: ahora(), por: usuario.nombre, cambios, deshecho: false };
         db().aumentos.push(a);
+        registrarPaso(usuario, "aumento");
         guardado.persistir();
         return copia(a);
     }
@@ -441,6 +459,7 @@ export function crearDatos(prefijo = MARCA.prefijo) {
         cambios.forEach((c) => (buscar(db().productos, c.id).precio = c.despues));
         const a = { id: nuevoId("a"), proveedorId: null, porcentaje: null, origen: "excel", fecha: ahora(), por: usuario.nombre, cambios, deshecho: false };
         db().aumentos.push(a);
+        registrarPaso(usuario, "lista");
         guardado.persistir();
         return copia(a);
     }
@@ -501,6 +520,7 @@ export function crearDatos(prefijo = MARCA.prefijo) {
         exigir(esDueno(usuario), "Solo el dueño cambia el tope de fiado.");
         const c = buscar(db().clientes, clienteId, "Ese cliente no existe.");
         c.tope = enteroHasta(tope, "El tope", { hasta: TOPES.tope });
+        registrarPaso(usuario, "tope");
         guardado.persistir();
         return armarCliente(c);
     }
@@ -515,6 +535,7 @@ export function crearDatos(prefijo = MARCA.prefijo) {
         exigir(c.movimientos.length < TOPES.movimientos, `${c.nombre} ya tiene ${TOPES.movimientos} movimientos. Es una demo: tocá "Empezar de cero" arriba.`);
         const m = enteroHasta(monto, "Lo que paga", { desde: 1, hasta: debe });
         c.movimientos.push({ id: nuevoId("m"), tipo: "pago", monto: m, fecha: ahora(), ventaId: null, medio, por: usuario.nombre });
+        registrarPaso(usuario, "cobro");
         guardado.persistir();
         return armarCliente(c);
     }
@@ -579,6 +600,7 @@ export function crearDatos(prefijo = MARCA.prefijo) {
         renglones.forEach((r) => (buscar(db().productos, r.productoId).stock -= r.cantidad));
         db().ventas.push(venta);
         if (c) c.movimientos.push({ id: nuevoId("m"), tipo: "fiado", monto: total, fecha: venta.fecha, ventaId: venta.id, medio: null, por: usuario.nombre });
+        registrarPaso(usuario, medio === "fiado" ? "fiado" : "venta");
         guardado.persistir();
         return { ...copia(venta), cliente: c ? armarCliente(c) : null };
     }
@@ -630,7 +652,7 @@ export function crearDatos(prefijo = MARCA.prefijo) {
     }
 
     return {
-        guardado,
+        guardado, pasos,
         listarProductos, rapidos, porCodigo, hayQuePedir, cargarProducto, corregirProducto,
         verAumento, aplicarAumento, deshacerAumento, ultimoAumento,
         verLista, aplicarLista, listaDeEjemplo, ventasDeLaSemana,

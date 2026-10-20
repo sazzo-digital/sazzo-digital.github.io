@@ -3,11 +3,12 @@
 // de estado de un pedido, los pasos de un pedido (pedido → listo → retirado), "hace cuánto" y el campo de kilos.
 // Todo dato que entra a HTML pasa por esc().
 // ============================================
-import { esc } from "../../kit/js/ui.js?v=55764424c5";
-import { diaLocalDe, fechaLocalISO } from "../../kit/js/fechas.js?v=55764424c5";
-import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=55764424c5";
-import { ESTADOS_PEDIDO, TOPES, kilos, pesos } from "../datos.js?v=55764424c5";
-import { buscarPersona } from "../marca.js?v=55764424c5";
+import { esc } from "../../kit/js/ui.js?v=4438010c31";
+import { htmlConsigna, htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=4438010c31";
+import { diaLocalDe, fechaLocalISO } from "../../kit/js/fechas.js?v=4438010c31";
+import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=4438010c31";
+import { ESTADOS_PEDIDO, TOPES, kilos, pesos } from "../datos.js?v=4438010c31";
+import { MARCA, buscarPersona } from "../marca.js?v=4438010c31";
 
 /** Botón del recorrido con la persona de la carnicería: guia("u-empleado", "/pedidos", "Mirá lo que le llega a Darío"). */
 export const guia = (personaId, ruta, texto) => htmlGuia({ persona: buscarPersona(personaId), ruta, texto });
@@ -108,3 +109,39 @@ export const porcentaje = (dif) => `${dif > 0 ? "+" : dif < 0 ? "−" : ""}${Mat
 export const unDecimal = (n) => `${Number(n).toLocaleString("es-AR", { minimumFractionDigits: 1, maximumFractionDigits: 1 })} %`;
 
 export const TOPE_KG_TEXTO = `${TOPES.gramos / 1000} kg`;
+
+
+const CONSIGNAS = {
+    dueno: [
+        ["En “Desposte”, abrí el N° 47, tocá el Asado en la vaca y escribí el peso de la balanza.", "El peso queda cargado y se suma a lo pesado del desposte."],
+        ["En “Precios”, tocá “Subió la hacienda”, elegí qué subió y cuánto, y tocá “Aplicar”.", "Suben juntos los precios de ese animal, con Deshacer."],
+        ["En “Precios”, abrí “Pizarra para la tele” y elegí otra “Oferta del día”.", "La oferta cambia en la pizarra al instante."]
+    ],
+    empleado: [
+        ["En “Pedidos”, tocá “Anotar uno del teléfono”, sumá un corte, escribí para quién es y tocá “Anotar el pedido”.", "Queda anotado para preparar, igual que los del celu."],
+        ["En “Pedidos”, abrí el N° 18 de Elena y tocá “Listo: avisarle”.", "Se descuenta del stock y sale el mensaje para avisarle."],
+        ["En “Pedidos”, abrí el N° 17 de Omar (ya está listo) y usá “Vinieron a buscarlo: cobrar y entregar”.", "Se cobra, se entrega y la venta entra en la caja del día."]
+    ],
+    clienta: [
+        ["En la vaca, tocá el asado, elegí 1,5 kg y tocá “Sumar al pedido”.", "El corte queda en tu pedido con el precio aproximado."],
+        ["Tocá “Cerdo” o “Pollo”, elegí un corte y tocá “Sumar al pedido”.", "Tu pedido suma otro corte y el total aproximado cambia."],
+        ["Sumá lo que quieras al pedido y tocá “Hacer el pedido”.", "Le llega a Darío para prepararlo y te avisa cuando está listo."]
+    ]
+};
+
+export function consignaPersona(datos, usuario) {
+    const paso = datos.pasos(usuario).findIndex((hecho) => !hecho);
+    if (paso < 0) return htmlConsignaFinal(MARCA, 3);
+    const [accion, resultado] = CONSIGNAS[usuario.rol][paso];
+    return htmlConsigna({ paso: paso + 1, total: 3, accion, resultado });
+}
+
+export const activarSerie = (cont) => activarConsigna(cont, MARCA);
+
+export function pintarConsigna(cont, datos, usuario) {
+    const html = consignaPersona(datos, usuario);
+    const anterior = cont.querySelector(".consigna");
+    if (anterior) anterior.outerHTML = html;
+    else cont.insertAdjacentHTML("afterbegin", html);
+    activarSerie(cont);
+}

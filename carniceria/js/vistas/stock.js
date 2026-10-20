@@ -1,3 +1,4 @@
+import { consignaPersona, activarSerie, pintarConsigna } from "./comunes.js?v=4438010c31";
 // ============================================
 // Precios y stock. Todos ven los kilos que quedan de cada corte (por animal), con "hay que despostar" (los que salen
 // de la media res) o "hay que pedir", y el precio por kilo. El dueño además:
@@ -6,13 +7,13 @@
 //   "Cargar un corte" y la "Pizarra para la tele".
 // También acá: las etiquetas de ejemplo de la balanza (para probar el escáner sin balanza).
 // ============================================
-import { esc, aviso, vacio, mensajeDe } from "../../kit/js/ui.js?v=55764424c5";
-import { htmlEstante, activarEstantes } from "../../kit/js/estante.js?v=55764424c5";
-import { ANIMALES, TOPES, nombreAnimal, pesos, kilos, armarEtiqueta } from "../datos.js?v=55764424c5";
-import { NEGOCIO } from "../marca.js?v=55764424c5";
-import { svgEAN } from "../codigo-barras.js?v=55764424c5";
-import { htmlCopiable, activarCopiables } from "../../kit/js/celular.js?v=55764424c5";
-import { pastillaStock, precioDe, campoKg, kgEnCampo, cuantoHay } from "./comunes.js?v=55764424c5";
+import { esc, aviso, vacio, mensajeDe } from "../../kit/js/ui.js?v=4438010c31";
+import { htmlEstante, activarEstantes } from "../../kit/js/estante.js?v=4438010c31";
+import { ANIMALES, TOPES, nombreAnimal, pesos, kilos, armarEtiqueta } from "../datos.js?v=4438010c31";
+import { NEGOCIO } from "../marca.js?v=4438010c31";
+import { svgEAN } from "../codigo-barras.js?v=4438010c31";
+import { htmlCopiable, activarCopiables } from "../../kit/js/celular.js?v=4438010c31";
+import { pastillaStock, precioDe, campoKg, kgEnCampo, cuantoHay } from "./comunes.js?v=4438010c31";
 
 const RAPIDOS = [5, 8, 10, 15];
 let textoBuscado = ""; // el buscador recuerda lo escrito mientras se navega
@@ -52,6 +53,7 @@ export function vistaStock(cont, { usuario, datos, consulta }) {
     const chip = (ver, texto) => `<a class="chip${(filtro ?? "") === (ver ?? "") ? " activo" : ""}" href="#/stock${ver ? `?ver=${ver}` : ""}">${esc(texto)}</a>`;
 
     cont.innerHTML = `
+        ${consignaPersona(datos, usuario)}
         <div class="titulo-con-accion">
             <h1 class="titulo">Precios y stock</h1>
         </div>
@@ -76,6 +78,7 @@ export function vistaStock(cont, { usuario, datos, consulta }) {
         </nav>
         <div class="lista-stock"></div>
         <p class="nota acerca-link"><i class="ti ti-info-circle"></i> <a href="#/acerca">Acerca de esta demo</a>.</p>`;
+    activarSerie(cont);
 
     const lugar = cont.querySelector(".lista-stock");
     const q = cont.querySelector("[name=q]");
@@ -176,6 +179,7 @@ export function vistaAumento(cont, { usuario, datos }) {
     }
 
     cont.innerHTML = `
+        ${consignaPersona(datos, usuario)}
         <a class="volver" href="#/stock"><i class="ti ti-arrow-left"></i> Precios y stock</a>
         <h1 class="titulo">Subió la hacienda</h1>
         <p class="nota"><i class="ti ti-trending-up"></i> Te subió el frigorífico: elegí qué subió y cuánto. Todos los precios de ese animal suben juntos, redondeados.</p>
@@ -193,6 +197,7 @@ export function vistaAumento(cont, { usuario, datos }) {
         <div class="antes-despues"></div>
         <button class="boton boton--ancho boton--grande" type="button" data-aplicar></button>
         <div class="resultado-aumento"></div>`;
+    activarSerie(cont);
 
     const otro = cont.querySelector("[name=pct]");
     cont.querySelectorAll("[data-animal]").forEach((b) => b.addEventListener("click", () => {
@@ -212,6 +217,7 @@ export function vistaAumento(cont, { usuario, datos }) {
         try {
             const c = datos.aplicarAumento(usuario, animal, porcentaje);
             aviso(`${c.cambios.length} precios actualizados`);
+            pintarConsigna(cont, datos, usuario);
             const lugar = cont.querySelector(".resultado-aumento");
             lugar.innerHTML = `
                 ${htmlUltimoCambio(c)}
@@ -232,6 +238,7 @@ export function vistaAumento(cont, { usuario, datos }) {
 /** Cargar un corte o un artículo nuevo (el dueño). */
 export function vistaNuevoArticulo(cont, { usuario, datos }) {
     cont.innerHTML = `
+        ${consignaPersona(datos, usuario)}
         <a class="volver" href="#/stock"><i class="ti ti-arrow-left"></i> Precios y stock</a>
         <h1 class="titulo">Cargar un corte</h1>
         <form class="formulario bloque" novalidate>
@@ -251,6 +258,7 @@ export function vistaNuevoArticulo(cont, { usuario, datos }) {
             <p class="nota"><i class="ti ti-info-circle"></i> El costo se calcula con el margen del animal; lo corregís después en la lista.</p>
             <button class="boton boton--ancho" type="submit"><i class="ti ti-plus"></i> Cargar</button>
         </form>`;
+    activarSerie(cont);
     const f = cont.querySelector("form");
     f.addEventListener("submit", (e) => {
         e.preventDefault();
@@ -271,12 +279,13 @@ export function vistaNuevoArticulo(cont, { usuario, datos }) {
 const ETIQUETAS = [["Asado", 1_625], ["Vacío", 2_040], ["Picada común", 845], ["Chorizo", 1_010]];
 
 /** Etiquetas de ejemplo de la balanza: para leerlas con la cámara en Vender (desde otra pantalla o impresas). */
-export function vistaEtiquetas(cont, { datos }) {
+export function vistaEtiquetas(cont, { usuario, datos }) {
     const etiquetas = ETIQUETAS.map(([nombre, gramos]) => {
         const a = datos.listarArticulos({ texto: nombre }).find((x) => x.nombre === nombre);
         return a ? { a, gramos, codigo: armarEtiqueta(a.plu, gramos) } : null;
     }).filter(Boolean);
     cont.innerHTML = `
+        ${consignaPersona(datos, usuario)}
         <a class="volver" href="#/stock"><i class="ti ti-arrow-left"></i> Precios y stock</a>
         <h1 class="titulo">Etiquetas de ejemplo</h1>
         <p class="nota"><i class="ti ti-barcode"></i> Como las que imprime la balanza: abrilas en otra pantalla (o imprimilas) y, en Vender, tocá la cámara y apuntá al código. El corte entra con su peso. Sin cámara: copiá el código y pegalo en el buscador de Vender.</p>
@@ -291,5 +300,6 @@ export function vistaEtiquetas(cont, { datos }) {
         </div>
         <p class="nota"><i class="ti ti-info-circle"></i> El código empieza con 20, sigue el código del corte y después el peso en gramos. En la versión real se ajusta a la balanza de cada carnicería (algunas ponen el importe en vez del peso).</p>
         <a class="boton boton--ancho" href="#/inicio"><i class="ti ti-shopping-cart"></i> Ir a Vender</a>`;
+    activarSerie(cont);
     activarCopiables(cont, "Código copiado: pegalo en el buscador de Vender.");
 }

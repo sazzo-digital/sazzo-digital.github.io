@@ -1,13 +1,13 @@
-import { esc, aviso } from "../../kit/js/ui.js?v=75a51fff75";
-import { mantenerPantallaPrendida, ding } from "../../kit/js/celular.js?v=75a51fff75";
-import { girarRuleta } from "../../kit/js/ruleta.js?v=75a51fff75";
-import { TOPES, MEDIOS, PREMIOS, PROMO_DESDE, SECCIONES, ganaTirada, pesos, seccionDe } from "../datos.js?v=75a51fff75";
-import { mediosParaCaja } from "../../kit/js/pagos.js?v=75a51fff75";
-import { MARCA, NEGOCIO } from "../marca.js?v=75a51fff75";
-import { guia, activarGuias } from "./comunes.js?v=75a51fff75";
-import { htmlConsigna } from "../../kit/js/consigna.js?v=75a51fff75";
-import { EVENTO_REINICIO } from "../../kit/js/guardado.js?v=75a51fff75";
-import { abrirCaja, htmlMasDeLaCaja } from "../../kit/js/caja.js?v=75a51fff75";
+import { pintarConsigna } from "./comunes.js?v=ab9b8e0e7d";
+import { esc, aviso } from "../../kit/js/ui.js?v=ab9b8e0e7d";
+import { mantenerPantallaPrendida, ding } from "../../kit/js/celular.js?v=ab9b8e0e7d";
+import { girarRuleta } from "../../kit/js/ruleta.js?v=ab9b8e0e7d";
+import { TOPES, MEDIOS, PREMIOS, PROMO_DESDE, SECCIONES, ganaTirada, pesos, seccionDe } from "../datos.js?v=ab9b8e0e7d";
+import { mediosParaCaja } from "../../kit/js/pagos.js?v=ab9b8e0e7d";
+import { MARCA, NEGOCIO } from "../marca.js?v=ab9b8e0e7d";
+import { guia, activarGuias } from "./comunes.js?v=ab9b8e0e7d";
+import { EVENTO_REINICIO } from "../../kit/js/guardado.js?v=ab9b8e0e7d";
+import { abrirCaja, htmlMasDeLaCaja } from "../../kit/js/caja.js?v=ab9b8e0e7d";
 
 export const ticket = new Map();
 addEventListener(EVENTO_REINICIO, () => ticket.clear());
@@ -34,17 +34,7 @@ export function vistaVender(cont, { usuario, datos, irA }) {
         ${htmlMasDeLaCaja()}`;
     const recorrido = cont.querySelector(".recorrido-caja");
     const panelCargar = cont.querySelector(".cargar");
-    const esEmpleada = usuario.rol === "empleada";
-
-    const pintarRecorrido = (v = null) => {
-        if (!esEmpleada) return;
-        recorrido.innerHTML = !v
-            ? htmlConsigna({ paso: 1, total: 3, accion: "Sumá la gaseosa de 1,5 L y el alfajor triple de la góndola, y cobrá con $ 10.000.", resultado: "Se suma en la pantalla grande y te calcula el vuelto solo." })
-            : v.medio === "fiado"
-                ? htmlConsigna({ paso: 2, total: 3, accion: "Anotá un fiado.", hecho: `quedó en la libreta${v.cliente ? ` de ${v.cliente.nombre}` : ""}`, guia: guia("u-dueno", "/stock/aumento", "Pasá a Rubén: subí los precios de un proveedor") })
-                : htmlConsigna({ paso: 2, total: 3, accion: "Ahora anotá un fiado: leche y pan lactal para Graciela. Al cobrar, elegí «Fiado» y su nombre.", resultado: "Queda en su libreta, con su tope." });
-        activarGuias(recorrido, irA);
-    };
+    const pintarRecorrido = () => pintarConsigna(cont, datos, usuario);
 
     const totalDe = (items) => datos.armarTicket(items).total;
     const caja = abrirCaja({
@@ -137,4 +127,5 @@ export function vistaVender(cont, { usuario, datos, irA }) {
     }
 
     pintarRecorrido();
+    pintarConsigna(cont, datos, usuario);
 }

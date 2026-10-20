@@ -2,11 +2,9 @@
 // Inicio de la administradora (Marta): tablero con los tres números, "Para mirar hoy" (avisos, papeles, service y
 // repuestos, lo urgente primero) y lo último que pasó con sus horas. En la compu, en dos columnas.
 // ============================================
-import { esc } from "../../kit/js/ui.js?v=b86ccb1eca";
-import { conArticulo } from "../datos.js?v=b86ccb1eca";
-import { haceCuanto, hora, guia, activarGuias, textoRepuestos } from "./comunes.js?v=b86ccb1eca";
-import { htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=b86ccb1eca";
-import { MARCA } from "../marca.js?v=b86ccb1eca";
+import { esc } from "../../kit/js/ui.js?v=144fda0e5d";
+import { conArticulo } from "../datos.js?v=144fda0e5d";
+import { haceCuanto, hora, activarGuias, textoRepuestos, consignaPersona, activarPasos } from "./comunes.js?v=144fda0e5d";
 
 const NUMEROS = [
     { estado: "andando", texto: "Andando", icono: "ti-circle-check" },
@@ -34,11 +32,10 @@ export function vistaInicioAdmin(cont, { usuario, datos, irA }) {
     const r = datos.resumen();
     const mirar = datos.paraMirar();
     const ultimos = datos.movimientos();
-    // Si lo último fue un arreglo, se cierra el recorrido: Ramón ya lo ve como arreglado
-    const cierre = ultimos[0]?.que === "arreglo" && ultimos[0].vehiculoId === datos.vehiculoDe("u-chofer")?.id;
 
     cont.innerHTML = `
         <h1 class="titulo">Hola, ${esc(usuario.nombre)}</h1>
+        ${consignaPersona(datos, usuario)}
         <div class="numeros">
             ${NUMEROS.map((n) => `
             <a class="numero numero--${n.estado}" href="#/vehiculos?estado=${n.estado}">
@@ -60,8 +57,7 @@ export function vistaInicioAdmin(cont, { usuario, datos, irA }) {
                 <h2 class="subtitulo"><i class="ti ti-history"></i> Lo último que pasó</h2>
                 <ul class="lineas">${ultimos.map(movimiento).join("")}</ul>
             </section>
-        </div>
-        ${cierre ? `${htmlConsignaFinal(MARCA, 3)}${guia("u-chofer", "/inicio", "Mirá cómo lo ve Ramón")}` : ""}`;
+        </div>`;
     activarGuias(cont, irA);
-    activarConsigna(cont, MARCA);
+    activarPasos(cont);
 }

@@ -7,19 +7,19 @@
 // abajo de la Caja y en el menú de Marcos.
 // irA() cambia de persona sin pasar por "Probala como…" (botones del recorrido: "Mirá lo que le llega a Nahuel →").
 // ============================================
-import { $, conFundido } from "../kit/js/ui.js?v=f6723a2a8a";
-import { iniciarDemo } from "../kit/js/arranque.js?v=f6723a2a8a";
-import { vistaIngreso } from "../kit/js/ingreso.js?v=f6723a2a8a";
-import { pintarMarco } from "../kit/js/marco.js?v=f6723a2a8a";
-import { mostrarRuta } from "../kit/js/rutas.js?v=f6723a2a8a";
-import { vistaAcerca } from "../kit/js/acerca.js?v=f6723a2a8a";
-import { MARCA, PERSONAS, DETALLE, buscarPersona } from "./marca.js?v=f6723a2a8a";
-import { aparte } from "../kit/js/aparte.js?v=f6723a2a8a";
-import { leerSesionGuardada } from "../kit/js/guardado.js?v=f6723a2a8a";
+import { $, conFundido } from "../kit/js/ui.js?v=12c89e832a";
+import { iniciarDemo } from "../kit/js/arranque.js?v=12c89e832a";
+import { vistaIngreso } from "../kit/js/ingreso.js?v=12c89e832a";
+import { pintarMarco } from "../kit/js/marco.js?v=12c89e832a";
+import { mostrarRuta } from "../kit/js/rutas.js?v=12c89e832a";
+import { vistaAcerca } from "../kit/js/acerca.js?v=12c89e832a";
+import { MARCA, PERSONAS, DETALLE, buscarPersona } from "./marca.js?v=12c89e832a";
+import { aparte } from "../kit/js/aparte.js?v=12c89e832a";
+import { leerSesionGuardada } from "../kit/js/guardado.js?v=12c89e832a";
 
 // Los datos de ejemplo y las pantallas se bajan aparte (al terminar de cargar): "Probala como…" aparece sin esperarlos
-const pantallas = aparte(() => import("./pantallas.js?v=f6723a2a8a"));
-const { vistaInicio, vistaMisPresupuestos, vistaPresupuestos, vistaNuevoPresupuesto, vistaPresupuesto, vistaCuentas, vistaCuenta, vistaStock, vistaAumento, vistaLista, vistaMargen, vistaPedidosProveedor, vistaNuevoProducto, vistaCaja, pintarNovedades } = pantallas.funciones;
+const pantallas = aparte(() => import("./pantallas.js?v=12c89e832a"));
+const { vistaInicio, vistaMisPresupuestos, vistaPresupuestos, vistaNuevoPresupuesto, vistaPresupuesto, vistaCuentas, vistaCuenta, vistaStock, vistaAumento, vistaLista, vistaMargen, vistaPedidosProveedor, vistaNuevoProducto, vistaCaja, pintarNovedades, pintarConsigna } = pantallas.funciones;
 
 iniciarDemo(MARCA);
 let datos = null; // se arma cuando bajan las pantallas
@@ -69,7 +69,10 @@ const RUTAS = [
     { patron: /^\/stock\/nuevo$/, vista: con(vistaNuevoProducto), puede: esDueno, menu: "/stock" },
     { patron: /^\/stock\/lista$/, vista: con(vistaLista), puede: esDueno, menu: "/stock" },
     { patron: /^\/caja$/, vista: con(vistaCaja), puede: esDelLocal },
-    { patron: /^\/acerca$/, vista: (cont) => vistaAcerca(cont, { marca: MARCA }) }
+    { patron: /^\/acerca$/, vista: con((cont, opciones) => {
+        vistaAcerca(cont, { marca: MARCA });
+        pintarConsigna(cont, opciones);
+    }) }
 ];
 
 // Después de cada pantalla, el aviso de novedades ("¡Pedido nuevo de presupuesto!": vistas/novedades.js)

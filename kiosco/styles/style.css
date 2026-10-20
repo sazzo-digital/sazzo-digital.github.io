@@ -764,6 +764,15 @@ body.guardando .boton:not(.boton--secundario) {
   background: var(--primario-suave);
 }
 @container (max-width: 26rem) {
+  .banda-prueba__persona {
+    flex-basis: 100%;
+  }
+  .banda-prueba__cambiar {
+    flex: 1 1 calc(50% - 0.375rem);
+    padding: 0 0.5rem;
+  }
+}
+@container (max-width: 19rem) {
   .banda-prueba__cambiar {
     flex-basis: 100%;
   }
@@ -2226,6 +2235,7 @@ body.guardando .boton:not(.boton--secundario) {
   }
 }
 .consigna {
+  position: relative;
   display: grid;
   gap: 0.35rem;
   margin: 0.75rem 0;
@@ -2233,6 +2243,14 @@ body.guardando .boton:not(.boton--secundario) {
   border-left: 3px solid var(--primario);
   border-radius: 12px;
   background: var(--superficie-2);
+}
+.consigna__cerrar {
+  position: absolute;
+  top: 0.25rem;
+  right: 0.25rem;
+}
+.consigna__paso, .consigna__exito {
+  padding-right: 2.4rem;
 }
 .consigna__paso {
   font-family: "JetBrains Mono", ui-monospace, monospace;
@@ -2252,6 +2270,7 @@ body.guardando .boton:not(.boton--secundario) {
   color: var(--primario);
 }
 .consigna__accion {
+  padding-right: 2.4rem;
   font-size: 0.95rem;
   font-weight: 600;
 }

@@ -1,3 +1,4 @@
+import { pintarConsigna } from "./comunes.js?v=53dafd0799";
 // ============================================
 // Stock y precios. Todos ven el stock por rubro, con "hay que pedir" y el precio (y el de por mayor).
 // La dueña además ve el costo y el margen de cada artículo y los corrige ahí mismo, y tiene:
@@ -8,14 +9,12 @@
 //   "Pedidos a proveedores": lo que bajó del mínimo, por proveedor, con el mensaje para copiar y "Llegó".
 //   "Cargar artículo": con costo y margen (el precio sale solo).
 // ============================================
-import { esc, aviso, vacio, mensajeDe } from "../../kit/js/ui.js?v=5983ccc313";
-import { mostrarMensaje } from "../../kit/js/mensaje.js?v=5983ccc313";
-import { bajarExcel, leerExcel } from "../../kit/js/archivos.js?v=5983ccc313";
-import { htmlEstante, activarEstantes } from "../../kit/js/estante.js?v=5983ccc313";
-import { PROVEEDORES, RUBROS, TOPES, DESCUENTO_MAYOR, nombreRubro, pesos, precioDe } from "../datos.js?v=5983ccc313";
-import { pastillaStock } from "./comunes.js?v=5983ccc313";
-import { htmlConsigna, htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=5983ccc313";
-import { MARCA } from "../marca.js?v=5983ccc313";
+import { esc, aviso, vacio, mensajeDe } from "../../kit/js/ui.js?v=53dafd0799";
+import { mostrarMensaje } from "../../kit/js/mensaje.js?v=53dafd0799";
+import { leerExcel } from "../../kit/js/archivos.js?v=53dafd0799";
+import { htmlEstante, activarEstantes } from "../../kit/js/estante.js?v=53dafd0799";
+import { PROVEEDORES, RUBROS, TOPES, DESCUENTO_MAYOR, nombreRubro, pesos, precioDe } from "../datos.js?v=53dafd0799";
+import { pastillaStock } from "./comunes.js?v=53dafd0799";
 
 const RAPIDOS = [5, 10, 15, 20];
 let textoBuscado = ""; // el buscador de Stock recuerda lo escrito mientras se navega
@@ -63,15 +62,14 @@ export function vistaStock(cont, { usuario, datos, consulta }) {
         </div>
         ${duena ? `
         <div class="acciones-stock">
-            <a class="boton boton--chico" href="#/stock/aumento"><i class="ti ti-trending-up"></i> Subió un proveedor</a>
+            <a class="boton boton--chico" href="#/stock/aumento"><i class="ti ti-trending-up"></i> Subir precios por proveedor</a>
             <a class="boton boton--chico boton--secundario" href="#/stock/lista"><i class="ti ti-file-spreadsheet"></i> Lista del proveedor en Excel</a>
             <a class="boton boton--chico boton--secundario" href="#/stock/margen"><i class="ti ti-percentage"></i> Cambiar margen</a>
             <a class="boton boton--chico boton--secundario" href="#/stock/pedidos"><i class="ti ti-truck-delivery"></i> Pedidos a proveedores</a>
             <a class="boton boton--chico boton--secundario" href="#/stock/nuevo"><i class="ti ti-plus"></i> Cargar artículo</a>
         </div>
         ${htmlUltimoCambio(datos.ultimoCambio())}` : `<p class="nota"><i class="ti ti-info-circle"></i> Los precios, los costos y el stock los cambia Mariela.</p>`}
-        ${duena && pedir && aPedir.length ? `${htmlConsigna({ paso: 3, total: 4, accion: "Esto bajó del mínimo (las listas separadas también descuentan): armá los pedidos de un toque.", resultado: "Después probá “Subió un proveedor”." })}
-            <a class="boton boton--ancho" href="#/stock/pedidos"><i class="ti ti-truck-delivery"></i> Armar los pedidos a los proveedores</a>` : ""}
+        ${duena && pedir && aPedir.length ? `<a class="boton boton--ancho" href="#/stock/pedidos"><i class="ti ti-truck-delivery"></i> Armar los pedidos a los proveedores</a>` : ""}
         <form class="buscar buscar--stock" novalidate>
             <label class="buscador">
                 <i class="ti ti-search" aria-hidden="true"></i>
@@ -85,6 +83,7 @@ export function vistaStock(cont, { usuario, datos, consulta }) {
             ${RUBROS.map((r) => chip(r.id, r.nombre)).join("")}
         </nav>
         <div class="lista-stock"></div>`;
+    pintarConsigna(cont, datos, usuario);
 
     const lugar = cont.querySelector(".lista-stock");
     const q = cont.querySelector("[name=q]");
@@ -215,8 +214,7 @@ export function vistaAumento(cont, { usuario, datos }) {
 
     cont.innerHTML = `
         <a class="volver" href="#/stock"><i class="ti ti-arrow-left"></i> Stock y precios</a>
-        <h1 class="titulo">Subió un proveedor</h1>
-        ${htmlConsigna({ paso: 4, total: 4, accion: "Te mandó la lista nueva: elegí el proveedor y cuánto subió, y aplicalo.", resultado: "Sube el costo y cada precio se recalcula con tu margen." })}
+        <h1 class="titulo">Subir los precios de un proveedor</h1>
         <div class="bloque">
             <p class="rotulo-chico">Proveedor</p>
             <div class="chips">${PROVEEDORES.map((p) => `<button class="chip" type="button" data-proveedor="${esc(p.id)}">${esc(p.nombre)}</button>`).join("")}</div>
@@ -231,6 +229,7 @@ export function vistaAumento(cont, { usuario, datos }) {
         <div class="antes-despues"></div>
         <button class="boton boton--ancho boton--grande" type="button" data-aplicar></button>
         <div class="resultado-aumento"></div>`;
+    pintarConsigna(cont, datos, usuario);
 
     const otro = cont.querySelector("[name=pct]");
     cont.querySelectorAll("[data-proveedor]").forEach((b) => b.addEventListener("click", () => {
@@ -250,13 +249,9 @@ export function vistaAumento(cont, { usuario, datos }) {
         try {
             const cambio = datos.aplicarAumento(usuario, proveedorId, porcentaje);
             aviso(`${cambio.cambios.length} precios actualizados`);
+            pintarConsigna(cont, datos, usuario);
             pintar();
             despuesDeAplicar(cont, { usuario, datos, cambio, alDeshacer: pintar });
-            const consigna = cont.querySelector(".consigna");
-            if (consigna) {
-                consigna.outerHTML = htmlConsignaFinal(MARCA, 4);
-                activarConsigna(cont, MARCA);
-            }
         } catch (err) {
             aviso(err, "error");
         }
@@ -301,6 +296,7 @@ export function vistaMargen(cont, { usuario, datos }) {
         <div class="antes-despues"></div>
         <button class="boton boton--ancho boton--grande" type="button" data-aplicar></button>
         <div class="resultado-aumento"></div>`;
+    pintarConsigna(cont, datos, usuario);
 
     const campo = cont.querySelector("[name=margen]");
     cont.querySelectorAll("[data-rubro]").forEach((b) => b.addEventListener("click", () => {
@@ -317,6 +313,7 @@ export function vistaMargen(cont, { usuario, datos }) {
         try {
             const cambio = datos.aplicarMargen(usuario, rubro, margen);
             aviso(`${cambio.cambios.length} precios actualizados`);
+            pintarConsigna(cont, datos, usuario);
             pintar();
             despuesDeAplicar(cont, { usuario, datos, cambio, alDeshacer: pintar });
         } catch (err) {
@@ -327,7 +324,7 @@ export function vistaMargen(cont, { usuario, datos }) {
 }
 
 /**
- * "La lista del proveedor en Excel": bajás la de ejemplo (o usás la que te mandó), la subís, mirás costo y precio antes
+ * "La lista del proveedor en Excel": usás la de ejemplo (o subís la que te mandó), mirás costo y precio antes
  * → después (cada artículo con su margen) y aplicás todo de una, con Deshacer. Todo pasa en el navegador: el archivo
  * no se sube a ningún lado.
  */
@@ -339,8 +336,8 @@ export function vistaLista(cont, { usuario, datos }) {
         <p class="nota"><i class="ti ti-file-spreadsheet"></i> ¿Te mandó la lista nueva en Excel? Subila: se actualiza el costo de cada artículo y el precio de venta sale solo, con tu margen. Probá con la de ejemplo.</p>
         <ol class="pasos-lista">
             <li>
-                <span>Bajá la lista de ejemplo de Papelera Central (sube un 12 %).</span>
-                <button class="boton boton--chico boton--secundario" type="button" data-ejemplo><i class="ti ti-download"></i> Lista de ejemplo</button>
+                <span>Usá la lista de ejemplo de Papelera Central (sube un 12 %).</span>
+                <button class="boton boton--chico boton--secundario" type="button" data-ejemplo><i class="ti ti-file-spreadsheet"></i> Usar la lista de ejemplo</button>
             </li>
             <li>
                 <span>Subila (o la que te mandó tu proveedor: con una columna "Costo" o "Precio" y otra "Código" o "Artículo").</span>
@@ -350,6 +347,7 @@ export function vistaLista(cont, { usuario, datos }) {
             </li>
         </ol>
         <div class="resultado-excel resultado-aumento" aria-live="polite"></div>`;
+    pintarConsigna(cont, datos, usuario);
 
     const lugar = cont.querySelector(".resultado-excel");
     function pintar(nombreArchivo) {
@@ -383,10 +381,14 @@ export function vistaLista(cont, { usuario, datos }) {
         });
     }
 
-    cont.querySelector("[data-ejemplo]").addEventListener("click", (e) => {
-        e.currentTarget.disabled = true;
-        bajarExcel("Lista Papelera Central (ejemplo)", datos.listaDeEjemplo("pr-papelera"), { hoja: "Lista", anchos: [16, 40, 14] })
-            .finally(() => cont.querySelector("[data-ejemplo]")?.removeAttribute("disabled"));
+    cont.querySelector("[data-ejemplo]").addEventListener("click", () => {
+        try {
+            filas = datos.listaDeEjemplo("pr-papelera");
+            pintar("Lista de ejemplo");
+        } catch (err) {
+            filas = null;
+            lugar.innerHTML = `<p class="alerta alerta--alerta"><i class="ti ti-alert-triangle"></i> ${esc(mensajeDe(err))}</p>`;
+        }
     });
     cont.querySelector("[data-archivo]").addEventListener("change", async (e) => {
         const archivo = e.target.files?.[0];
@@ -427,7 +429,8 @@ export function vistaPedidosProveedor(cont, { usuario, datos }) {
             </div>
         </section>`).join("")
         : vacio("No hay nada para pedir: todo está sobre el mínimo.", "ti-circle-check")}
-        <a class="boton boton--secundario boton--ancho siguiente" href="#/stock/aumento"><i class="ti ti-trending-up"></i> Ahora probá: subió un proveedor</a>`;
+        <a class="boton boton--secundario boton--ancho siguiente" href="#/stock/aumento"><i class="ti ti-trending-up"></i> Ahora probá: subir precios por proveedor</a>`;
+    pintarConsigna(cont, datos, usuario);
 
     cont.querySelectorAll("[data-copiar]").forEach((b) => b.addEventListener("click", () => {
         try {
@@ -475,6 +478,7 @@ export function vistaNuevoProducto(cont, { usuario, datos }) {
             <p class="nota precio-nuevo" aria-live="polite"><i class="ti ti-info-circle"></i> Poné el costo y el margen: el precio sale solo.</p>
             <button class="boton" type="submit"><i class="ti ti-plus"></i> Cargar</button>
         </form>`;
+    pintarConsigna(cont, datos, usuario);
     const f = cont.querySelector("form");
     const previa = () => {
         const costo = num(f.costo.value);

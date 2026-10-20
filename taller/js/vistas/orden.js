@@ -4,16 +4,15 @@
 // El mecánico carga lo que encontró y los repuestos, sin ver precios. Y el presupuesto (dueño): para imprimir, con la
 // firma del cliente en pantalla y en PDF para mandarlo por WhatsApp.
 // ============================================
-import { esc, aviso, fechaCorta, fechaHora } from "../../kit/js/ui.js?v=1c786e0170";
-import { fechaLocalISO } from "../../kit/js/fechas.js?v=1c786e0170";
-import { pedirFirma, esFirma } from "../../kit/js/firma.js?v=1c786e0170";
-import { htmlBotonDictar, activarDictado } from "../../kit/js/dictado.js?v=1c786e0170";
-import { armarPdf, pdfListo } from "../../kit/js/pdf.js?v=1c786e0170";
-import { ESTADOS, REPUESTOS, MANO_DE_OBRA, TOPES, pesos } from "../datos.js?v=1c786e0170";
-import { NEGOCIO, MARCA } from "../marca.js?v=1c786e0170";
-import { guia, activarGuias, chapa, pastillaEstado, textoPromesa, mostrarMensaje } from "./comunes.js?v=1c786e0170";
-import { htmlConsigna, htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=1c786e0170";
-import { htmlAntesDespues, activarAntesDespues } from "../../kit/js/antes-despues.js?v=1c786e0170";
+import { esc, aviso, fechaCorta, fechaHora } from "../../kit/js/ui.js?v=fba34fb3d2";
+import { fechaLocalISO } from "../../kit/js/fechas.js?v=fba34fb3d2";
+import { pedirFirma, esFirma } from "../../kit/js/firma.js?v=fba34fb3d2";
+import { htmlBotonDictar, activarDictado } from "../../kit/js/dictado.js?v=fba34fb3d2";
+import { armarPdf, pdfListo } from "../../kit/js/pdf.js?v=fba34fb3d2";
+import { ESTADOS, REPUESTOS, MANO_DE_OBRA, TOPES, pesos } from "../datos.js?v=fba34fb3d2";
+import { NEGOCIO } from "../marca.js?v=fba34fb3d2";
+import { guia, activarGuias, chapa, pastillaEstado, textoPromesa, mostrarMensaje, consignaPersona, activarPasos } from "./comunes.js?v=fba34fb3d2";
+import { htmlAntesDespues, activarAntesDespues } from "../../kit/js/antes-despues.js?v=fba34fb3d2";
 
 export function vistaOrden(cont, { usuario, datos, irA, params: [id] }) {
     const o = datos.orden(id, usuario);
@@ -46,18 +45,9 @@ export function vistaOrden(cont, { usuario, datos, irA, params: [id] }) {
         botones.push(`<button class="boton boton--secundario" type="button" data-accion="entregar"><i class="ti ti-key"></i> Entregado</button>`);
     }
 
-    // El paso siguiente del recorrido del momento wow
-    let recorrido = "";
-    if (!dueno && o.estado === "recibido") recorrido = o.renglones.length
-        ? htmlConsigna({ paso: 2, total: 5, accion: "Anotá lo que encontraste.", hecho: "Raúl ya lo ve", guia: guia("u-dueno", `/orden/${o.id}`, "Mirá cómo lo ve Raúl") })
-        : htmlConsigna({ paso: 2, total: 5, accion: "Anotá lo que encontraste: repuestos y mano de obra.", resultado: "Raúl lo ve para mandar el presupuesto." });
-    if (dueno && (o.estado === "recibido" || o.estado === "presupuestado") && o.renglones.length) recorrido = htmlConsigna({ paso: 3, total: 5, accion: "Tocá “Mandar presupuesto” y después “Aprobado”.", resultado: "Pasa a reparación y Seba lo ve." });
-    if (dueno && o.estado === "reparacion" && o.mecanico === "Seba") recorrido = htmlConsigna({ paso: 3, total: 5, accion: "Aprobá el presupuesto.", hecho: "pasa a reparación", guia: guia("u-mecanico", `/orden/${o.id}`, "Pasá a Seba: que lo termine") });
-    if (!dueno && o.estado === "reparacion") recorrido = htmlConsigna({ paso: 4, total: 5, accion: "Cuando lo termines, tocá “Terminado”.", resultado: "Raúl ve que está listo." });
-    if (!dueno && o.estado === "listo") recorrido = htmlConsigna({ paso: 4, total: 5, accion: "Terminá el arreglo.", hecho: "está listo", guia: guia("u-dueno", `/orden/${o.id}`, "Mirá cómo lo ve Raúl: avisale al cliente") });
-    if (dueno && o.estado === "listo") recorrido = o.avisado
-        ? htmlConsignaFinal(MARCA, 5)
-        : htmlConsigna({ paso: 5, total: 5, accion: "Tocá “Avisar que está listo”.", resultado: "Te arma el mensaje para el cliente." });
+    let recorrido = consignaPersona(datos, usuario);
+    if (dueno && o.estado === "reparacion" && o.mecanico === "Seba") recorrido += guia("u-mecanico", `/orden/${o.id}`, "Pasá a Seba: que lo termine");
+    if (!dueno && o.estado === "listo") recorrido += guia("u-dueno", `/orden/${o.id}`, "Mirá cómo lo ve Raúl: avisale al cliente");
 
     cont.innerHTML = `
         <a class="volver" href="#/inicio"><i class="ti ti-arrow-left"></i> ${dueno ? "Taller" : "Mis autos"}</a>
@@ -124,7 +114,7 @@ export function vistaOrden(cont, { usuario, datos, irA, params: [id] }) {
             ${dueno && o.editable || (dueno && o.estado === "listo") ? `<button class="boton-link anular" type="button" data-accion="anular"><i class="ti ti-ban"></i> Anular la orden</button>` : ""}
         </section>`;
     activarGuias(cont, irA);
-    activarConsigna(cont, MARCA);
+    activarPasos(cont);
     activarAntesDespues(cont);
     activarDictado(cont); // el mecánico con las manos sucias dicta lo que encontró
 

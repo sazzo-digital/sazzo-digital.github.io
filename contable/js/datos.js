@@ -6,19 +6,19 @@
 // en semilla.js. Todo cuelga de "la empresa actual" (la forma ya sirve para varias empresas).
 // La plata va en centavos. Si cambia la forma de los datos, subir VERSION_DATOS (se regeneran solos).
 // ============================================
-import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=929def1556";
-import { enteroHasta, sinPasarse } from "../kit/js/topes.js?v=929def1556";
-import { esFechaISO } from "../kit/js/fechas.js?v=929def1556";
-import { MARCA } from "./marca.js?v=929def1556";
-import { semilla as semillaFabrica, ID_CONSUMIDOR_FINAL } from "./semilla.js?v=929def1556";
-import { armarAsientos, armarMayor, armarBalance, CUENTAS_CONTABLES } from "./contabilidad.js?v=929def1556";
+import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=569102ff5e";
+import { enteroHasta, sinPasarse } from "../kit/js/topes.js?v=569102ff5e";
+import { esFechaISO } from "../kit/js/fechas.js?v=569102ff5e";
+import { MARCA } from "./marca.js?v=569102ff5e";
+import { semilla as semillaFabrica, ID_CONSUMIDOR_FINAL } from "./semilla.js?v=569102ff5e";
+import { armarAsientos, armarMayor, armarBalance, CUENTAS_CONTABLES } from "./contabilidad.js?v=569102ff5e";
 import {
     COMPROBANTES, NC_DE, CONDICIONES, ALICUOTAS, ORDEN_ALICUOTAS, TOPE_CF_IDENTIFICAR, signo, esAlicuota, tipoFactura,
     calcularComprobante, repartirNotaCredito, caeSimulado, revisarCuit, soloNumeros, aCentavos, fechaISO, sumarDias,
     periodoDe, periodoActual, ultimosPeriodos, correrPeriodo, vencimientoIva, numeroComprobante, pesos
-} from "./reglas.js?v=929def1556";
+} from "./reglas.js?v=569102ff5e";
 
-export const VERSION_DATOS = 4;
+export const VERSION_DATOS = 5;
 
 // ---------- Topes (cada uno con su prueba de valor absurdo) ----------
 export const TOPES = {
@@ -46,10 +46,13 @@ export const TOPES = {
 
 export const CUENTAS = { caja: "Caja", banco: "Banco" };
 export const ROLES_QUE_CARGAN = ["admin"];
+export const ROLES_QUE_COBRAN = ["admin", "dueno"];
 export const ROLES_QUE_CONFIGURAN = ["admin", "dueno"]; // "Tu empresa": Silvina y Hernán (la contadora no)
 export const MODULOS = { compras: "Compras", cuentas: "Cuentas", contabilidad: "Contabilidad" };
-const MENSAJE_PERMISO = "Solo administración carga facturas, compras, cobros y pagos. Cambiá a Silvina para probarlo.";
+const MENSAJE_PERMISO = "Solo administración carga facturas, compras y pagos. Cambiá a Silvina para probarlo.";
 const MENSAJE_LLENO = "Es una demo: llegaste al máximo. Tocá \"Empezar de cero\" arriba para volver a los datos de ejemplo.";
+
+const MARCAS_DE = { admin: ["cobro"], dueno: ["datos", "marca", "cobro"], contadora: ["mes", "csv", "txt"] };
 
 const hoy = () => fechaISO(new Date());
 const puedeCargar = (quien) => ROLES_QUE_CARGAN.includes(quien?.rol);
@@ -66,6 +69,10 @@ export function crearDatos(prefijo = MARCA.prefijo, { semilla = semillaFabrica }
     const exigirCarga = (quien) => {
         exigir(quien?.id, "Elegí con quién probarla.");
         exigir(puedeCargar(quien), MENSAJE_PERMISO);
+    };
+    const exigirCobro = (quien) => {
+        exigir(quien?.id, "Elegí con quién probarla.");
+        exigir(ROLES_QUE_COBRAN.includes(quien?.rol), "Los cobros los anotan Silvina o Hernán.");
     };
     const exigirConfig = (quien) => {
         exigir(quien?.id, "Elegí con quién probarla.");
@@ -198,10 +205,34 @@ export function crearDatos(prefijo = MARCA.prefijo, { semilla = semillaFabrica }
         return lista;
     }
 
+    const hayQuienDebe = () => emp().clientes.some((c) => saldoCliente(c.id) > 0);
+
+    function marcarPaso(usuario, id) {
+        if (!MARCAS_DE[usuario?.rol]?.includes(id)) return;
+        const hechas = (emp().pasosPersonas ??= {});
+        const propias = (hechas[usuario.id] ??= []);
+        if (propias.includes(id)) return;
+        propias.push(id);
+        guardado.persistir();
+    }
+
     const textoComprobante = (c) => `${COMPROBANTES[c.tipo].corto} ${numeroComprobante(c.puntoVenta, c.numero)}`;
 
     return {
         guardado,
+
+        pasos(usuario) {
+            exigir(usuario?.id && MARCAS_DE[usuario.rol], "Elegí una persona de la demo.");
+            const hechas = emp().pasosPersonas?.[usuario.id] ?? [];
+            const cobro = hechas.includes("cobro") || !hayQuienDebe();
+            if (usuario.rol === "admin") return [!!emp().facturaProbada, !!emp().comprasProbadas || this.pendientesArca().length === 0, cobro];
+            return MARCAS_DE[usuario.rol].map((id) => (id === "cobro" ? cobro : hechas.includes(id)));
+        },
+
+        registrarPaso(usuario, id) {
+            exigir(usuario?.id && MARCAS_DE[usuario.rol], "Elegí una persona de la demo.");
+            marcarPaso(usuario, id);
+        },
 
         // ---------- Empresa ----------
         leerEmpresa() {
@@ -238,6 +269,7 @@ export function crearDatos(prefijo = MARCA.prefijo, { semilla = semillaFabrica }
             }
             Object.assign(e, nuevos);
             guardado.persistir();
+            marcarPaso(quien, "datos");
             return this.leerEmpresa();
         },
 
@@ -252,6 +284,7 @@ export function crearDatos(prefijo = MARCA.prefijo, { semilla = semillaFabrica }
             }
             emp().logo = imagen;
             guardado.persistir();
+            if (imagen !== null) marcarPaso(quien, "marca");
             return imagen;
         },
 
@@ -377,6 +410,7 @@ export function crearDatos(prefijo = MARCA.prefijo, { semilla = semillaFabrica }
                 hechoEn: ahora()
             };
             e.comprobantes.push(comp);
+            if (comp.tipo === "FA" && comp.clienteId === "c-tornillo") e.facturaProbada = true;
             if (condicionVenta === "contado") {
                 nuevoMovimiento({ tipo: "cobro", clienteId: c.id, cuenta, monto: comp.total, comprobanteId: comp.id, detalle: "Cobro al contado" }, quien);
             }
@@ -542,19 +576,21 @@ export function crearDatos(prefijo = MARCA.prefijo, { semilla = semillaFabrica }
             exigir(e.compras.length + faltan.length <= TOPES.compras, MENSAJE_LLENO);
             const traidas = faltan.map((r) => ({ ...r, id: nuevoId("c"), origen: "arca", hechoPor: quien.id, hechoEn: ahora() }));
             e.compras.push(...traidas);
+            e.comprasProbadas = true;
             guardado.persistir();
             return copia(traidas);
         },
 
         // ---------- Cobros, pagos y cuentas ----------
         registrarCobro({ clienteId, monto, cuenta } = {}, quien) {
-            exigirCarga(quien);
+            exigirCobro(quien);
             const c = cliente(clienteId);
             const saldo = saldoCliente(c.id);
             if (saldo <= 0) throw new Error(`${c.nombre} no debe nada.`);
             const m = aCentavos(monto, "El cobro", { hasta: Math.min(saldo / 100, TOPES.movimiento) });
             const mov = nuevoMovimiento({ tipo: "cobro", clienteId: c.id, cuenta: revisarCuenta(cuenta), monto: m, detalle: cuenta === "caja" ? "Cobro en efectivo" : "Transferencia" }, quien);
             guardado.persistir();
+            marcarPaso(quien, "cobro");
             return copia(mov);
         },
 

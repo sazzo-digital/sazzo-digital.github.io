@@ -2,9 +2,9 @@
 // Repuestos (administradora y mecánico): "hay / queda poco / no hay". Se descuentan solos cuando el mecánico
 // cierra un arreglo diciendo qué usó.
 // ============================================
-import { esc, aviso } from "../../kit/js/ui.js?v=b86ccb1eca";
-import { cantidadCon, MOTIVOS_STOCK, TOPES } from "../datos.js?v=b86ccb1eca";
-import { haceCuanto } from "./comunes.js?v=b86ccb1eca";
+import { esc, aviso } from "../../kit/js/ui.js?v=144fda0e5d";
+import { cantidadCon, MOTIVOS_STOCK, TOPES } from "../datos.js?v=144fda0e5d";
+import { haceCuanto, consignaPersona, activarPasos } from "./comunes.js?v=144fda0e5d";
 
 const ESTADOS = {
     "no-hay": { texto: "No hay", clase: "problema", icono: "ti-circle-x" },
@@ -20,6 +20,7 @@ export function vistaRepuestos(cont, { usuario, datos }) {
     const movimientos = datos.movimientosStock();
     cont.innerHTML = `
         <h1 class="titulo">Repuestos</h1>
+        ${consignaPersona(datos, usuario)}
         <p class="nota"><i class="ti ti-info-circle"></i> Bajan solos con cada arreglo y cada service. Lo que entra, se vende o sale, se anota acá.</p>
         <ul class="tarjetas">${lista.map((r) => {
             const e = ESTADOS[r.estado];
@@ -60,6 +61,7 @@ export function vistaRepuestos(cont, { usuario, datos }) {
                 <p class="tarjeta__quien">${m.detalle ? `${esc(m.detalle)} · ` : ""}${esc(m.quien)} · ${esc(haceCuanto(m.cuando))}</p>
             </li>`).join("")}</ul>` : `<p class="nota">Todavía no hubo movimientos. Probá con "Entró" o hacé un service desde un vehículo.</p>`}`;
 
+    activarPasos(cont);
     const otraVez = () => vistaRepuestos(cont, { usuario, datos });
     cont.querySelectorAll("[data-mover]").forEach((b) => b.addEventListener("click", () => {
         moviendo = moviendo?.id === b.dataset.mover && moviendo.motivo === b.dataset.motivo ? null : { id: b.dataset.mover, motivo: b.dataset.motivo };

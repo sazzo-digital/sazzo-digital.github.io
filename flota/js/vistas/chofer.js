@@ -2,10 +2,9 @@
 // Pantallas del chofer (Ramón): su inicio y "Avisar un problema".
 // Pensado para el celular y una sola mano: botones grandes, pocas palabras, se avisa en 15 segundos.
 // ============================================
-import { esc, vacio, aviso } from "../../kit/js/ui.js?v=b86ccb1eca";
-import { TIPOS_PROBLEMA, URGENCIAS, TOPES } from "../datos.js?v=b86ccb1eca";
-import { haceCuanto, pastillaVehiculo, pastillaProblema, guia, activarGuias } from "./comunes.js?v=b86ccb1eca";
-import { htmlConsigna } from "../../kit/js/consigna.js?v=b86ccb1eca";
+import { esc, vacio, aviso } from "../../kit/js/ui.js?v=144fda0e5d";
+import { TIPOS_PROBLEMA, URGENCIAS, TOPES } from "../datos.js?v=144fda0e5d";
+import { haceCuanto, pastillaVehiculo, pastillaProblema, guia, activarGuias, consignaPersona, activarPasos } from "./comunes.js?v=144fda0e5d";
 
 export function vistaInicioChofer(cont, { usuario, datos, irA }) {
     const v = datos.vehiculoDe(usuario.id);
@@ -25,8 +24,8 @@ export function vistaInicioChofer(cont, { usuario, datos, irA }) {
         <a class="boton boton--ancho boton--grande" href="#/avisar">
             <i class="ti ti-alert-triangle" aria-hidden="true"></i> Avisar un problema
         </a>
-        ${esperando ? "" : htmlConsigna({ paso: 1, total: 3, accion: "Avisá un problema de tu vehículo.", resultado: "Le llega al mecánico en el momento." })}
-        ${esperando?.estado === "avisado" ? htmlConsigna({ paso: 1, total: 3, accion: "Avisá un problema.", hecho: "el mecánico ya lo tiene", guia: guia("u-mecanico", "/inicio", "Mirá lo que le llega a Diego") }) : ""}
+        ${consignaPersona(datos, usuario)}
+        ${esperando?.estado === "avisado" ? guia("u-mecanico", "/inicio", "Mirá lo que le llega a Diego") : ""}
         <h2 class="subtitulo"><i class="ti ti-history"></i> Tus últimos avisos</h2>
         ${avisos.length ? `<ul class="tarjetas">${avisos.map((p) => `
             <li class="tarjeta">
@@ -38,6 +37,7 @@ export function vistaInicioChofer(cont, { usuario, datos, irA }) {
                 ${pastillaProblema(p.estado)}
             </li>`).join("")}</ul>` : vacio("Todavía no avisaste ningún problema.", "ti-mood-smile")}`;
     activarGuias(cont, irA);
+    activarPasos(cont);
 }
 
 export function vistaAvisar(cont, { usuario, datos, irA }) {
@@ -86,7 +86,7 @@ export function vistaAvisar(cont, { usuario, datos, irA }) {
         const f = new FormData(form);
         try {
             const p = datos.avisarProblema(usuario, { tipo: f.get("tipo"), urgencia: f.get("urgencia"), comentario: f.get("comentario") });
-            enviado(cont, p, irA);
+            enviado(cont, p, { usuario, datos, irA });
         } catch (err) {
             aviso(err, "error");
         }
@@ -94,7 +94,7 @@ export function vistaAvisar(cont, { usuario, datos, irA }) {
 }
 
 /** Después de enviar: confirmación y el paso siguiente del recorrido (ver cómo le llega al mecánico). */
-function enviado(cont, p, irA) {
+function enviado(cont, p, { usuario, datos, irA }) {
     cont.innerHTML = `
         <div class="hecho">
             <i class="ti ti-circle-check" aria-hidden="true"></i>
@@ -102,8 +102,10 @@ function enviado(cont, p, irA) {
             <p>${esc(p.vehiculo)} · ${esc(p.tipoInfo.texto)}${p.urgencia === "parar" ? " · tenés que parar" : ""}</p>
             ${pastillaProblema(p.estado)}
         </div>
-        ${htmlConsigna({ paso: 1, total: 3, accion: "Avisá un problema.", hecho: "el mecánico ya lo tiene", guia: guia("u-mecanico", "/inicio", "Mirá lo que le llega a Diego") })}
+        ${consignaPersona(datos, usuario)}
+        ${guia("u-mecanico", "/inicio", "Mirá lo que le llega a Diego")}
         <a class="boton boton--secundario boton--ancho" href="#/inicio"><i class="ti ti-home"></i> Volver a mi inicio</a>`;
     activarGuias(cont, irA);
+    activarPasos(cont);
     window.scrollTo(0, 0);
 }

@@ -1,13 +1,14 @@
+import { htmlConsigna, htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=12c89e832a";
 // ============================================
 // Piezas que comparten las pantallas de Sazzo Ferretería: el botón del recorrido (del kit), las pastillas de stock y
 // de estado de un presupuesto, los pasos (pedido → enviado → aceptado → vendido), la tarjeta de un presupuesto, el
 // formulario de cobro (Vender y "Pasar a venta") y "hace cuánto". Todo dato que entra a HTML pasa por esc().
 // ============================================
-import { esc } from "../../kit/js/ui.js?v=f6723a2a8a";
-import { diaLocalDe, fechaLocalISO } from "../../kit/js/fechas.js?v=f6723a2a8a";
-import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=f6723a2a8a";
-import { ESTADOS_PRESUPUESTO, MEDIOS, TOPES, UNIDADES, pesos, cantidadTexto, diaMes } from "../datos.js?v=f6723a2a8a";
-import { buscarPersona } from "../marca.js?v=f6723a2a8a";
+import { esc } from "../../kit/js/ui.js?v=12c89e832a";
+import { diaLocalDe, fechaLocalISO } from "../../kit/js/fechas.js?v=12c89e832a";
+import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=12c89e832a";
+import { ESTADOS_PRESUPUESTO, MEDIOS, TOPES, UNIDADES, pesos, cantidadTexto, diaMes } from "../datos.js?v=12c89e832a";
+import { MARCA, buscarPersona } from "../marca.js?v=12c89e832a";
 
 /** Botón del recorrido con la persona de la ferretería: guia("u-empleado", "/presupuestos", "Mirá lo que le llega a Nahuel"). */
 export const guia = (personaId, ruta, texto) => htmlGuia({ persona: buscarPersona(personaId), ruta, texto });
@@ -188,4 +189,35 @@ export function pintarCobro(lugar, { usuario, datos, total, medio = "efectivo", 
         }
         alCobrar({ medio, pagaCon: pagaCon?.value ? Number(pagaCon.value) : null, clienteId, autorizarTope });
     });
+}
+
+const CONSIGNAS = {
+    dueno: [
+        ["En “Stock”, tocá “Lista del proveedor en Excel”, tocá “Usar la lista de ejemplo” y aplicala.", "Los costos y los precios se actualizan solos con tu margen."],
+        ["En “Stock”, tocá “Subir precios por proveedor” y después “Aplicar” (ya viene Bulonera del Sur al 15 %).", "Cambian todos sus precios de una, con Deshacer."],
+        ["En “Cuentas”, abrí una cuenta, cambiale el tope y tocá “Guardar”.", "Queda guardado el tope nuevo de esa cuenta."]
+    ],
+    empleado: [
+        ["En “Presupuestos”, abrí el N° 200 de Marcos, tocá “Mandar a Marcos” y confirmá con “Sí, lo mandé”.", "El presupuesto queda mandado y Marcos lo ve en su celu."],
+        ["En el presupuesto N° 201 de Lucía Ferreyra, tocá “Lo aceptó por teléfono”.", "Queda anotado que Lucía lo aceptó."],
+        ["En “Vender”, buscá “taco del 8”, sumá 100 y tocá “Cobrar”.", "La venta queda anotada, sale con el precio por mayor y baja el stock."]
+    ],
+    cliente: [
+        ["En “Pedir”, escribí lo que necesitás (ya hay un ejemplo) y tocá “Pedir el presupuesto”.", "La ferretería recibe tu pedido y lo arma."],
+        ["En “Mis presupuestos”, tocá “Aceptar el presupuesto” en el N° 199 que te mandaron.", "Queda aceptado y te lo preparan para retirar."],
+        ["En “Pedir”, dejá tildada la foto de lo que se rompió y tocá “Pedir el presupuesto” otra vez.", "Pedís otro presupuesto con foto y la ferretería la mira."]
+    ]
+};
+
+export function consignaPersona(datos, usuario) {
+    const paso = datos.pasos(usuario).findIndex((hecho) => !hecho);
+    if (paso < 0) return htmlConsignaFinal(MARCA, 3);
+    const [accion, resultado] = CONSIGNAS[usuario.rol][paso];
+    return htmlConsigna({ paso: paso + 1, total: 3, accion, resultado });
+}
+
+export function pintarConsigna(cont, { usuario, datos }) {
+    cont.querySelectorAll(".consigna").forEach((cartel) => cartel.remove());
+    cont.insertAdjacentHTML("afterbegin", consignaPersona(datos, usuario));
+    activarConsigna(cont, MARCA);
 }

@@ -3,14 +3,13 @@
 // atender primero (visitas pedidas desde la página, sin contestar, sin seguimiento), la ficha de cada consulta
 // (confirmar la visita, mandar la ficha en PDF y el mensaje, ofrecer otras propiedades, notas) y "Anotar consulta".
 // ============================================
-import { esc, aviso, vacio, mensajeDe } from "../../kit/js/ui.js?v=86b90b0105";
-import { aHora } from "../../kit/js/turnos.js?v=86b90b0105";
-import { TOPES, TIPOS, ZONAS, OPERACIONES, ORIGENES, ESTADOS_CONSULTA } from "../datos.js?v=86b90b0105";
-import { bajarFicha } from "./propiedades.js?v=86b90b0105";
-import { htmlConsigna } from "../../kit/js/consigna.js?v=86b90b0105";
+import { esc, aviso, vacio, mensajeDe } from "../../kit/js/ui.js?v=34a23b46ed";
+import { aHora } from "../../kit/js/turnos.js?v=34a23b46ed";
+import { TOPES, TIPOS, ZONAS, OPERACIONES, ORIGENES, ESTADOS_CONSULTA } from "../datos.js?v=34a23b46ed";
+import { bajarFicha } from "./propiedades.js?v=34a23b46ed";
 import {
-    guia, activarGuias, pastillaConsulta, pastillaVisita, mostrarMensaje, hace, mayuscula, htmlFoto, medidas, hrefPropiedad
-} from "./comunes.js?v=86b90b0105";
+    guia, activarGuias, pastillaConsulta, pastillaVisita, mostrarMensaje, hace, mayuscula, htmlFoto, medidas, hrefPropiedad, consignaPersona, activarPasos
+} from "./comunes.js?v=34a23b46ed";
 
 let filtroEstado = "abiertas";
 const FILTROS = { abiertas: "Abiertas", nueva: "Nuevas", agendada: "Con visita", todas: "Todas" };
@@ -38,9 +37,8 @@ export function vistaConsultas(cont, { usuario, datos, irA }) {
                 <i class="ti ti-bell-ringing" aria-hidden="true"></i>
                 <span><b>${esc(v.consultaNombre)} pidió una visita</b><small>${esc(v.propiedad)} · ${esc(mayuscula(v.fechaNombre))} ${esc(v.hora)} · desde la página</small></span>
                 <a class="boton boton--chico" href="#/consultas/${esc(v.consultaId)}">Ver</a>
-            </li>`).join("")}</ul>` : usuario.rol === "agente" && !todas.some((c) => c.pedida) ? `
-            ${htmlConsigna({ paso: 1, total: 3, accion: "Pedí una visita como Valeria.", resultado: "Te llega acá, con el día y la hora.", guia: guia("u-cliente", "/inicio", "Pedí una visita como Valeria") })}` : `
-            ${htmlConsigna({ paso: 2, total: 3, accion: "Abrí la de arriba, confirmá la visita y mandale la ficha.", resultado: "Le llega la ficha en PDF, con fotos y mapa." })}`}
+            </li>`).join("")}</ul>` : ""}
+        ${consignaPersona(datos, usuario)}
         <div class="chips" role="tablist" aria-label="Qué consultas ver">${Object.entries(FILTROS).map(([k, v]) => `
             <button class="chip${k === filtroEstado ? " activo" : ""}" type="button" role="tab" aria-selected="${k === filtroEstado}" data-filtro="${esc(k)}">${esc(v)} <b>${esc(cuantas(k))}</b></button>`).join("")}
         </div>
@@ -54,6 +52,7 @@ export function vistaConsultas(cont, { usuario, datos, irA }) {
                 ${avisoDe(c)}
                 <div class="tarjeta__pie"><small>${esc(c.origenTexto)} · ${esc(hace(c.creado, hoy))} · la atiende ${esc(c.agente)}</small></div>
             </li>`).join("")}</ul>` : vacio("No hay consultas así.", "ti-mood-empty")}`;
+    activarPasos(cont);
     activarGuias(cont, irA);
     cont.querySelectorAll("[data-filtro]").forEach((b) => b.addEventListener("click", () => {
         filtroEstado = b.dataset.filtro;
@@ -101,7 +100,7 @@ export function vistaConsulta(cont, { usuario, datos, params: [id], irA }) {
                 <button class="boton boton--secundario" type="button" data-pdf="${esc(v.propiedadId)}"><i class="ti ti-file-type-pdf"></i> Ficha en PDF</button>
                 <button class="boton boton--secundario boton--chico" type="button" data-cancelar="${esc(v.id)}"><i class="ti ti-x"></i> Cancelar</button>`}
             </div>
-            ${esValeria && !yaPaso ? htmlConsigna({ paso: 2, total: 3, accion: "Confirmá la visita.", hecho: "visita confirmada", guia: `<div class="guias">${guia("u-cliente", "/mis-visitas", "Mirá cómo lo ve Valeria")}${guia("u-duena", "/inicio", "Pasá a Graciela: los alquileres de este mes")}</div>` }) : ""}
+            ${esValeria && !yaPaso ? `<div class="guias">${guia("u-cliente", "/mis-visitas", "Mirá cómo lo ve Valeria")}${guia("u-duena", "/inicio", "Pasá a Graciela: los alquileres de este mes")}</div>` : ""}
         </section>`;
     }
 

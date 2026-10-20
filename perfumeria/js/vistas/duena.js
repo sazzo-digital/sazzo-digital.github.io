@@ -1,14 +1,14 @@
+import { pintarConsigna } from "./comunes.js?v=a61469be59";
 // ============================================
 // Pantallas de la dueña (Carolina): los pedidos (el día arriba; los nuevos resaltados; preparado → avisar →
 // entregado), el stock (frascos y botellas madre en ml, lo que hay que pedir primero) y las clientas (lo que compra
 // cada una y "Cumplen este mes" con el saludo para copiar).
 // ============================================
-import { esc, aviso, vacio, fechaCorta, fechaHora } from "../../kit/js/ui.js?v=d819d10110";
-import { htmlEstante, activarEstantes } from "../../kit/js/estante.js?v=d819d10110";
-import { TOPES, MADRE_POCO_ML, MEDIOS, FAMILIAS, pesos } from "../datos.js?v=d819d10110";
-import { frasco, pastillaPedido, mostrarMensaje } from "./comunes.js?v=d819d10110";
-import { htmlConsigna, htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=d819d10110";
-import { MARCA } from "../marca.js?v=d819d10110";
+import { esc, aviso, vacio, fechaCorta, fechaHora } from "../../kit/js/ui.js?v=a61469be59";
+import { htmlEstante, activarEstantes } from "../../kit/js/estante.js?v=a61469be59";
+import { TOPES, MADRE_POCO_ML, MEDIOS, FAMILIAS, pesos } from "../datos.js?v=a61469be59";
+import { frasco, pastillaPedido, mostrarMensaje } from "./comunes.js?v=a61469be59";
+import { MARCA } from "../marca.js?v=a61469be59";
 
 let cobrando = null;
 let medioCobro = "efectivo";
@@ -59,14 +59,8 @@ export function vistaPedidos(cont, { usuario, datos }) {
                 <button class="boton-link" type="button" data-cerrar-cobro>Volver</button>
             </div>` : ""}
         </li>`;
-    const consigna = p.nuevos.length
-        ? htmlConsigna({ paso: 2, total: 3, accion: "Tocá “Preparado” en el pedido nuevo.", resultado: "Se descuenta el frasco o los ml de la botella madre." })
-        : p.preparados.some((o) => !o.avisado)
-            ? htmlConsigna({ paso: 3, total: 3, accion: "Tocá “Avisar que está listo”.", resultado: "Te arma el mensaje para mandarle." })
-            : p.preparados.some((o) => o.avisado) ? htmlConsignaFinal(MARCA, 3) : "";
     cont.innerHTML = `
         <h1 class="titulo">Pedidos</h1>
-        ${consigna}
         <div class="tira">
             <span><b>${esc(p.dia.llegaron)}</b> llegaron hoy</span>
             <span>Vendido hoy <b>${esc(pesos(p.dia.vendido))}</b></span>
@@ -82,7 +76,7 @@ export function vistaPedidos(cont, { usuario, datos }) {
             <ul class="tarjetas">${p.entregadosHoy.map((o) => `<li class="tarjeta"><div class="tarjeta__fila"><b>${esc(o.clienta)} · N° ${esc(o.numero)}</b><b>${esc(pesos(o.total))}</b></div></li>`).join("")}</ul>
         </details>` : ""}`;
 
-    activarConsigna(cont, MARCA);
+
     const otraVez = () => vistaPedidos(cont, { usuario, datos });
     const acciones = {
         preparar: (id) => {
@@ -151,6 +145,7 @@ export function vistaPedidos(cont, { usuario, datos }) {
             if (err) aviso(err, "error");
         }
     }));
+    pintarConsigna(cont, datos, usuario);
 }
 
 export function vistaStock(cont, { usuario, datos }) {
@@ -207,6 +202,7 @@ export function vistaStock(cont, { usuario, datos }) {
             aviso(err, "error");
         }
     }));
+    pintarConsigna(cont, datos, usuario);
 }
 
 let soloCumple = false;
@@ -253,4 +249,5 @@ export function vistaClientas(cont, { usuario, datos }) {
             aviso(err, "error");
         }
     }));
+    pintarConsigna(cont, datos, usuario);
 }

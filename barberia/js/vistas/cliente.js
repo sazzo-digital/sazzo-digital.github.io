@@ -1,13 +1,13 @@
+import { consignaPersona, pintarConsigna } from "./comunes.js?v=dd1f695466";
 // ============================================
 // Pantallas del cliente (Matías), pensadas para el celular: "Sacá tu turno" (servicio, barbero o "el que esté
 // libre", día y hora libre: sin cargar ningún dato) y "Mis turnos" (con Cancelar).
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=3b2eaafd59";
-import { aHora } from "../../kit/js/turnos.js?v=3b2eaafd59";
-import { SERVICIOS, BARBEROS, pesos, nombreFecha } from "../datos.js?v=3b2eaafd59";
-import { NEGOCIO } from "../marca.js?v=3b2eaafd59";
-import { guia, activarGuias, pastillaEstado, chipsDias } from "./comunes.js?v=3b2eaafd59";
-import { htmlConsigna } from "../../kit/js/consigna.js?v=3b2eaafd59";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=dd1f695466";
+import { aHora } from "../../kit/js/turnos.js?v=dd1f695466";
+import { SERVICIOS, BARBEROS, pesos, nombreFecha } from "../datos.js?v=dd1f695466";
+import { NEGOCIO } from "../marca.js?v=dd1f695466";
+import { guia, activarGuias, pastillaEstado, chipsDias } from "./comunes.js?v=dd1f695466";
 
 // Lo elegido queda mientras se navega
 let servicioId = "corte";
@@ -69,9 +69,10 @@ export function vistaSacarTurno(cont, { usuario, datos, irA }) {
                 <p>Te esperamos <b>${esc(nombreFecha(t.fecha))} ${esc(t.hora)}</b> con ${esc(t.barbero)}.</p>
                 <p class="nota">${esc(t.servicio)} · ${esc(pesos(t.precio))}</p>
             </div>
-            ${htmlConsigna({ paso: 1, total: 3, accion: "Sacá un turno.", hecho: "turno sacado", guia: guia("u-barbero", `/inicio?fecha=${t.fecha}`, "Mirá cómo lo ve Leo") })}
+            ${consignaPersona(datos, usuario)}
             <a class="boton boton--secundario boton--ancho" href="#/turnos"><i class="ti ti-calendar"></i> Mis turnos</a>`;
         activarGuias(cont, irA);
+        pintarConsigna(cont, datos, usuario);
         window.scrollTo(0, 0);
     }
 
@@ -80,7 +81,7 @@ export function vistaSacarTurno(cont, { usuario, datos, irA }) {
             <h1 class="titulo">Sacá tu turno</h1>
             <span class="negocio"><i class="ti ti-scissors" aria-hidden="true"></i>${esc(NEGOCIO)}</span>
         </div>
-        ${htmlConsigna({ paso: 1, total: 3, accion: "Elegí “Corte y barba”, con Leo, y una hora.", resultado: "Te queda el turno y Leo lo ve en su agenda." })}
+        ${consignaPersona(datos, usuario)}
         <p class="rotulo-chico">Servicio</p>
         <div class="servicios">${SERVICIOS.map((s) => `
             <button class="servicio" type="button" data-servicio="${esc(s.id)}">
@@ -105,6 +106,7 @@ export function vistaSacarTurno(cont, { usuario, datos, irA }) {
     cont.querySelectorAll("[data-barbero]").forEach((b) => b.addEventListener("click", cambiar(() => (barberoId = b.dataset.barbero))));
     cont.querySelectorAll("[data-dia]").forEach((b) => b.addEventListener("click", cambiar(() => (fecha = b.dataset.dia))));
     pintar();
+    pintarConsigna(cont, datos, usuario);
 }
 
 export function vistaMisTurnos(cont, { usuario, datos }) {
@@ -137,4 +139,5 @@ export function vistaMisTurnos(cont, { usuario, datos }) {
             aviso(err, "error");
         }
     }));
+    pintarConsigna(cont, datos, usuario);
 }

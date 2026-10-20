@@ -3,18 +3,19 @@
 // El menú de abajo tiene lugar para 5: cada persona ve las 4 que más usa + "Más" (todas). Las pantallas que se
 // apagan en "Tu empresa" desaparecen del menú. irA() cambia de persona sin pasar por "Probala como…" (recorrido).
 // ============================================
-import { $, vacio, conFundido } from "../kit/js/ui.js?v=929def1556";
-import { iniciarDemo } from "../kit/js/arranque.js?v=929def1556";
-import { vistaIngreso } from "../kit/js/ingreso.js?v=929def1556";
-import { pintarMarco } from "../kit/js/marco.js?v=929def1556";
-import { mostrarRuta } from "../kit/js/rutas.js?v=929def1556";
-import { vistaAcerca } from "../kit/js/acerca.js?v=929def1556";
-import { MARCA, PERSONAS, DETALLE, buscarPersona } from "./marca.js?v=929def1556";
-import { aparte } from "../kit/js/aparte.js?v=929def1556";
-import { leerSesionGuardada } from "../kit/js/guardado.js?v=929def1556";
+import { $, vacio, conFundido } from "../kit/js/ui.js?v=569102ff5e";
+import { iniciarDemo } from "../kit/js/arranque.js?v=569102ff5e";
+import { vistaIngreso } from "../kit/js/ingreso.js?v=569102ff5e";
+import { pintarMarco } from "../kit/js/marco.js?v=569102ff5e";
+import { mostrarRuta } from "../kit/js/rutas.js?v=569102ff5e";
+import { vistaAcerca as pintarAcerca } from "../kit/js/acerca.js?v=569102ff5e";
+import { conConsigna } from "./vistas/comunes.js?v=569102ff5e";
+import { MARCA, PERSONAS, DETALLE, buscarPersona } from "./marca.js?v=569102ff5e";
+import { aparte } from "../kit/js/aparte.js?v=569102ff5e";
+import { leerSesionGuardada } from "../kit/js/guardado.js?v=569102ff5e";
 
 // Los datos de ejemplo y las pantallas se bajan aparte (al terminar de cargar): "Probala como…" aparece sin esperarlos
-const pantallas = aparte(() => import("./pantallas.js?v=929def1556"));
+const pantallas = aparte(() => import("./pantallas.js?v=569102ff5e"));
 const { vistaInicio, vistaFacturar, vistaNuevaFactura, vistaComprobante, vistaCompras, vistaNuevaCompra, vistaIva, vistaCuentas, vistaFicha, vistaContabilidad, vistaEmpresa, vistaMas, avisosDe } = pantallas.funciones;
 
 iniciarDemo(MARCA);
@@ -73,8 +74,8 @@ const RUTAS = [
     { patron: /^\/cuentas\/(cliente|proveedor)\/([\w-]+)$/, vista: siPrendida("cuentas", vistaFicha), menu: "/cuentas" },
     { patron: /^\/contabilidad$/, vista: siPrendida("contabilidad", vistaContabilidad), ancho: true },
     { patron: /^\/empresa$/, vista: (cont, o) => vistaEmpresa(cont, { ...o, datos, alCambiarModulos: () => entrar(usuario) }) },
-    { patron: /^\/mas$/, vista: (cont) => vistaMas(cont, { secciones: secciones() }) },
-    { patron: /^\/acerca$/, vista: (cont) => vistaAcerca(cont, { marca: MARCA }) }
+    { patron: /^\/mas$/, vista: (cont, o) => vistaMas(cont, { ...o, datos, secciones: secciones() }) },
+    { patron: /^\/acerca$/, vista: (cont, o) => conConsigna(pintarAcerca)(cont, { ...o, datos, marca: MARCA }) }
 ];
 
 const mostrar = () => mostrarRuta({ rutas: RUTAS, contenido, usuario });

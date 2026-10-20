@@ -1,17 +1,17 @@
+import { pintarConsigna } from "./comunes.js?v=ff14c7e9df";
 // ============================================
 // Pantallas del dueño (Gustavo): la grilla del día (canchas en columnas, horas de media en media; se luce en la
 // compu y en el celu se desliza de costado), el detalle de un turno (llegaron, faltaron, cobrar seña, liberar) y
 // "Anotar turno" en un casillero libre (para cuando llaman por teléfono).
 // Los turnos que reservó un jugador y Gustavo todavía no miró aparecen arriba y marcados "Nuevo".
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=952176458b";
-import { mantenerPantallaPrendida } from "../../kit/js/celular.js?v=952176458b";
-import { aHora } from "../../kit/js/turnos.js?v=952176458b";
-import { TOPES, CANCHAS, TIPOS, pesos, nombreFecha, horarioDe } from "../datos.js?v=952176458b";
-import { pastillaSena, pastillaEstado, chipsDias } from "./comunes.js?v=952176458b";
-import { buscarPersona, MARCA } from "../marca.js?v=952176458b";
-import { htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=952176458b";
-import { htmlCuenta, pedirCantina, cobrarCuenta } from "./cuenta.js?v=952176458b";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=ff14c7e9df";
+import { mantenerPantallaPrendida } from "../../kit/js/celular.js?v=ff14c7e9df";
+import { aHora } from "../../kit/js/turnos.js?v=ff14c7e9df";
+import { TOPES, CANCHAS, TIPOS, pesos, nombreFecha, horarioDe } from "../datos.js?v=ff14c7e9df";
+import { pastillaSena, pastillaEstado, chipsDias } from "./comunes.js?v=ff14c7e9df";
+import { buscarPersona, MARCA } from "../marca.js?v=ff14c7e9df";
+import { htmlCuenta, pedirCantina, cobrarCuenta } from "./cuenta.js?v=ff14c7e9df";
 
 const PASO = 30; // la grilla va de media hora en media hora (entran los turnos de 60 y los de 90 min)
 
@@ -44,7 +44,7 @@ export function vistaGrilla(cont, { usuario, datos, consulta }) {
                 <span><b>${esc(buscarPersona(t.jugadorId)?.nombre ?? "Un jugador")} reservó ${esc(t.cancha)} · ${esc(nombreFecha(t.fecha))} ${esc(t.hora)}</b><small>${esc(t.grupo)} · ${esc(t.tipo)} · seña pagada</small></span>
                 <span class="etiqueta etiqueta--nuevo">Nuevo</span>
             </a></li>`).join("")}</ul>
-        ${htmlConsignaFinal(MARCA, 2)}` : ""}
+        ` : ""}
         ${chipsDias(dias, fecha)}
         <div class="numeros-grilla">
             <div><span>Ocupados</span><b>${esc(g.resumen.ocupados)}<small> de ${esc(g.resumen.total)}</small></b></div>
@@ -78,9 +78,10 @@ export function vistaGrilla(cont, { usuario, datos, consulta }) {
         </ul>`;
 
     cont.querySelectorAll("[data-dia]").forEach((b) => b.addEventListener("click", () => (location.hash = `#/inicio?fecha=${b.dataset.dia}`)));
-    activarConsigna(cont, MARCA);
+
     // Que el primer turno nuevo (o la hora de ahora) quede a la vista en la grilla
     cont.querySelector(".turno--nuevo")?.scrollIntoView({ block: "nearest", inline: "center" });
+    pintarConsigna(cont, datos, usuario);
 }
 
 export function vistaTurno(cont, { usuario, datos, params: [id] }) {
@@ -161,6 +162,7 @@ export function vistaTurno(cont, { usuario, datos, params: [id] }) {
         if (!confirm(t.esFijo ? "¿Liberar el fijo solo esta semana? El horario queda libre para otros." : "¿Liberar el turno? El horario queda libre y la seña pagada se devuelve.")) return;
         hacer(() => datos.liberar(usuario, id), "Turno liberado");
     });
+    pintarConsigna(cont, datos, usuario);
 }
 
 /** Anotar un turno en un casillero libre (para cuando llaman por teléfono): la seña queda a cobrar. */
@@ -197,4 +199,5 @@ export function vistaAnotar(cont, { usuario, datos, consulta }) {
             aviso(err, "error");
         }
     });
+    pintarConsigna(cont, datos, usuario);
 }
