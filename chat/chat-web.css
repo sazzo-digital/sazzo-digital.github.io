@@ -256,7 +256,37 @@
 }
 
 .sazzo-chat__quien {
+    display: block;
     min-width: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+
+.sazzo-chat__titulo,
+.sazzo-chat__subtitulo {
+    display: block;
+}
+
+.sazzo-chat__iso {
+    cursor: pointer;
+}
+
+.sazzo-chat__nuevo {
+    display: inline-block;
+    margin-left: 0.5rem;
+    padding: 0.05rem 0.45rem;
+    border-radius: 999px;
+    background: var(--sc-verde);
+    color: var(--sc-sobre-verde);
+    font: 600 0.62rem/1.4 "Inter", system-ui, sans-serif;
+    letter-spacing: 0;
+    text-transform: none;
+    vertical-align: 0.15em;
 }
 
 .sazzo-chat__cerrar {
@@ -1286,6 +1316,22 @@
     }
 }
 
+/* Ventana plegada */
+.sazzo-chat--plegado .sazzo-chat__panel {
+    height: auto;
+}
+
+.sazzo-chat--plegado .sazzo-chat__panel > :not(.sazzo-chat__cabecera),
+.sazzo-chat--plegado .sazzo-chat__presencia,
+.sazzo-chat--plegado .sazzo-chat__acciones {
+    display: none;
+}
+
+.sazzo-chat--plegado .sazzo-chat__cabecera {
+    border-bottom: 0;
+    box-shadow: none;
+}
+
 /* Celular */
 @media (max-width: 520px) {
     .sazzo-chat--neon .sazzo-chat__abrir {
@@ -1334,7 +1380,7 @@
         overscroll-behavior: contain;
     }
 
-    :root:has(.sazzo-chat--abierto) {
+    :root:has(.sazzo-chat--abierto:not(.sazzo-chat--plegado)) {
         overflow: hidden;
     }
 
@@ -1362,6 +1408,19 @@
     .sazzo-chat__cerrar svg {
         width: 18px;
         height: 18px;
+    }
+}
+
+@media (max-width: 520px) {
+    .sazzo-chat--plegado .sazzo-chat__panel {
+        top: auto;
+        bottom: 0;
+        border-width: 1px 0 0;
+        border-radius: 18px 18px 0 0;
+    }
+
+    .sazzo-chat--plegado.sazzo-chat--sin-boton .sazzo-chat__panel {
+        bottom: var(--sazzo-chat-abajo, 0px);
     }
 }
 

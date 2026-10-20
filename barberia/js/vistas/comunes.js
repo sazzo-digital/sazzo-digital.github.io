@@ -2,9 +2,9 @@
 // Piezas que comparten las pantallas de Sazzo Barbería: el botón del recorrido (del kit), pastillas, los días en
 // pastillas y la ventanita del mensaje para copiar (del kit). Todo dato que entra a HTML pasa por esc().
 // ============================================
-import { esc } from "../../kit/js/ui.js?v=80175c9283";
-import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=80175c9283";
-import { MARCA, buscarPersona } from "../marca.js?v=80175c9283";
+import { esc } from "../../kit/js/ui.js?v=20fdd95980";
+import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=20fdd95980";
+import { MARCA, buscarPersona } from "../marca.js?v=20fdd95980";
 
 export const guia = (personaId, ruta, texto) => htmlGuia({ persona: buscarPersona(personaId), ruta, texto });
 export { activarGuias };
@@ -31,16 +31,16 @@ export function chipsDias(dias, actual) {
 }
 
 // La ventanita del mensaje para copiar es del kit (kit/mensaje.js)
-export { mostrarMensaje } from "../../kit/js/mensaje.js?v=80175c9283";
+export { mostrarMensaje } from "../../kit/js/mensaje.js?v=20fdd95980";
 
 
-import { htmlConsigna, htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=80175c9283";
+import { htmlConsigna, htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=20fdd95980";
 
 const CONSIGNAS = {
     barbero: [
         ["En “Clientes”, tocá “No vuelven hace +45 días”.", "Ves a quiénes podés invitar a volver."],
         ["Tocá “Invitarlo” en un cliente y confirmá el mensaje.", "Queda anotado que lo invitaste."],
-        ["En “Agenda”, tocá “Llegó” en un turno.", "El turno queda marcado como atendido y suma al día."]
+        ["En “Agenda”, tocá “Llegó” en un turno reservado (si ese día no hay, elegí otro día arriba).", "El turno queda marcado como atendido y suma al día."]
     ],
     cliente: [
         ["Elegí una hora libre y tocá “Sacar turno”.", "Tu turno queda confirmado con el servicio elegido."],

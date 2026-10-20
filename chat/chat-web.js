@@ -32,10 +32,14 @@
         invitaDesconectado: "Chateá con Sazzito: te ayuda las 24 h y nos deja tu consulta",
         invitaCerrar: "Cerrar el aviso",
         tema: "Cambiar claro / oscuro",
+        plegar: "Plegar o desplegar la charla",
+        nuevo: "Mensaje nuevo",
         saludos: ["¡Hola! Soy Sazzito 🚀", "¡Wiii! ¿Te ayudo a encontrar tu demo?", "Estoy volando, pero te leo 👀"],
         lugar: "Escribí tu consulta…",
         persona: "🙋 Hablar con una persona",
         libre: "✍️ Consulta libre",
+        contar: "✍️ Contar lo que necesito",
+        contarLugar: "Contanos con tus palabras…",
         enVivo: "🟢 Hablar en vivo ahora",
         escribe: "escribiendo",
         muchos: "Recibimos muchos mensajes seguidos. Probá de nuevo en un rato.",
@@ -116,10 +120,10 @@
         <section class="sazzo-chat__panel" id="sazzo-chat-panel" role="dialog" aria-label="Chat con Sazzo" hidden>
             <header class="sazzo-chat__cabecera">
                 <svg class="sazzo-chat__iso" viewBox="0 0 100 100" aria-hidden="true"><rect width="100" height="100" rx="22" fill="#0B1210"/><path fill="none" stroke-width="10" stroke-linecap="round" stroke="#E6EFEB" d="M40.26 38.75 A13 7.5 0 1 0 29 50 A13 7.5 0 1 1 17.74 61.25"/><path fill="none" stroke="#34D399" stroke-width="9" stroke-linecap="round" d="M58 64 H82"/></svg>
-                <div class="sazzo-chat__quien">
-                    <p class="sazzo-chat__titulo">${TEXTOS.titulo}</p>
-                    <p class="sazzo-chat__subtitulo">${TEXTOS.subtitulo}</p>
-                </div>
+                <button class="sazzo-chat__quien" type="button" aria-expanded="true" title="${TEXTOS.plegar}">
+                    <span class="sazzo-chat__titulo">${TEXTOS.titulo}<span class="sazzo-chat__nuevo" hidden>${TEXTOS.nuevo}</span></span>
+                    <span class="sazzo-chat__subtitulo">${TEXTOS.subtitulo}</span>
+                </button>
                 <button class="sazzo-chat__cerrar" type="button" aria-label="${TEXTOS.cerrar}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
                 <ul class="sazzo-chat__presencia" aria-live="polite">
                     <li class="sazzo-chat__quienes sazzo-chat__quienes--bot">
@@ -159,6 +163,7 @@
                 <p class="sazzo-chat__telefono-legal">${TEXTOS.telefonoLegal} <a href="${PRIVACIDAD}" target="_blank" rel="noopener">Privacidad</a>.</p>
             </form>
             <div class="sazzo-chat__rubros" hidden></div>
+            <div class="sazzo-chat__rubros sazzo-chat__opciones" hidden></div>
             <p class="sazzo-chat__aviso" role="alert" hidden></p>
             <form class="sazzo-chat__form">
                 <div class="sazzo-chat__fila">
@@ -176,6 +181,7 @@
     const panel = $(".sazzo-chat__panel");
     const lista = $(".sazzo-chat__mensajes");
     const cajaRubros = $(".sazzo-chat__rubros");
+    const cajaOpciones = $(".sazzo-chat__opciones");
     const aviso = $(".sazzo-chat__aviso");
     const form = $(".sazzo-chat__form");
     const campo = $(".sazzo-chat__form textarea");
@@ -185,10 +191,14 @@
     escribe.className = "sazzo-chat__globo sazzo-chat__globo--bot sazzo-chat__escribe";
     escribe.innerHTML = `${TEXTOS.escribe}<span aria-hidden="true"><i></i><i></i><i></i></span>`;
 
+    let plegado = leerDato("sazzo-chat-plegado") === true;
+    caja.classList.toggle("sazzo-chat--plegado", plegado);
+    $(".sazzo-chat__quien").setAttribute("aria-expanded", String(!plegado));
     let ultimo = 0;
     let ultimoTipo = "";
     let ultimoEsteban = 0;
     let rubros = [];
+    let opciones = [];
     let leyendo = false;
     let otraVez = false;
     let mandando = 0;
@@ -292,6 +302,56 @@
         }
         cajaRubros.hidden = mandando > 0 || !(ultimo === 0 || ultimoTipo === "rubros");
         $(".sazzo-chat__intro")?.toggleAttribute("hidden", ultimo > 0);
+        cajaOpciones.hidden = mandando > 0 || ultimoTipo !== "opciones" || !opciones.length;
+    };
+
+    const ponerOpciones = (texto) => {
+        let datos = [];
+        try {
+            datos = JSON.parse(texto);
+        } catch {}
+        opciones = Array.isArray(datos) ? datos.filter((o) => typeof o === "string" && o.trim()).slice(0, 6) : [];
+        cajaOpciones.replaceChildren();
+        for (const o of opciones) {
+            const b = document.createElement("button");
+            b.type = "button";
+            b.className = "sazzo-chat__rubro";
+            b.textContent = o;
+            b.addEventListener("click", () => mandar({ texto: o }, o));
+            cajaOpciones.append(b);
+        }
+        const contar = document.createElement("button");
+        contar.type = "button";
+        contar.className = "sazzo-chat__rubro sazzo-chat__rubro--libre";
+        contar.textContent = TEXTOS.contar;
+        contar.addEventListener("click", () => {
+            campo.placeholder = TEXTOS.contarLugar;
+            campo.focus();
+        });
+        cajaOpciones.append(contar);
+    };
+
+    const reiniciar = () => {
+        if (plegado) plegar(false);
+        try {
+            ["sazzo-chat-visitante", "sazzo-chat-libre", "sazzo-chat-plegado", "sazzo-chat-persona", "sazzo-chat-telefono"].forEach((clave) => localStorage.removeItem(clave));
+        } catch {}
+        visitante = inventar();
+        try {
+            localStorage.setItem("sazzo-chat-visitante", visitante);
+        } catch {}
+        ultimo = 0;
+        ultimoTipo = "";
+        ultimoEsteban = 0;
+        pausaBot = null;
+        esperaBot = 0;
+        telefono.hidden = true;
+        lista.replaceChildren();
+        opciones = [];
+        cajaOpciones.replaceChildren();
+        globo(TEXTOS.hola, "bot", "sazzo-chat__intro");
+        pintarEscribe();
+        pintarRubros();
     };
 
     const leer = async () => {
@@ -304,15 +364,26 @@
             const r = await fetch(`${BOT}?visitante=${encodeURIComponent(visitante)}&desde=${ultimo}`);
             if (r.ok) {
                 const d = await r.json();
+                if (d.reiniciada === true) {
+                    reiniciar();
+                    leyendo = false;
+                    return;
+                }
                 rubros = d.rubros ?? rubros;
                 if (typeof d.pausa === "boolean") pausaBot = d.pausa;
                 if (d.presencia) presencia(d.presencia);
+                const primera = ultimo === 0;
                 for (const m of d.mensajes ?? []) {
                     if (m.id <= ultimo) continue;
+                    if (plegado && !primera && m.rol !== "cliente") $(".sazzo-chat__nuevo").hidden = false;
                     ultimo = m.id;
                     ultimoTipo = m.tipo;
                     if (m.tipo === "esteban") ultimoEsteban = m.id;
                     if (m.rol !== "cliente") esperaBot = 0;
+                    if (m.tipo === "opciones") {
+                        ponerOpciones(m.texto ?? "");
+                        continue;
+                    }
                     const pendiente = m.rol === "cliente" && lista.querySelector(".sazzo-chat__globo--pendiente");
                     if (pendiente) {
                         pendiente.classList.remove("sazzo-chat__globo--pendiente");
@@ -356,6 +427,7 @@
 
     const mandar = async (cuerpo, texto) => {
         avisar("");
+        campo.placeholder = TEXTOS.lugar;
         const pendiente = globo(texto, "cliente", "sazzo-chat__globo--pendiente");
         const conHumano = humano === "disponible";
         const enPausa = !cuerpo.libre && (pausaBot ?? (leerDato("sazzo-chat-libre") ?? 0) > Date.now());
@@ -388,12 +460,12 @@
 
     const ubicarCielo = () => {
         cielo.style.top = `${lista.offsetTop}px`;
-        cielo.style.height = `${lista.clientHeight + (cajaRubros.hidden ? 0 : cajaRubros.offsetHeight)}px`;
+        cielo.style.height = `${lista.clientHeight + (cajaRubros.hidden ? 0 : cajaRubros.offsetHeight) + (cajaOpciones.hidden ? 0 : cajaOpciones.offsetHeight)}px`;
     };
 
     const volar = (ms) => {
         cancelAnimationFrame(vuelo);
-        if (panel.hidden) return;
+        if (panel.hidden || plegado) return;
         const t = ms / 1000;
         const ancho = Math.max(0, cielo.clientWidth - sazzito.offsetWidth);
         const alto = Math.max(0, cielo.clientHeight - sazzito.offsetHeight);
@@ -459,13 +531,26 @@
             requestAnimationFrame(volar);
             leer();
             reloj = setInterval(() => document.hidden || leer(), CADA);
-            campo.focus();
+            (plegado ? $(".sazzo-chat__quien") : campo).focus();
         } else (FLOTANTE ? abrir : disparador)?.focus();
     };
 
     globo(TEXTOS.hola, "bot", "sazzo-chat__intro");
     abrir.addEventListener("click", () => mostrar(panel.hidden));
     $(".sazzo-chat__cerrar").addEventListener("click", () => mostrar(false));
+    const plegar = (si) => {
+        plegado = si;
+        caja.classList.toggle("sazzo-chat--plegado", si);
+        $(".sazzo-chat__quien").setAttribute("aria-expanded", String(!si));
+        guardarDato("sazzo-chat-plegado", si);
+        if (si) return;
+        $(".sazzo-chat__nuevo").hidden = true;
+        ubicarCielo();
+        bajar();
+        requestAnimationFrame(volar);
+    };
+    $(".sazzo-chat__quien").addEventListener("click", () => plegar(!plegado));
+    $(".sazzo-chat__iso").addEventListener("click", () => plegar(!plegado));
     document.addEventListener("click", (e) => {
         const boton = e.target.closest("[data-abrir-chat]");
         if (!boton) return;
@@ -523,6 +608,7 @@
     const medir = new ResizeObserver(ubicarCielo);
     medir.observe(lista);
     medir.observe(cajaRubros);
+    medir.observe(cajaOpciones);
     [lista, cajaRubros].forEach((zona) => {
         zona.addEventListener("click", (e) => tocaSazzito(e) && saludar());
         zona.addEventListener("mousemove", (e) => (zona.style.cursor = tocaSazzito(e) ? "pointer" : ""));

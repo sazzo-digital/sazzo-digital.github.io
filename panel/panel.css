@@ -113,6 +113,11 @@ svg {
     border-color: var(--borde);
 }
 
+.boton--peligro {
+    color: var(--fallo);
+    border-color: color-mix(in srgb, var(--fallo) 45%, var(--borde));
+}
+
 .boton:disabled {
     opacity: 0.6;
     cursor: wait;
