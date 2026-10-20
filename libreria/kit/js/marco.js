@@ -13,17 +13,18 @@
 // Festejo: cuando aparece una confirmación (.hecho: turno reservado, venta cobrada, orden creada…), el ✓ entra con un
 // rebote, salen chispitas del color de la demo y el celular vibra cortito (Android). Quieto con "reducir movimiento".
 // ============================================
-import { $, $$, esc, iniciales } from "./ui.js?v=53dafd0799";
-import { logoSazzo, nombreDemo } from "./marca.js?v=53dafd0799";
-import { interruptorTema, activarInterruptorTema } from "./apariencia.js?v=53dafd0799";
-import { linkOtrasDemos, linkQuieroEsto, botDelChat } from "./enlaces.js?v=53dafd0799";
-import { abrirColores, leerNombre } from "./colores.js?v=53dafd0799";
-import { contar } from "./visita.js?v=53dafd0799";
-import { pintarAvisos } from "./avisos.js?v=53dafd0799";
-import { revisarDetalle, htmlBotonDetalle, activarDetalle } from "./detalle.js?v=53dafd0799";
-import { htmlBotonInstalarCabecera } from "./instalar.js?v=53dafd0799";
-import { olvidarDemo } from "./guardado.js?v=53dafd0799";
-import { htmlInterruptorPasos, activarInterruptorPasos } from "./consigna.js?v=53dafd0799";
+import { $, $$, esc, iniciales } from "./ui.js?v=6c9c546cd1";
+import { logoSazzo, nombreDemo } from "./marca.js?v=6c9c546cd1";
+import { LINK_CATALOGO } from "./config.js?v=6c9c546cd1";
+import { interruptorTema, activarInterruptorTema } from "./apariencia.js?v=6c9c546cd1";
+import { linkOtrasDemos, linkQuieroEsto, botDelChat } from "./enlaces.js?v=6c9c546cd1";
+import { abrirColores, leerNombre } from "./colores.js?v=6c9c546cd1";
+import { contar } from "./visita.js?v=6c9c546cd1";
+import { pintarAvisos } from "./avisos.js?v=6c9c546cd1";
+import { revisarDetalle, htmlBotonDetalle, activarDetalle } from "./detalle.js?v=6c9c546cd1";
+import { htmlBotonInstalarCabecera } from "./instalar.js?v=6c9c546cd1";
+import { olvidarDemo } from "./guardado.js?v=6c9c546cd1";
+import { htmlInterruptorPasos, activarInterruptorPasos } from "./consigna.js?v=6c9c546cd1";
 
 /** La barrita de Sazzo: colores, otras demos y "Quiero esto" (los textos largos solo si hay lugar). */
 export function htmlBarraSazzo(marca, opciones, conDetalle = false) {
@@ -73,7 +74,7 @@ export function htmlMarco({ marca, usuario, menu = [], cambiarPersona = true, de
                 ${htmlBotonColores()}
                 ${htmlBotonInstalarCabecera()}
             </div>
-            <a class="cabecera__marca" href="#/inicio" title="Ir al inicio">${logoSazzo()}<span>${nombreDemo(marca)}${htmlNombreNegocio(marca)}</span></a>
+            <div class="cabecera__marca"><a href="${esc(LINK_CATALOGO)}" aria-label="Ir a Sazzo">${logoSazzo()}</a><a href="#/inicio" title="Ir al inicio">${nombreDemo(marca)}${htmlNombreNegocio(marca)}</a></div>
             <div class="cabecera__fin">${cambiarPersona ? htmlPersonaCabecera(usuario) : ""}</div>
         </header>
         <div class="banda-prueba">

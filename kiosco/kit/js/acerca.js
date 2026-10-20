@@ -4,9 +4,10 @@
 // - Con alguien adentro: la pantalla entera (vistaAcerca), desde el menú o la cabecera de la demo.
 // Nada de datos personales: firma Sazzo. El contacto ("Quiero esto para mi negocio") llega en el paso 2.
 // ============================================
-import { esc } from "./ui.js?v=ab9b8e0e7d";
-import { logoSazzo, nombreDemo } from "./marca.js?v=ab9b8e0e7d";
-import { htmlInterruptorPasos, activarInterruptorPasos } from "./consigna.js?v=ab9b8e0e7d";
+import { esc } from "./ui.js?v=31552da8a0";
+import { logoSazzo, nombreDemo } from "./marca.js?v=31552da8a0";
+import { LINK_CATALOGO } from "./config.js?v=31552da8a0";
+import { htmlInterruptorPasos, activarInterruptorPasos } from "./consigna.js?v=31552da8a0";
 
 const AVISO_DEMO =
     "Es una demo: los datos son inventados y quedan guardados solo en este navegador. No te pedimos ningún dato. La versión real se arma a medida de cada negocio.";
@@ -38,7 +39,7 @@ export function vistaAcerca(cont, { marca, volver = ["#/inicio", "Inicio"] }) {
         <a class="volver" href="${esc(volver[0])}"><i class="ti ti-arrow-left"></i> ${esc(volver[1])}</a>
         <section class="bloque acerca-pagina">
             <div class="acerca-pagina__marca">
-                ${logoSazzo("logo logo--grande")}
+                <a href="${esc(LINK_CATALOGO)}" aria-label="Ir a Sazzo" title="Ir a Sazzo">${logoSazzo("logo logo--grande")}</a>
                 <h1>${nombreDemo(marca)}</h1>
                 ${marca.lema ? `<p class="lema">${esc(marca.lema)}</p>` : ""}
             </div>

@@ -1,11 +1,11 @@
-import { pintarConsigna } from "./comunes.js?v=ff14c7e9df";
+import { pintarConsigna } from "./comunes.js?v=d615be4552";
 // ============================================
 // Turnos fijos (dueño): los grupos que juegan todas las semanas el mismo día y hora. Se reservan solos; una semana
 // se puede liberar (sin borrar el fijo) y volver a reservar. Fijo nuevo: el horario tiene que estar libre.
 // ============================================
-import { esc, aviso, vacio, fechaCorta } from "../../kit/js/ui.js?v=ff14c7e9df";
-import { aHora, franjas, diaSemana, proximosDias } from "../../kit/js/turnos.js?v=ff14c7e9df";
-import { CANCHAS, TIPOS, TOPES, DIAS, horarioDe } from "../datos.js?v=ff14c7e9df";
+import { esc, aviso, vacio, fechaCorta } from "../../kit/js/ui.js?v=d615be4552";
+import { aHora, franjas, diaSemana, proximosDias } from "../../kit/js/turnos.js?v=d615be4552";
+import { CANCHAS, TIPOS, TOPES, DIAS, horarioDe } from "../datos.js?v=d615be4552";
 
 const ORDEN_DIAS = [1, 2, 3, 4, 5, 6, 0];
 

@@ -7,15 +7,16 @@
 // trae `wow`, esa línea va arriba de las personas: le dice a quien llega de Instagram qué va a pasar.
 // y qué hacer al elegir una (alElegir(id): guardar la sesión y arrancar la demo).
 // ============================================
-import { $, $$, esc, iniciales, mensajeDe } from "./ui.js?v=ab9b8e0e7d";
-import { logoSazzo, nombreDemo } from "./marca.js?v=ab9b8e0e7d";
-import { pieAcerca } from "./acerca.js?v=ab9b8e0e7d";
-import { linkOtrasDemos, linkQuieroEsto, botDelChat } from "./enlaces.js?v=ab9b8e0e7d";
-import { activarBotonesSazzo, htmlBarraSazzo, medirPie } from "./marco.js?v=ab9b8e0e7d";
-import { revisarDetalle, htmlBotonDetalle } from "./detalle.js?v=ab9b8e0e7d";
-import { htmlBotonInstalar } from "./instalar.js?v=ab9b8e0e7d";
-import { contar, contarPantalla } from "./visita.js?v=ab9b8e0e7d";
-import { soltarPantalla } from "./rutas.js?v=ab9b8e0e7d";
+import { $, $$, esc, iniciales, mensajeDe } from "./ui.js?v=31552da8a0";
+import { logoSazzo, nombreDemo } from "./marca.js?v=31552da8a0";
+import { LINK_CATALOGO } from "./config.js?v=31552da8a0";
+import { pieAcerca } from "./acerca.js?v=31552da8a0";
+import { linkOtrasDemos, linkQuieroEsto, botDelChat } from "./enlaces.js?v=31552da8a0";
+import { activarBotonesSazzo, htmlBarraSazzo, medirPie } from "./marco.js?v=31552da8a0";
+import { revisarDetalle, htmlBotonDetalle } from "./detalle.js?v=31552da8a0";
+import { htmlBotonInstalar } from "./instalar.js?v=31552da8a0";
+import { contar, contarPantalla } from "./visita.js?v=31552da8a0";
+import { soltarPantalla } from "./rutas.js?v=31552da8a0";
 
 function htmlCompleta(marca) {
     if (!marca.completa) return "";
@@ -32,7 +33,7 @@ export function htmlIngreso({ marca, personas, detalle = null, contacto }) {
     return `
         <main class="ingreso">
             <div class="ingreso__marca">
-                ${logoSazzo("logo logo--grande")}
+                <a href="${esc(LINK_CATALOGO)}" aria-label="Ir a Sazzo" title="Ir a Sazzo">${logoSazzo("logo logo--grande")}</a>
                 <h1>${nombreDemo(marca)}</h1>
                 ${marca.lema ? `<p class="lema">${esc(marca.lema)}</p>` : ""}
             </div>

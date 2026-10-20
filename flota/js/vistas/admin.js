@@ -2,9 +2,9 @@
 // Inicio de la administradora (Marta): tablero con los tres números, "Para mirar hoy" (avisos, papeles, service y
 // repuestos, lo urgente primero) y lo último que pasó con sus horas. En la compu, en dos columnas.
 // ============================================
-import { esc } from "../../kit/js/ui.js?v=144fda0e5d";
-import { conArticulo } from "../datos.js?v=144fda0e5d";
-import { haceCuanto, hora, activarGuias, textoRepuestos, consignaPersona, activarPasos } from "./comunes.js?v=144fda0e5d";
+import { esc } from "../../kit/js/ui.js?v=881e78d90a";
+import { conArticulo } from "../datos.js?v=881e78d90a";
+import { haceCuanto, hora, activarGuias, textoRepuestos, consignaPersona, activarPasos } from "./comunes.js?v=881e78d90a";
 
 const NUMEROS = [
     { estado: "andando", texto: "Andando", icono: "ti-circle-check" },

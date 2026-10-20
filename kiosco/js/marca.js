@@ -2,8 +2,8 @@
 // Marca, personas y "también puede tener" de Sazzo Kiosco (diseñada el 08/10/2026).
 // Las personas son los roles reales del rubro (nombres inventados): el dueño y la empleada.
 // ============================================
-import { revisarMarca } from "../kit/js/marca.js?v=ab9b8e0e7d";
-import { negocioDe } from "../kit/js/colores.js?v=ab9b8e0e7d";
+import { revisarMarca } from "../kit/js/marca.js?v=31552da8a0";
+import { negocioDe } from "../kit/js/colores.js?v=31552da8a0";
 
 export const MARCA = revisarMarca({
     id: "kiosco",

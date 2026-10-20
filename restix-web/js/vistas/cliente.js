@@ -4,13 +4,13 @@
 // (verEn3D del kit: el plato se gira con el dedo y, donde el celular puede, "Verlo en tu mesa" en tamaño real).
 // Solo mirar, como la carta real de Restix: el pedido lo sigue tomando la moza.
 // ============================================
-import { esc, aviso } from "../../kit/js/ui.js?v=06810dfe3c";
-import { verEn3D } from "../../kit/js/modelo3d.js?v=06810dfe3c";
-import { cartaCliente, pesos, notaDe3D } from "../datos.js?v=06810dfe3c";
-import { MARCA, NEGOCIO, MESA_CLIENTE } from "../marca.js?v=06810dfe3c";
-import { guia, activarGuias, consignaPersona } from "./comunes.js?v=06810dfe3c";
+import { esc, aviso } from "../../kit/js/ui.js?v=38fb5b6bc6";
+import { verEn3D } from "../../kit/js/modelo3d.js?v=38fb5b6bc6";
+import { cartaCliente, pesos, notaDe3D } from "../datos.js?v=38fb5b6bc6";
+import { MARCA, NEGOCIO, MESA_CLIENTE } from "../marca.js?v=38fb5b6bc6";
+import { guia, activarGuias, consignaPersona } from "./comunes.js?v=38fb5b6bc6";
 
-import { activarConsigna } from "../../kit/js/consigna.js?v=06810dfe3c";
+import { activarConsigna } from "../../kit/js/consigna.js?v=38fb5b6bc6";
 
 const MODELO_VALIDO = /^[a-z0-9-]+$/; // nombre del .glb de img\, sin la extensión
 

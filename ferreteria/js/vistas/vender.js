@@ -1,10 +1,10 @@
-import { pintarConsigna } from "./comunes.js?v=12c89e832a";
-import { esc, aviso, fechaHora } from "../../kit/js/ui.js?v=12c89e832a";
-import { TOPES, MEDIOS, RUBROS, UNIDADES, pesos, cantidadTexto, precioPara } from "../datos.js?v=12c89e832a";
-import { textoMedio, mediosParaCaja } from "../../kit/js/pagos.js?v=12c89e832a";
-import { NEGOCIO, MARCA } from "../marca.js?v=12c89e832a";
-import { EVENTO_REINICIO } from "../../kit/js/guardado.js?v=12c89e832a";
-import { abrirCaja, htmlMasDeLaCaja } from "../../kit/js/caja.js?v=12c89e832a";
+import { pintarConsigna } from "./comunes.js?v=05788725cf";
+import { esc, aviso, fechaHora } from "../../kit/js/ui.js?v=05788725cf";
+import { TOPES, MEDIOS, RUBROS, UNIDADES, pesos, cantidadTexto, precioPara } from "../datos.js?v=05788725cf";
+import { textoMedio, mediosParaCaja } from "../../kit/js/pagos.js?v=05788725cf";
+import { NEGOCIO, MARCA } from "../marca.js?v=05788725cf";
+import { EVENTO_REINICIO } from "../../kit/js/guardado.js?v=05788725cf";
+import { abrirCaja, htmlMasDeLaCaja } from "../../kit/js/caja.js?v=05788725cf";
 
 export const ticket = new Map();
 addEventListener(EVENTO_REINICIO, () => ticket.clear());

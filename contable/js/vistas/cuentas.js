@@ -1,13 +1,13 @@
-import { conConsigna } from "./comunes.js?v=569102ff5e";
+import { conConsigna } from "./comunes.js?v=9b3e014917";
 // ============================================
 // Cuentas: quién te debe (clientes), a quién le debés (proveedores) y caja y banco. En la ficha de cada uno, su
 // cuenta corriente con el saldo renglón por renglón y, para administración, cobrar o pagar. Desde acá también se
 // suman clientes y proveedores.
 // ============================================
-import { esc, aviso } from "../../kit/js/ui.js?v=569102ff5e";
-import { TOPES, CUENTAS, ROLES_QUE_COBRAN } from "../datos.js?v=569102ff5e";
-import { CONDICIONES, pesos, formatoCuit } from "../reglas.js?v=569102ff5e";
-import { diaMes, haceDias, htmlTabla, documento, condicionTexto, fechaCorta } from "./comunes.js?v=569102ff5e";
+import { esc, aviso } from "../../kit/js/ui.js?v=9b3e014917";
+import { TOPES, CUENTAS, ROLES_QUE_COBRAN } from "../datos.js?v=9b3e014917";
+import { CONDICIONES, pesos, formatoCuit } from "../reglas.js?v=9b3e014917";
+import { diaMes, haceDias, htmlTabla, documento, condicionTexto, fechaCorta } from "./comunes.js?v=9b3e014917";
 
 const puedeCargar = (u) => u.rol === "admin";
 const puedeCobrar = (u) => ROLES_QUE_COBRAN.includes(u.rol);

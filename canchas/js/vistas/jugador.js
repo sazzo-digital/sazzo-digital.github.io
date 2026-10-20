@@ -1,16 +1,16 @@
-import { consignaPersona, pintarConsigna } from "./comunes.js?v=ff14c7e9df";
+import { consignaPersona, pintarConsigna } from "./comunes.js?v=d615be4552";
 // ============================================
 // Pantallas del jugador (Fede), pensadas para el celular: "Reservá tu cancha" (día, tipo, hora libre, cancha,
 // nombre del grupo y seña simulada) y "Mis turnos" (con Cancelar y la regla de la seña a la vista).
 // Lo ocupado se ve, pero no se puede tocar: nunca se pisan.
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=ff14c7e9df";
-import { TIPOS, TOPES, CANCELAR_HORAS, pesos, nombreFecha } from "../datos.js?v=ff14c7e9df";
-import { NEGOCIO } from "../marca.js?v=ff14c7e9df";
-import { guia, activarGuias, pastillaSena, pastillaEstado, chipsDias } from "./comunes.js?v=ff14c7e9df";
-import { aHora, minutoAhora } from "../../kit/js/turnos.js?v=ff14c7e9df";
-import { htmlCopiable, activarCopiables } from "../../kit/js/celular.js?v=ff14c7e9df";
-import { htmlCuenta, pedirCantina } from "./cuenta.js?v=ff14c7e9df";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=d615be4552";
+import { TIPOS, TOPES, CANCELAR_HORAS, pesos, nombreFecha } from "../datos.js?v=d615be4552";
+import { NEGOCIO } from "../marca.js?v=d615be4552";
+import { guia, activarGuias, pastillaSena, pastillaEstado, chipsDias } from "./comunes.js?v=d615be4552";
+import { aHora, minutoAhora } from "../../kit/js/turnos.js?v=d615be4552";
+import { htmlCopiable, activarCopiables } from "../../kit/js/celular.js?v=d615be4552";
+import { htmlCuenta, pedirCantina } from "./cuenta.js?v=d615be4552";
 
 // Lo elegido queda mientras se navega
 let fecha = null;

@@ -3,8 +3,8 @@
 // rehecho con el kit). Las personas son los roles reales del rubro (nombres inventados): la moza, el de la cocina y
 // (desde el 10/10) una clienta que abre la carta con el QR de la mesa.
 // ============================================
-import { revisarMarca } from "../kit/js/marca.js?v=06810dfe3c";
-import { negocioDe } from "../kit/js/colores.js?v=06810dfe3c";
+import { revisarMarca } from "../kit/js/marca.js?v=38fb5b6bc6";
+import { negocioDe } from "../kit/js/colores.js?v=38fb5b6bc6";
 
 export const MARCA = revisarMarca({
     id: "restix-web",

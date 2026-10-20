@@ -6,12 +6,12 @@
 // Reglas del kit: exigir() en lo que modifica, topes en todo lo que se carga, nada se borra (se cancela) y se
 // devuelven copias. Si cambia la forma de los datos, subir VERSION_DATOS (se regeneran solos).
 // ============================================
-import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=dd1f695466";
-import { filtrarPorTexto } from "../kit/js/buscar.js?v=dd1f695466";
-import { sinPasarse } from "../kit/js/topes.js?v=dd1f695466";
-import { fechaLocalISO } from "../kit/js/fechas.js?v=dd1f695466";
-import { aMinutos, aHora, diaSemana, proximosDias, ocupados, libres, revisarLibre } from "../kit/js/turnos.js?v=dd1f695466";
-import { MARCA, PERSONAS } from "./marca.js?v=dd1f695466";
+import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=80175c9283";
+import { filtrarPorTexto } from "../kit/js/buscar.js?v=80175c9283";
+import { sinPasarse } from "../kit/js/topes.js?v=80175c9283";
+import { fechaLocalISO } from "../kit/js/fechas.js?v=80175c9283";
+import { aMinutos, aHora, diaSemana, proximosDias, ocupados, libres, revisarLibre } from "../kit/js/turnos.js?v=80175c9283";
+import { MARCA, PERSONAS } from "./marca.js?v=80175c9283";
 
 export const VERSION_DATOS = 2;
 

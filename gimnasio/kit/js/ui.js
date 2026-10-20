@@ -3,8 +3,8 @@
 // Solo lo genérico: lo propio de cada rubro (estados, pastillas, unidades…) va en cada demo.
 // Todo dato que entra a HTML pasa por esc().
 // ============================================
-import { esDeProgramacion, contarFalla } from "./visita.js?v=0ae8c6cc93";
-import { mostrarArchivoDeDemo } from "./archivos.js?v=0ae8c6cc93";
+import { esDeProgramacion, contarFalla } from "./visita.js?v=697d1e229d";
+import { mostrarArchivoDeDemo } from "./archivos.js?v=697d1e229d";
 
 export const $ = (selector, raiz = document) => raiz.querySelector(selector);
 export const $$ = (selector, raiz = document) => [...raiz.querySelectorAll(selector)];

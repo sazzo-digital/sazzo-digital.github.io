@@ -7,7 +7,7 @@
 // Al tocarlo: fundido suave entre las dos pantallas (donde el navegador lo permite) y un cartelito de un segundo,
 // "Ahora estás como Diego · Mecánico", para que se note el cambio. El botón late una vez al aparecer (estilos).
 // ============================================
-import { esc, conFundido } from "./ui.js?v=06810dfe3c";
+import { esc, conFundido } from "./ui.js?v=38fb5b6bc6";
 
 export { conFundido }; // antes vivía acá
 

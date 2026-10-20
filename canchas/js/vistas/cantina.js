@@ -1,10 +1,10 @@
-import { pintarConsigna } from "./comunes.js?v=ff14c7e9df";
-import { esc } from "../../kit/js/ui.js?v=ff14c7e9df";
-import { abrirCaja, htmlMasDeLaCaja } from "../../kit/js/caja.js?v=ff14c7e9df";
-import { htmlEstante, activarEstantes } from "../../kit/js/estante.js?v=ff14c7e9df";
-import { MEDIOS_PAGO, mediosParaCaja } from "../../kit/js/pagos.js?v=ff14c7e9df";
-import { pesos, SECCIONES_CANTINA } from "../datos.js?v=ff14c7e9df";
-import { MARCA, NEGOCIO } from "../marca.js?v=ff14c7e9df";
+import { pintarConsigna } from "./comunes.js?v=d615be4552";
+import { esc } from "../../kit/js/ui.js?v=d615be4552";
+import { abrirCaja, htmlMasDeLaCaja } from "../../kit/js/caja.js?v=d615be4552";
+import { htmlEstante, activarEstantes } from "../../kit/js/estante.js?v=d615be4552";
+import { MEDIOS_PAGO, mediosParaCaja } from "../../kit/js/pagos.js?v=d615be4552";
+import { pesos, SECCIONES_CANTINA } from "../datos.js?v=d615be4552";
+import { MARCA, NEGOCIO } from "../marca.js?v=d615be4552";
 
 const MEDIOS_CAJA = mediosParaCaja(MEDIOS_PAGO);
 

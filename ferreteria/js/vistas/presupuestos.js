@@ -1,4 +1,4 @@
-import { pintarConsigna } from "./comunes.js?v=12c89e832a";
+import { pintarConsigna } from "./comunes.js?v=05788725cf";
 // ============================================
 // Presupuestos (Osvaldo y Nahuel): los que piden los clientes desde el celu y los que se arman en el mostrador.
 // En cada uno: los renglones como los escribió el cliente, con el artículo que entendió el buscador; lo que no se
@@ -6,13 +6,13 @@ import { pintarConsigna } from "./comunes.js?v=12c89e832a";
 // renglón. "Mandar" fija los precios por 7 días y arma el mensaje; "PDF" lo deja para compartir. Cuando lo acepta,
 // "Pasar a venta" descuenta el stock y lo cobra (de contado o a su cuenta corriente).
 // ============================================
-import { esc, aviso, vacio, fechaCorta } from "../../kit/js/ui.js?v=12c89e832a";
-import { diaLocalDe } from "../../kit/js/fechas.js?v=12c89e832a";
-import { mostrarMensaje } from "../../kit/js/mensaje.js?v=12c89e832a";
-import { armarPdf, pdfListo } from "../../kit/js/pdf.js?v=12c89e832a";
-import { ESTADOS_PRESUPUESTO, TOPES, UNIDADES, VALIDEZ_DIAS, pesos, precioConUnidad, cantidadTexto, entender, diaMes } from "../datos.js?v=12c89e832a";
-import { NEGOCIO } from "../marca.js?v=12c89e832a";
-import { guia, activarGuias, pasos, pastillaEstado, tarjetaPresupuesto, cuando, validez, pintarCobro, etiquetaUnidad, htmlFoto } from "./comunes.js?v=12c89e832a";
+import { esc, aviso, vacio, fechaCorta } from "../../kit/js/ui.js?v=05788725cf";
+import { diaLocalDe } from "../../kit/js/fechas.js?v=05788725cf";
+import { mostrarMensaje } from "../../kit/js/mensaje.js?v=05788725cf";
+import { armarPdf, pdfListo } from "../../kit/js/pdf.js?v=05788725cf";
+import { ESTADOS_PRESUPUESTO, TOPES, UNIDADES, VALIDEZ_DIAS, pesos, precioConUnidad, cantidadTexto, entender, diaMes } from "../datos.js?v=05788725cf";
+import { NEGOCIO } from "../marca.js?v=05788725cf";
+import { guia, activarGuias, pasos, pastillaEstado, tarjetaPresupuesto, cuando, validez, pintarCobro, etiquetaUnidad, htmlFoto } from "./comunes.js?v=05788725cf";
 
 /** Lo que va en el PDF del presupuesto (lo usan el mostrador y el cliente). */
 export const datosPdf = (pr) => ({

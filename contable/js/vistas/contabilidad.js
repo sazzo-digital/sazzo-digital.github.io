@@ -1,14 +1,14 @@
-import { conConsigna } from "./comunes.js?v=569102ff5e";
+import { conConsigna } from "./comunes.js?v=9b3e014917";
 // ============================================
 // Contabilidad: libro diario (los asientos salen solos de cada factura, compra, cobro y pago), mayor de cada cuenta
 // y balance de sumas y saldos. Solo para mirar: en la demo no hay asientos manuales.
 // ============================================
-import { esc } from "../../kit/js/ui.js?v=569102ff5e";
-import { htmlEstante, activarEstantes } from "../../kit/js/estante.js?v=569102ff5e";
-import { agruparPorMes } from "../estantes.js?v=569102ff5e";
-import { pesos, nombrePeriodo, periodoActual, correrPeriodo } from "../reglas.js?v=569102ff5e";
-import { nombreCuenta } from "../contabilidad.js?v=569102ff5e";
-import { periodoPedido, htmlSelectorMes, activarSelectorMes, htmlTabla, fechaCorta, diaMes } from "./comunes.js?v=569102ff5e";
+import { esc } from "../../kit/js/ui.js?v=9b3e014917";
+import { htmlEstante, activarEstantes } from "../../kit/js/estante.js?v=9b3e014917";
+import { agruparPorMes } from "../estantes.js?v=9b3e014917";
+import { pesos, nombrePeriodo, periodoActual, correrPeriodo } from "../reglas.js?v=9b3e014917";
+import { nombreCuenta } from "../contabilidad.js?v=9b3e014917";
+import { periodoPedido, htmlSelectorMes, activarSelectorMes, htmlTabla, fechaCorta, diaMes } from "./comunes.js?v=9b3e014917";
 
 const VISTAS = { diario: "Libro diario", mayor: "Mayor", balance: "Balance" };
 const MAX_ASIENTOS = 60; // en pantalla (el resto, cambiando de mes)

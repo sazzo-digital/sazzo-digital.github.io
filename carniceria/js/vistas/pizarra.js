@@ -1,13 +1,13 @@
-import { consignaPersona, activarSerie } from "./comunes.js?v=4438010c31";
+import { consignaPersona, activarSerie } from "./comunes.js?v=9653b43c72";
 // ============================================
 // Pizarra para la tele: los precios por kilo de cada animal en letra enorme y la oferta del día. Para poner en una
 // tele del local (pantalla completa): cuando cambian los precios (desposte o "Subió la hacienda"), ya está al día.
 // El dueño elige la oferta del día.
 // ============================================
-import { esc, aviso } from "../../kit/js/ui.js?v=4438010c31";
-import { pesos } from "../datos.js?v=4438010c31";
-import { NEGOCIO } from "../marca.js?v=4438010c31";
-import { precioDe } from "./comunes.js?v=4438010c31";
+import { esc, aviso } from "../../kit/js/ui.js?v=9653b43c72";
+import { pesos } from "../datos.js?v=9653b43c72";
+import { NEGOCIO } from "../marca.js?v=9653b43c72";
+import { precioDe } from "./comunes.js?v=9653b43c72";
 
 export function vistaPizarra(cont, { usuario, datos }) {
     const dueno = usuario.rol === "dueno";

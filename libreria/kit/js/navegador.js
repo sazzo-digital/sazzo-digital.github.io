@@ -2,7 +2,7 @@
 // Aviso "abrila en el navegador": si la demo se abrió desde adentro de Instagram, WhatsApp o Facebook, lo que se
 // carga queda guardado ahí aparte (y se puede perder). Se avisa una vez por visita, con "Copiar link" y "Seguir acá".
 // ============================================
-import { $, esc, aviso, esNavegadorDeOtraApp } from "./ui.js?v=53dafd0799";
+import { $, esc, aviso, esNavegadorDeOtraApp } from "./ui.js?v=6c9c546cd1";
 
 const CLAVE_VISTO = "sazzo-aviso-navegador"; // solo en esta pestaña (sessionStorage): vuelve a aparecer otra visita
 

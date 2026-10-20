@@ -3,18 +3,18 @@
 // Cada persona tiene su menú: Gustavo (dueño) la grilla y los fijos; Fede (jugador) reservar y sus turnos.
 // irA() cambia de persona sin pasar por "Probala como…" (botón del recorrido: "Mirá cómo lo ve Gustavo →").
 // ============================================
-import { $, conFundido } from "../kit/js/ui.js?v=ff14c7e9df";
-import { iniciarDemo } from "../kit/js/arranque.js?v=ff14c7e9df";
-import { vistaIngreso } from "../kit/js/ingreso.js?v=ff14c7e9df";
-import { pintarMarco } from "../kit/js/marco.js?v=ff14c7e9df";
-import { mostrarRuta } from "../kit/js/rutas.js?v=ff14c7e9df";
-import { vistaAcerca } from "../kit/js/acerca.js?v=ff14c7e9df";
-import { MARCA, PERSONAS, DETALLE, buscarPersona } from "./marca.js?v=ff14c7e9df";
-import { aparte } from "../kit/js/aparte.js?v=ff14c7e9df";
-import { leerSesionGuardada } from "../kit/js/guardado.js?v=ff14c7e9df";
+import { $, conFundido } from "../kit/js/ui.js?v=d615be4552";
+import { iniciarDemo } from "../kit/js/arranque.js?v=d615be4552";
+import { vistaIngreso } from "../kit/js/ingreso.js?v=d615be4552";
+import { pintarMarco } from "../kit/js/marco.js?v=d615be4552";
+import { mostrarRuta } from "../kit/js/rutas.js?v=d615be4552";
+import { vistaAcerca } from "../kit/js/acerca.js?v=d615be4552";
+import { MARCA, PERSONAS, DETALLE, buscarPersona } from "./marca.js?v=d615be4552";
+import { aparte } from "../kit/js/aparte.js?v=d615be4552";
+import { leerSesionGuardada } from "../kit/js/guardado.js?v=d615be4552";
 
 // Los datos de ejemplo y las pantallas se bajan aparte (al terminar de cargar): "Probala como…" aparece sin esperarlos
-const pantallas = aparte(() => import("./pantallas.js?v=ff14c7e9df"));
+const pantallas = aparte(() => import("./pantallas.js?v=d615be4552"));
 const { vistaInicio, vistaMisTurnos, vistaTurno, vistaAnotar, vistaFijos, vistaCantina, avisosDe } = pantallas.funciones;
 
 iniciarDemo(MARCA);

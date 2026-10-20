@@ -1,14 +1,14 @@
-import { conConsigna } from "./comunes.js?v=569102ff5e";
+import { conConsigna } from "./comunes.js?v=9b3e014917";
 // ============================================
 // Inicio de Sazzo Contable: el tablero de la empresa. Vendido y comprado en el mes, IVA estimado y cuándo vence,
 // quién te debe y a quién le debés, y lo último que se facturó. Arriba, el paso del recorrido de cada persona
 // (Silvina arranca facturando; Hernán y Patricia, mirando).
 // ============================================
-import { esc } from "../../kit/js/ui.js?v=569102ff5e";
-import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=569102ff5e";
-import { pesos, pesosRedondo, nombrePeriodo, periodoActual, correrPeriodo, signo, numeroComprobante } from "../reglas.js?v=569102ff5e";
-import { buscarPersona } from "../marca.js?v=569102ff5e";
-import { logoEmpresa, haceDias, pastillaTipo, diaMes, fechaCorta } from "./comunes.js?v=569102ff5e";
+import { esc } from "../../kit/js/ui.js?v=9b3e014917";
+import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=9b3e014917";
+import { pesos, pesosRedondo, nombrePeriodo, periodoActual, correrPeriodo, signo, numeroComprobante } from "../reglas.js?v=9b3e014917";
+import { buscarPersona } from "../marca.js?v=9b3e014917";
+import { logoEmpresa, haceDias, pastillaTipo, diaMes, fechaCorta } from "./comunes.js?v=9b3e014917";
 
 function pintarInicio(cont, { usuario, datos, irA }) {
     const e = datos.leerEmpresa();

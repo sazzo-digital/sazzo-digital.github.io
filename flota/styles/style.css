@@ -425,7 +425,14 @@ body.guardando .boton:not(.boton--secundario) {
   height: 2.3rem;
   filter: drop-shadow(0 0 8px var(--brillo));
 }
-.cabecera__marca > span {
+.cabecera__marca > a {
+  color: inherit;
+  text-decoration: none;
+}
+.cabecera__marca > a:first-child {
+  display: contents;
+}
+.cabecera__marca > a:last-child {
   display: grid;
   justify-items: center;
   min-width: 0;

@@ -1,16 +1,16 @@
-import { pintarConsigna } from "./comunes.js?v=ab9b8e0e7d";
+import { pintarConsigna } from "./comunes.js?v=31552da8a0";
 // ============================================
 // Stock y precios: productos por proveedor con "hay que pedir"; el dueño corrige precio y stock ("llegó
 // mercadería") y tiene "Subió un proveedor": elegís el proveedor y el %, ves antes → después con el redondeo de
 // kiosco y aplicás todo de una, con Deshacer. Y "La lista del proveedor en Excel": subís la lista que te mandó y los
 // precios se actualizan solos (también con Deshacer). El stock se baja a Excel. La empleada solo mira (y baja).
 // ============================================
-import { esc, aviso, vacio, mensajeDe } from "../../kit/js/ui.js?v=ab9b8e0e7d";
-import { bajarExcel, leerExcel } from "../../kit/js/archivos.js?v=ab9b8e0e7d";
-import { htmlEstante, activarEstantes } from "../../kit/js/estante.js?v=ab9b8e0e7d";
-import { PROVEEDORES, TOPES, pesos, estadoStock } from "../datos.js?v=ab9b8e0e7d";
-import { pastillaStock } from "./comunes.js?v=ab9b8e0e7d";
-import { MARCA } from "../marca.js?v=ab9b8e0e7d";
+import { esc, aviso, vacio, mensajeDe } from "../../kit/js/ui.js?v=31552da8a0";
+import { bajarExcel, leerExcel } from "../../kit/js/archivos.js?v=31552da8a0";
+import { htmlEstante, activarEstantes } from "../../kit/js/estante.js?v=31552da8a0";
+import { PROVEEDORES, TOPES, pesos, estadoStock } from "../datos.js?v=31552da8a0";
+import { pastillaStock } from "./comunes.js?v=31552da8a0";
+import { MARCA } from "../marca.js?v=31552da8a0";
 
 const RAPIDOS = [5, 10, 15, 20];
 

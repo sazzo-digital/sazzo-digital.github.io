@@ -1,12 +1,12 @@
-import { pintarConsigna } from "./comunes.js?v=53dafd0799";
+import { pintarConsigna } from "./comunes.js?v=6c9c546cd1";
 // ============================================
 // Lo de Paula (clienta), desde el celular: elegir la lista del colegio, destildar lo que ya tiene en casa, ver el total
 // y pedirla; después, en "Mis pedidos", ver cómo va (pedida → separada → retirada).
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=53dafd0799";
-import { TOPES, pesos } from "../datos.js?v=53dafd0799";
-import { NEGOCIO } from "../marca.js?v=53dafd0799";
-import { guia, activarGuias, pasos, pastillaEstado, cuando } from "./comunes.js?v=53dafd0799";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=6c9c546cd1";
+import { TOPES, pesos } from "../datos.js?v=6c9c546cd1";
+import { NEGOCIO } from "../marca.js?v=6c9c546cd1";
+import { guia, activarGuias, pasos, pastillaEstado, cuando } from "./comunes.js?v=6c9c546cd1";
 
 // La lista elegida y lo destildado quedan en memoria mientras se navega
 let listaId = "l-1";

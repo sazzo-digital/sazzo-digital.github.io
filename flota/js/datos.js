@@ -5,10 +5,10 @@
 // Reglas del kit: exigir() en lo que modifica, topes en todo lo que se carga, nada se borra y se devuelven copias.
 // Si cambia la forma de los datos, subir VERSION_DATOS (se regeneran solos).
 // ============================================
-import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=144fda0e5d";
-import { enteroHasta, sinPasarse } from "../kit/js/topes.js?v=144fda0e5d";
-import { fechaLocalISO, diasHasta } from "../kit/js/fechas.js?v=144fda0e5d";
-import { MARCA, PERSONAS } from "./marca.js?v=144fda0e5d";
+import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=881e78d90a";
+import { enteroHasta, sinPasarse } from "../kit/js/topes.js?v=881e78d90a";
+import { fechaLocalISO, diasHasta } from "../kit/js/fechas.js?v=881e78d90a";
+import { MARCA, PERSONAS } from "./marca.js?v=881e78d90a";
 
 export const VERSION_DATOS = 3;
 
