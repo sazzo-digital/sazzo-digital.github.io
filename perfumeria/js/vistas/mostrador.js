@@ -1,10 +1,10 @@
-import { pintarConsigna } from "./comunes.js?v=5db8adfe03";
-import { esc, fechaHora } from "../../kit/js/ui.js?v=5db8adfe03";
-import { abrirCaja, htmlMasDeLaCaja } from "../../kit/js/caja.js?v=5db8adfe03";
-import { FAMILIAS, PRESENTACIONES, MEDIOS, pesos } from "../datos.js?v=5db8adfe03";
-import { frasco } from "./comunes.js?v=5db8adfe03";
-import { mediosParaCaja, textoMedio } from "../../kit/js/pagos.js?v=5db8adfe03";
-import { MARCA, NEGOCIO } from "../marca.js?v=5db8adfe03";
+import { pintarConsigna } from "./comunes.js?v=5050d1dc54";
+import { esc, fechaHora } from "../../kit/js/ui.js?v=5050d1dc54";
+import { abrirCaja, htmlMasDeLaCaja } from "../../kit/js/caja.js?v=5050d1dc54";
+import { FAMILIAS, PRESENTACIONES, MEDIOS, pesos } from "../datos.js?v=5050d1dc54";
+import { frasco } from "./comunes.js?v=5050d1dc54";
+import { mediosParaCaja, textoMedio } from "../../kit/js/pagos.js?v=5050d1dc54";
+import { MARCA, NEGOCIO } from "../marca.js?v=5050d1dc54";
 
 const MEDIOS_CAJA = mediosParaCaja(MEDIOS);
 let familia = "mas";

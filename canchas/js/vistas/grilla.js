@@ -1,17 +1,17 @@
-import { pintarConsigna } from "./comunes.js?v=7d4af554c7";
+import { pintarConsigna } from "./comunes.js?v=fda02631c7";
 // ============================================
 // Pantallas del dueño (Gustavo): la grilla del día (canchas en columnas, horas de media en media; se luce en la
 // compu y en el celu se desliza de costado), el detalle de un turno (llegaron, faltaron, cobrar seña, liberar) y
 // "Anotar turno" en un casillero libre (para cuando llaman por teléfono).
 // Los turnos que reservó un jugador y Gustavo todavía no miró aparecen arriba y marcados "Nuevo".
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=7d4af554c7";
-import { mantenerPantallaPrendida } from "../../kit/js/celular.js?v=7d4af554c7";
-import { aHora } from "../../kit/js/turnos.js?v=7d4af554c7";
-import { TOPES, CANCHAS, TIPOS, pesos, nombreFecha, horarioDe } from "../datos.js?v=7d4af554c7";
-import { pastillaSena, pastillaEstado, chipsDias } from "./comunes.js?v=7d4af554c7";
-import { buscarPersona, MARCA } from "../marca.js?v=7d4af554c7";
-import { htmlCuenta, pedirCantina, cobrarCuenta } from "./cuenta.js?v=7d4af554c7";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=fda02631c7";
+import { mantenerPantallaPrendida } from "../../kit/js/celular.js?v=fda02631c7";
+import { aHora } from "../../kit/js/turnos.js?v=fda02631c7";
+import { TOPES, CANCHAS, TIPOS, pesos, nombreFecha, horarioDe } from "../datos.js?v=fda02631c7";
+import { pastillaSena, pastillaEstado, chipsDias } from "./comunes.js?v=fda02631c7";
+import { buscarPersona, MARCA } from "../marca.js?v=fda02631c7";
+import { htmlCuenta, pedirCantina, cobrarCuenta } from "./cuenta.js?v=fda02631c7";
 
 const PASO = 30; // la grilla va de media hora en media hora (entran los turnos de 60 y los de 90 min)
 

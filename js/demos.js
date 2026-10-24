@@ -492,3 +492,38 @@ export const TRABAJOS = [
         ]
     }
 ];
+
+export const SERVICIOS_HECHOS = [
+    {
+        id: "dos-locales",
+        icono: "i-equipos",
+        tipo: "Organización interna",
+        titulo: "Dos locales, un mismo orden",
+        para: "Que cada turno sepa qué se hizo y qué falta, sin preguntar ni dejar papelitos.",
+        personas: "4 personas · 2 locales",
+        items: [
+            "Tareas del día y de la semana, por local y por turno",
+            "Lo que no se termina pasa solo al turno siguiente",
+            "Queda registrado qué se hizo, cuándo y en qué local",
+            "La dueña ve informes y avisos de ambos locales"
+        ],
+        conexion: "Cada una desde su celu, con todo al día en el momento.",
+        video: { base: "img/hechos/locales", texto: "Marcar tareas del turno y dejarle una nota al turno que sigue" }
+    },
+    {
+        id: "flota",
+        icono: "i-sistema",
+        tipo: "Control de una flota",
+        titulo: "Vehículos y repuestos, con cada rol conectado",
+        para: "Saber el estado de cada vehículo y de los repuestos sin papeles ni llamadas.",
+        personas: "Unas 60 personas · 4 roles",
+        items: [
+            "Estado de cada vehículo, con su historia",
+            "Stock de repuestos con alertas de lo que falta",
+            "Vencimientos de papeles y service por kilómetros",
+            "Tareas y avisos entre administradores, supervisor, mecánicos y choferes"
+        ],
+        conexion: "Cada rol ve lo suyo, todo se actualiza solo y sigue andando sin señal.",
+        video: { base: "img/hechos/flota", texto: "Un chofer avisa un problema y le llega al mecánico al instante" }
+    }
+];

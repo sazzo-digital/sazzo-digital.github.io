@@ -388,7 +388,9 @@
                     }
                 }
                 pintarEscribe();
+                const sinOpciones = cajaOpciones.hidden;
                 pintarRubros();
+                if (sinOpciones && !cajaOpciones.hidden) bajar();
                 revisarTelefono();
             }
         } catch {}

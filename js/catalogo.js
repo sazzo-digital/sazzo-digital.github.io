@@ -2,8 +2,8 @@
 // Catálogo de Sazzo: arma las tarjetas de demos (desde demos.js), las animaciones al bajar, los botones de
 // contacto (desde config.js), guarda de dónde vino la visita (?o=papel / ?o=ig) y avisa a la medición.
 // ============================================
-import { DEMOS, TRABAJOS } from "./demos.js?v=ae797bfe77";
-import { CONTACTO, MEDICION, LINK_DEMOS, RUTA_LIBS, RUTA_CHAT } from "./config.js?v=ae797bfe77";
+import { DEMOS, TRABAJOS, SERVICIOS_HECHOS } from "./demos.js?v=cd0b07e501";
+import { CONTACTO, MEDICION, LINK_DEMOS, RUTA_LIBS, RUTA_CHAT } from "./config.js?v=cd0b07e501";
 
 const $ = (selector, raiz = document) => raiz.querySelector(selector);
 const $$ = (selector, raiz = document) => [...raiz.querySelectorAll(selector)];
@@ -180,6 +180,46 @@ function tarjetaTrabajo(t) {
 }
 
 $("#lista-trabajos").innerHTML = TRABAJOS.map(tarjetaTrabajo).join("");
+
+function htmlVideoHecho(h) {
+    if (!h.video) return "";
+    const base = esc(h.video.base);
+    return `
+            <div class="hecho__celu">
+                <video muted loop playsinline preload="none" poster="${base}.webp" width="390" height="844" aria-label="${esc(h.video.texto)}">
+                    <source src="${base}.webm" type="video/webm">
+                    <source src="${base}.mp4" type="video/mp4">
+                </video>
+            </div>`;
+}
+
+function tarjetaHecho(h) {
+    return `
+        <article class="hecho revelar">
+            <p class="hecho__tipo"><svg class="icono" aria-hidden="true"><use href="#${esc(h.icono)}"/></svg> ${esc(h.tipo)}</p>
+            <h3 class="hecho__titulo">${esc(h.titulo)}</h3>
+            <p class="hecho__para">${esc(h.para)}</p>
+            <p class="hecho__personas"><svg class="icono" aria-hidden="true"><use href="#i-personas"/></svg> ${esc(h.personas)}</p>
+            ${htmlVideoHecho(h)}
+            ${listaTildes(h.items, "hecho__items")}
+            <p class="hecho__conexion"><svg class="icono" aria-hidden="true"><use href="#i-vivo"/></svg> ${esc(h.conexion)}</p>
+        </article>`;
+}
+
+$("#lista-hechos").innerHTML = SERVICIOS_HECHOS.map(tarjetaHecho).join("");
+
+const sinMovimiento = matchMedia("(prefers-reduced-motion: reduce)");
+const videosHechos = document.querySelectorAll(".hecho__celu video");
+videosHechos.forEach((v) => { v.muted = true; });
+if (!sinMovimiento.matches && "IntersectionObserver" in window) {
+    const mirador = new IntersectionObserver((entradas) => {
+        entradas.forEach((e) => {
+            if (e.isIntersecting) e.target.play().catch(() => {});
+            else e.target.pause();
+        });
+    }, { threshold: 0.35 });
+    videosHechos.forEach((v) => mirador.observe(v));
+}
 
 const galeria = $("#galeria");
 let enGaleria = { trabajo: null, indice: 0 };
@@ -419,7 +459,7 @@ if ((linkWhatsapp || usuarioInstagram) && typeof ventanaContacto.showModal === "
 const botChat = /^https:\/\/[\w.-]+\/web$|^http:\/\/(localhost|127\.0\.0\.1):\d{2,5}\/web$/.test(CONTACTO.chat ?? "") ? CONTACTO.chat : null;
 if (botChat) {
     const guion = document.createElement("script");
-    guion.src = `${RUTA_CHAT}chat-web.js?v=15455c95cb`;
+    guion.src = `${RUTA_CHAT}chat-web.js?v=4961579887`;
     Object.assign(guion.dataset, {
         bot: botChat, origen: "catalogo", privacidad: "privacidad.html",
         whatsapp: linkWhatsapp ? CONTACTO.whatsapp : "", instagram: usuarioInstagram ?? "", mensaje: CONTACTO.mensaje

@@ -2,9 +2,9 @@
 // Piezas que comparten las pantallas de Sazzo Kiosco: el botón del recorrido (del kit), la pastilla de stock y
 // "hace cuánto". Todo dato que entra a HTML pasa por esc().
 // ============================================
-import { esc } from "../../kit/js/ui.js?v=5923a3d3eb";
-import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=5923a3d3eb";
-import { MARCA, buscarPersona } from "../marca.js?v=5923a3d3eb";
+import { esc } from "../../kit/js/ui.js?v=638b4b3f1c";
+import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=638b4b3f1c";
+import { MARCA, buscarPersona } from "../marca.js?v=638b4b3f1c";
 
 /** Botón del recorrido con la persona de Kiosco: guia("u-dueno", "/stock/aumento", "Pasá a Rubén…"). */
 export const guia = (personaId, ruta, texto) => htmlGuia({ persona: buscarPersona(personaId), ruta, texto });
@@ -35,7 +35,7 @@ export function haceDias(iso) {
 export const hora = (iso) => new Date(iso).toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit", hourCycle: "h23" });
 
 
-import { htmlConsigna, htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=5923a3d3eb";
+import { htmlConsigna, htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=638b4b3f1c";
 
 const CONSIGNAS = {
     dueno: [

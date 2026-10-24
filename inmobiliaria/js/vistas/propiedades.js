@@ -3,18 +3,18 @@
 // el mapa, nunca la dirección; Valeria pide la visita, la inmobiliaria ve quiénes buscan algo así y baja el PDF) y
 // "Cargar propiedad" (con fotos sacadas con el celu, que no se suben a ningún lado).
 // ============================================
-import { esc, aviso, vacio, mensajeDe, fechaCorta } from "../../kit/js/ui.js?v=0a4006f884";
-import { fechaLocalISO, diaLocalDe } from "../../kit/js/fechas.js?v=0a4006f884";
-import { mostrarMapa } from "../../kit/js/mapa.js?v=0a4006f884";
-import { armarPdf, pdfListo, fotoParaPdf } from "../../kit/js/pdf.js?v=0a4006f884";
-import { TOPES, TIPOS, ZONAS, OPERACIONES, CARACTERISTICAS, RADIO_ZONA, pesos, dolares } from "../datos.js?v=0a4006f884";
-import { NEGOCIO } from "../marca.js?v=0a4006f884";
-import { fotosDe, urlRecorrido, achicarFoto, guardarFotosEnMemoria, revisarArchivoFoto } from "../fotos.js?v=0a4006f884";
-import { abrirRecorrido } from "../visor360.js?v=0a4006f884";
+import { esc, aviso, vacio, mensajeDe, fechaCorta } from "../../kit/js/ui.js?v=0d9ff4dcfa";
+import { fechaLocalISO, diaLocalDe } from "../../kit/js/fechas.js?v=0d9ff4dcfa";
+import { mostrarMapa } from "../../kit/js/mapa.js?v=0d9ff4dcfa";
+import { armarPdf, pdfListo, fotoParaPdf } from "../../kit/js/pdf.js?v=0d9ff4dcfa";
+import { TOPES, TIPOS, ZONAS, OPERACIONES, CARACTERISTICAS, RADIO_ZONA, pesos, dolares } from "../datos.js?v=0d9ff4dcfa";
+import { NEGOCIO } from "../marca.js?v=0d9ff4dcfa";
+import { fotosDe, urlRecorrido, achicarFoto, guardarFotosEnMemoria, revisarArchivoFoto } from "../fotos.js?v=0d9ff4dcfa";
+import { abrirRecorrido } from "../visor360.js?v=0d9ff4dcfa";
 import {
     guia, activarGuias, tarjetaPropiedad, htmlFoto, medidas, hrefPropiedad, pastillaPropiedad, pastillaVisita,
     pastillaConsulta, mostrarMensaje, mayuscula, consignaPersona, activarPasos
-} from "./comunes.js?v=0a4006f884";
+} from "./comunes.js?v=0d9ff4dcfa";
 
 // Lo elegido en los filtros queda mientras se navega
 const filtro = { operacion: null, zona: null, ambientes: null, hasta: null, mapa: false };

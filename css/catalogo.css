@@ -367,7 +367,7 @@ a { color: inherit; }
 /* 9. A medida y nosotros */
 .a-medida {
     text-align: center; padding: 2.6rem 1.4rem; border-radius: calc(var(--radio) + 6px);
-    background: radial-gradient(ellipse at top, var(--verde-suave), transparent 70%), var(--superficie);
+    background: var(--superficie);
     border: 1px solid var(--borde);
 }
 .a-medida h2 { font-size: clamp(1.6rem, 5vw, 2.3rem); }
@@ -408,7 +408,7 @@ a { color: inherit; }
 .en-vivo {
     display: flex; gap: 1rem; align-items: flex-start; max-width: 44rem; margin: 1.6rem auto 0; padding: 1.1rem 1.2rem;
     border: 1px solid var(--borde); border-left: 3px solid var(--verde); border-radius: var(--radio);
-    background: radial-gradient(ellipse at left, var(--verde-suave), transparent 70%), var(--superficie);
+    background: var(--superficie);
 }
 .en-vivo .icono--grande { flex: none; width: 30px; height: 30px; }
 .en-vivo h3 { font-size: 1.05rem; }
@@ -474,7 +474,7 @@ a { color: inherit; }
 .trabajos { margin-top: 2.4rem; display: grid; gap: 1.2rem; }
 .trabajo {
     display: grid; gap: 1.4rem; padding: 1.2rem; border-radius: calc(var(--radio) + 6px);
-    background: radial-gradient(ellipse at top left, var(--verde-suave), transparent 60%), var(--superficie);
+    background: var(--superficie);
     border: 1px solid var(--borde);
 }
 .trabajo__vista {
@@ -510,6 +510,31 @@ a { color: inherit; }
 .trabajo__items li { color: var(--texto); }
 @media (min-width: 860px) {
     .trabajo { grid-template-columns: 1.35fr 1fr; align-items: center; padding: 1.8rem; gap: 2.2rem; }
+}
+
+/* 9d. Lo que ya hicimos para otros */
+.hechos { margin-top: 2.4rem; display: grid; gap: 1.2rem; }
+.hecho {
+    display: flex; flex-direction: column; gap: .5rem; padding: 1.4rem; border-radius: calc(var(--radio) + 6px);
+    background: var(--superficie);
+    border: 1px solid var(--borde);
+}
+.hecho__tipo { display: inline-flex; align-items: center; gap: .4rem; font: 500 .78rem var(--fuente-numeros); letter-spacing: .08em; text-transform: uppercase; color: var(--verde); }
+.hecho__titulo { font-size: clamp(1.3rem, 3.6vw, 1.6rem); }
+.hecho__para { color: var(--texto-suave); }
+.hecho__personas { display: inline-flex; align-items: center; gap: .45rem; align-self: flex-start; padding: .35rem .8rem; border-radius: 999px; border: 1px solid var(--borde); font-weight: 600; font-size: .9rem; }
+.hecho__celu {
+    align-self: center; width: min(100%, 210px); margin: .9rem 0 .5rem; padding: 6px; border-radius: 28px;
+    background: #050807; border: 1.5px solid #26332f; box-shadow: var(--sombra);
+}
+.hecho__celu video { display: block; width: 100%; height: auto; aspect-ratio: 390 / 844; object-fit: cover; border-radius: 22px; background: #0b1210; }
+.hecho__items { margin: .6rem 0 .4rem; }
+.hecho__items li { color: var(--texto); }
+.hecho__conexion { display: flex; align-items: flex-start; gap: .45rem; margin-top: auto; padding-top: .9rem; border-top: 1px solid var(--borde); color: var(--texto-suave); font-size: .92rem; }
+.hecho__conexion .icono { flex: none; margin-top: .15rem; color: var(--verde); }
+@media (min-width: 860px) {
+    .hechos { grid-template-columns: 1fr 1fr; }
+    .hecho { padding: 1.8rem; }
 }
 
 /* 9e. Galería: la captura grande */

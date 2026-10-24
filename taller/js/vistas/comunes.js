@@ -2,15 +2,15 @@
 // Piezas que comparten las pantallas de Sazzo Taller: el botón del recorrido y el mensaje para copiar (del kit), la
 // patente dibujada como chapa y la pastilla del estado de una orden. Todo dato que entra a HTML pasa por esc().
 // ============================================
-import { esc } from "../../kit/js/ui.js?v=dbc8745e96";
-import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=dbc8745e96";
-import { htmlConsigna, htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=dbc8745e96";
-import { fechaLocalISO } from "../../kit/js/fechas.js?v=dbc8745e96";
-import { buscarPersona, MARCA } from "../marca.js?v=dbc8745e96";
+import { esc } from "../../kit/js/ui.js?v=3118e0dd89";
+import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=3118e0dd89";
+import { htmlConsigna, htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=3118e0dd89";
+import { fechaLocalISO } from "../../kit/js/fechas.js?v=3118e0dd89";
+import { buscarPersona, MARCA } from "../marca.js?v=3118e0dd89";
 
 export const guia = (personaId, ruta, texto) => htmlGuia({ persona: buscarPersona(personaId), ruta, texto });
 export { activarGuias };
-export { mostrarMensaje } from "../../kit/js/mensaje.js?v=dbc8745e96";
+export { mostrarMensaje } from "../../kit/js/mensaje.js?v=3118e0dd89";
 
 /** La patente como una chapa (con la franja de arriba). */
 export const chapa = (texto, grande = false) => `<span class="chapa${grande ? " chapa--grande" : ""}">${esc(texto)}</span>`;

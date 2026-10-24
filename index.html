@@ -24,7 +24,7 @@
     <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
     <!-- Letras desde el propio sitio (antes Google Fonts); el script de armar las apunta a la copia compartida -->
     <link rel="stylesheet" href="letras/letras.css?v=f1eead28d9">
-    <link rel="stylesheet" href="css/catalogo.css?v=ae797bfe77">
+    <link rel="stylesheet" href="css/catalogo.css?v=cd0b07e501">
     <!-- Si hay JavaScript, las secciones arrancan ocultas y aparecen al bajar (sin JavaScript se ve todo igual) -->
     <script>
         document.documentElement.classList.add("js");
@@ -133,7 +133,7 @@
                 </svg>
             </h1>
             <p class="portada__frase">Tu negocio en el celu o en tu compu: ventas, stock y turnos, sin papeles.</p>
-            <p class="portada__texto">Sistemas, páginas web y automatizaciones a la medida de tu negocio. Tu mundo digital, en orden.</p>
+            <p class="portada__texto">Probás el sistema de tu rubro con datos de ejemplo. Si te sirve, lo armamos con tu nombre y tus colores.</p>
             <div class="portada__botones">
                 <a class="boton" href="#demos">Probá las demos <svg class="icono" aria-hidden="true"><use href="#i-flecha"/></svg></a>
                 <a class="boton boton--borde" href="#contacto" data-abrir-contacto>Escribinos</a>
@@ -226,6 +226,12 @@
             </div>
         </section>
 
+        <section class="seccion" id="ya-lo-hicimos">
+            <h2 class="seccion__titulo revelar">Negocios y equipos que ya usan Sazzo</h2>
+            <p class="seccion__bajada revelar">Dos sistemas funcionando hoy: uno sencillo y uno grande, para que veas hasta dónde llega.</p>
+            <div class="hechos" id="lista-hechos"></div>
+        </section>
+
         <!-- 4. Cómo funciona -->
         <section class="seccion" id="como-funciona">
             <h2 class="seccion__titulo revelar">Cómo funciona</h2>
@@ -238,7 +244,7 @@
 
         <!-- 3. Qué hacemos -->
         <section class="seccion" id="que-hacemos">
-            <h2 class="seccion__titulo revelar">Qué hacemos</h2>
+            <h2 class="seccion__titulo revelar">Lo que armamos para tu negocio</h2>
             <div class="servicios">
                 <article class="servicio revelar">
                     <svg class="icono icono--grande" aria-hidden="true"><use href="#i-sistema"/></svg>
@@ -297,6 +303,7 @@
             <p class="seccion__bajada revelar">Webs reales, hechas por Sazzo. Tocá las capturas para verlas más grandes.</p>
             <div class="trabajos" id="lista-trabajos"></div>
         </section>
+
 
         <!-- 4b. Lo que se adapta (el detalle del paso 3) -->
         <section class="seccion" id="lo-que-adaptamos">
@@ -493,15 +500,16 @@
                     <circle fill="var(--verde)" cx="197" cy="40" r="5"/>
                     <path class="cursor" fill="none" stroke="var(--verde)" stroke-width="7" stroke-linecap="round" d="M231 24 V56"/>
                 </svg>
-                <p class="pie__frase">Tu mundo digital, en orden.</p>
+                <p class="pie__frase">Sin papelitos ni llamadas para saber qué falta.</p>
                 <p class="pie__suave">Sistemas, páginas web y automatizaciones para negocios.</p>
             </div>
             <nav class="pie__lista" aria-label="Secciones">
                 <h2>Explorar</h2>
                 <a href="#demos">Demos</a>
-                <a href="#que-hacemos">Qué hacemos</a>
-                <a href="#paginas-web">Páginas web</a>
+                <a href="#ya-lo-hicimos">Quién ya lo usa</a>
                 <a href="#como-funciona">Cómo funciona</a>
+                <a href="#que-hacemos">Lo que armamos</a>
+                <a href="#paginas-web">Páginas web</a>
                 <a href="#por-dentro">Por dentro</a>
                 <a href="#preguntas">Preguntas frecuentes</a>
                 <a href="#contacto">Contacto</a>
@@ -516,10 +524,10 @@
         </div>
         <div class="pie__legal">
             <span>© <span data-anio>2026</span> Sazzo. Todos los derechos reservados.</span>
-            <span><a href="privacidad.html">Privacidad</a> <span class="pie__version">V 1.10</span></span>
+            <span><a href="privacidad.html">Privacidad</a> <span class="pie__version">V 1.11</span></span>
         </div>
     </footer>
 
-    <script type="module" src="js/catalogo.js?v=ae797bfe77"></script>
+    <script type="module" src="js/catalogo.js?v=cd0b07e501"></script>
 </body>
 </html>

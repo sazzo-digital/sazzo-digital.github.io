@@ -2,9 +2,9 @@
 // Pantallas del mecánico (Diego): los problemas abiertos (los que tienen que parar y los nuevos primero),
 // "Me hago cargo" y "Listo, arreglado" con los repuestos que usó (se descuentan solos).
 // ============================================
-import { esc, vacio, aviso } from "../../kit/js/ui.js?v=ec846344b5";
-import { TOPES, cantidadCon } from "../datos.js?v=ec846344b5";
-import { haceCuanto, pastillaVehiculo, pastillaUrgencia, pastillaProblema, guia, activarGuias, textoRepuestos, consignaPersona, activarPasos } from "./comunes.js?v=ec846344b5";
+import { esc, vacio, aviso } from "../../kit/js/ui.js?v=63657558c1";
+import { TOPES, cantidadCon } from "../datos.js?v=63657558c1";
+import { haceCuanto, pastillaVehiculo, pastillaUrgencia, pastillaProblema, guia, activarGuias, textoRepuestos, consignaPersona, activarPasos } from "./comunes.js?v=63657558c1";
 
 export function vistaInicioMecanico(cont, { usuario, datos, irA }) {
     const abiertos = datos.problemasAbiertos();
