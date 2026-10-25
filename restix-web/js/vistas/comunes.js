@@ -2,11 +2,11 @@
 // Piezas que comparten las pantallas de Restix Sazzo: el botón del recorrido (del kit), el ticket de una comanda
 // (cocina o barra) y "hace cuánto". Todo dato que entra a HTML pasa por esc().
 // ============================================
-import { esc } from "../../kit/js/ui.js?v=7027bb2531";
-import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=7027bb2531";
-import { MARCA, buscarPersona } from "../marca.js?v=7027bb2531";
+import { esc } from "../../kit/js/ui.js?v=854c927c5a";
+import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=854c927c5a";
+import { MARCA, buscarPersona } from "../marca.js?v=854c927c5a";
 
-import { htmlConsigna, htmlConsignaFinal } from "../../kit/js/consigna.js?v=7027bb2531";
+import { htmlConsigna, htmlConsignaFinal } from "../../kit/js/consigna.js?v=854c927c5a";
 
 const CONSIGNAS = {
     moza: [
@@ -45,6 +45,6 @@ export function ticket(c, { titulo = c.destino === "cocina" ? "Cocina" : "Barra"
     return `
         <article class="ticket ticket--${esc(c.destino)}">
             <header><b><i class="ti ${c.destino === "cocina" ? "ti-tools-kitchen-2" : "ti-glass-full"}" aria-hidden="true"></i> ${esc(titulo)}</b><span>${esc(c.mesa)} · ${esc(hora(c.creadaEn))}</span></header>
-            <ul>${c.items.map((i) => `<li><b>${esc(i.cantidad)}</b> ${esc(i.nombre)}</li>`).join("")}</ul>
+            <ul>${c.items.map((i) => `<li${i.anulacion ? ' class="renglon-anulado"' : ""}><b>${esc(i.cantidad)}</b> ${esc(i.nombre)}${i.anulacion ? `<small>Anulado · ${esc(i.anulacion.motivo)} · ${esc(i.anulacion.por)} · ${esc(hora(i.anulacion.en))}</small>` : ""}</li>`).join("")}</ul>
         </article>`;
 }

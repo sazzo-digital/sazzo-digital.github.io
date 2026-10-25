@@ -498,7 +498,7 @@
     $("[data-tomar]").addEventListener("click", (e) => accion("/panel/tomar", e.currentTarget));
     $("[data-devolver]").addEventListener("click", (e) => accion("/panel/devolver", e.currentTarget));
     $("[data-reiniciar]").addEventListener("click", async (e) => {
-        if (!abierta || !confirm(`¿Reiniciar la charla con ${nombre(abierta)}?\n\nSe borra toda la charla y sus datos. No se puede deshacer.`)) return;
+        if (!abierta || !confirm(`¿Eliminar la charla con ${nombre(abierta)}?\n\nSe borra toda la charla y sus datos. No se puede deshacer.`)) return;
         const boton = e.currentTarget;
         const id = abierta;
         boton.disabled = true;
@@ -513,7 +513,7 @@
             cerrar();
             await leerLista();
         } catch (error) {
-            if (error.message !== "clave") avisar("No se pudo reiniciar. Probá de nuevo en un momento.");
+            if (error.message !== "clave") avisar("No se pudo eliminar. Probá de nuevo en un momento.");
         }
         boton.disabled = false;
     });

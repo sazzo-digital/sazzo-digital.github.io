@@ -1,15 +1,15 @@
-import { pintarConsigna } from "./comunes.js?v=638b4b3f1c";
+import { pintarConsigna } from "./comunes.js?v=d5f06e834f";
 // ============================================
 // Caja del día: ventas de hoy por medio de pago, fiados anotados y cobrados, lo más vendido, las últimas ventas y
 // cuánto tiene que haber en el cajón. "Cerrar caja": contás la plata y te dice si sobra o falta.
 // El dueño ve además los últimos 7 días.
 // ============================================
-import { esc, aviso, fechaCorta } from "../../kit/js/ui.js?v=638b4b3f1c";
-import { diaLocalDe } from "../../kit/js/fechas.js?v=638b4b3f1c";
-import { bajarExcel } from "../../kit/js/archivos.js?v=638b4b3f1c";
-import { FONDO_CAJA, MEDIOS, TOPES, pesos } from "../datos.js?v=638b4b3f1c";
-import { textoMedio } from "../../kit/js/pagos.js?v=638b4b3f1c";
-import { hora } from "./comunes.js?v=638b4b3f1c";
+import { esc, aviso, fechaCorta } from "../../kit/js/ui.js?v=d5f06e834f";
+import { diaLocalDe } from "../../kit/js/fechas.js?v=d5f06e834f";
+import { bajarExcel } from "../../kit/js/archivos.js?v=d5f06e834f";
+import { FONDO_CAJA, MEDIOS, TOPES, pesos } from "../datos.js?v=d5f06e834f";
+import { textoMedio } from "../../kit/js/pagos.js?v=d5f06e834f";
+import { hora } from "./comunes.js?v=d5f06e834f";
 
 const DIAS = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
 const nombreDia = (dia) => {

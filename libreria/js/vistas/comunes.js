@@ -3,12 +3,12 @@
 // de estado de un pedido, los pasos de una lista (pedida → separada → entregada) y "hace cuánto".
 // Todo dato que entra a HTML pasa por esc().
 // ============================================
-import { esc } from "../../kit/js/ui.js?v=58e04db4d3";
-import { diaLocalDe, fechaLocalISO } from "../../kit/js/fechas.js?v=58e04db4d3";
-import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=58e04db4d3";
-import { ESTADOS_PEDIDO, pesos } from "../datos.js?v=58e04db4d3";
-import { MARCA, buscarPersona } from "../marca.js?v=58e04db4d3";
-import { htmlConsigna, htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=58e04db4d3";
+import { esc } from "../../kit/js/ui.js?v=7b24b8223b";
+import { diaLocalDe, fechaLocalISO } from "../../kit/js/fechas.js?v=7b24b8223b";
+import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=7b24b8223b";
+import { ESTADOS_PEDIDO, pesos } from "../datos.js?v=7b24b8223b";
+import { MARCA, buscarPersona } from "../marca.js?v=7b24b8223b";
+import { htmlConsigna, htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=7b24b8223b";
 
 const CONSIGNAS = {
     duena: [

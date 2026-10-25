@@ -3,18 +3,18 @@
 // Lara (moza) ve el salón, la cocina (solo mirar) y la caja; Beto, la cocina; Flor (cliente), la carta del QR.
 // irA() cambia de persona sin pasar por "Probala como…" (botón del recorrido: "Mirá lo que le llega a la cocina →").
 // ============================================
-import { $, conFundido } from "../kit/js/ui.js?v=7027bb2531";
-import { iniciarDemo } from "../kit/js/arranque.js?v=7027bb2531";
-import { vistaIngreso } from "../kit/js/ingreso.js?v=7027bb2531";
-import { pintarMarco } from "../kit/js/marco.js?v=7027bb2531";
-import { mostrarRuta } from "../kit/js/rutas.js?v=7027bb2531";
-import { vistaAcerca } from "../kit/js/acerca.js?v=7027bb2531";
-import { MARCA, PERSONAS, DETALLE, buscarPersona } from "./marca.js?v=7027bb2531";
-import { aparte } from "../kit/js/aparte.js?v=7027bb2531";
-import { leerSesionGuardada } from "../kit/js/guardado.js?v=7027bb2531";
+import { $, conFundido } from "../kit/js/ui.js?v=854c927c5a";
+import { iniciarDemo } from "../kit/js/arranque.js?v=854c927c5a";
+import { vistaIngreso } from "../kit/js/ingreso.js?v=854c927c5a";
+import { pintarMarco } from "../kit/js/marco.js?v=854c927c5a";
+import { mostrarRuta, soltarPantalla } from "../kit/js/rutas.js?v=854c927c5a";
+import { vistaAcerca } from "../kit/js/acerca.js?v=854c927c5a";
+import { MARCA, PERSONAS, DETALLE, buscarPersona } from "./marca.js?v=854c927c5a";
+import { aparte } from "../kit/js/aparte.js?v=854c927c5a";
+import { leerSesionGuardada } from "../kit/js/guardado.js?v=854c927c5a";
 
 // Los datos de ejemplo y las pantallas se bajan aparte (al terminar de cargar): "Probala como…" aparece sin esperarlos
-const pantallas = aparte(() => import("./pantallas.js?v=7027bb2531"));
+const pantallas = aparte(() => import("./pantallas.js?v=854c927c5a"));
 const { vistaInicio, vistaMesa, vistaCobro, vistaCaja, vistaCocina, avisosDe } = pantallas.funciones;
 
 iniciarDemo(MARCA);
@@ -48,6 +48,7 @@ const RUTAS = [
 const mostrar = () => mostrarRuta({ rutas: RUTAS, contenido, usuario });
 
 function ingresar() {
+    soltarPantalla();
     usuario = null;
     contenido = null;
     guardarSesion(null);
@@ -66,6 +67,7 @@ function ingresar() {
 async function entrar(persona) {
     pantallas.ya(); // al elegir persona (o si ya había alguien adentro) se piden en el momento
     await listos;
+    datos.guardado.olvidarCache();
     usuario = persona;
     contenido = pintarMarco(app, {
         avisos: () => avisosDe(datos), // avisos entre roles (vistas/avisos.js, kit/avisos.js)
@@ -93,14 +95,15 @@ function irA(personaId, ruta = "/inicio") {
 
 // Cada cambio de pantalla, con un fundido corto donde el navegador lo permite (kit/ui.js → conFundido)
 window.addEventListener("hashchange", () => {
+    datos?.guardado.olvidarCache();
     if (contenido) conFundido(mostrar);
 });
 
 // Si otra pestaña cambió los datos (ej: Lara tomando pedidos en el celu y la cocina con su pantalla en la compu)
 window.addEventListener("storage", (e) => {
-    if (datos && e.key === datos.guardado.claves.datos && contenido) {
+    if (datos && e.key === datos.guardado.claves.datos) {
         datos.guardado.olvidarCache();
-        mostrar();
+        if (contenido) mostrar();
     }
 });
 

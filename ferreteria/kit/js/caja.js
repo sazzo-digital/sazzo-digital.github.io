@@ -1,7 +1,7 @@
-import { esc, aviso, sinMovimiento } from "./ui.js?v=34b83b32d4";
-import { puedeEscanear, escanearSeguido } from "./escaner.js?v=34b83b32d4";
-import { pip, vibrar, htmlBotonSonido, activarBotonSonido, htmlCopiable, activarCopiables } from "./celular.js?v=34b83b32d4";
-import { DIVIDIDO, revisarPagos } from "./pagos.js?v=34b83b32d4";
+import { esc, aviso, sinMovimiento } from "./ui.js?v=bcfbd5ba45";
+import { puedeEscanear, escanearSeguido } from "./escaner.js?v=bcfbd5ba45";
+import { pip, vibrar, htmlBotonSonido, activarBotonSonido, htmlCopiable, activarCopiables } from "./celular.js?v=bcfbd5ba45";
+import { DIVIDIDO, revisarPagos } from "./pagos.js?v=bcfbd5ba45";
 
 export const TOPE_RENGLONES = 30;
 export const TOPE_CANTIDAD = 99;

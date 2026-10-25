@@ -21,8 +21,8 @@
 //   minutos"). Mientras la usa (cada cambio que guarda), no se renuevan. Se avisa con un cartelito.
 // ============================================
 
-import { aviso } from "./ui.js?v=5050d1dc54";
-import { olvidarAvisos } from "./avisos.js?v=5050d1dc54";
+import { aviso, esc } from "./ui.js?v=6936e4798d";
+import { olvidarAvisos } from "./avisos.js?v=6936e4798d";
 
 /** Nombres compartidos entre el catálogo y todas las demos (no pueden ser el prefijo de una demo). */
 export const COMPARTIDAS = ["sazzo-origen", "sazzo-equipo", "sazzo-tema", "sazzo-yo"];
@@ -38,7 +38,20 @@ export const EVENTO_REINICIO = "sazzo-reinicio";
 export const MENSAJE_RENOVADOS ="Los datos de ejemplo se renovaron para que estén al día.";
 export const SIN_USO_RENUEVA = 3 * 60 * 60 * 1000; // 3 horas sin guardar nada: al volver, datos nuevos
 
+export const PREGUNTA_TURNO = "Quedó un turno abierto de hace {tiempo}: ¿seguís con ese turno o empezás de cero?";
+
 const claveSesion = (prefijo) => `${prefijo}-sesion`;
+
+function haceCuanto(milisegundos) {
+    const minutos = Math.max(1, Math.floor(milisegundos / 60000));
+    const horas = Math.floor(minutos / 60);
+    const dias = Math.floor(horas / 24);
+    const en = (n, uno, varios) => `${n} ${n === 1 ? uno : varios}`;
+    if (dias >= 60) return "mucho tiempo";
+    if (dias >= 1) return en(dias, "día", "días");
+    if (horas >= 1) return en(horas, "hora", "horas");
+    return en(minutos, "minuto", "minutos");
+}
 
 /**
  * Quién quedó adentro la última vez (el id de la persona), sin armar los datos: el arranque lo usa para mostrar
@@ -63,7 +76,7 @@ export function olvidarDemo(prefijo) {
     }
 }
 
-export function crearGuardado({ prefijo, version, semilla } = {}) {
+export function crearGuardado({ prefijo, version, semilla, turnoAbierto, preguntaAlVolver } = {}) {
     if (!/^sazzo-[a-z0-9]+(-[a-z0-9]+)*$/.test(prefijo ?? "")) {
         throw new Error(`El prefijo de la demo tiene que ser "sazzo-" y su nombre en minúsculas (ej: "sazzo-kiosco"). Llegó: ${JSON.stringify(prefijo)}.`);
     }
@@ -76,8 +89,60 @@ export function crearGuardado({ prefijo, version, semilla } = {}) {
     let sesionEnMemoria = null; // por si el navegador no deja usar localStorage (ventana privada, permisos)
     let yaAviso = false; // el aviso de "no se pudo guardar" sale una sola vez (hasta "Empezar de cero")
 
+    let preguntando = false;
+    const pregunta = typeof preguntaAlVolver === "string" && preguntaAlVolver.trim() ? preguntaAlVolver : PREGUNTA_TURNO;
+
+    function hayTurnoAbierto(guardados) {
+        if (typeof turnoAbierto !== "function") return false;
+        try {
+            return turnoAbierto(copia(guardados)) === true;
+        } catch {
+            return false;
+        }
+    }
+
+    function preguntarPorElTurno(sinUso) {
+        if (preguntando || typeof document === "undefined" || !document.body) return;
+        preguntando = true;
+        const hoja = document.createElement("dialog");
+        hoja.className = "hoja turno-abierto";
+        hoja.setAttribute("aria-labelledby", "turno-abierto-titulo");
+        hoja.innerHTML = `
+            <div class="hoja__caja">
+                <div class="hoja__titulos">
+                    <h2 id="turno-abierto-titulo"><i class="ti ti-info-circle" aria-hidden="true"></i> Turno abierto</h2>
+                </div>
+                <p>${esc(pregunta.replaceAll("{tiempo}", haceCuanto(sinUso)))}</p>
+                <button class="boton boton--ancho" type="button" data-seguir>Seguir con el turno</button>
+                <button class="boton boton--secundario boton--ancho" type="button" data-cero>Empezar de cero</button>
+            </div>`;
+        const cerrar = () => {
+            preguntando = false;
+            if (hoja.open) hoja.close();
+            hoja.remove();
+        };
+        hoja.addEventListener("cancel", (e) => e.preventDefault());
+        hoja.addEventListener("close", () => {
+            if (preguntando && hoja.isConnected) hoja.showModal();
+        });
+        hoja.querySelector("[data-seguir]").addEventListener("click", () => {
+            cerrar();
+            if (cache) {
+                cache.armadoEl = hoyLocal();
+                persistir();
+            }
+        });
+        hoja.querySelector("[data-cero]").addEventListener("click", () => {
+            cerrar();
+            reiniciar();
+            dispatchEvent(new Event("hashchange"));
+        });
+        document.body.append(hoja);
+        hoja.showModal();
+    }
+
     function persistir() {
-        if (cache) cache.usadoEl = Date.now(); // la última vez que se usó (ver SIN_USO_RENUEVA)
+        if (cache && !preguntando) cache.usadoEl = Date.now(); // la última vez que se usó (ver SIN_USO_RENUEVA)
         try {
             localStorage.setItem(claves.datos, JSON.stringify(cache));
             return true;
@@ -94,15 +159,23 @@ export function crearGuardado({ prefijo, version, semilla } = {}) {
     function db() {
         if (cache) return cache;
         let deOtroDia = false;
+        let turno = null;
         try {
             const guardados = JSON.parse(localStorage.getItem(claves.datos));
             if (guardados?.version === version) {
                 const sinUso = Date.now() - Number(guardados.usadoEl || 0);
                 if (guardados.armadoEl === hoyLocal() && sinUso >= 0 && sinUso < SIN_USO_RENUEVA) return (cache = guardados);
-                deOtroDia = true;
+                if (hayTurnoAbierto(guardados)) turno = { guardados, sinUso };
+                else deOtroDia = true;
             }
         } catch {
             // datos rotos o sin acceso: se regeneran
+        }
+        if (turno) {
+            cache = turno.guardados;
+            if (turno.sinUso >= SIN_USO_RENUEVA) preguntarPorElTurno(turno.sinUso);
+            else cache.armadoEl = hoyLocal();
+            return cache;
         }
         cache = { ...semilla(), version, armadoEl: hoyLocal(), usadoEl: Date.now() };
         olvidarAvisos(prefijo); // datos nuevos: los avisos entre roles arrancan de cero (kit/avisos.js)

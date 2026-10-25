@@ -24,7 +24,7 @@
     <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
     <!-- Letras desde el propio sitio (antes Google Fonts); el script de armar las apunta a la copia compartida -->
     <link rel="stylesheet" href="letras/letras.css?v=f1eead28d9">
-    <link rel="stylesheet" href="css/catalogo.css?v=cd0b07e501">
+    <link rel="stylesheet" href="css/catalogo.css?v=b2a6bc339d">
     <!-- Si hay JavaScript, las secciones arrancan ocultas y aparecen al bajar (sin JavaScript se ve todo igual) -->
     <script>
         document.documentElement.classList.add("js");
@@ -488,18 +488,20 @@
     <footer class="pie">
         <div class="pie__columnas">
             <div class="pie__marca">
-                <svg class="pie__logo" viewBox="0 12 240 56" aria-label="sazzo" role="img">
-                    <g fill="none" stroke-width="10" stroke-linecap="round" stroke-linejoin="round">
-                        <path stroke="var(--letras)" d="M34.26 28.75 A13 7.5 0 1 0 23 40 A13 7.5 0 1 1 11.74 51.25"/>
-                        <circle stroke="var(--letras)" cx="67" cy="40" r="15.4"/>
-                        <path stroke="var(--letras)" d="M82.4 25 V55"/>
-                        <path stroke="var(--verde)" d="M98 25 H124 L98 55 H124"/>
-                        <path stroke="var(--verde)" d="M140 25 H166 L140 55 H166"/>
-                        <circle stroke="var(--letras)" cx="197" cy="40" r="15.4"/>
-                    </g>
-                    <circle fill="var(--verde)" cx="197" cy="40" r="5"/>
-                    <path class="cursor" fill="none" stroke="var(--verde)" stroke-width="7" stroke-linecap="round" d="M231 24 V56"/>
-                </svg>
+                <a class="pie__logo-enlace" href="#inicio" aria-label="Volver arriba">
+                    <svg class="pie__logo" viewBox="0 12 240 56" aria-label="sazzo" role="img">
+                        <g fill="none" stroke-width="10" stroke-linecap="round" stroke-linejoin="round">
+                            <path stroke="var(--letras)" d="M34.26 28.75 A13 7.5 0 1 0 23 40 A13 7.5 0 1 1 11.74 51.25"/>
+                            <circle stroke="var(--letras)" cx="67" cy="40" r="15.4"/>
+                            <path stroke="var(--letras)" d="M82.4 25 V55"/>
+                            <path stroke="var(--verde)" d="M98 25 H124 L98 55 H124"/>
+                            <path stroke="var(--verde)" d="M140 25 H166 L140 55 H166"/>
+                            <circle stroke="var(--letras)" cx="197" cy="40" r="15.4"/>
+                        </g>
+                        <circle fill="var(--verde)" cx="197" cy="40" r="5"/>
+                        <path class="cursor" fill="none" stroke="var(--verde)" stroke-width="7" stroke-linecap="round" d="M231 24 V56"/>
+                    </svg>
+                </a>
                 <p class="pie__frase">Sin papelitos ni llamadas para saber qué falta.</p>
                 <p class="pie__suave">Sistemas, páginas web y automatizaciones para negocios.</p>
             </div>
@@ -524,10 +526,10 @@
         </div>
         <div class="pie__legal">
             <span>© <span data-anio>2026</span> Sazzo. Todos los derechos reservados.</span>
-            <span><a href="privacidad.html">Privacidad</a> <span class="pie__version">V 1.11</span></span>
+            <span><a href="privacidad.html">Privacidad</a> <span class="pie__version">V 1.12</span></span>
         </div>
     </footer>
 
-    <script type="module" src="js/catalogo.js?v=cd0b07e501"></script>
+    <script type="module" src="js/catalogo.js?v=b2a6bc339d"></script>
 </body>
 </html>

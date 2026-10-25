@@ -594,6 +594,8 @@ a { color: inherit; }
 .pie h2 { margin: 0 0 .7rem; font-size: .78rem; letter-spacing: .08em; text-transform: uppercase; color: var(--texto-suave); }
 .pie .icono { width: 1.05rem; height: 1.05rem; vertical-align: -.2em; }
 .pie__logo { width: 110px; height: auto; display: block; overflow: visible; }
+.pie__logo-enlace { display: block; width: fit-content; border-radius: 6px; }
+.pie__logo-enlace:focus-visible { outline: 3px solid var(--verde); outline-offset: 4px; }
 .pie__columnas { max-width: var(--ancho); margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 1.6rem 1rem; }
 .pie__marca { grid-column: 1 / -1; }
 .pie__marca, .pie__lista { display: grid; gap: .5rem; align-content: start; }

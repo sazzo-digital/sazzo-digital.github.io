@@ -1,12 +1,12 @@
 // Los datos de ejemplo y todas las pantallas de la demo: app.js los baja aparte (kit/aparte.js), así
 // "Probala como…" aparece sin esperarlos.
-export { crearDatos } from "./datos.js?v=40d34d8cff";
-export { vistaInicio } from "./vistas/inicio.js?v=40d34d8cff";
-export { vistaFacturar, vistaNuevaFactura, vistaComprobante } from "./vistas/facturar.js?v=40d34d8cff";
-export { vistaCompras, vistaNuevaCompra } from "./vistas/compras.js?v=40d34d8cff";
-export { vistaIva } from "./vistas/iva.js?v=40d34d8cff";
-export { vistaCuentas, vistaFicha } from "./vistas/cuentas.js?v=40d34d8cff";
-export { vistaContabilidad } from "./vistas/contabilidad.js?v=40d34d8cff";
-export { vistaEmpresa } from "./vistas/empresa.js?v=40d34d8cff";
-export { vistaMas } from "./vistas/mas.js?v=40d34d8cff";
-export { avisosDe } from "./vistas/avisos.js?v=40d34d8cff";
+export { crearDatos } from "./datos.js?v=e73a01d881";
+export { vistaInicio } from "./vistas/inicio.js?v=e73a01d881";
+export { vistaFacturar, vistaNuevaFactura, vistaComprobante } from "./vistas/facturar.js?v=e73a01d881";
+export { vistaCompras, vistaNuevaCompra } from "./vistas/compras.js?v=e73a01d881";
+export { vistaIva } from "./vistas/iva.js?v=e73a01d881";
+export { vistaCuentas, vistaFicha } from "./vistas/cuentas.js?v=e73a01d881";
+export { vistaContabilidad } from "./vistas/contabilidad.js?v=e73a01d881";
+export { vistaEmpresa } from "./vistas/empresa.js?v=e73a01d881";
+export { vistaMas } from "./vistas/mas.js?v=e73a01d881";
+export { avisosDe } from "./vistas/avisos.js?v=e73a01d881";

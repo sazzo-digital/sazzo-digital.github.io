@@ -6,13 +6,13 @@
 // Reglas del kit: exigir() en lo que modifica, topes en todo lo que se carga y se devuelven copias.
 // Si cambia la forma de los datos, subir VERSION_DATOS (se regeneran solos).
 // ============================================
-import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=7027bb2531";
-import { enteroHasta } from "../kit/js/topes.js?v=7027bb2531";
-import { fechaLocalISO, diaLocalDe } from "../kit/js/fechas.js?v=7027bb2531";
-import { MARCA } from "./marca.js?v=7027bb2531";
-import { MEDIOS_PAGO } from "../kit/js/pagos.js?v=7027bb2531";
+import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=854c927c5a";
+import { enteroHasta, sinPasarse } from "../kit/js/topes.js?v=854c927c5a";
+import { fechaLocalISO } from "../kit/js/fechas.js?v=854c927c5a";
+import { MARCA, PERSONAS } from "./marca.js?v=854c927c5a";
+import { MEDIOS_PAGO } from "../kit/js/pagos.js?v=854c927c5a";
 
-export const VERSION_DATOS = 4;
+export const VERSION_DATOS = 9;
 export const PASOS_CARTA = ["pizzas", "hamburguesa-3d", "minutas"];
 
 export const TOPES = {
@@ -22,8 +22,14 @@ export const TOPES = {
     renglones: 60,
     partes: 20, // en cuántas partes se divide la cuenta
     monto: 10_000_000,
-    cobros: 500
+    cobros: 500,
+    movimientos: 100,
+    motivo: 60,
+    anulaciones: 100
 };
+
+export const MEDIOS_PERSONAL = { efectivo: "Efectivo", transferencia: "Transferencia" };
+export const MOTIVOS_PERSONAL = ["Sueldo del día", "Adelanto"];
 
 export const FONDO_CAJA = 30_000;
 export const NUEVA_MIN = 5; // una comanda de hace menos de 5 minutos se ve "Nueva" en la cocina
@@ -114,12 +120,12 @@ export function semilla() {
     function abrir(mesaId, personas, hace, pedidos, { cocinaLista = true, estado = "abierta" } = {}) {
         const mesa = mesas.find((m) => m.id === mesaId);
         const renglones = pedidos.map(([id, cantidad]) => ({ id: `rg-${mesaId}-${id}`, itemId: id, nombre: item(id).nombre, precio: item(id).precio, cantidad, enviado: true }));
-        mesa.abierta = { abiertaEn: haceMin(hace), personas, moza: "Lara", estado, renglones };
+        mesa.abierta = { id: `a-${mesaId}`, abiertaEn: haceMin(hace), personas, moza: "Lara", estado, renglones, heredada: false };
         for (const destino of ["cocina", "barra"]) {
-            const items = renglones.filter((r) => item(r.itemId).destino === destino).map((r) => ({ nombre: r.nombre, cantidad: r.cantidad }));
+            const items = renglones.filter((r) => item(r.itemId).destino === destino).map((r) => ({ renglonId: r.id, nombre: r.nombre, cantidad: r.cantidad }));
             if (!items.length) continue;
             const lista = destino === "barra" || cocinaLista;
-            comandas.push({ id: `c-${++n}`, mesaId, mesa: mesa.nombre, destino, items, creadaEn: haceMin(hace - 2), estado: lista ? "lista" : "pendiente", listaEn: lista ? haceMin(Math.max(0, hace - 15)) : null });
+            comandas.push({ id: `c-${++n}`, aperturaId: mesa.abierta.id, mesaId, mesa: mesa.nombre, destino, items, creadaEn: haceMin(hace - 2), estado: lista ? "lista" : "pendiente", listaEn: lista ? haceMin(Math.max(0, hace - 15)) : null });
         }
     }
     abrir("m2", 4, 50, [["napo", 1], ["muzza", 1], ["pinta-rubia", 3], ["coca", 1]]);
@@ -146,21 +152,32 @@ export function semilla() {
     // El de Pedidos Ya que ya se entregó también suma a la caja
     cobros.push({ id: "co-py-2", mesa: "Pedido Ya #4807", partes: [{ monto: pedidosYa[1].total, medio: "pedidosya" }], total: pedidosYa[1].total, en: haceMin(90), por: "Lara" });
 
-    return { mesas, comandas, cobros, pedidosYa, cierres: [], cartaVista: [], cocinaTVVista: false };
+    return { mesas, comandas, cobros, pedidosYa, movimientos: [], anulaciones: [], cierres: [], cartaVista: [], cocinaTVVista: false };
 }
 
 // ---------- Funciones de datos ----------
 
+const desdeCierre = (lista, cierre, campo) => lista.filter((x) => !cierre || x.en > cierre.hasta || (x.en === cierre.hasta && !cierre[campo].includes(x.id)));
+
+export function turnoAbierto(d) {
+    const cierre = d.cierres.at(-1);
+    return d.mesas.some((m) => !!m.abierta) || d.pedidosYa.some((p) => p.estado !== "entregado") ||
+        desdeCierre(d.cobros, cierre, "cobrosEnHasta").length > 0 ||
+        desdeCierre(d.movimientos, cierre, "movimientosEnHasta").length > 0 ||
+        desdeCierre(d.anulaciones, cierre, "anulacionesEnHasta").length > 0;
+}
+
 export function crearDatos(prefijo = MARCA.prefijo) {
-    const guardado = crearGuardado({ prefijo, version: VERSION_DATOS, semilla });
+    const guardado = crearGuardado({ prefijo, version: VERSION_DATOS, semilla, turnoAbierto,
+        preguntaAlVolver: "Quedó un turno abierto de hace {tiempo}. ¿Seguís con ese turno o empezás de cero?" });
     const db = () => guardado.db();
     const esMoza = (u) => u?.rol === "moza";
     const esCocina = (u) => u?.rol === "cocina";
-    const totalDe = (renglones) => renglones.reduce((t, r) => t + r.precio * r.cantidad, 0);
+    const totalDe = (renglones) => renglones.filter((r) => !r.anulacion).reduce((t, r) => t + r.precio * r.cantidad, 0);
 
     function armarMesa(m) {
         const a = m.abierta;
-        const pendientes = db().comandas.filter((c) => c.mesaId === m.id && c.destino === "cocina" && c.estado === "pendiente" && a && c.creadaEn >= a.abiertaEn).length;
+        const pendientes = db().comandas.filter((c) => c.mesaId === m.id && c.destino === "cocina" && c.estado === "pendiente" && c.items.some((i) => !i.anulacion) && a && c.aperturaId === a.id).length;
         return {
             ...copia(m), sectorTexto: SECTORES[m.sector],
             estado: a ? a.estado : "libre",
@@ -168,15 +185,23 @@ export function crearDatos(prefijo = MARCA.prefijo) {
             minutos: a ? minutos(a.abiertaEn) : 0,
             sinMandar: a ? a.renglones.filter((r) => !r.enviado).length : 0,
             cocinaPendiente: pendientes,
-            comidaLista: !!a && !pendientes && db().comandas.some((c) => c.mesaId === m.id && c.destino === "cocina" && c.estado === "lista" && c.creadaEn >= a.abiertaEn)
+            comandas: a ? db().comandas.filter((c) => c.aperturaId === a.id).map(copia) : [],
+            comidaLista: !!a && !a.comidaServida && !pendientes && db().comandas.some((c) => c.mesaId === m.id && c.destino === "cocina" && c.estado === "lista" && c.items.some((i) => !i.anulacion) && c.aperturaId === a.id)
         };
     }
 
     function pasos(usuario) {
         if (usuario?.rol === "cliente") return PASOS_CARTA.map((id) => db().cartaVista.includes(id));
         if (esMoza(usuario)) {
-            const cobrada = db().cobros.some((c) => c.mesa === "Mesa 4");
-            return [!!mesa("m4").abierta || cobrada, db().comandas.some((c) => c.mesaId === "m4") || cobrada, cobrada];
+            const cobros = db().cobros.filter((c) => c.mesa === "Mesa 4");
+            const aperturas = new Map();
+            for (const c of db().comandas.filter((c) => c.mesaId === "m4" && c.estado !== "anulada")) {
+                const cantidades = aperturas.get(c.aperturaId) ?? {};
+                for (const i of c.items.filter((i) => !i.anulacion)) cantidades[i.nombre] = (cantidades[i.nombre] ?? 0) + i.cantidad;
+                aperturas.set(c.aperturaId, cantidades);
+            }
+            const pedido = [...aperturas.values()].some((cantidades) => [["muzza", 2], ["fernet", 1], ["coca", 2]].every(([id, n]) => (cantidades[item(id).nombre] ?? 0) >= n));
+            return [!!mesa("m4").abierta || cobros.length > 0, pedido, cobros.some((c) => c.modo === "iguales" && c.partes.length >= 2)];
         }
         if (esCocina(usuario)) return ["m5", "m9"].map((id) => db().comandas.some((c) => c.mesaId === id && c.destino === "cocina" && c.estado === "lista")).concat(!!db().cocinaTVVista);
         exigir(false, "Esta serie todavía no está disponible para esa persona.");
@@ -218,7 +243,7 @@ export function crearDatos(prefijo = MARCA.prefijo) {
         const m = buscar(db().mesas, mesaId, "Esa mesa no existe.");
         exigir(!m.abierta, `${m.nombre} ya está abierta.`);
         const n = enteroHasta(personas, "Las personas", { desde: 1, hasta: TOPES.personas });
-        m.abierta = { abiertaEn: ahora(), personas: n, moza: usuario.nombre, estado: "abierta", renglones: [] };
+        m.abierta = { id: nuevoId("a"), abiertaEn: ahora(), personas: n, moza: usuario.nombre, estado: "abierta", renglones: [], heredada: false };
         guardado.persistir();
         return armarMesa(m);
     }
@@ -230,17 +255,37 @@ export function crearDatos(prefijo = MARCA.prefijo) {
         return m;
     }
 
+    function anularMesa(usuario, mesaId, motivo) {
+        const m = mesaAbierta(usuario, mesaId);
+        exigir(typeof motivo === "string" && motivo.trim().length > 0, "Escribí un motivo para anular la mesa.");
+        const texto = sinPasarse(motivo, TOPES.motivo, "el motivo");
+        exigir(caja(usuario).anulaciones.length < TOPES.anulaciones, `Ya hay ${TOPES.anulaciones} mesas anuladas en este turno.`);
+        const anulacion = { id: nuevoId("an"), mesaId, mesa: m.nombre, abierta: copia(m.abierta), total: totalDe(m.abierta.renglones), motivo: texto, por: usuario.nombre, en: ahora() };
+        for (const c of db().comandas.filter((c) => c.aperturaId === m.abierta.id && c.estado === "pendiente")) {
+            c.estado = "anulada";
+            c.anuladaEn = anulacion.en;
+            c.anuladaPor = usuario.nombre;
+            c.motivo = texto;
+        }
+        db().anulaciones.push(anulacion);
+        m.abierta = null;
+        guardado.persistir();
+        return copia(anulacion);
+    }
+
     /** Sumar a la mesa (si ya hay de ese producto sin mandar, se suma la cantidad). */
     function agregar(usuario, mesaId, itemId, cantidad = 1) {
         const m = mesaAbierta(usuario, mesaId);
         const it = item(itemId);
         exigir(it, "Ese producto no está en la carta.");
         const n = enteroHasta(cantidad, "La cantidad", { desde: 1, hasta: TOPES.cantidad });
+        const cantidadMesa = m.abierta.renglones.filter((r) => r.itemId === itemId && !r.anulacion).reduce((t, r) => t + r.cantidad, 0);
+        enteroHasta(cantidadMesa + n, `La cantidad de ${it.nombre}`, { desde: 1, hasta: TOPES.porRenglon });
         const ya = m.abierta.renglones.find((r) => r.itemId === itemId && !r.enviado);
         if (ya) {
             ya.cantidad = enteroHasta(ya.cantidad + n, `La cantidad de ${it.nombre}`, { desde: 1, hasta: TOPES.porRenglon });
         } else {
-            exigir(m.abierta.renglones.length < TOPES.renglones, `Una mesa puede tener hasta ${TOPES.renglones} renglones.`);
+            exigir(m.abierta.renglones.length < TOPES.renglones, `Llegaste a ${TOPES.renglones} renglones en esta mesa. Mandá lo pendiente y cobrá esta cuenta antes de abrir otro pedido.`);
             m.abierta.renglones.push({ id: nuevoId("rg"), itemId, nombre: it.nombre, precio: it.precio, cantidad: n, enviado: false });
         }
         if (m.abierta.estado === "cobrando") m.abierta.estado = "abierta";
@@ -259,6 +304,27 @@ export function crearDatos(prefijo = MARCA.prefijo) {
         return armarMesa(m);
     }
 
+    function anularRenglon(usuario, mesaId, renglonId, motivo) {
+        const m = mesaAbierta(usuario, mesaId);
+        const r = buscar(m.abierta.renglones, renglonId, "Eso ya no está en la mesa.");
+        exigir(r.enviado && !r.anulacion, "Solo podés anular un renglón mandado que no está anulado.");
+        exigir(typeof motivo === "string" && motivo.trim().length > 0, "Escribí un motivo para anular el renglón.");
+        const texto = sinPasarse(motivo, TOPES.motivo, "el motivo");
+        const anulacion = { motivo: texto, por: usuario.nombre, en: ahora() };
+        const c = db().comandas.find((c) => c.aperturaId === m.abierta.id && c.items.some((i) => i.renglonId === r.id));
+        exigir(c, "No se encontró la comanda de ese renglón.");
+        r.anulacion = anulacion;
+        c.items.find((i) => i.renglonId === r.id).anulacion = copia(anulacion);
+        if (c.estado === "pendiente" && c.items.every((i) => i.anulacion)) {
+            c.estado = "anulada";
+            c.anuladaEn = anulacion.en;
+            c.anuladaPor = anulacion.por;
+            c.motivo = texto;
+        }
+        guardado.persistir();
+        return armarMesa(m);
+    }
+
     /** Enviar: lo que no se mandó se separa solo en una comanda para la cocina y otra para la barra. */
     function enviar(usuario, mesaId) {
         const m = mesaAbierta(usuario, mesaId);
@@ -266,41 +332,44 @@ export function crearDatos(prefijo = MARCA.prefijo) {
         exigir(nuevos.length, "No hay nada nuevo para mandar.");
         const tickets = {};
         for (const destino of ["cocina", "barra"]) {
-            const items = nuevos.filter((r) => item(r.itemId).destino === destino).map((r) => ({ nombre: r.nombre, cantidad: r.cantidad }));
+            const items = nuevos.filter((r) => item(r.itemId).destino === destino).map((r) => ({ renglonId: r.id, nombre: r.nombre, cantidad: r.cantidad }));
             if (!items.length) continue;
             // La barra la atiende la misma moza: su comanda sale como lista
-            const c = { id: nuevoId("c"), mesaId: m.id, mesa: m.nombre, destino, items, creadaEn: ahora(), estado: destino === "barra" ? "lista" : "pendiente", listaEn: destino === "barra" ? ahora() : null };
+            const c = { id: nuevoId("c"), aperturaId: m.abierta.id, mesaId: m.id, mesa: m.nombre, destino, items, creadaEn: ahora(), estado: destino === "barra" ? "lista" : "pendiente", listaEn: destino === "barra" ? ahora() : null };
             db().comandas.push(c);
             tickets[destino] = copia(c);
         }
         nuevos.forEach((r) => (r.enviado = true));
+        m.abierta.comidaServida = true;
         guardado.persistir();
         return { mesa: armarMesa(m), ...tickets };
     }
 
     function pedirCuenta(usuario, mesaId) {
         const m = mesaAbierta(usuario, mesaId);
-        exigir(m.abierta.renglones.length, "La mesa no pidió nada todavía.");
+        exigir(m.abierta.renglones.some((r) => !r.anulacion), "La mesa no pidió nada todavía.");
         m.abierta.estado = "cobrando";
         guardado.persistir();
         return armarMesa(m);
     }
 
     /** Cobrar: las partes tienen que sumar justo el total; cada una con su medio de pago. La mesa queda libre. */
-    function cobrar(usuario, mesaId, { partes } = {}) {
+    function cobrar(usuario, mesaId, { partes, modo = "junto" } = {}) {
         const m = mesaAbierta(usuario, mesaId);
-        exigir(m.abierta.renglones.length, "La mesa no pidió nada todavía.");
+        exigir(m.abierta.renglones.some((r) => !r.anulacion), "La mesa no pidió nada todavía.");
         exigir(m.abierta.renglones.every((r) => r.enviado), "Hay cosas sin mandar: mandalas o sacalas antes de cobrar.");
         exigir(Array.isArray(partes) && partes.length >= 1 && partes.length <= TOPES.partes, `La cuenta se divide en 1 a ${TOPES.partes} partes.`);
+        exigir(["junto", "iguales", "items"].includes(modo), "Elegí una forma de dividir la cuenta.");
         const total = totalDe(m.abierta.renglones);
         const limpias = partes.map((p, i) => {
-            exigir(MEDIOS[p?.medio], `Elegí cómo paga la parte ${i + 1}.`);
-            return { monto: enteroHasta(p.monto, `El monto de la parte ${i + 1}`, { desde: 1, hasta: TOPES.monto }), medio: p.medio };
+            exigir(Object.hasOwn(MEDIOS, p?.medio), partes.length === 1 ? "Elegí cómo paga la cuenta." : `Elegí cómo paga la parte ${i + 1}.`);
+            return { monto: enteroHasta(p.monto, partes.length === 1 ? "El monto de la cuenta" : `El monto de la parte ${i + 1}`, { desde: 1, hasta: TOPES.monto }), medio: p.medio };
         });
+        if (modo === "iguales") exigir(JSON.stringify(limpias.map((p) => p.monto)) === JSON.stringify(dividir(total, partes.length)), "Revisá las partes iguales.");
         const suma = limpias.reduce((t, p) => t + p.monto, 0);
         exigir(suma === total, suma < total ? `Faltan ${pesos(total - suma)} para llegar al total.` : `Las partes suman ${pesos(suma - total)} de más.`);
         exigir(db().cobros.length < TOPES.cobros, `Ya hay ${TOPES.cobros} cobros. Es una demo: tocá "Empezar de cero" arriba.`);
-        const cobro = { id: nuevoId("co"), mesa: m.nombre, partes: limpias, total, en: ahora(), por: usuario.nombre };
+        const cobro = { id: nuevoId("co"), mesa: m.nombre, modo, partes: limpias, total, en: ahora(), por: usuario.nombre };
         db().cobros.push(cobro);
         m.abierta = null;
         guardado.persistir();
@@ -312,11 +381,15 @@ export function crearDatos(prefijo = MARCA.prefijo) {
     /** Lo que tiene que hacer la cocina (lo más viejo primero) y lo último que salió. */
     function cocina(usuario) {
         exigir(esCocina(usuario) || esMoza(usuario), "Solo alguien del bar ve la cocina.");
-        const deCocina = db().comandas.filter((c) => c.destino === "cocina");
+        const deCocina = db().comandas.filter((c) => c.destino === "cocina").map((c) => {
+            const m = db().mesas.find((m) => m.id === c.mesaId);
+            return { ...copia(c), cobrando: !!m?.abierta && c.aperturaId === m.abierta.id && m.abierta.estado === "cobrando", yaCobrada: c.estado !== "anulada" && !!m && (!m.abierta || c.aperturaId !== m.abierta.id) };
+        });
         return {
             pendientes: deCocina.filter((c) => c.estado === "pendiente").sort((a, b) => a.creadaEn.localeCompare(b.creadaEn))
                 .map((c) => ({ ...copia(c), minutos: minutos(c.creadaEn), nueva: minutos(c.creadaEn) < NUEVA_MIN })),
-            listas: deCocina.filter((c) => c.estado === "lista").sort((a, b) => (b.listaEn ?? "").localeCompare(a.listaEn ?? "")).slice(0, 5).map(copia)
+            listas: deCocina.filter((c) => c.estado === "lista").sort((a, b) => (b.listaEn ?? "").localeCompare(a.listaEn ?? "")).slice(0, 5).map(copia),
+            anuladas: deCocina.filter((c) => c.estado === "anulada").sort((a, b) => b.anuladaEn.localeCompare(a.anuladaEn)).map(copia)
         };
     }
 
@@ -326,6 +399,8 @@ export function crearDatos(prefijo = MARCA.prefijo) {
         exigir(c.estado === "pendiente", "Esa comanda ya estaba lista.");
         c.estado = "lista";
         c.listaEn = ahora();
+        const m = db().mesas.find((m) => m.id === c.mesaId);
+        if (c.destino === "cocina" && m?.abierta && c.aperturaId === m.abierta.id) m.abierta.comidaServida = false;
         guardado.persistir();
         return copia(c);
     }
@@ -357,6 +432,7 @@ export function crearDatos(prefijo = MARCA.prefijo) {
         const p = buscar(db().pedidosYa, id, "Ese pedido no existe.");
         exigir(p.estado === "aceptado", p.estado === "nuevo" ? "Primero aceptalo." : "Ese pedido ya se entregó.");
         exigir(armarPY(p).cocinaLista, "La cocina todavía no lo terminó.");
+        exigir(db().cobros.length < TOPES.cobros, `Ya hay ${TOPES.cobros} cobros. Es una demo: tocá "Empezar de cero" arriba.`);
         p.estado = "entregado";
         db().cobros.push({ id: nuevoId("co"), mesa: p.cliente, partes: [{ monto: p.total, medio: "pedidosya" }], total: p.total, en: ahora(), por: usuario.nombre });
         guardado.persistir();
@@ -365,26 +441,99 @@ export function crearDatos(prefijo = MARCA.prefijo) {
 
     // ----- Caja del turno -----
 
+    function registrarMovimiento(usuario, { tipo, personaId = null, motivo, monto, medio }) {
+        exigir(esMoza(usuario), "Los movimientos de caja los carga la moza.");
+        exigir(["personal", "gasto", "retiro"].includes(tipo), "Elegí Pago al personal, Gasto o Retiro.");
+        exigir(typeof motivo === "string", "Escribí un motivo.");
+        const texto = sinPasarse(motivo, TOPES.motivo, "el motivo");
+        exigir(texto.length > 0, "Escribí un motivo.");
+        const persona = PERSONAS.find((p) => p.id === personaId && p.rol !== "cliente");
+        if (tipo === "personal") {
+            exigir(persona, "Elegí a alguien del personal del bar.");
+            exigir(MOTIVOS_PERSONAL.includes(texto), "Elegí Sueldo del día o Adelanto.");
+            exigir(Object.hasOwn(MEDIOS_PERSONAL, medio), "Elegí Efectivo o Transferencia para pagar al personal.");
+        } else {
+            exigir(medio === "efectivo", "Los gastos y retiros salen en efectivo del cajón.");
+        }
+        const n = enteroHasta(monto, "El monto", { desde: 1, hasta: TOPES.monto });
+        const c = caja(usuario);
+        exigir(c.movimientos.length < TOPES.movimientos, `Ya hay ${TOPES.movimientos} movimientos en este turno.`);
+        exigir(medio !== "efectivo" || n <= c.enCajon, `Ese egreso dejaría el cajón esperado por debajo de 0. Hay ${pesos(c.enCajon)} disponibles.`);
+        const movimiento = { id: nuevoId("mc"), tipo, personaId, persona: persona?.nombre ?? null, motivo: texto, monto: n, medio, en: ahora(), por: usuario.nombre };
+        db().movimientos.push(movimiento);
+        guardado.persistir();
+        return copia(movimiento);
+    }
+
+    function pagarPersonal(usuario, { personaId, motivo, monto, medio } = {}) {
+        return registrarMovimiento(usuario, { tipo: "personal", personaId, motivo, monto, medio });
+    }
+
+    function gastoORetiro(usuario, { tipo, motivo, monto } = {}) {
+        exigir(["gasto", "retiro"].includes(tipo), "Elegí Gasto o Retiro.");
+        return registrarMovimiento(usuario, { tipo, motivo, monto, medio: "efectivo" });
+    }
+
     function caja(usuario) {
         exigir(esMoza(usuario), "La caja la ve la moza.");
-        const hoy = fechaLocalISO(0);
-        const cobros = db().cobros.filter((c) => diaLocalDe(c.en) === hoy).sort((a, b) => b.en.localeCompare(a.en));
+        const cierres = [...db().cierres].reverse();
+        const cierre = cierres[0] ?? null;
+        const desde = cierre?.hasta ?? null;
+        const cobros = desdeCierre(db().cobros, cierre, "cobrosEnHasta").sort((a, b) => b.en.localeCompare(a.en));
+        const movimientos = desdeCierre(db().movimientos, cierre, "movimientosEnHasta").sort((a, b) => b.en.localeCompare(a.en));
+        const anulaciones = desdeCierre(db().anulaciones, cierre, "anulacionesEnHasta");
+        const egresosEfectivo = movimientos.filter((m) => m.medio === "efectivo").reduce((t, m) => t + m.monto, 0);
+        const pagosTransferencia = movimientos.filter((m) => m.tipo === "personal" && m.medio === "transferencia").reduce((t, m) => t + m.monto, 0);
         const porMedio = Object.fromEntries([...Object.keys(MEDIOS), "pedidosya"].map((k) => [k, 0]));
         cobros.forEach((c) => c.partes.forEach((p) => (porMedio[p.medio] += p.monto)));
         const total = Object.values(porMedio).reduce((a, b) => a + b, 0);
-        const cierre = db().cierres.filter((c) => c.dia === hoy).at(-1) ?? null;
+        const enCajon = FONDO_CAJA + porMedio.efectivo - egresosEfectivo;
+        const abiertas = db().mesas.filter((m) => m.abierta);
+        const mesasPasadas = abiertas.map((m) => ({ id: m.id, nombre: m.nombre, total: totalDe(m.abierta.renglones) }));
+        const pedidosPasados = db().pedidosYa.filter((p) => p.estado !== "entregado").map((p) => ({ id: p.id, cliente: p.cliente, total: p.total }));
         return {
-            porMedio, total, cobros: copia(cobros), fondo: FONDO_CAJA,
-            enCajon: FONDO_CAJA + porMedio.efectivo,
-            abierto: db().mesas.reduce((t, m) => t + (m.abierta ? totalDe(m.abierta.renglones) : 0), 0),
-            cierre: copia(cierre)
+            desde: desde ?? [cobros.at(-1)?.en, movimientos.at(-1)?.en, anulaciones[0]?.en].filter(Boolean).sort()[0] ?? null,
+            movimientos: copia(movimientos), egresosEfectivo, pagosTransferencia,
+            anulaciones: copia(anulaciones), totalAnulado: anulaciones.reduce((t, a) => t + a.total, 0),
+            mesasPasadas, pedidosPasados,
+            porMedio, total, cobros: copia(cobros), fondo: FONDO_CAJA, enCajon,
+            topeContado: Math.max(TOPES.monto, enCajon * 2),
+            mesasAbiertas: abiertas.length,
+            abierto: abiertas.reduce((t, m) => t + totalDe(m.abierta.renglones), 0),
+            cierre: copia(cierre), cierres: copia(cierres.slice(0, 10))
         };
     }
 
-    function cerrarCaja(usuario, contado) {
+    function prepararCierre(usuario, contado, tipo = "turno") {
         const c = caja(usuario);
-        const n = enteroHasta(contado, "La plata contada", { hasta: TOPES.monto });
-        const cierre = { id: nuevoId("cc"), dia: fechaLocalISO(0), en: ahora(), esperado: c.enCajon, contado: n, diferencia: n - c.enCajon, por: usuario.nombre };
+        exigir(["turno", "dia"].includes(tipo), "Elegí Terminar el turno o Cerrar el día.");
+        if (tipo === "dia") {
+            const faltantes = [];
+            if (c.mesasAbiertas) faltantes.push(`Quedan ${c.mesasAbiertas} ${c.mesasAbiertas === 1 ? "mesa abierta" : "mesas abiertas"} (${c.mesasPasadas.map((m) => m.nombre).join(" y ")}): cobralas o anulalas para cerrar el día`);
+            if (c.pedidosPasados.length) faltantes.push(`Quedan ${c.pedidosPasados.length} ${c.pedidosPasados.length === 1 ? "pedido de Pedidos Ya sin entregar" : "pedidos de Pedidos Ya sin entregar"} (${c.pedidosPasados.map((p) => p.cliente).join(" y ")}): entregalos para cerrar el día`);
+            exigir(!faltantes.length, faltantes.join(". "));
+        }
+        exigir(contado !== "" && contado != null, "Escribí cuánta plata contaste");
+        const n = enteroHasta(contado, "La plata contada", { hasta: c.topeContado });
+        exigir(c.cobros.length > 0 || c.movimientos.length > 0 || c.anulaciones.length > 0 || c.mesasAbiertas > 0 || c.pedidosPasados.length > 0 || (tipo === "dia" && c.cierre?.tipo !== "dia"), "No hubo cobros ni movimientos desde el último cierre. Cargá una operación antes de cerrar caja.");
+        return { ...c, tipo, contado: n, diferencia: n - c.enCajon };
+    }
+
+    function cerrarCaja(usuario, contado, tipo = "turno") {
+        const c = prepararCierre(usuario, contado, tipo);
+        const hasta = ahora();
+        const cierre = {
+            id: nuevoId("cc"), tipo, dia: fechaLocalISO(0), en: hasta, desde: c.desde, hasta,
+            cobrosEnHasta: db().cobros.filter((co) => co.en === hasta).map((co) => co.id),
+            movimientosEnHasta: db().movimientos.filter((m) => m.en === hasta).map((m) => m.id),
+            anulacionesEnHasta: db().anulaciones.filter((a) => a.en === hasta).map((a) => a.id),
+            mesasPasadas: c.mesasPasadas, pedidosPasados: c.pedidosPasados,
+            anulaciones: c.anulaciones, totalAnulado: c.totalAnulado,
+            egresosEfectivo: c.egresosEfectivo, pagosTransferencia: c.pagosTransferencia,
+            esperado: c.enCajon, contado: c.contado, diferencia: c.diferencia, por: usuario.nombre
+        };
+        db().mesas.filter((m) => m.abierta).forEach((m) => { m.abierta.heredada = true; });
+        db().pedidosYa.filter((p) => p.estado !== "entregado").forEach((p) => { p.heredada = true; });
         db().cierres.push(cierre);
         guardado.persistir();
         return copia(cierre);
@@ -392,7 +541,7 @@ export function crearDatos(prefijo = MARCA.prefijo) {
 
     return {
         guardado, pasos, mirarCategoria, mirarTVCocina,
-        plano, mesa, abrirMesa, agregar, sacar, enviar, pedirCuenta, cobrar,
-        cocina, marcarLista, aceptarPY, entregarPY, caja, cerrarCaja
+        plano, mesa, abrirMesa, anularMesa, anularRenglon, agregar, sacar, enviar, pedirCuenta, cobrar,
+        cocina, marcarLista, aceptarPY, entregarPY, pagarPersonal, gastoORetiro, caja, prepararCierre, cerrarCaja
     };
 }

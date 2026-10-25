@@ -6,13 +6,13 @@
 // Las ventas guardan el precio del momento: si después sube un proveedor, lo vendido no cambia.
 // Si cambia la forma de los datos, subir VERSION_DATOS (se regeneran solos).
 // ============================================
-import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=638b4b3f1c";
-import { enteroHasta, sinPasarse } from "../kit/js/topes.js?v=638b4b3f1c";
-import { diaLocalDe, fechaLocalISO } from "../kit/js/fechas.js?v=638b4b3f1c";
-import { columnasDe, numeroDe, textoParaComparar } from "../kit/js/tablas.js?v=638b4b3f1c";
-import { filtrarPorTexto } from "../kit/js/buscar.js?v=638b4b3f1c";
-import { MARCA, PERSONAS } from "./marca.js?v=638b4b3f1c";
-import { MEDIOS_PAGO, DIVIDIDO, revisarPagos, sumarPorMedio } from "../kit/js/pagos.js?v=638b4b3f1c";
+import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=d5f06e834f";
+import { enteroHasta, sinPasarse } from "../kit/js/topes.js?v=d5f06e834f";
+import { diaLocalDe, fechaLocalISO } from "../kit/js/fechas.js?v=d5f06e834f";
+import { columnasDe, numeroDe, textoParaComparar } from "../kit/js/tablas.js?v=d5f06e834f";
+import { filtrarPorTexto } from "../kit/js/buscar.js?v=d5f06e834f";
+import { MARCA, PERSONAS } from "./marca.js?v=d5f06e834f";
+import { MEDIOS_PAGO, DIVIDIDO, revisarPagos, sumarPorMedio } from "../kit/js/pagos.js?v=d5f06e834f";
 
 export const VERSION_DATOS = 3;
 

@@ -4861,6 +4861,28 @@ details[open] > :not(summary) {
   letter-spacing: -0.02em;
 }
 
+.caja-egresos .formulario {
+  grid-template-columns: minmax(0, 1fr);
+  min-width: 0;
+}
+
+.caja-movimientos {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  overflow-wrap: anywhere;
+}
+.caja-movimientos li {
+  display: grid;
+  gap: 0.2rem;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid var(--borde);
+}
+.caja-movimientos small {
+  color: var(--texto-suave);
+}
+
 .fila-form {
   display: flex;
   align-items: center;
@@ -5028,5 +5050,128 @@ details[open] > :not(summary) {
 @media (prefers-reduced-motion: reduce) {
   .mesa--paso {
     animation: none;
+  }
+}
+.mesa__heredada {
+  max-width: 100%;
+  font-size: 0.65rem;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+.caja-cierres-acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.caja-anulaciones {
+  padding-left: 1.2rem;
+  overflow-wrap: anywhere;
+}
+.caja-anulaciones small {
+  display: block;
+  color: var(--texto-suave);
+}
+
+.mesa-opciones {
+  flex-wrap: wrap;
+  overflow: visible;
+  max-width: 100%;
+}
+
+.renglon-anulado {
+  color: var(--texto-suave);
+  text-decoration: line-through;
+}
+.renglon-anulado small {
+  display: block;
+  font-size: 0.75rem;
+  overflow-wrap: anywhere;
+}
+
+.cuenta {
+  position: sticky;
+  top: 5rem;
+}
+.cuenta .renglones {
+  max-height: max(6rem, 100dvh - calc(var(--alto-pie, 122px) + 0.75rem + 1rem + env(safe-area-inset-bottom)) - 25rem);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.cuenta__acciones {
+  position: sticky;
+  bottom: calc(var(--alto-pie, 122px) + 0.75rem + 1rem + env(safe-area-inset-bottom));
+  z-index: 2;
+  background: var(--superficie);
+}
+@media (min-width: 1000px) {
+  .cuenta .renglones {
+    max-height: max(6rem, 100dvh - 25rem);
+  }
+  .cuenta__acciones {
+    bottom: 1rem;
+  }
+}
+
+.resumen-salon {
+  margin-bottom: 0.4rem;
+}
+.resumen-salon summary {
+  cursor: pointer;
+  padding: 0.35rem 0;
+  font-size: 0.8rem;
+  color: var(--texto-suave);
+}
+
+.producto__cantidad {
+  display: block;
+  min-height: 1.2em;
+  color: var(--texto-suave);
+  font-size: 0.75rem;
+}
+
+@media (max-width: 999px) {
+  .contenido {
+    padding-bottom: calc(var(--alto-pie, 122px) + 0.75rem + 1rem + env(safe-area-inset-bottom));
+  }
+  .contenido:has(.pestanas-salon) {
+    padding-top: 0.6rem;
+  }
+  .contenido:has(.pestanas-salon) .titulo-con-accion {
+    margin-bottom: 0.3rem;
+  }
+  .contenido:has(.pestanas-salon) .tira {
+    gap: 0.2rem 0.6rem;
+    padding: 0.35rem 0.5rem;
+    margin-bottom: 0.35rem;
+    font-size: 0.75rem;
+  }
+  .contenido:has(.pestanas-salon) .estados-salon {
+    gap: 0.25rem;
+    margin-bottom: 0.4rem;
+  }
+  .contenido:has(.pestanas-salon) .estado-chip {
+    padding: 0.15rem 0.4rem;
+    font-size: 0.65rem;
+  }
+  .contenido:has(.pestanas-salon) .pestanas-salon {
+    display: flex;
+    border-radius: 14px;
+    gap: 0;
+    padding: 0.15rem;
+    margin-bottom: 0.4rem;
+  }
+  .contenido:has(.pestanas-salon) .pestana-salon {
+    min-width: 0;
+    min-height: 2.75rem;
+    padding: 0.25rem;
+    gap: 0.15rem;
+    font-size: 0.72rem;
+  }
+  [data-confirmacion],
+  [data-confirmacion-anulacion],
+  [data-anulacion-renglon] {
+    scroll-margin-bottom: calc(var(--alto-pie, 122px) + 0.75rem + 1rem + env(safe-area-inset-bottom));
   }
 }

@@ -1,16 +1,16 @@
-import { pintarConsigna } from "./comunes.js?v=ea8bff47c7";
+import { pintarConsigna } from "./comunes.js?v=fcb06c7c44";
 // ============================================
 // Pantallas del barbero (Leo): la agenda del día (un renglón por turno y los huecos libres a la vista; Leo, Fran o
 // los dos; en la compu, una columna por barbero) y "+ Turno" (cargar a mano el que pidió por mensaje o entró sin
 // turno). El turno que sacó un cliente desde el celular aparece resaltado hasta que Leo hace algo con él.
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=ea8bff47c7";
-import { aHora } from "../../kit/js/turnos.js?v=ea8bff47c7";
-import { fechaLocalISO } from "../../kit/js/fechas.js?v=ea8bff47c7";
-import { SERVICIOS, BARBEROS, TOPES, HORARIO, pesos, nombreFecha, grillaDelDia, textoLibre } from "../datos.js?v=ea8bff47c7";
-import { pastillaEstado, chipsDias, mostrarMensaje } from "./comunes.js?v=ea8bff47c7";
-import { htmlBotonTV, abrirModoTV } from "../../kit/js/modo-tv.js?v=ea8bff47c7";
-import { NEGOCIO } from "../marca.js?v=ea8bff47c7";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=fcb06c7c44";
+import { aHora } from "../../kit/js/turnos.js?v=fcb06c7c44";
+import { fechaLocalISO } from "../../kit/js/fechas.js?v=fcb06c7c44";
+import { SERVICIOS, BARBEROS, TOPES, HORARIO, pesos, nombreFecha, grillaDelDia, textoLibre } from "../datos.js?v=fcb06c7c44";
+import { pastillaEstado, chipsDias, mostrarMensaje } from "./comunes.js?v=fcb06c7c44";
+import { htmlBotonTV, abrirModoTV } from "../../kit/js/modo-tv.js?v=fcb06c7c44";
+import { NEGOCIO } from "../marca.js?v=fcb06c7c44";
 
 let ver = "todos"; // "todos" o el id de un barbero
 

@@ -4,13 +4,13 @@
 // descanso (con "ding" y vibración al terminar, si prendió el sonido). Si levanta más que nunca: "¡Nuevo récord!".
 // Si hoy descansa, le dice cuándo le toca y puede entrenar igual otro día de su rutina.
 // ============================================
-import { esc, aviso } from "../../kit/js/ui.js?v=ca300ee11c";
-import { alSalirDeLaPantalla } from "../../kit/js/rutas.js?v=ca300ee11c";
-import { mantenerPantallaPrendida, vibrar, ding, htmlBotonSonido, activarBotonSonido } from "../../kit/js/celular.js?v=ca300ee11c";
-import { MARCA, NEGOCIO } from "../marca.js?v=ca300ee11c";
-import { SOCIO_DE, kilos, cuanto } from "../datos.js?v=ca300ee11c";
-import { activarConsignaPersona, guia, activarGuias, pastilla, pastillaCuota } from "./comunes.js?v=ca300ee11c";
-import { htmlTrabajosSocio, activarTrabajosSocio } from "./trabajos.js?v=ca300ee11c";
+import { esc, aviso } from "../../kit/js/ui.js?v=ae6415f807";
+import { alSalirDeLaPantalla } from "../../kit/js/rutas.js?v=ae6415f807";
+import { mantenerPantallaPrendida, vibrar, ding, htmlBotonSonido, activarBotonSonido } from "../../kit/js/celular.js?v=ae6415f807";
+import { MARCA, NEGOCIO } from "../marca.js?v=ae6415f807";
+import { SOCIO_DE, kilos, cuanto } from "../datos.js?v=ae6415f807";
+import { activarConsignaPersona, guia, activarGuias, pastilla, pastillaCuota } from "./comunes.js?v=ae6415f807";
+import { htmlTrabajosSocio, activarTrabajosSocio } from "./trabajos.js?v=ae6415f807";
 
 // Lo que queda mientras se navega: lo escrito en cada ejercicio, el último récord (para festejarlo una vez) y el descanso
 const borrador = {};

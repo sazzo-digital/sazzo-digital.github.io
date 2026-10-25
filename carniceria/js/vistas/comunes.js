@@ -3,12 +3,12 @@
 // de estado de un pedido, los pasos de un pedido (pedido → listo → retirado), "hace cuánto" y el campo de kilos.
 // Todo dato que entra a HTML pasa por esc().
 // ============================================
-import { esc } from "../../kit/js/ui.js?v=04e1a41254";
-import { htmlConsigna, htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=04e1a41254";
-import { diaLocalDe, fechaLocalISO } from "../../kit/js/fechas.js?v=04e1a41254";
-import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=04e1a41254";
-import { ESTADOS_PEDIDO, TOPES, kilos, pesos } from "../datos.js?v=04e1a41254";
-import { MARCA, buscarPersona } from "../marca.js?v=04e1a41254";
+import { esc } from "../../kit/js/ui.js?v=020822440c";
+import { htmlConsigna, htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=020822440c";
+import { diaLocalDe, fechaLocalISO } from "../../kit/js/fechas.js?v=020822440c";
+import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=020822440c";
+import { ESTADOS_PEDIDO, TOPES, kilos, pesos } from "../datos.js?v=020822440c";
+import { MARCA, buscarPersona } from "../marca.js?v=020822440c";
 
 /** Botón del recorrido con la persona de la carnicería: guia("u-empleado", "/pedidos", "Mirá lo que le llega a Darío"). */
 export const guia = (personaId, ruta, texto) => htmlGuia({ persona: buscarPersona(personaId), ruta, texto });

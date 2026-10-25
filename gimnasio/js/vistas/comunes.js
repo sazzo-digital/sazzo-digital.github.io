@@ -3,11 +3,11 @@
 // los días en pastillas, la cara de cada socio, el gráfico de progreso (SVG, sin librerías) y la ventanita del
 // mensaje para copiar (del kit). Todo dato que entra a HTML pasa por esc().
 // ============================================
-import { esc } from "../../kit/js/ui.js?v=ca300ee11c";
-import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=ca300ee11c";
-import { MARCA, buscarPersona } from "../marca.js?v=ca300ee11c";
-import { kilos } from "../datos.js?v=ca300ee11c";
-import { htmlConsigna, htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=ca300ee11c";
+import { esc } from "../../kit/js/ui.js?v=ae6415f807";
+import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=ae6415f807";
+import { MARCA, buscarPersona } from "../marca.js?v=ae6415f807";
+import { kilos } from "../datos.js?v=ae6415f807";
+import { htmlConsigna, htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=ae6415f807";
 
 const CONSIGNAS = {
     socio: [
@@ -42,7 +42,7 @@ export function activarConsignaPersona(cont, datos, usuario) {
 
 export const guia = (personaId, ruta, texto) => htmlGuia({ persona: buscarPersona(personaId), ruta, texto });
 export { activarGuias };
-export { mostrarMensaje } from "../../kit/js/mensaje.js?v=ca300ee11c";
+export { mostrarMensaje } from "../../kit/js/mensaje.js?v=ae6415f807";
 
 const CLASE_CUOTA = { "al-dia": "bien", pronto: "alerta", vencida: "mal" };
 

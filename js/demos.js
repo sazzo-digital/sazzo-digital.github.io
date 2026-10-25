@@ -254,7 +254,6 @@ export const DEMOS = [
                 "Cambiar la carta y los precios cuando quieras",
                 "Stock de barriles y bebidas que se descuenta con cada pinta",
                 "Resúmenes del mes: lo más vendido y cuánto entró",
-                "Pedidos Ya y delivery en la misma pantalla",
                 "Funciona en la compu del local, aunque se corte internet"
             ]
         },
