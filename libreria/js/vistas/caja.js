@@ -1,13 +1,13 @@
-import { pintarConsigna } from "./comunes.js?v=7b24b8223b";
+import { pintarConsigna } from "./comunes.js?v=d4aafb8120";
 // ============================================
 // Caja del día: lo vendido hoy por medio de pago, por rubro, lo más vendido, las últimas ventas (y las listas
 // entregadas) y cuánto tiene que haber en el cajón. "Cerrar caja": contás la plata y te dice si sobra o falta.
 // La dueña ve además la ganancia (venta menos costo) y los últimos 7 días.
 // ============================================
-import { esc, aviso, fechaCorta } from "../../kit/js/ui.js?v=7b24b8223b";
-import { FONDO_CAJA, MEDIOS, TOPES, pesos } from "../datos.js?v=7b24b8223b";
-import { textoMedio } from "../../kit/js/pagos.js?v=7b24b8223b";
-import { hora } from "./comunes.js?v=7b24b8223b";
+import { esc, aviso, fechaCorta } from "../../kit/js/ui.js?v=d4aafb8120";
+import { FONDO_CAJA, MEDIOS, TOPES, pesos } from "../datos.js?v=d4aafb8120";
+import { textoMedio } from "../../kit/js/pagos.js?v=d4aafb8120";
+import { hora } from "./comunes.js?v=d4aafb8120";
 
 const DIAS = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
 const nombreDia = (dia) => {

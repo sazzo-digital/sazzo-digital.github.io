@@ -1,4 +1,4 @@
-import { consignaPersona, activarSerie } from "./comunes.js?v=020822440c";
+import { consignaPersona, activarSerie } from "./comunes.js?v=d8a3925649";
 // ============================================
 // Vender (Ricardo y Darío), en el mostrador: los cortes que más salen y los de cada animal a mano, y un buscador que
 // entiende cómo pide la gente ("chori", "molida") y perdona errores ("bacio"). Pesaje: se toca el corte y se escribe
@@ -7,17 +7,17 @@ import { consignaPersona, activarSerie } from "./comunes.js?v=020822440c";
 // peso. Ticket con vuelto, alias para la transferencia, "ding" al cobrar y la vista previa del ticket.
 // En la compu, dos columnas (cortes | ticket); en el celular, el ticket abajo con una barrita arriba que lleva a él.
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=020822440c";
-import { puedeEscanear, escanear } from "../../kit/js/escaner.js?v=020822440c";
-import { mantenerPantallaPrendida, htmlCopiable, activarCopiables, htmlBotonSonido, activarBotonSonido, ding } from "../../kit/js/celular.js?v=020822440c";
-import { TOPES, MEDIOS, ALIAS, ANIMALES, ETIQUETA, pesos, kilos, aGramos, precioPorPeso, gramosPara, leerEtiqueta } from "../datos.js?v=020822440c";
-import { textoMedio, DIVIDIDO, partesIniciales, htmlDosMedios, activarDosMedios } from "../../kit/js/pagos.js?v=020822440c";
-import { MARCA, NEGOCIO } from "../marca.js?v=020822440c";
-import { campoKg, kgEnCampo, precioDe, hora } from "./comunes.js?v=020822440c";
-import { EVENTO_REINICIO } from "../../kit/js/guardado.js?v=020822440c";
-import { puedeConectarBalanza, conectarBalanza } from "../../kit/js/balanza.js?v=020822440c";
-import { abrirModoTV } from "../../kit/js/modo-tv.js?v=020822440c";
-import { htmlMasDeLaCaja } from "../../kit/js/caja.js?v=020822440c";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=d8a3925649";
+import { puedeEscanear, escanear } from "../../kit/js/escaner.js?v=d8a3925649";
+import { mantenerPantallaPrendida, htmlCopiable, activarCopiables, htmlBotonSonido, activarBotonSonido, ding } from "../../kit/js/celular.js?v=d8a3925649";
+import { TOPES, MEDIOS, ALIAS, ANIMALES, ETIQUETA, pesos, kilos, aGramos, precioPorPeso, gramosPara, leerEtiqueta } from "../datos.js?v=d8a3925649";
+import { textoMedio, DIVIDIDO, partesIniciales, htmlDosMedios, activarDosMedios } from "../../kit/js/pagos.js?v=d8a3925649";
+import { MARCA, NEGOCIO } from "../marca.js?v=d8a3925649";
+import { campoKg, kgEnCampo, precioDe, hora } from "./comunes.js?v=d8a3925649";
+import { EVENTO_REINICIO } from "../../kit/js/guardado.js?v=d8a3925649";
+import { puedeConectarBalanza, conectarBalanza } from "../../kit/js/balanza.js?v=d8a3925649";
+import { abrirModoTV } from "../../kit/js/modo-tv.js?v=d8a3925649";
+import { htmlMasDeLaCaja } from "../../kit/js/caja.js?v=d8a3925649";
 
 // El ticket en curso queda en memoria mientras se navega (se vacía al cobrar)
 export const ticket = new Map(); // articuloId → { gramos } o { unidades }

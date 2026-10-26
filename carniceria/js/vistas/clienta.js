@@ -1,14 +1,14 @@
-import { consignaPersona, activarSerie } from "./comunes.js?v=020822440c";
+import { consignaPersona, activarSerie } from "./comunes.js?v=d8a3925649";
 // ============================================
 // Lo de Claudia (clienta), desde el celular: elegir los cortes (por animal, o tocando la vaca), cuánto (de a medio
 // kilo, "en plata" o por unidad) y cómo lo quiere ("milanesas finitas"), el combo del asado, el horario de retiro y
 // pedir. El total es aproximado: la carnicería lo pesa y se ajusta. Después, en "Mis pedidos", cómo va.
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=020822440c";
-import { TOPES, ANIMALES, RETIROS, COMBO_ASADO, pesos, kilos, precioPorPeso, gramosPara } from "../datos.js?v=020822440c";
-import { NEGOCIO } from "../marca.js?v=020822440c";
-import { htmlMediaRes, activarMediaRes } from "../media-res.js?v=020822440c";
-import { guia, activarGuias, pasos, pastillaEstado, cuando, precioDe, loPedido } from "./comunes.js?v=020822440c";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=d8a3925649";
+import { TOPES, ANIMALES, RETIROS, COMBO_ASADO, pesos, kilos, precioPorPeso, gramosPara } from "../datos.js?v=d8a3925649";
+import { NEGOCIO } from "../marca.js?v=d8a3925649";
+import { htmlMediaRes, activarMediaRes } from "../media-res.js?v=d8a3925649";
+import { guia, activarGuias, pasos, pastillaEstado, cuando, precioDe, loPedido } from "./comunes.js?v=d8a3925649";
 
 // Lo elegido queda en memoria mientras se navega
 const carrito = new Map(); // articuloId → { modo, cantidad, aclaracion }

@@ -5175,3 +5175,150 @@ details[open] > :not(summary) {
     scroll-margin-bottom: calc(var(--alto-pie, 122px) + 0.75rem + 1rem + env(safe-area-inset-bottom));
   }
 }
+.importe {
+  white-space: nowrap;
+}
+
+.mesa small.mesa__total {
+  white-space: nowrap;
+  overflow-wrap: normal;
+}
+
+.mesa--importe-largo {
+  padding-inline: 0.3rem;
+}
+.mesa--importe-largo small.mesa__total {
+  font-size: 0.6rem;
+  letter-spacing: -0.035em;
+}
+
+.contenido .chips {
+  flex-wrap: wrap;
+  overflow: visible;
+  min-width: 0;
+}
+.contenido .chips .chip {
+  min-width: 44px;
+  min-height: 44px;
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.contenido .pestanas-salon {
+  flex-wrap: wrap;
+  overflow: visible;
+}
+.contenido .pestanas-salon .pestana-salon {
+  flex: 1 1 auto;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.total-cobro,
+.medios > div,
+.cuenta,
+.boton-cobrar {
+  min-width: 0;
+  container-type: inline-size;
+}
+
+.total-cobro {
+  overflow-wrap: anywhere;
+}
+.total-cobro .panel__numero .importe {
+  min-width: 0;
+  font-size: clamp(0.6rem, 100cqi / var(--importe-ancho), 2.2rem);
+}
+
+.medios {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.medios > div {
+  overflow-wrap: anywhere;
+}
+.medios b .importe {
+  font-size: clamp(0.6rem, 100cqi / var(--importe-ancho), 0.75rem);
+}
+@media (min-width: 600px) {
+  .medios {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.parte,
+.unidades li > span,
+.parte__quien > *,
+.cobros li > * {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.parte__quien,
+.cobros li,
+.total,
+.boton-cobrar {
+  flex-wrap: wrap;
+}
+
+.parte {
+  container-type: inline-size;
+}
+.parte__quien b .importe {
+  font-size: clamp(0.6rem, 100cqi / var(--importe-ancho), 1.1rem);
+}
+
+.total b .importe {
+  font-size: clamp(0.6rem, 100cqi / var(--importe-ancho), 0.75rem);
+}
+
+.boton-cobrar .importe {
+  font-size: clamp(0.6rem, 100cqi / var(--importe-ancho), 1.05rem);
+}
+
+.renglon {
+  flex-wrap: wrap;
+}
+.renglon__nombre {
+  flex-basis: 30%;
+  overflow-wrap: anywhere;
+}
+.renglon > b .importe {
+  font-size: clamp(0.6rem, 100cqi / var(--importe-ancho), 0.88rem);
+}
+.renglon .boton-icono {
+  flex-shrink: 0;
+  min-width: 44px;
+  min-height: 44px;
+}
+
+.resumen-salon summary,
+[data-anular-mesa] > summary,
+.contenido:has(.medios) details > summary {
+  min-height: 44px;
+  padding-block: 0.65rem;
+}
+
+.contenido .volver,
+.contenido:has(.medios) input,
+.contenido:has(.medios) select,
+.tarjeta__pie .boton,
+.acerca__boton,
+[data-interruptor-pasos],
+#reiniciar {
+  min-height: 44px;
+}
+
+@media (max-width: 999px), (max-height: 600px) {
+  .cuenta,
+  .cuenta__acciones {
+    position: static;
+  }
+  .cuenta .renglones {
+    max-height: none;
+    overflow: visible;
+  }
+}
+.medios.medios--importe-largo {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr));
+}

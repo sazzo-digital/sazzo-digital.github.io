@@ -3,10 +3,10 @@
 // tipo de comprobante, tablas con scroll propio (la página nunca se corre de costado) y el "Pidiendo CAE a ARCA…".
 // Todo lo que viene de los datos pasa por esc().
 // ============================================
-import { esc, fechaCorta } from "../../kit/js/ui.js?v=e73a01d881";
-import { ultimosPeriodos, nombrePeriodo, periodoActual, COMPROBANTES, CONDICIONES, formatoCuit } from "../reglas.js?v=e73a01d881";
-import { buscarPersona, MARCA } from "../marca.js?v=e73a01d881";
-import { htmlConsigna, htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=e73a01d881";
+import { esc, fechaCorta } from "../../kit/js/ui.js?v=ffcf92064c";
+import { ultimosPeriodos, nombrePeriodo, periodoActual, COMPROBANTES, CONDICIONES, formatoCuit } from "../reglas.js?v=ffcf92064c";
+import { buscarPersona, MARCA } from "../marca.js?v=ffcf92064c";
+import { htmlConsigna, htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=ffcf92064c";
 
 const CONSIGNAS = {
     admin: [

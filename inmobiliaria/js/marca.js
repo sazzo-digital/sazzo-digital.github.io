@@ -3,8 +3,8 @@
 // Las personas son los roles reales del rubro (nombres inventados): la dueña (martillera), el agente que atiende
 // consultas y visitas, y una chica que busca alquilar y pide la visita desde el celular.
 // ============================================
-import { revisarMarca } from "../kit/js/marca.js?v=ee0a3fd29d";
-import { negocioDe } from "../kit/js/colores.js?v=ee0a3fd29d";
+import { revisarMarca } from "../kit/js/marca.js?v=87b82baae1";
+import { negocioDe } from "../kit/js/colores.js?v=87b82baae1";
 
 export const MARCA = revisarMarca({
     id: "inmobiliaria",
@@ -59,11 +59,9 @@ export const DETALLE = {
         "Antes de que venza, preguntarle al inquilino si renueva"
     ],
     tambien: [
-        "Publicar solo en los portales y traer sus consultas a una sola lista",
-        "El índice oficial de cada mes, sin cargarlo a mano",
+        "El índice oficial de cada mes, para aplicar el aumento",
         "Liquidación al propietario y recibos de alquiler",
-        "Contratos con firma digital",
-        "Cobro del alquiler con Mercado Pago o transferencia, y avisos por WhatsApp",
+        "Cobro del alquiler con Mercado Pago o transferencia, y avisos por Telegram o por WhatsApp con un toque",
         "Agenda de visitas en el calendario de cada agente",
         "Tasaciones y varias sucursales, con su usuario cada una"
     ]

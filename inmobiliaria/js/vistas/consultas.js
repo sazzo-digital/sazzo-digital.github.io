@@ -3,13 +3,13 @@
 // atender primero (visitas pedidas desde la página, sin contestar, sin seguimiento), la ficha de cada consulta
 // (confirmar la visita, mandar la ficha en PDF y el mensaje, ofrecer otras propiedades, notas) y "Anotar consulta".
 // ============================================
-import { esc, aviso, vacio, mensajeDe } from "../../kit/js/ui.js?v=ee0a3fd29d";
-import { aHora } from "../../kit/js/turnos.js?v=ee0a3fd29d";
-import { TOPES, TIPOS, ZONAS, OPERACIONES, ORIGENES, ESTADOS_CONSULTA } from "../datos.js?v=ee0a3fd29d";
-import { bajarFicha } from "./propiedades.js?v=ee0a3fd29d";
+import { esc, aviso, vacio, mensajeDe } from "../../kit/js/ui.js?v=87b82baae1";
+import { aHora } from "../../kit/js/turnos.js?v=87b82baae1";
+import { TOPES, TIPOS, ZONAS, OPERACIONES, ORIGENES, ESTADOS_CONSULTA } from "../datos.js?v=87b82baae1";
+import { bajarFicha } from "./propiedades.js?v=87b82baae1";
 import {
     guia, activarGuias, pastillaConsulta, pastillaVisita, mostrarMensaje, hace, mayuscula, htmlFoto, medidas, hrefPropiedad, consignaPersona, activarPasos
-} from "./comunes.js?v=ee0a3fd29d";
+} from "./comunes.js?v=87b82baae1";
 
 let filtroEstado = "abiertas";
 const FILTROS = { abiertas: "Abiertas", nueva: "Nuevas", agendada: "Con visita", todas: "Todas" };

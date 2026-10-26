@@ -2,13 +2,13 @@
 // La cocina (Beto; la moza también la puede mirar): los pedidos que llegan, lo más viejo primero, con cuánto hace que
 // esperan (en rojo si pasan los 15 minutos). "Listo" lo saca y la mesa ve "comida lista".
 // ============================================
-import { esc, aviso } from "../../kit/js/ui.js?v=854c927c5a";
-import { mantenerPantallaPrendida, htmlBotonVoz, activarBotonVoz, decir } from "../../kit/js/celular.js?v=854c927c5a";
-import { MARCA, NEGOCIO } from "../marca.js?v=854c927c5a";
-import { ticket, guia, activarGuias, haceMin, hora, consignaPersona } from "./comunes.js?v=854c927c5a";
-import { activarConsigna } from "../../kit/js/consigna.js?v=854c927c5a";
-import { htmlBotonTV, abrirModoTV } from "../../kit/js/modo-tv.js?v=854c927c5a";
-import { alSalirDeLaPantalla } from "../../kit/js/rutas.js?v=854c927c5a";
+import { esc, aviso } from "../../kit/js/ui.js?v=7d06fec91a";
+import { mantenerPantallaPrendida, htmlBotonVoz, activarBotonVoz, decir } from "../../kit/js/celular.js?v=7d06fec91a";
+import { MARCA, NEGOCIO } from "../marca.js?v=7d06fec91a";
+import { ticket, guia, activarGuias, haceMin, hora, consignaPersona } from "./comunes.js?v=7d06fec91a";
+import { activarConsigna } from "../../kit/js/consigna.js?v=7d06fec91a";
+import { htmlBotonTV, abrirModoTV } from "../../kit/js/modo-tv.js?v=7d06fec91a";
+import { alSalirDeLaPantalla } from "../../kit/js/rutas.js?v=7d06fec91a";
 
 const DEMORA_MIN = 15;
 const relojes = new WeakMap();
@@ -90,6 +90,9 @@ export function vistaCocina(cont, { usuario, datos, irA }, recien = null) {
 }
 
 export function htmlTVCocina({ pendientes, listas, anuladas = [] }) {
+    pendientes = pendientes.filter((p) => p.items?.length);
+    listas = listas.filter((p) => p.items?.length);
+    anuladas = anuladas.filter((p) => p.items?.length);
     return `<div class="tv-grilla">
         <section class="tv-tarjeta">
             <span class="tv-tarjeta__rotulo">En preparación · ${esc(pendientes.length)}</span>

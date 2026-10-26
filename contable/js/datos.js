@@ -6,17 +6,17 @@
 // en semilla.js. Todo cuelga de "la empresa actual" (la forma ya sirve para varias empresas).
 // La plata va en centavos. Si cambia la forma de los datos, subir VERSION_DATOS (se regeneran solos).
 // ============================================
-import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=e73a01d881";
-import { enteroHasta, sinPasarse } from "../kit/js/topes.js?v=e73a01d881";
-import { esFechaISO } from "../kit/js/fechas.js?v=e73a01d881";
-import { MARCA } from "./marca.js?v=e73a01d881";
-import { semilla as semillaFabrica, ID_CONSUMIDOR_FINAL } from "./semilla.js?v=e73a01d881";
-import { armarAsientos, armarMayor, armarBalance, CUENTAS_CONTABLES } from "./contabilidad.js?v=e73a01d881";
+import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=ffcf92064c";
+import { enteroHasta, sinPasarse } from "../kit/js/topes.js?v=ffcf92064c";
+import { esFechaISO } from "../kit/js/fechas.js?v=ffcf92064c";
+import { MARCA } from "./marca.js?v=ffcf92064c";
+import { semilla as semillaFabrica, ID_CONSUMIDOR_FINAL } from "./semilla.js?v=ffcf92064c";
+import { armarAsientos, armarMayor, armarBalance, CUENTAS_CONTABLES } from "./contabilidad.js?v=ffcf92064c";
 import {
     COMPROBANTES, NC_DE, CONDICIONES, ALICUOTAS, ORDEN_ALICUOTAS, TOPE_CF_IDENTIFICAR, signo, esAlicuota, tipoFactura,
     calcularComprobante, repartirNotaCredito, caeSimulado, revisarCuit, soloNumeros, aCentavos, fechaISO, sumarDias,
     periodoDe, periodoActual, ultimosPeriodos, correrPeriodo, vencimientoIva, numeroComprobante, pesos
-} from "./reglas.js?v=e73a01d881";
+} from "./reglas.js?v=ffcf92064c";
 
 export const VERSION_DATOS = 5;
 

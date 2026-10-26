@@ -1,15 +1,15 @@
-import { conConsigna } from "./comunes.js?v=e73a01d881";
+import { conConsigna } from "./comunes.js?v=ffcf92064c";
 // ============================================
 // Compras: las facturas de los proveedores del mes, "Traer de ARCA" (simulado: trae de un toque las que ARCA tiene
 // en Mis Comprobantes y faltan cargar) y cargar una a mano, con el IVA calculado solo. Una compra mal cargada se
 // anula (no se borra). Solo administración carga; Hernán y Patricia miran.
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=e73a01d881";
-import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=e73a01d881";
-import { TOPES } from "../datos.js?v=e73a01d881";
-import { ALICUOTAS, ORDEN_ALICUOTAS, pesos, numeroComprobante, nombrePeriodo, periodoActual, fechaISO, aCentavos } from "../reglas.js?v=e73a01d881";
-import { buscarPersona } from "../marca.js?v=e73a01d881";
-import { diaMes, periodoPedido, htmlSelectorMes, activarSelectorMes, conEspera, nombreDe } from "./comunes.js?v=e73a01d881";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=ffcf92064c";
+import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=ffcf92064c";
+import { TOPES } from "../datos.js?v=ffcf92064c";
+import { ALICUOTAS, ORDEN_ALICUOTAS, pesos, numeroComprobante, nombrePeriodo, periodoActual, fechaISO, aCentavos } from "../reglas.js?v=ffcf92064c";
+import { buscarPersona } from "../marca.js?v=ffcf92064c";
+import { diaMes, periodoPedido, htmlSelectorMes, activarSelectorMes, conEspera, nombreDe } from "./comunes.js?v=ffcf92064c";
 
 const puedeCargar = (u) => u.rol === "admin";
 

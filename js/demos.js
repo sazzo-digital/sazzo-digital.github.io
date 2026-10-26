@@ -80,11 +80,10 @@ export const DEMOS = [
                 ]
             },
             tambien: [
-                "Cobro con Mercado Pago o QR, y lector de códigos o balanza",
+                "Cobro con Mercado Pago o QR, y lector de códigos",
                 "Que la caja y el stock se vean en el celular del dueño, al instante",
                 "Varias cajas o sucursales, con su usuario cada una",
-                "Pedido al proveedor armado solo con lo que hay que pedir",
-                "Recargas, servicios y lo que cobre tu kiosco"
+                "Pedido al proveedor armado solo con lo que hay que pedir"
             ]
         },
         acento: "#F5B83D",
@@ -118,7 +117,7 @@ export const DEMOS = [
             },
             tambien: [
                 "Que el turno le llegue al dueño en su celular, al instante",
-                "Seña con Mercado Pago o transferencia, de verdad",
+                "Seña con Mercado Pago o transferencia",
                 "Botón para avisarle al grupo por WhatsApp",
                 "Torneos, \"falta uno\" y avisos por lluvia",
                 "Varios complejos, con su usuario cada uno"
@@ -225,7 +224,7 @@ export const DEMOS = [
                 "Envíos a domicilio y cobro con QR o transferencia",
                 "Cosmética y cuidado personal, con fotos de cada producto",
                 "Vendedoras con su usuario y lo que vendió cada una",
-                "Saludo de cumpleaños que sale solo, el mismo día"
+                "Saludo de cumpleaños listo para mandar el mismo día, con un toque"
             ]
         },
         acento: "#E879F9",
@@ -269,37 +268,36 @@ export const DEMOS = [
         enVivo: "Silvina factura → el dueño y la contadora lo ven",
         rubro: "Pymes, comercios y profesionales que facturan",
         pregunta: "¿Te enterás del IVA cuando ya lo tenés que pagar?",
-        items: ["Facturas A, B y C con CAE de prueba", "Compras traídas de ARCA", "IVA del mes, o tu tope si sos monotributista"],
+        items: ["Facturas A, B y C con CAE de prueba", "Compras que se cargan de un toque, con ARCA simulado", "IVA del mes, o tu tope si sos monotributista"],
         detalle: {
             hace: [
-                "Factura A, B o C y notas de crédito; si sos monotributista, cuánto te queda del tope de tu categoría",
+                "Factura A, B o C y notas de crédito de ejemplo, sin validez fiscal; si sos monotributista, tu tope de categoría",
                 "Cuentas corrientes: quién te debe, a quién le debés, cobros y pagos",
                 "Libro IVA Digital (.txt) y libros en Excel para la contadora",
                 "Libro diario, mayor y balance de sumas y saldos que se arman solos",
                 "Tu empresa: razón social, CUIT, logo, colores y qué pantallas se usan"
             ],
             extra: {
-                titulo: "Para tu contador, en la versión real",
+                titulo: "Para ver con tu contador",
                 renglones: [
-                    "Asientos a mano, con plantillas para amortizaciones, sueldos y ajustes",
+                    "Asientos a mano, con plantillas para amortizaciones y ajustes",
                     "Correcciones con contraasiento: nada se borra ni se edita",
                     "Cierre de cada mes: nadie puede cargar nada con fecha de un mes cerrado",
-                    "Cierre del ejercicio: refundición de resultados y apertura del año nuevo",
-                    "Plan de cuentas a medida y estados contables (situación patrimonial y resultados)",
-                    "Libros listos para rubricar y registro de quién cargó cada cosa"
+                    "Cierre de cada ejercicio, con el criterio de tu contador",
+                    "Plan de cuentas a medida",
+                    "Libros para que tu contador los revise y los rubrique, y registro de quién cargó cada cosa"
                 ]
             },
             tambien: [
-                "Conexión real con ARCA: facturas con validez fiscal, CAE y QR de verificación",
+                "Conexión con ARCA, a evaluar con tu contador: la validez fiscal depende de su alta y de sus certificados",
                 "Traer las compras desde \"Mis Comprobantes\" de ARCA con el archivo que da ARCA",
                 "Varias empresas a la vez, para un estudio contable o un grupo de empresas",
-                "Sueldos, Ingresos Brutos y convenio multilateral, retenciones y Ganancias",
-                "Conciliación bancaria importando el extracto del banco",
+                "Importar el extracto del banco para conciliar",
                 "Usuarios con contraseña y permisos para cada persona del equipo"
             ]
         },
         acento: "#22D3EE",
-        pantalla: ["Factura A · CAE autorizado", "6 compras traídas de ARCA", "IVA del mes · a pagar"],
+        pantalla: ["Factura A · CAE de prueba", "6 compras traídas (ARCA simulado)", "IVA del mes · a pagar"],
         dispositivo: "compu",
         estado: "activa"
     },
@@ -319,11 +317,9 @@ export const DEMOS = [
                 "Caja como la del súper: góndola por rubro, lector de códigos y cobro con dos medios a la vez"
             ],
             tambien: [
-                "Cargar la lista de un colegio desde una foto o un PDF",
                 "Pasar el stock, las ventas y la ganancia a Excel",
-                "Cobro con Mercado Pago o QR e impresora de tickets",
-                "Avisos por WhatsApp cuando la lista está separada",
-                "Tienda online con tu stock real y retiro en el local",
+                "Cobro con Mercado Pago o QR, y tickets para imprimir",
+                "Aviso por Telegram (si el cliente activa el bot) o por WhatsApp con un toque, cuando la lista está separada",
                 "Cuenta corriente para colegios, oficinas y clientes de siempre",
                 "Varias cajas o sucursales, con su usuario cada una"
             ]
@@ -357,12 +353,9 @@ export const DEMOS = [
                 ]
             },
             tambien: [
-                "Mandar el presupuesto por WhatsApp de verdad",
-                "Reconocer la pieza de la foto sola",
-                "Cobro con Mercado Pago o QR, balanza y lector conectados",
-                "Impresora de tickets y presupuestos",
-                "Listas de proveedores que llegan en PDF",
-                "Tienda online con tu stock real y retiro en el local",
+                "Mandar el presupuesto por WhatsApp con un toque",
+                "Cobro con Mercado Pago o QR, y lector de códigos",
+                "Presupuestos y tickets para imprimir",
                 "Varias cajas, sucursales o depósito, con su usuario cada una"
             ]
         },
@@ -394,12 +387,11 @@ export const DEMOS = [
                 ]
             },
             tambien: [
-                "La balanza conectada a la compu del mostrador, ajustada a tu modelo",
-                "Imprimir las etiquetas y el ticket en la impresora del mostrador",
+                "La balanza conectada a la compu del mostrador, según el modelo",
+                "Etiquetas y tickets para imprimir",
                 "Cobro con Mercado Pago o QR",
-                "Avisos por WhatsApp cuando el pedido está listo",
-                "Envíos a domicilio con el recorrido del día",
-                "Tienda online con el stock real de cada corte",
+                "Aviso por Telegram (si el cliente activa el bot) o por WhatsApp con un toque, cuando el pedido está listo",
+                "Envíos a domicilio, con la lista del día",
                 "Varias cajas o sucursales, con su usuario cada una"
             ]
         },
@@ -432,9 +424,8 @@ export const DEMOS = [
                 ]
             },
             tambien: [
-                "Cobro de la cuota con Mercado Pago o débito automático",
-                "Recordatorio de la cuota por WhatsApp, solo",
-                "Molinete en la puerta que se abre con el QR del socio",
+                "Cobro de la cuota con Mercado Pago",
+                "Recordatorio de la cuota por Telegram, o por WhatsApp con un toque",
                 "Videos de cada ejercicio en la rutina",
                 "Varias sedes, con su usuario cada profe",
                 "Venta de bebidas y suplementos en el mostrador"
@@ -461,11 +452,9 @@ export const DEMOS = [
                 "Antes de que venza, preguntarle al inquilino si renueva"
             ],
             tambien: [
-                "Publicar solo en los portales y traer sus consultas a una sola lista",
-                "El índice oficial de cada mes, sin cargarlo a mano",
+                "El índice oficial de cada mes, para aplicar el aumento",
                 "Liquidación al propietario y recibos de alquiler",
-                "Contratos con firma digital",
-                "Cobro del alquiler con Mercado Pago o transferencia, y avisos por WhatsApp",
+                "Cobro del alquiler con Mercado Pago o transferencia, y avisos por Telegram o por WhatsApp con un toque",
                 "Agenda de visitas en el calendario de cada agente",
                 "Tasaciones y varias sucursales, con su usuario cada una"
             ]

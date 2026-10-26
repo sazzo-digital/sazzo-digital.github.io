@@ -1,14 +1,14 @@
-import { conConsigna } from "./comunes.js?v=e73a01d881";
+import { conConsigna } from "./comunes.js?v=ffcf92064c";
 // ============================================
 // Inicio de Sazzo Contable: el tablero de la empresa. Vendido y comprado en el mes, IVA estimado y cuándo vence,
 // quién te debe y a quién le debés, y lo último que se facturó. Arriba, el paso del recorrido de cada persona
 // (Silvina arranca facturando; Hernán y Patricia, mirando).
 // ============================================
-import { esc } from "../../kit/js/ui.js?v=e73a01d881";
-import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=e73a01d881";
-import { pesos, pesosRedondo, nombrePeriodo, periodoActual, correrPeriodo, signo, numeroComprobante } from "../reglas.js?v=e73a01d881";
-import { buscarPersona } from "../marca.js?v=e73a01d881";
-import { logoEmpresa, haceDias, pastillaTipo, diaMes, fechaCorta } from "./comunes.js?v=e73a01d881";
+import { esc } from "../../kit/js/ui.js?v=ffcf92064c";
+import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=ffcf92064c";
+import { pesos, pesosRedondo, nombrePeriodo, periodoActual, correrPeriodo, signo, numeroComprobante } from "../reglas.js?v=ffcf92064c";
+import { buscarPersona } from "../marca.js?v=ffcf92064c";
+import { logoEmpresa, haceDias, pastillaTipo, diaMes, fechaCorta } from "./comunes.js?v=ffcf92064c";
 
 function pintarInicio(cont, { usuario, datos, irA }) {
     const e = datos.leerEmpresa();
@@ -107,7 +107,7 @@ function htmlMonotributo(m) {
             <p class="monotributo__texto">${m.quedan > 0 ? `Usaste el ${esc(m.usado)}% del tope de tu categoría: te quedan <b>${esc(pesosRedondo(m.quedan))}</b>.` : `Te pasaste del tope de tu categoría por <b>${esc(pesosRedondo(-m.quedan))}</b>: toca recategorizarte en ARCA.`}</p>`
             : `<p class="nota"><i class="ti ti-info-circle" aria-hidden="true"></i> <span>Cargá el tope de tu categoría en <a href="#/empresa">Tu empresa</a> y te avisa cuánto te queda.</span></p>`}
             <details class="monotributo__pasos">
-                <summary>Cómo facturás sin contadora</summary>
+                <summary>Cómo hacer tu factura</summary>
                 <ol>
                     <li>Una sola vez: en ARCA, con tu CUIT y clave fiscal, das de alta un punto de venta de factura electrónica.</li>
                     <li>En cada venta: hacés la factura C desde acá. En la versión real, ARCA le pone el CAE al momento.</li>

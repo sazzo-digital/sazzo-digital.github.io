@@ -1,14 +1,14 @@
-import { consignaPersona, pintarConsigna } from "./comunes.js?v=6936e4798d";
+import { consignaPersona, pintarConsigna } from "./comunes.js?v=71afbca5b0";
 // ============================================
 // Pantallas de la clienta (Julieta), pensadas para el celular: el catálogo (filtros por familia y para quién,
 // "Recomendame uno"), cada perfume con sus notas y presentaciones, "Tu pedido" (el carrito) y "Mis pedidos".
 // El pedido no pide ningún dato: Julieta ya entró como ella. Retiro en el local.
 // ============================================
-import { esc, aviso, vacio, fechaCorta, mensajeDe } from "../../kit/js/ui.js?v=6936e4798d";
-import { verEn3D } from "../../kit/js/modelo3d.js?v=6936e4798d";
-import { FAMILIAS, PARA, PRESENTACIONES, TOPES, pesos, frasco3D, notaFrasco } from "../datos.js?v=6936e4798d";
-import { NEGOCIO } from "../marca.js?v=6936e4798d";
-import { frasco, carrito, itemsDelCarrito, unidadesEnCarrito, guia, activarGuias, pastillaPedido } from "./comunes.js?v=6936e4798d";
+import { esc, aviso, vacio, fechaCorta, mensajeDe } from "../../kit/js/ui.js?v=71afbca5b0";
+import { verEn3D } from "../../kit/js/modelo3d.js?v=71afbca5b0";
+import { FAMILIAS, PARA, PRESENTACIONES, TOPES, pesos, frasco3D, notaFrasco } from "../datos.js?v=71afbca5b0";
+import { NEGOCIO } from "../marca.js?v=71afbca5b0";
+import { frasco, carrito, itemsDelCarrito, unidadesEnCarrito, guia, activarGuias, pastillaPedido } from "./comunes.js?v=71afbca5b0";
 
 let familia = null;
 let para = null;

@@ -3,8 +3,8 @@
 // Las personas son los roles reales del rubro (nombres inventados): el dueño, el empleado del mostrador y un cliente
 // con cuenta corriente que pide presupuestos desde el celular.
 // ============================================
-import { revisarMarca } from "../kit/js/marca.js?v=bcfbd5ba45";
-import { negocioDe } from "../kit/js/colores.js?v=bcfbd5ba45";
+import { revisarMarca } from "../kit/js/marca.js?v=7879dd46ff";
+import { negocioDe } from "../kit/js/colores.js?v=7879dd46ff";
 
 export const MARCA = revisarMarca({
     id: "ferreteria",
@@ -68,12 +68,9 @@ export const DETALLE = {
         ]
     },
     tambien: [
-        "Mandar el presupuesto por WhatsApp de verdad",
-        "Reconocer la pieza de la foto sola",
-        "Cobro con Mercado Pago o QR, balanza y lector conectados",
-        "Impresora de tickets y presupuestos",
-        "Listas de proveedores que llegan en PDF",
-        "Tienda online con tu stock real y retiro en el local",
+        "Mandar el presupuesto por WhatsApp con un toque",
+        "Cobro con Mercado Pago o QR, y lector de códigos",
+        "Presupuestos y tickets para imprimir",
         "Varias cajas, sucursales o depósito, con su usuario cada una"
     ]
 };

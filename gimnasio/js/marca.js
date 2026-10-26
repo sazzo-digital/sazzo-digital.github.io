@@ -2,8 +2,8 @@
 // Marca, personas y "también puede tener" de Sazzo Gimnasio (propuesta aprobada el 10/10/2026).
 // Las personas son los roles reales del rubro (nombres inventados): la dueña, el profe de musculación y un socio.
 // ============================================
-import { revisarMarca } from "../kit/js/marca.js?v=ae6415f807";
-import { negocioDe } from "../kit/js/colores.js?v=ae6415f807";
+import { revisarMarca } from "../kit/js/marca.js?v=6819a0f377";
+import { negocioDe } from "../kit/js/colores.js?v=6819a0f377";
 
 export const MARCA = revisarMarca({
     id: "gimnasio",
@@ -66,9 +66,8 @@ export const DETALLE = {
         ]
     },
     tambien: [
-        "Cobro de la cuota con Mercado Pago o débito automático",
-        "Recordatorio de la cuota por WhatsApp, solo",
-        "Molinete en la puerta que se abre con el QR del socio",
+        "Cobro de la cuota con Mercado Pago",
+        "Recordatorio de la cuota por Telegram, o por WhatsApp con un toque",
         "Videos de cada ejercicio en la rutina",
         "Varias sedes, con su usuario cada profe",
         "Venta de bebidas y suplementos en el mostrador"

@@ -1,8 +1,8 @@
-import { esc, aviso } from "../../kit/js/ui.js?v=ae6415f807";
-import { puedeEscanear, escanearSeguido } from "../../kit/js/escaner.js?v=ae6415f807";
-import { pip, vibrar } from "../../kit/js/celular.js?v=ae6415f807";
-import { MARCA, NEGOCIO } from "../marca.js?v=ae6415f807";
-import { activarConsignaPersona } from "./comunes.js?v=ae6415f807";
+import { esc, aviso } from "../../kit/js/ui.js?v=6819a0f377";
+import { puedeEscanear, escanearSeguido } from "../../kit/js/escaner.js?v=6819a0f377";
+import { pip, vibrar } from "../../kit/js/celular.js?v=6819a0f377";
+import { MARCA, NEGOCIO } from "../marca.js?v=6819a0f377";
+import { activarConsignaPersona } from "./comunes.js?v=6819a0f377";
 
 let pararCamara = null;
 

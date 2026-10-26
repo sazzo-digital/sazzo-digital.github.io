@@ -2,9 +2,9 @@
 // Lo de Valeria (la que busca), pensado para el celular: "Pedir visita" (día y hora libre, sin cargar ningún dato:
 // la inmobiliaria asigna quién la acompaña) y "Mis visitas" (pedida → confirmada, con Cancelar).
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=ee0a3fd29d";
-import { aHora } from "../../kit/js/turnos.js?v=ee0a3fd29d";
-import { guia, activarGuias, chipsDias, htmlFoto, medidas, pastillaVisita, mayuscula, consignaPersona, activarPasos } from "./comunes.js?v=ee0a3fd29d";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=87b82baae1";
+import { aHora } from "../../kit/js/turnos.js?v=87b82baae1";
+import { guia, activarGuias, chipsDias, htmlFoto, medidas, pastillaVisita, mayuscula, consignaPersona, activarPasos } from "./comunes.js?v=87b82baae1";
 
 let fecha = null; // el día elegido queda mientras se navega
 

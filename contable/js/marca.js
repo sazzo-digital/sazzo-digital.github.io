@@ -3,8 +3,8 @@
 // Las personas son los roles reales de una pyme Responsable Inscripta (nombres inventados): administración, el dueño
 // y la contadora.
 // ============================================
-import { revisarMarca } from "../kit/js/marca.js?v=e73a01d881";
-import { negocioDe } from "../kit/js/colores.js?v=e73a01d881";
+import { revisarMarca } from "../kit/js/marca.js?v=ffcf92064c";
+import { negocioDe } from "../kit/js/colores.js?v=ffcf92064c";
 
 export const MARCA = revisarMarca({
     id: "contable",
@@ -52,29 +52,28 @@ export const NEGOCIO = negocioDe(MARCA.prefijo, "Distribuidora Los Álamos S.R.L
 
 export const DETALLE = {
     hace: [
-        "Factura A, B o C y notas de crédito; si sos monotributista, cuánto te queda del tope de tu categoría",
+        "Factura A, B o C y notas de crédito de ejemplo, sin validez fiscal; si sos monotributista, tu tope de categoría",
         "Cuentas corrientes: quién te debe, a quién le debés, cobros y pagos",
         "Libro IVA Digital (.txt) y libros en Excel para la contadora",
         "Libro diario, mayor y balance de sumas y saldos que se arman solos",
         "Tu empresa: razón social, CUIT, logo, colores y qué pantallas se usan"
     ],
     extra: {
-        titulo: "Para tu contador, en la versión real",
+        titulo: "Para ver con tu contador",
         renglones: [
-            "Asientos a mano, con plantillas para amortizaciones, sueldos y ajustes",
+            "Asientos a mano, con plantillas para amortizaciones y ajustes",
             "Correcciones con contraasiento: nada se borra ni se edita",
             "Cierre de cada mes: nadie puede cargar nada con fecha de un mes cerrado",
-            "Cierre del ejercicio: refundición de resultados y apertura del año nuevo",
-            "Plan de cuentas a medida y estados contables (situación patrimonial y resultados)",
-            "Libros listos para rubricar y registro de quién cargó cada cosa"
+            "Cierre de cada ejercicio, con el criterio de tu contador",
+            "Plan de cuentas a medida",
+            "Libros para que tu contador los revise y los rubrique, y registro de quién cargó cada cosa"
         ]
     },
     tambien: [
-        "Conexión real con ARCA: facturas con validez fiscal, CAE y QR de verificación",
+        "Conexión con ARCA, a evaluar con tu contador: la validez fiscal depende de su alta y de sus certificados",
         "Traer las compras desde \"Mis Comprobantes\" de ARCA con el archivo que da ARCA",
         "Varias empresas a la vez, para un estudio contable o un grupo de empresas",
-        "Sueldos, Ingresos Brutos y convenio multilateral, retenciones y Ganancias",
-        "Conciliación bancaria importando el extracto del banco",
+        "Importar el extracto del banco para conciliar",
         "Usuarios con contraseña y permisos para cada persona del equipo"
     ]
 };

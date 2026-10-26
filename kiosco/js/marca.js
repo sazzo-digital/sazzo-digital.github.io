@@ -2,8 +2,8 @@
 // Marca, personas y "también puede tener" de Sazzo Kiosco (diseñada el 08/10/2026).
 // Las personas son los roles reales del rubro (nombres inventados): el dueño y la empleada.
 // ============================================
-import { revisarMarca } from "../kit/js/marca.js?v=d5f06e834f";
-import { negocioDe } from "../kit/js/colores.js?v=d5f06e834f";
+import { revisarMarca } from "../kit/js/marca.js?v=ce4b63aa63";
+import { negocioDe } from "../kit/js/colores.js?v=ce4b63aa63";
 
 export const MARCA = revisarMarca({
     id: "kiosco",
@@ -58,10 +58,9 @@ export const DETALLE = {
         ]
     },
     tambien: [
-        "Cobro con Mercado Pago o QR, y lector de códigos o balanza",
+        "Cobro con Mercado Pago o QR, y lector de códigos",
         "Que la caja y el stock se vean en el celular del dueño, al instante",
         "Varias cajas o sucursales, con su usuario cada una",
-        "Pedido al proveedor armado solo con lo que hay que pedir",
-        "Recargas, servicios y lo que cobre tu kiosco"
+        "Pedido al proveedor armado solo con lo que hay que pedir"
     ]
 };

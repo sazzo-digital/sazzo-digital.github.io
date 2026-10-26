@@ -3,8 +3,8 @@
 // Las personas son los roles reales del rubro (nombres inventados): la dueña, el empleado del mostrador y una mamá
 // que pide la lista escolar desde el celular.
 // ============================================
-import { revisarMarca } from "../kit/js/marca.js?v=7b24b8223b";
-import { negocioDe } from "../kit/js/colores.js?v=7b24b8223b";
+import { revisarMarca } from "../kit/js/marca.js?v=d4aafb8120";
+import { negocioDe } from "../kit/js/colores.js?v=d4aafb8120";
 
 export const MARCA = revisarMarca({
     id: "libreria",
@@ -59,11 +59,9 @@ export const DETALLE = {
         "Caja como la del súper: góndola por rubro, lector de códigos y cobro con dos medios a la vez"
     ],
     tambien: [
-        "Cargar la lista de un colegio desde una foto o un PDF",
         "Pasar el stock, las ventas y la ganancia a Excel",
-        "Cobro con Mercado Pago o QR e impresora de tickets",
-        "Avisos por WhatsApp cuando la lista está separada",
-        "Tienda online con tu stock real y retiro en el local",
+        "Cobro con Mercado Pago o QR, y tickets para imprimir",
+        "Aviso por Telegram (si el cliente activa el bot) o por WhatsApp con un toque, cuando la lista está separada",
         "Cuenta corriente para colegios, oficinas y clientes de siempre",
         "Varias cajas o sucursales, con su usuario cada una"
     ]

@@ -6,11 +6,12 @@
 // Reglas del kit: exigir() en lo que modifica, topes en todo lo que se carga y se devuelven copias.
 // Si cambia la forma de los datos, subir VERSION_DATOS (se regeneran solos).
 // ============================================
-import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=854c927c5a";
-import { enteroHasta, sinPasarse } from "../kit/js/topes.js?v=854c927c5a";
-import { fechaLocalISO } from "../kit/js/fechas.js?v=854c927c5a";
-import { MARCA, PERSONAS } from "./marca.js?v=854c927c5a";
-import { MEDIOS_PAGO } from "../kit/js/pagos.js?v=854c927c5a";
+import { exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=7d06fec91a";
+import { enteroHasta, sinPasarse } from "../kit/js/topes.js?v=7d06fec91a";
+import { fechaLocalISO } from "../kit/js/fechas.js?v=7d06fec91a";
+import { MARCA, PERSONAS } from "./marca.js?v=7d06fec91a";
+import { MEDIOS_PAGO } from "../kit/js/pagos.js?v=7d06fec91a";
+import { crearGuardadoRestix } from "./guardado.js?v=7d06fec91a";
 
 export const VERSION_DATOS = 9;
 export const PASOS_CARTA = ["pizzas", "hamburguesa-3d", "minutas"];
@@ -168,7 +169,7 @@ export function turnoAbierto(d) {
 }
 
 export function crearDatos(prefijo = MARCA.prefijo) {
-    const guardado = crearGuardado({ prefijo, version: VERSION_DATOS, semilla, turnoAbierto,
+    const guardado = crearGuardadoRestix({ prefijo, version: VERSION_DATOS, semilla, turnoAbierto,
         preguntaAlVolver: "Quedó un turno abierto de hace {tiempo}. ¿Seguís con ese turno o empezás de cero?" });
     const db = () => guardado.db();
     const esMoza = (u) => u?.rol === "moza";
@@ -381,7 +382,7 @@ export function crearDatos(prefijo = MARCA.prefijo) {
     /** Lo que tiene que hacer la cocina (lo más viejo primero) y lo último que salió. */
     function cocina(usuario) {
         exigir(esCocina(usuario) || esMoza(usuario), "Solo alguien del bar ve la cocina.");
-        const deCocina = db().comandas.filter((c) => c.destino === "cocina").map((c) => {
+        const deCocina = db().comandas.filter((c) => c.destino === "cocina" && c.items?.length).map((c) => {
             const m = db().mesas.find((m) => m.id === c.mesaId);
             return { ...copia(c), cobrando: !!m?.abierta && c.aperturaId === m.abierta.id && m.abierta.estado === "cobrando", yaCobrada: c.estado !== "anulada" && !!m && (!m.abierta || c.aperturaId !== m.abierta.id) };
         });
@@ -409,7 +410,7 @@ export function crearDatos(prefijo = MARCA.prefijo) {
 
     function armarPY(p) {
         const c = p.comandaId ? db().comandas.find((x) => x.id === p.comandaId) : null;
-        return { ...copia(p), minutos: minutos(p.creadoEn), cocinaLista: c?.estado === "lista" };
+        return { ...copia(p), minutos: minutos(p.creadoEn), cocinaLista: c?.estado === "lista" || (!p.comandaId && !p.items.some((i) => item(i.itemId).destino === "cocina")) };
     }
 
     /** Aceptar un pedido de Pedidos Ya: la comida va a la cocina como cualquier comanda. */
@@ -418,9 +419,12 @@ export function crearDatos(prefijo = MARCA.prefijo) {
         const p = buscar(db().pedidosYa, id, "Ese pedido no existe.");
         exigir(p.estado === "nuevo", "Ese pedido ya estaba aceptado.");
         const items = p.items.filter((i) => item(i.itemId).destino === "cocina").map((i) => ({ nombre: i.nombre, cantidad: i.cantidad }));
-        const c = { id: nuevoId("c"), mesaId: p.id, mesa: p.cliente, destino: "cocina", items, creadaEn: ahora(), estado: items.length ? "pendiente" : "lista", listaEn: items.length ? null : ahora() };
-        db().comandas.push(c);
-        p.comandaId = c.id;
+        p.comandaId = null;
+        if (items.length) {
+            const c = { id: nuevoId("c"), mesaId: p.id, mesa: p.cliente, destino: "cocina", items, creadaEn: ahora(), estado: "pendiente", listaEn: null };
+            db().comandas.push(c);
+            p.comandaId = c.id;
+        }
         p.estado = "aceptado";
         guardado.persistir();
         return armarPY(p);
@@ -530,6 +534,7 @@ export function crearDatos(prefijo = MARCA.prefijo) {
             mesasPasadas: c.mesasPasadas, pedidosPasados: c.pedidosPasados,
             anulaciones: c.anulaciones, totalAnulado: c.totalAnulado,
             egresosEfectivo: c.egresosEfectivo, pagosTransferencia: c.pagosTransferencia,
+            porMedio: copia(c.porMedio), entrado: c.total,
             esperado: c.enCajon, contado: c.contado, diferencia: c.diferencia, por: usuario.nombre
         };
         db().mesas.filter((m) => m.abierta).forEach((m) => { m.abierta.heredada = true; });

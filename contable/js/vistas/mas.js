@@ -1,8 +1,8 @@
-import { conConsigna } from "./comunes.js?v=e73a01d881";
+import { conConsigna } from "./comunes.js?v=ffcf92064c";
 // ============================================
 // Más: todas las pantallas en una lista (en el celular el menú de abajo tiene lugar para 5).
 // ============================================
-import { esc } from "../../kit/js/ui.js?v=e73a01d881";
+import { esc } from "../../kit/js/ui.js?v=ffcf92064c";
 
 function pintarMas(cont, { secciones }) {
     cont.innerHTML = `

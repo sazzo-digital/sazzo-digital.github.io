@@ -1,4 +1,4 @@
-import { pintarConsigna } from "./comunes.js?v=bcfbd5ba45";
+import { pintarConsigna } from "./comunes.js?v=7879dd46ff";
 // ============================================
 // Lo de Marcos (cliente con cuenta corriente), desde el celular:
 //   "Pedir presupuesto": escribe lo que necesita como habla, un artículo por renglón ("cano de 1/2 x 3", "teflon"),
@@ -6,12 +6,12 @@ import { pintarConsigna } from "./comunes.js?v=bcfbd5ba45";
 //   "Mis presupuestos": cómo va cada uno (pedido → te lo mandaron → aceptado → retirado), el PDF, "Aceptar" y su
 //   cuenta corriente (lo que debe y los últimos movimientos).
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=bcfbd5ba45";
-import { armarPdf, pdfListo } from "../../kit/js/pdf.js?v=bcfbd5ba45";
-import { TOPES, pesos, cantidadTexto } from "../datos.js?v=bcfbd5ba45";
-import { NEGOCIO } from "../marca.js?v=bcfbd5ba45";
-import { guia, activarGuias, pasos, pastillaEstado, cuando, validez, barraTope, haceDias, htmlFoto } from "./comunes.js?v=bcfbd5ba45";
-import { datosPdf } from "./presupuestos.js?v=bcfbd5ba45";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=7879dd46ff";
+import { armarPdf, pdfListo } from "../../kit/js/pdf.js?v=7879dd46ff";
+import { TOPES, pesos, cantidadTexto } from "../datos.js?v=7879dd46ff";
+import { NEGOCIO } from "../marca.js?v=7879dd46ff";
+import { guia, activarGuias, pasos, pastillaEstado, cuando, validez, barraTope, haceDias, htmlFoto } from "./comunes.js?v=7879dd46ff";
+import { datosPdf } from "./presupuestos.js?v=7879dd46ff";
 
 // Lo que va escribiendo queda en memoria mientras se navega
 const EJEMPLO = ["cano de 1/2 x 3", "4 codos de 1/2", "2 llaves de paso 1/2", "teflon"];

@@ -24,7 +24,7 @@
     <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
     <!-- Letras desde el propio sitio (antes Google Fonts); el script de armar las apunta a la copia compartida -->
     <link rel="stylesheet" href="letras/letras.css?v=f1eead28d9">
-    <link rel="stylesheet" href="css/catalogo.css?v=b2a6bc339d">
+    <link rel="stylesheet" href="css/catalogo.css?v=a777b3699e">
     <!-- Si hay JavaScript, las secciones arrancan ocultas y aparecen al bajar (sin JavaScript se ve todo igual) -->
     <script>
         document.documentElement.classList.add("js");
@@ -201,8 +201,8 @@
                 </a>
                 <a class="sorpresa" href="#demos" data-link-demo="contable">
                     <video class="sorpresa__video" muted loop playsinline preload="none" poster="img/sorpresas/contable.jpg" width="600" height="750" aria-hidden="true"><source src="img/sorpresas/contable.mp4" type="video/mp4"></video>
-                    <b class="sorpresa__frase">Tu factura sin contadora</b>
-                    <span class="sorpresa__texto">Si sos monotributista: factura C y cuánto te queda del tope de tu categoría.</span>
+                    <b class="sorpresa__frase">Tu factura, en un toque</b>
+                    <span class="sorpresa__texto">En la demo ves cómo sería una factura C y cuánto te queda del tope de tu categoría.</span>
                     <span class="sorpresa__link">Probalo en Contable <svg class="icono" aria-hidden="true"><use href="#i-flecha"/></svg></span>
                 </a>
             </div>
@@ -269,7 +269,7 @@
                     <h3>Automatizaciones</h3>
                     <p>Tareas que se hacen solas mientras vos atendés. Elegí una y mirá cómo funciona por dentro.</p>
                     <div class="automatiza__elegir" role="group" aria-label="Elegí una automatización">
-                        <button class="automatiza__opcion" type="button" data-flujo="resumen" aria-pressed="true">El resumen del día, en tu WhatsApp</button>
+                        <button class="automatiza__opcion" type="button" data-flujo="resumen" aria-pressed="true">El resumen del día, en tu celu</button>
                         <button class="automatiza__opcion" type="button" data-flujo="respuestas" aria-pressed="false">Respuestas listas para tus clientes</button>
                     </div>
                     <p class="automatiza__nota"><svg class="icono" aria-hidden="true"><use href="#i-tilde"/></svg>Nada le llega a tus clientes sin que vos lo apruebes.</p>
@@ -280,7 +280,7 @@
                             <li class="nodo" style="--i:0"><svg class="icono" aria-hidden="true"><use href="#i-reloj"/></svg><strong>Todos los días, 21&nbsp;h</strong><small>Arranca solo</small></li>
                             <li class="nodo" style="--i:1"><svg class="icono" aria-hidden="true"><use href="#i-planilla"/></svg><strong>Lee tu caja y tu stock</strong><small>Lo que pasó hoy</small></li>
                             <li class="nodo nodo--ia" style="--i:2"><svg class="icono" aria-hidden="true"><use href="#i-chispa"/></svg><strong>La IA arma el resumen</strong><small>Corto y claro</small></li>
-                            <li class="nodo" style="--i:3"><svg class="icono" aria-hidden="true"><use href="#i-whatsapp"/></svg><strong>Te llega a vos</strong><small>A tu WhatsApp</small></li>
+                            <li class="nodo" style="--i:3"><svg class="icono" aria-hidden="true"><use href="#i-enviar"/></svg><strong>Te llega a vos</strong><small>A tu celu</small></li>
                         </ol>
                         <p class="pizarra__mensaje">Hoy: 48 ventas. Se está terminando la yerba (quedan 3) y la gaseosa de 1,5 L (quedan 2).</p>
                     </div>
@@ -289,11 +289,11 @@
                             <li class="nodo" style="--i:0"><svg class="icono" aria-hidden="true"><use href="#i-sobre"/></svg><strong>Llega una consulta</strong><small>Por tu web o tu mail</small></li>
                             <li class="nodo nodo--ia" style="--i:1"><svg class="icono" aria-hidden="true"><use href="#i-chispa"/></svg><strong>La IA escribe la respuesta</strong><small>Con los datos de tu negocio</small></li>
                             <li class="nodo" style="--i:2"><svg class="icono" aria-hidden="true"><use href="#i-tilde"/></svg><strong>Vos la mirás</strong><small>La cambiás si querés</small></li>
-                            <li class="nodo" style="--i:3"><svg class="icono" aria-hidden="true"><use href="#i-enviar"/></svg><strong>Sale con un toque</strong><small>Al mail o al WhatsApp</small></li>
+                            <li class="nodo" style="--i:3"><svg class="icono" aria-hidden="true"><use href="#i-enviar"/></svg><strong>Sale con un toque</strong><small>Mail o WhatsApp, armado</small></li>
                         </ol>
                         <p class="pizarra__mensaje">"¿Tienen turno el sábado?" → "¡Hola! Sí, a las 10 y a las 11:30. ¿Te reservo uno?"</p>
                     </div>
-                    <p class="pizarra__pie">Así se ve por dentro: cada cajita hace una cosa y le pasa el dato a la siguiente. Lo armamos con n8n.</p>
+                    <p class="pizarra__pie">Así se ve por dentro: cada cajita hace una cosa y le pasa el dato a la siguiente.</p>
                 </div>
             </div>
         </section>
@@ -388,7 +388,7 @@
                 </details>
                 <details class="pregunta">
                     <summary>¿Puedo probar algo antes de decidir?</summary>
-                    <p>Sí. En sazzo.com.ar tenés demos para probar en un toque, sin registrarte. Hay una para cada rubro y vamos sumando más.</p>
+                    <p>Sí. En sazzo.com.ar tenés demos para probar en un toque, sin registrarte. Hoy hay 13 y vamos sumando más.</p>
                 </details>
                 <details class="pregunta">
                     <summary>¿Tienen una demo de mi rubro?</summary>
@@ -420,11 +420,11 @@
                 </details>
                 <details class="pregunta">
                     <summary>¿El sistema es mío?</summary>
-                    <p>Elegís vos. Podemos cuidarlo nosotros y vos solo lo usás, o te lo entregamos funcionando a tu nombre y queda todo tuyo. Lo podés decidir al final, y en las dos formas tus datos son tuyos.</p>
+                    <p>Tus datos son tuyos y te los podés llevar cuando quieras. El sistema lo cuidamos nosotros: lo mantenemos, lo actualizamos y lo ajustamos a medida que tu negocio lo necesite. Si querés que quede a tu nombre, lo charlamos aparte.</p>
                 </details>
             </div>
             <p class="preguntas__otra revelar">¿Otra pregunta? <a class="boton-red" href="#contacto" data-whatsapp data-solo-con-numero aria-label="Escribinos por WhatsApp" title="WhatsApp de Sazzo"><svg class="icono" aria-hidden="true"><use href="#i-whatsapp"/></svg></a></p>
-            <script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "¿Qué hace Sazzo?", "acceptedAnswer": {"@type": "Answer", "text": "Hacemos sistemas y páginas web a la medida de tu negocio: para ordenar ventas, stock, turnos, pedidos o las tareas del equipo, desde el celu o la compu."}}, {"@type": "Question", "name": "¿Puedo probar algo antes de decidir?", "acceptedAnswer": {"@type": "Answer", "text": "Sí. En sazzo.com.ar tenés demos para probar en un toque, sin registrarte. Hay una para cada rubro y vamos sumando más."}}, {"@type": "Question", "name": "¿Tienen una demo de mi rubro?", "acceptedAnswer": {"@type": "Answer", "text": "Hoy hay demos para kiosco, librería, ferretería, carnicería, perfumería, restaurante, barbería, gimnasio, canchas, taller, inmobiliaria, estudio contable y flotas de vehículos. Si el tuyo no está, te mostramos la que más se parece y la adaptamos a cómo trabajás."}}, {"@type": "Question", "name": "¿Cómo trabajan?", "acceptedAnswer": {"@type": "Answer", "text": "Primero charlamos: nos contás cómo trabajás hoy y qué te gustaría ordenar. Después te mostramos una demo parecida a tu negocio para que la pruebes. Lo armamos a tu medida, con tu nombre y tus colores, y vas probando mientras avanza."}}, {"@type": "Question", "name": "¿Hacen páginas web?", "acceptedAnswer": {"@type": "Answer", "text": "Sí. Hacemos páginas que se ven bien en el celu, con tus productos, tu horario y un botón para que te escriban directo. También te ayudamos a que te encuentren en Google."}}, {"@type": "Question", "name": "¿Hay que instalar algo?", "acceptedAnswer": {"@type": "Answer", "text": "No hace falta bajar nada de la tienda de apps. El sistema se usa desde el celu o la compu, y se puede dejar como una app en la pantalla de inicio. Se actualiza solo."}}, {"@type": "Question", "name": "¿Lo puedo usar en el celu y en la compu?", "acceptedAnswer": {"@type": "Answer", "text": "Sí. Se usa en el celu, en la tablet y en la compu. En la versión para tu negocio lo armamos para que lo que cargás en uno lo veas en los otros."}}, {"@type": "Question", "name": "¿Y si se corta internet?", "acceptedAnswer": {"@type": "Answer", "text": "Si lo necesitás, lo armamos para que siga andando con lo último que tenía: lo que cargues queda guardado en el equipo y se manda solo cuando vuelve la señal."}}, {"@type": "Question", "name": "¿Cada empleado ve todo?", "acceptedAnswer": {"@type": "Answer", "text": "No tiene por qué. Lo podemos armar con un usuario para cada uno, y que cada uno vea solo lo que le toca: el empleado vende y vos ves la caja y los números."}}, {"@type": "Question", "name": "¿El sistema es mío?", "acceptedAnswer": {"@type": "Answer", "text": "Elegís vos. Podemos cuidarlo nosotros y vos solo lo usás, o te lo entregamos funcionando a tu nombre y queda todo tuyo. Lo podés decidir al final, y en las dos formas tus datos son tuyos."}}]}</script>
+            <script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "¿Qué hace Sazzo?", "acceptedAnswer": {"@type": "Answer", "text": "Hacemos sistemas y páginas web a la medida de tu negocio: para ordenar ventas, stock, turnos, pedidos o las tareas del equipo, desde el celu o la compu."}}, {"@type": "Question", "name": "¿Puedo probar algo antes de decidir?", "acceptedAnswer": {"@type": "Answer", "text": "Sí. En sazzo.com.ar tenés demos para probar en un toque, sin registrarte. Hoy hay 13 y vamos sumando más."}}, {"@type": "Question", "name": "¿Tienen una demo de mi rubro?", "acceptedAnswer": {"@type": "Answer", "text": "Hoy hay demos para kiosco, librería, ferretería, carnicería, perfumería, restaurante, barbería, gimnasio, canchas, taller, inmobiliaria, estudio contable y flotas de vehículos. Si el tuyo no está, te mostramos la que más se parece y la adaptamos a cómo trabajás."}}, {"@type": "Question", "name": "¿Cómo trabajan?", "acceptedAnswer": {"@type": "Answer", "text": "Primero charlamos: nos contás cómo trabajás hoy y qué te gustaría ordenar. Después te mostramos una demo parecida a tu negocio para que la pruebes. Lo armamos a tu medida, con tu nombre y tus colores, y vas probando mientras avanza."}}, {"@type": "Question", "name": "¿Hacen páginas web?", "acceptedAnswer": {"@type": "Answer", "text": "Sí. Hacemos páginas que se ven bien en el celu, con tus productos, tu horario y un botón para que te escriban directo. También te ayudamos a que te encuentren en Google."}}, {"@type": "Question", "name": "¿Hay que instalar algo?", "acceptedAnswer": {"@type": "Answer", "text": "No hace falta bajar nada de la tienda de apps. El sistema se usa desde el celu o la compu, y se puede dejar como una app en la pantalla de inicio. Se actualiza solo."}}, {"@type": "Question", "name": "¿Lo puedo usar en el celu y en la compu?", "acceptedAnswer": {"@type": "Answer", "text": "Sí. Se usa en el celu, en la tablet y en la compu. En la versión para tu negocio lo armamos para que lo que cargás en uno lo veas en los otros."}}, {"@type": "Question", "name": "¿Y si se corta internet?", "acceptedAnswer": {"@type": "Answer", "text": "Si lo necesitás, lo armamos para que siga andando con lo último que tenía: lo que cargues queda guardado en el equipo y se manda solo cuando vuelve la señal."}}, {"@type": "Question", "name": "¿Cada empleado ve todo?", "acceptedAnswer": {"@type": "Answer", "text": "No tiene por qué. Lo podemos armar con un usuario para cada uno, y que cada uno vea solo lo que le toca: el empleado vende y vos ves la caja y los números."}}, {"@type": "Question", "name": "¿El sistema es mío?", "acceptedAnswer": {"@type": "Answer", "text": "Tus datos son tuyos y te los podés llevar cuando quieras. El sistema lo cuidamos nosotros: lo mantenemos, lo actualizamos y lo ajustamos a medida que tu negocio lo necesite. Si querés que quede a tu nombre, lo charlamos aparte."}}]}</script>
         </section>
 
         <!-- 5. A medida -->
@@ -526,10 +526,10 @@
         </div>
         <div class="pie__legal">
             <span>© <span data-anio>2026</span> Sazzo. Todos los derechos reservados.</span>
-            <span><a href="privacidad.html">Privacidad</a> <span class="pie__version">V 1.12</span></span>
+            <span><a href="privacidad.html">Privacidad</a> <span class="pie__version">V 1.13</span></span>
         </div>
     </footer>
 
-    <script type="module" src="js/catalogo.js?v=b2a6bc339d"></script>
+    <script type="module" src="js/catalogo.js?v=a777b3699e"></script>
 </body>
 </html>

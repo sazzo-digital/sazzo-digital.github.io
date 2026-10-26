@@ -3,13 +3,13 @@
 // grilla), la comanda de una mesa (al enviar se separa solo lo de la cocina y lo de la barra), el cobro dividiendo la
 // cuenta (todo junto, en partes iguales o por lo que consumió cada uno, cada parte con su medio de pago) y la caja.
 // ============================================
-import { esc, aviso, vacio, fechaCorta } from "../../kit/js/ui.js?v=854c927c5a";
-import { CATEGORIAS, MEDIOS, MEDIOS_PERSONAL, MOTIVOS_PERSONAL, TOPES, carta, dividir, pesos } from "../datos.js?v=854c927c5a";
-import { MARCA, NEGOCIO, PERSONAS } from "../marca.js?v=854c927c5a";
-import { htmlBotonSonido, activarBotonSonido, ding } from "../../kit/js/celular.js?v=854c927c5a";
-import { ticket, guia, activarGuias, haceMin, hora, consignaPersona } from "./comunes.js?v=854c927c5a";
-import { activarConsigna } from "../../kit/js/consigna.js?v=854c927c5a";
-import { diaLocalDe } from "../../kit/js/fechas.js?v=854c927c5a";
+import { esc, aviso, vacio, fechaCorta } from "../../kit/js/ui.js?v=7d06fec91a";
+import { CATEGORIAS, MEDIOS, MEDIOS_PERSONAL, MOTIVOS_PERSONAL, TOPES, carta, dividir } from "../datos.js?v=7d06fec91a";
+import { MARCA, NEGOCIO, PERSONAS } from "../marca.js?v=7d06fec91a";
+import { htmlBotonSonido, activarBotonSonido, ding } from "../../kit/js/celular.js?v=7d06fec91a";
+import { ticket, importe, guia, activarGuias, haceMin, hora, consignaPersona } from "./comunes.js?v=7d06fec91a";
+import { activarConsigna } from "../../kit/js/consigna.js?v=7d06fec91a";
+import { diaLocalDe } from "../../kit/js/fechas.js?v=7d06fec91a";
 
 const ESTADO_MESA = { libre: "Libre", abierta: "Abierta", cobrando: "Cobrando" };
 
@@ -26,11 +26,11 @@ export function vistaPlano(cont, { usuario, datos, irA }) {
     const cuentas = Object.fromEntries(Object.keys(estados).map((estado) => [estado, p.sectores.flatMap((s) => s.mesas).filter((m) => estadoVisual(m) === estado).length]));
     const panel = (id) => `id="sector-${esc(id)}" role="tabpanel" aria-labelledby="pestana-${esc(id)}" data-sector="${esc(id)}"${id === elegido ? "" : " hidden"}`;
     const tile = (m) => `
-        <a class="mesa mesa--${esc(m.estado)}${m.id === mesaPaso ? " mesa--paso" : ""}" data-estado="${esc(estadoVisual(m))}" href="#/mesa/${esc(m.id)}" aria-label="${esc(m.nombre)}: ${esc(ESTADO_MESA[m.estado])}">
+        <a class="mesa${m.total >= 1_000_000 ? " mesa--importe-largo" : ""} mesa--${esc(m.estado)}${m.id === mesaPaso ? " mesa--paso" : ""}" data-estado="${esc(estadoVisual(m))}" href="#/mesa/${esc(m.id)}" aria-label="${esc(m.nombre)}: ${esc(ESTADO_MESA[m.estado])}">
             <b class="mesa__numero">${esc(m.nombre.replace(/^\D+/, ""))}</b>
             ${m.estado === "libre" ? "" : `
             <small><i class="ti ti-users" aria-hidden="true"></i> ${esc(m.abierta.personas)} · ${esc(m.minutos)}'</small>
-            <small class="mesa__total">${esc(pesos(m.total))}</small>
+            <small class="mesa__total">${importe(m.total)}</small>
             <span class="mesa__marcas">
                 ${m.estado === "cobrando" ? `<i class="ti ti-cash" title="Cobrando"></i>` : ""}
                 ${m.cocinaPendiente ? `<i class="ti ti-flame" title="La cocina está en eso"></i>` : ""}
@@ -51,7 +51,7 @@ export function vistaPlano(cont, { usuario, datos, irA }) {
         <div class="tira">
             <span><b>${esc(p.resumen.ocupadas)}</b> de ${esc(p.resumen.total)} ocupadas</span>
             <span><b>${esc(p.resumen.personas)}</b> personas</span>
-            <span>Abierto <b>${esc(pesos(p.resumen.abierto))}</b></span>
+            <span>Abierto <b>${importe(p.resumen.abierto)}</b></span>
         </div>
         <div class="estados-salon">${Object.entries(cuentas).filter(([, n]) => n > 0).map(([estado, n]) => `<span class="estado-chip" data-estado="${esc(estado)}"><b>${esc(n)}</b> ${esc(estados[estado][n === 1 ? 0 : 1])}</span>`).join("")}</div>
         </details>
@@ -67,7 +67,7 @@ export function vistaPlano(cont, { usuario, datos, irA }) {
                 <li class="tarjeta${o.estado === "nuevo" ? " tarjeta--nuevo" : ""}">
                     <div class="tarjeta__fila"><b>${esc(o.cliente)}</b><span class="pastilla pastilla--${o.estado === "nuevo" ? "alerta" : o.cocinaLista ? "bien" : "suave"}">${o.estado === "nuevo" ? "Nuevo" : o.cocinaLista ? "Listo para el repartidor" : "En la cocina"}</span></div>
                     ${o.heredada ? `<p class="nota">viene del turno anterior</p>` : ""}
-                    <p class="tarjeta__quien">${esc(o.items.map((i) => `${i.cantidad} ${i.nombre}`).join(", "))} · <b>${esc(pesos(o.total))}</b> · ${esc(haceMin(o.minutos))}</p>
+                    <p class="tarjeta__quien">${esc(o.items.map((i) => `${i.cantidad} ${i.nombre}`).join(", "))} · <b>${importe(o.total)}</b> · ${esc(haceMin(o.minutos))}</p>
                     <div class="tarjeta__pie"><span></span>
                         ${o.estado === "nuevo" ? `<button class="boton boton--chico" type="button" data-aceptar="${esc(o.id)}"><i class="ti ti-check"></i> Aceptar</button>` : ""}
                         ${o.estado === "aceptado" ? `<button class="boton boton--chico" type="button" data-entregar="${esc(o.id)}"${o.cocinaLista ? "" : " disabled"}><i class="ti ti-motorbike"></i> Entregado al repartidor</button>` : ""}
@@ -152,7 +152,7 @@ export function vistaMesa(cont, { usuario, datos, irA, params: [id] }, enviado =
                 </div>
                 <div class="productos">${productos.map((p) => `
                     <button class="producto" type="button" data-agregar="${esc(p.id)}">
-                        <span>${esc(p.nombre)}<small class="producto__cantidad">${esc(m.abierta.renglones.filter((r) => r.itemId === p.id && !r.anulacion).reduce((n, r) => n + r.cantidad, 0))} en la mesa</small></span><b>${esc(pesos(p.precio))}</b>
+                        <span>${esc(p.nombre)}<small class="producto__cantidad">${esc(m.abierta.renglones.filter((r) => r.itemId === p.id && !r.anulacion).reduce((n, r) => n + r.cantidad, 0))} en la mesa</small></span><b>${importe(p.precio)}</b>
                     </button>`).join("")}
                 </div>
             </section>
@@ -162,10 +162,10 @@ export function vistaMesa(cont, { usuario, datos, irA, params: [id] }, enviado =
                     <li class="renglon${r.anulacion ? " renglon-anulado" : r.enviado ? "" : " renglon--nuevo"}">
                         <span class="renglon__cant">${esc(r.cantidad)}</span>
                         <span class="renglon__nombre">${esc(r.nombre)}<small>${r.anulacion ? `Anulado · ${esc(r.anulacion.motivo)} · ${esc(r.anulacion.por)} · ${esc(hora(r.anulacion.en))}` : r.enviado ? "Mandado" : "Sin mandar"}</small></span>
-                        <b>${esc(pesos(r.precio * r.cantidad))}</b>
+                        <b>${importe(r.precio * r.cantidad)}</b>
                         ${r.anulacion ? "" : r.enviado ? `${usuario.rol === "moza" ? `<button class="boton-icono" type="button" data-anular-renglon="${esc(r.id)}" aria-label="Anular ${esc(r.nombre)}"><i class="ti ti-circle-x"></i></button>` : ""}` : `<button class="boton-icono" type="button" data-sacar="${esc(r.id)}" aria-label="Uno menos de ${esc(r.nombre)}"><i class="ti ti-minus"></i></button>`}
                     </li>`).join("")}</ul>` : `<p class="nota">Tocá los productos para sumarlos.</p>`}
-                <div class="cuenta__acciones"><div class="total"><span>Total</span><b>${esc(pesos(m.total))}</b></div>
+                <div class="cuenta__acciones"><div class="total"><span>Total</span><b>${importe(m.total)}</b></div>
                 ${m.sinMandar ? `<button class="boton boton--ancho boton--grande" type="button" data-enviar><i class="ti ti-send"></i> Mandar a cocina y barra</button>` : ""}
                 ${m.total > 0 && !m.sinMandar ? `<a class="boton boton--ancho${m.cocinaPendiente ? " boton--secundario" : ""}" href="#/mesa/${esc(m.id)}/cobrar"><i class="ti ti-cash"></i> Cobrar</a>` : ""}
                 ${m.total > 0 && m.estado !== "cobrando" && usuario.rol === "moza" ? `<button class="boton boton--secundario boton--ancho" type="button" data-pedir-cuenta>Pedir la cuenta</button>` : ""}
@@ -230,7 +230,7 @@ export function vistaMesa(cont, { usuario, datos, irA, params: [id] }, enviado =
         motivoAnular = motivo;
         formAnular.elements.motivo.readOnly = true;
         formAnular.querySelector("button").disabled = true;
-        confirmarAnular.innerHTML = `<p>¿Anulás ${esc(m.nombre)} por ${esc(pesos(m.total))}?</p><p>Motivo: ${esc(motivo)}</p><p>La mesa queda libre y la cocina ve lo pendiente como anulado.</p><button class="boton" type="button" data-confirmar-anulacion>Confirmar anulación</button><button class="boton boton--secundario" type="button" data-cancelar-anulacion>Volver</button>`;
+        confirmarAnular.innerHTML = `<p>¿Anulás ${esc(m.nombre)} por ${importe(m.total)}?</p><p>Motivo: ${esc(motivo)}</p><p>La mesa queda libre y la cocina ve lo pendiente como anulado.</p><button class="boton" type="button" data-confirmar-anulacion>Confirmar anulación</button><button class="boton boton--secundario" type="button" data-cancelar-anulacion>Volver</button>`;
         confirmarAnular.hidden = false;
         confirmarAnular.focus();
     });
@@ -353,8 +353,8 @@ export function vistaCobro(cont, { usuario, datos, params: [id] }) {
             ${consignaPersona(datos, usuario)}
             ${estado.cambio ? `<p class="alerta alerta--alerta" role="status">La cuenta cambió: revisá el total</p>` : ""}
             ${m.sinMandar ? `<p class="nota">Hay cosas sin mandar: mandalas o sacalas antes de cobrar.</p>` : ""}
-            <div class="panel total-cobro"><span class="panel__rotulo">Total</span><span class="panel__numero">${esc(pesos(m.total))}</span><small>${esc(m.abierta.personas)} ${m.abierta.personas === 1 ? "persona" : "personas"}</small></div>
-            <div class="chips" role="tablist" aria-label="Cómo se divide">
+            <div class="panel total-cobro"><span class="panel__rotulo">Total</span><span class="panel__numero">${importe(m.total)}</span><small>${esc(m.abierta.personas)} ${m.abierta.personas === 1 ? "persona" : "personas"}</small></div>
+            <div class="chips modos-cobro" role="tablist" aria-label="Cómo se divide">
                 <button class="chip${estado.modo === "junto" ? " activo" : ""}" type="button" data-modo="junto">Todo junto</button>
                 <button class="chip${estado.modo === "iguales" ? " activo" : ""}" type="button" data-modo="iguales">En partes iguales</button>
                 <button class="chip${estado.modo === "items" ? " activo" : ""}" type="button" data-modo="items">Por lo que consumió cada uno</button>
@@ -364,17 +364,17 @@ export function vistaCobro(cont, { usuario, datos, params: [id] }) {
             <div class="chips mesa-opciones">${Array.from({ length: TOPES.partes }, (_, i) => i + 1).map((n) => `<button class="chip${n === estado.cuantos ? " activo" : ""}" type="button" data-cuantos="${esc(n)}">${esc(n)}</button>`).join("")}</div>` : ""}
             ${estado.modo === "items" ? `
             <ul class="unidades">${unidades.map((u) => `
-                <li><span>${esc(u.nombre)}<small>${esc(pesos(u.precio))}</small></span>
+                <li><span>${esc(u.nombre)}<small>${importe(u.precio)}</small></span>
                     <span class="chips chips--chicos mesa-opciones">${Array.from({ length: estado.cuantos }, (_, i) => `<button class="chip${estado.asignado[u.clave] === i ? " activo" : ""}" type="button" data-unidad="${esc(u.clave)}" data-persona="${esc(i)}">${esc(i + 1)}</button>`).join("")}</span>
                 </li>`).join("")}
             </ul>` : ""}
             <ul class="partes">${lista.map((monto, i) => `
                 <li class="parte${monto ? "" : " parte--vacia"}">
-                    <span class="parte__quien">${lista.length > 1 ? `Persona ${i + 1}` : "Toda la mesa"}<b>${esc(pesos(monto))}</b></span>
+                    <span class="parte__quien">${lista.length > 1 ? `Persona ${i + 1}` : "Toda la mesa"}<b>${importe(monto)}</b></span>
                     <span class="chips chips--chicos">${Object.entries(MEDIOS).map(([k, t]) => `<button class="chip${estado.medios[i] === k ? " activo" : ""}" type="button" data-parte="${i}" data-medio="${k}">${esc(t)}</button>`).join("")}</span>
                 </li>`).join("")}
             </ul>
-            <button class="boton boton--ancho boton--grande" type="button" data-cobrar><i class="ti ti-cash"></i> Cobrar ${esc(pesos(m.total))}</button>
+            <button class="boton boton--ancho boton--grande boton-cobrar" type="button" data-cobrar><i class="ti ti-cash"></i><span>Cobrar</span>${importe(m.total)}</button>
             ${m.cocinaPendiente ? `<p class="nota"><i class="ti ti-flame"></i> Ojo: la cocina todavía está preparando algo de esta mesa.</p>` : ""}`;
 
         cont.querySelectorAll("[data-modo]").forEach((b) => b.addEventListener("click", () => {
@@ -407,8 +407,8 @@ export function vistaCobro(cont, { usuario, datos, params: [id] }) {
                     <div class="hecho">
                         <i class="ti ti-circle-check" aria-hidden="true"></i>
                         <h1 class="titulo">Cobrado</h1>
-                        <p>${esc(cobro.mesa)} · ${esc(pesos(cobro.total))}</p>
-                        <ul class="resumen-cobro">${resumen.map((p, i) => `<li><span>${resumen.length > 1 ? `Persona ${i + 1}` : "Toda la mesa"}</span><b>${esc(pesos(p.monto))}</b><small>${p.monto ? esc(MEDIOS[p.medio] ?? (p.medio === "tarjeta" ? "Tarjeta" : p.medio)) : "Sin consumo"}</small></li>`).join("")}</ul>
+                        <p>${esc(cobro.mesa)} · ${importe(cobro.total)}</p>
+                        <ul class="resumen-cobro">${resumen.map((p, i) => `<li><span>${resumen.length > 1 ? `Persona ${i + 1}` : "Toda la mesa"}</span><b>${importe(p.monto)}</b><small>${p.monto ? esc(MEDIOS[p.medio] ?? (p.medio === "tarjeta" ? "Tarjeta" : p.medio)) : "Sin consumo"}</small></li>`).join("")}</ul>
                         <p class="nota"><i class="ti ti-armchair"></i> La mesa quedó libre.</p>
                     </div>
                     ${consignaPersona(datos, usuario)}
@@ -427,27 +427,28 @@ export function vistaCobro(cont, { usuario, datos, params: [id] }) {
 export function vistaCaja(cont, { usuario, datos }) {
     const c = datos.caja(usuario);
     const medios = { ...MEDIOS, pedidosya: "Pedidos Ya" };
-    const diferencia = (n) => n === 0 ? "Justo: no sobra ni falta nada." : n > 0 ? `Sobran ${pesos(n)}.` : `Faltan ${pesos(-n)}.`;
+    const diferencia = (n) => n === 0 ? "Justo: no sobra ni falta nada." : n > 0 ? `Sobran ${importe(n)}.` : `Faltan ${importe(-n)}.`;
     const totalesEgresos = (caja) => `
-        <p>Egresos en efectivo: ${esc(pesos(caja.egresosEfectivo))}</p>
-        <p>Pagado al personal por transferencia: ${esc(pesos(caja.pagosTransferencia))} (no sale del cajón).</p>`;
-    const resumenAnulaciones = (caja) => `<p>Anuladas: ${esc(caja.anulaciones.length)} ${caja.anulaciones.length === 1 ? "mesa" : "mesas"} por ${esc(pesos(caja.totalAnulado))}.</p>${caja.anulaciones.length ? `<ul class="caja-anulaciones">${caja.anulaciones.map((a) => `<li><b>${esc(a.mesa)}</b> · ${esc(pesos(a.total))} · ${esc(a.motivo)}<small>${esc(fechaCorta(diaLocalDe(a.en)))} a las ${esc(hora(a.en))} · ${esc(a.por)}</small></li>`).join("")}</ul>` : ""}`;
-    const resumenPasadas = (caja) => `<p>Pasaron al turno siguiente: ${esc(caja.mesasPasadas.length)} ${caja.mesasPasadas.length === 1 ? "mesa" : "mesas"} por ${esc(pesos(caja.mesasPasadas.reduce((t, m) => t + m.total, 0)))}.</p><p>Pedidos Ya que pasaron: ${esc(caja.pedidosPasados.length)} por ${esc(pesos(caja.pedidosPasados.reduce((t, p) => t + p.total, 0)))}.</p>`;
+        <p>Egresos en efectivo: ${importe(caja.egresosEfectivo)}</p>
+        <p>Pagado al personal por transferencia: ${importe(caja.pagosTransferencia)} (no sale del cajón).</p>`;
+    const resumenAnulaciones = (caja) => `<p>Anuladas: ${esc(caja.anulaciones.length)} ${caja.anulaciones.length === 1 ? "mesa" : "mesas"} por ${importe(caja.totalAnulado)}.</p>${caja.anulaciones.length ? `<ul class="caja-anulaciones">${caja.anulaciones.map((a) => `<li><b>${esc(a.mesa)}</b> · ${importe(a.total)} · ${esc(a.motivo)}<small>${esc(fechaCorta(diaLocalDe(a.en)))} a las ${esc(hora(a.en))} · ${esc(a.por)}</small></li>`).join("")}</ul>` : ""}`;
+    const resumenPasadas = (caja) => `<p>Pasaron al turno siguiente: ${esc(caja.mesasPasadas.length)} ${caja.mesasPasadas.length === 1 ? "mesa" : "mesas"} por ${importe(caja.mesasPasadas.reduce((t, m) => t + m.total, 0))}.</p><p>Pedidos Ya que pasaron: ${esc(caja.pedidosPasados.length)} por ${importe(caja.pedidosPasados.reduce((t, p) => t + p.total, 0))}.</p>`;
     const resumenCierre = (ci) => `
         <p><b>${ci.tipo === "dia" ? "Cierre del día" : "Fin de turno"}</b></p>
         <p class="nota">${esc(fechaCorta(diaLocalDe(ci.hasta)))} a las ${esc(hora(ci.hasta))} · ${esc(ci.por)}</p>
-        <p>Esperado: ${esc(pesos(ci.esperado))} · Contado: ${esc(pesos(ci.contado))}</p>
+        ${Number.isFinite(ci.entrado) && ci.porMedio ? `<p>Entró en el turno: ${importe(ci.entrado)}</p>${Object.entries(medios).map(([k, t]) => `<p class="cierre-medio">${esc(t)}: ${importe(ci.porMedio[k] ?? 0)}</p>`).join("")}` : ""}
+        <p>Esperado: ${importe(ci.esperado)} · Contado: ${importe(ci.contado)}</p>
         ${totalesEgresos(ci)}
         ${resumenPasadas(ci)}
         ${resumenAnulaciones(ci)}
-        <p class="cierre ${ci.diferencia === 0 ? "cierre--bien" : "cierre--ojo"}">${esc(diferencia(ci.diferencia))}</p>`;
+        <p class="cierre ${ci.diferencia === 0 ? "cierre--bien" : "cierre--ojo"}">${diferencia(ci.diferencia)}</p>`;
     const cobros = `<ul class="cobros">${c.cobros.map((co) => `
-        <li><span><b>${esc(co.mesa)}</b><small>${esc(hora(co.en))} · ${esc(co.partes.map((p) => medios[p.medio]).join(" + "))}</small></span><b>${esc(pesos(co.total))}</b></li>`).join("")}</ul>`;
+        <li><span><b>${esc(co.mesa)}</b><small>${esc(hora(co.en))} · ${esc(co.partes.map((p) => medios[p.medio]).join(" + "))}</small></span><b>${importe(co.total)}</b></li>`).join("")}</ul>`;
     cont.innerHTML = `
         <h1 class="titulo">Caja del turno</h1>
         ${consignaPersona(datos, usuario)}
-        <div class="panel total-cobro"><span class="panel__rotulo">Entró en el turno</span><span class="panel__numero">${esc(pesos(c.total))}</span><small>${esc(c.cobros.length)} cobros · en las mesas todavía hay ${esc(pesos(c.abierto))}</small></div>
-        <div class="medios">${Object.entries(medios).map(([k, t]) => `<div><span>${esc(t)}</span><b>${esc(pesos(c.porMedio[k]))}</b></div>`).join("")}</div>
+        <div class="panel total-cobro"><span class="panel__rotulo">Entró en el turno</span><span class="panel__numero">${importe(c.total)}</span><small>${esc(c.cobros.length)} cobros · en las mesas todavía hay ${importe(c.abierto)}</small></div>
+        <div class="medios${Object.values(c.porMedio).some((n) => n >= 1_000_000) ? " medios--importe-largo" : ""}">${Object.entries(medios).map(([k, t]) => `<div><span>${esc(t)}</span><b>${importe(c.porMedio[k])}</b></div>`).join("")}</div>
         <section class="bloque">
             <h2 class="subtitulo"><i class="ti ti-receipt"></i> Cobros del turno</h2>
             ${c.cobros.length > 10 ? `<details><summary>Ver los ${esc(c.cobros.length)} cobros del turno</summary>${cobros}</details>` : c.cobros.length ? cobros : '<p class="nota">Todavía no hubo cobros en este turno.</p>'}
@@ -475,7 +476,7 @@ export function vistaCaja(cont, { usuario, datos }) {
         <section class="bloque" data-movimientos-turno>
             <h2 class="subtitulo">Movimientos del turno</h2>
             ${totalesEgresos(c)}
-            ${c.movimientos.length ? `<ul class="caja-movimientos">${c.movimientos.map((m) => `<li><b>${esc(m.tipo === "personal" ? "Pago al personal" : m.tipo === "gasto" ? "Gasto" : "Retiro")}${m.persona ? ` · ${esc(m.persona)}` : ""} · ${esc(m.motivo)}</b><span>${esc(hora(m.en))} · ${esc(medios[m.medio])} · ${esc(pesos(m.monto))}</span><small>Cargó: ${esc(m.por)}</small></li>`).join("")}</ul>` : '<p class="nota">Todavía no hubo movimientos en este turno.</p>'}
+            ${c.movimientos.length ? `<ul class="caja-movimientos">${c.movimientos.map((m) => `<li><b>${esc(m.tipo === "personal" ? "Pago al personal" : m.tipo === "gasto" ? "Gasto" : "Retiro")}${m.persona ? ` · ${esc(m.persona)}` : ""} · ${esc(m.motivo)}</b><span>${esc(hora(m.en))} · ${esc(medios[m.medio])} · ${importe(m.monto)}</span><small>Cargó: ${esc(m.por)}</small></li>`).join("")}</ul>` : '<p class="nota">Todavía no hubo movimientos en este turno.</p>'}
         </section>
         <section class="bloque">
             <h2 class="subtitulo">Mesas anuladas del turno</h2>
@@ -484,7 +485,7 @@ export function vistaCaja(cont, { usuario, datos }) {
         <section class="bloque">
             <h2 class="subtitulo"><i class="ti ti-lock"></i> Terminar el turno o cerrar el día</h2>
             <p class="nota">Lo cerrás a mano al terminar tu jornada. Las mesas y Pedidos Ya pendientes pasan al turno siguiente. Para cerrar el día, no puede quedar nada abierto.</p>
-            <p class="nota"><i class="ti ti-cash"></i> En el cajón tiene que haber ${esc(pesos(c.enCajon))} (${esc(pesos(c.fondo))} de cambio + lo cobrado en efectivo − ${esc(pesos(c.egresosEfectivo))} de pagos al personal en efectivo, gastos y retiros del turno).</p>
+            <p class="nota"><i class="ti ti-cash"></i> <span>En el cajón tiene que haber ${importe(c.enCajon)} (${importe(c.fondo)} de cambio + lo cobrado en efectivo − ${importe(c.egresosEfectivo)} de pagos al personal en efectivo, gastos y retiros del turno).</span></p>
             <form class="formulario" data-cerrar-caja novalidate>
                 <label>Contá la plata del cajón
                     <span class="fila-form">
@@ -537,12 +538,12 @@ export function vistaCaja(cont, { usuario, datos }) {
             pendiente = datos.prepararCierre(usuario, campo.value === "" ? "" : Number(campo.value), e.submitter?.value ?? "turno");
             confirmacion.innerHTML = `
                 <h3 class="subtitulo">${pendiente.tipo === "dia" ? "¿Cerrás el día?" : "¿Terminás este turno?"}</h3>
-                <p>Esperado: ${esc(pesos(pendiente.enCajon))} · Contado: ${esc(pesos(pendiente.contado))}</p>
+                <p>Esperado: ${importe(pendiente.enCajon)} · Contado: ${importe(pendiente.contado)}</p>
                 ${totalesEgresos(pendiente)}
                 ${resumenAnulaciones(pendiente)}
-                <p>${esc(diferencia(pendiente.diferencia))}</p>
-                ${pendiente.mesasAbiertas ? `<p class="cierre cierre--ojo">Quedan ${esc(pendiente.mesasAbiertas)} ${pendiente.mesasAbiertas === 1 ? "mesa abierta" : "mesas abiertas"} por ${esc(pesos(pendiente.abierto))}. Esos cobros quedarán para el turno siguiente.</p>` : ""}
-                ${pendiente.pedidosPasados.length ? `<p class="nota">Pasan al turno siguiente ${esc(pendiente.pedidosPasados.length)} pedidos de Pedidos Ya por ${esc(pesos(pendiente.pedidosPasados.reduce((t, p) => t + p.total, 0)))}.</p>` : ""}
+                <p>${diferencia(pendiente.diferencia)}</p>
+                ${pendiente.mesasAbiertas ? `<p class="cierre cierre--ojo">Quedan ${esc(pendiente.mesasAbiertas)} ${pendiente.mesasAbiertas === 1 ? "mesa abierta" : "mesas abiertas"} por ${importe(pendiente.abierto)}. Esos cobros quedarán para el turno siguiente.</p>` : ""}
+                ${pendiente.pedidosPasados.length ? `<p class="nota"><span>Pasan al turno siguiente ${esc(pendiente.pedidosPasados.length)} pedidos de Pedidos Ya por ${importe(pendiente.pedidosPasados.reduce((t, p) => t + p.total, 0))}.</span></p>` : ""}
                 <button class="boton" type="button" data-confirmar-cierre>Confirmar cierre</button>
                 <button class="boton boton--secundario" type="button" data-cancelar-cierre>Volver a contar</button>`;
             campo.readOnly = true;

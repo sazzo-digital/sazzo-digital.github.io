@@ -3,25 +3,26 @@
 // Lara (moza) ve el salón, la cocina (solo mirar) y la caja; Beto, la cocina; Flor (cliente), la carta del QR.
 // irA() cambia de persona sin pasar por "Probala como…" (botón del recorrido: "Mirá lo que le llega a la cocina →").
 // ============================================
-import { $, conFundido } from "../kit/js/ui.js?v=854c927c5a";
-import { iniciarDemo } from "../kit/js/arranque.js?v=854c927c5a";
-import { vistaIngreso } from "../kit/js/ingreso.js?v=854c927c5a";
-import { pintarMarco } from "../kit/js/marco.js?v=854c927c5a";
-import { mostrarRuta, soltarPantalla } from "../kit/js/rutas.js?v=854c927c5a";
-import { vistaAcerca } from "../kit/js/acerca.js?v=854c927c5a";
-import { MARCA, PERSONAS, DETALLE, buscarPersona } from "./marca.js?v=854c927c5a";
-import { aparte } from "../kit/js/aparte.js?v=854c927c5a";
-import { leerSesionGuardada } from "../kit/js/guardado.js?v=854c927c5a";
+import { $, conFundido } from "../kit/js/ui.js?v=7d06fec91a";
+import { iniciarDemo } from "../kit/js/arranque.js?v=7d06fec91a";
+import { vistaIngreso } from "../kit/js/ingreso.js?v=7d06fec91a";
+import { pintarMarco } from "../kit/js/marco.js?v=7d06fec91a";
+import { mostrarRuta, soltarPantalla } from "../kit/js/rutas.js?v=7d06fec91a";
+import { vistaAcerca } from "../kit/js/acerca.js?v=7d06fec91a";
+import { MARCA, PERSONAS, DETALLE, buscarPersona } from "./marca.js?v=7d06fec91a";
+import { aparte } from "../kit/js/aparte.js?v=7d06fec91a";
+import { leerSesionGuardada } from "../kit/js/guardado.js?v=7d06fec91a";
+import { esperarPantallas } from "./carga.js?v=7d06fec91a";
 
 // Los datos de ejemplo y las pantallas se bajan aparte (al terminar de cargar): "Probala como…" aparece sin esperarlos
-const pantallas = aparte(() => import("./pantallas.js?v=854c927c5a"));
+const pantallas = aparte(() => import("./pantallas.js?v=7d06fec91a"));
 const { vistaInicio, vistaMesa, vistaCobro, vistaCaja, vistaCocina, avisosDe } = pantallas.funciones;
 
 iniciarDemo(MARCA);
 let datos = null; // se arma cuando bajan las pantallas
-const listos = pantallas.listo.then((m) => (datos = m.crearDatos()));
-const guardarSesion = (id) => listos.then(() => datos.guardado.guardarSesion(id));
 const app = $("#app");
+const listos = esperarPantallas(pantallas, app).then((m) => (datos = m?.crearDatos() ?? null));
+const guardarSesion = (id) => listos.then(() => datos?.guardado.guardarSesion(id));
 let usuario = null;
 let contenido = null;
 
@@ -67,6 +68,7 @@ function ingresar() {
 async function entrar(persona) {
     pantallas.ya(); // al elegir persona (o si ya había alguien adentro) se piden en el momento
     await listos;
+    if (!datos) return;
     datos.guardado.olvidarCache();
     usuario = persona;
     contenido = pintarMarco(app, {

@@ -3,8 +3,8 @@
 // Las personas son los roles reales del rubro (nombres inventados): el dueño, el carnicero del mostrador y una clienta
 // que pide desde el celular.
 // ============================================
-import { revisarMarca } from "../kit/js/marca.js?v=020822440c";
-import { negocioDe } from "../kit/js/colores.js?v=020822440c";
+import { revisarMarca } from "../kit/js/marca.js?v=d8a3925649";
+import { negocioDe } from "../kit/js/colores.js?v=d8a3925649";
 
 export const MARCA = revisarMarca({
     id: "carniceria",
@@ -66,12 +66,11 @@ export const DETALLE = {
         ]
     },
     tambien: [
-        "La balanza conectada a la compu del mostrador, ajustada a tu modelo",
-        "Imprimir las etiquetas y el ticket en la impresora del mostrador",
+        "La balanza conectada a la compu del mostrador, según el modelo",
+        "Etiquetas y tickets para imprimir",
         "Cobro con Mercado Pago o QR",
-        "Avisos por WhatsApp cuando el pedido está listo",
-        "Envíos a domicilio con el recorrido del día",
-        "Tienda online con el stock real de cada corte",
+        "Aviso por Telegram (si el cliente activa el bot) o por WhatsApp con un toque, cuando el pedido está listo",
+        "Envíos a domicilio, con la lista del día",
         "Varias cajas o sucursales, con su usuario cada una"
     ]
 };

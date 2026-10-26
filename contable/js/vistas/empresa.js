@@ -1,15 +1,15 @@
-import { conConsigna } from "./comunes.js?v=e73a01d881";
+import { conConsigna } from "./comunes.js?v=ffcf92064c";
 // ============================================
 // Tu empresa: todo se modifica. Razón social, CUIT, condición frente al IVA, domicilio, punto de venta, logo
 // (se achica en el navegador antes de guardarlo), colores (la ventanita del kit) y qué pantallas se usan.
 // Lo cambian Silvina y Hernán; Patricia lo ve. Nada de esto viene del link: se escribe acá.
 // ============================================
-import { esc, aviso } from "../../kit/js/ui.js?v=e73a01d881";
-import { abrirColores } from "../../kit/js/colores.js?v=e73a01d881";
-import { TOPES, MODULOS } from "../datos.js?v=e73a01d881";
-import { MARCA } from "../marca.js?v=e73a01d881";
-import { formatoCuit, CONDICIONES, fechaISO } from "../reglas.js?v=e73a01d881";
-import { logoEmpresa, condicionTexto, pintarConsigna } from "./comunes.js?v=e73a01d881";
+import { esc, aviso } from "../../kit/js/ui.js?v=ffcf92064c";
+import { abrirColores } from "../../kit/js/colores.js?v=ffcf92064c";
+import { TOPES, MODULOS } from "../datos.js?v=ffcf92064c";
+import { MARCA } from "../marca.js?v=ffcf92064c";
+import { formatoCuit, CONDICIONES, fechaISO } from "../reglas.js?v=ffcf92064c";
+import { logoEmpresa, condicionTexto, pintarConsigna } from "./comunes.js?v=ffcf92064c";
 
 const puedeCambiar = (u) => u.rol === "admin" || u.rol === "dueno";
 const LADO_LOGO = 240; // px: el logo se guarda chico (pesa poco y se ve bien en la factura)

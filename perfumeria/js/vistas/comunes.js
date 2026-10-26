@@ -3,15 +3,15 @@
 // marcas reales), el carrito de Julieta (queda mientras se navega), el botón del recorrido y el mensaje para copiar
 // (del kit). Todo dato que entra a HTML pasa por esc().
 // ============================================
-import { esc } from "../../kit/js/ui.js?v=6936e4798d";
-import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=6936e4798d";
-import { FAMILIAS } from "../datos.js?v=6936e4798d";
-import { MARCA, buscarPersona } from "../marca.js?v=6936e4798d";
-import { EVENTO_REINICIO } from "../../kit/js/guardado.js?v=6936e4798d";
+import { esc } from "../../kit/js/ui.js?v=71afbca5b0";
+import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=71afbca5b0";
+import { FAMILIAS } from "../datos.js?v=71afbca5b0";
+import { MARCA, buscarPersona } from "../marca.js?v=71afbca5b0";
+import { EVENTO_REINICIO } from "../../kit/js/guardado.js?v=71afbca5b0";
 
 export const guia = (personaId, ruta, texto) => htmlGuia({ persona: buscarPersona(personaId), ruta, texto });
 export { activarGuias };
-export { mostrarMensaje } from "../../kit/js/mensaje.js?v=6936e4798d";
+export { mostrarMensaje } from "../../kit/js/mensaje.js?v=71afbca5b0";
 
 /** Un frasco de perfume dibujado, del color de su familia. */
 export function frasco(familia, grande = false) {
@@ -46,7 +46,7 @@ export function pastillaPedido(o) {
 }
 
 
-import { htmlConsigna, htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=6936e4798d";
+import { htmlConsigna, htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=71afbca5b0";
 
 const CONSIGNAS = {
     duena: [
