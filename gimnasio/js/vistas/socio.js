@@ -5,11 +5,11 @@
 // - "Mi cuota": cuándo vence, el pago de ejemplo (alias para copiar y "Ya transferí") y sus pagos anteriores.
 //   Nada de tarjetas ni cobro de verdad: es una demo.
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=6819a0f377";
-import { MEDIOS_PAGO, textoMedio } from "../../kit/js/pagos.js?v=6819a0f377";
-import { htmlCopiable, activarCopiables } from "../../kit/js/celular.js?v=6819a0f377";
-import { SOCIO_DE, pesos, fechaCorta, nombreFecha } from "../datos.js?v=6819a0f377";
-import { activarConsignaPersona, guia, activarGuias, pastilla, pastillaCuota, chipsDias, graficoPeso, barrasSemanas } from "./comunes.js?v=6819a0f377";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=6b204d1609";
+import { MEDIOS_PAGO, textoMedio } from "../../kit/js/pagos.js?v=6b204d1609";
+import { htmlCopiable, activarCopiables } from "../../kit/js/celular.js?v=6b204d1609";
+import { SOCIO_DE, pesos, fechaCorta, nombreFecha } from "../datos.js?v=6b204d1609";
+import { activarConsignaPersona, guia, activarGuias, pastilla, pastillaCuota, chipsDias, graficoPeso, barrasSemanas } from "./comunes.js?v=6b204d1609";
 
 let fechaClases = null; // el día elegido en "Clases" queda mientras se navega
 

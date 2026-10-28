@@ -9,11 +9,12 @@
 // Reglas del kit: exigir() en lo que modifica, topes en todo lo que se carga, nada se borra y se devuelven copias.
 // Si cambia la forma de los datos, subir VERSION_DATOS (se regeneran solos).
 // ============================================
-import { crearGuardado, exigir, copia, nuevoId, buscar } from "../kit/js/guardado.js?v=87b82baae1";
-import { enteroHasta, sinPasarse } from "../kit/js/topes.js?v=87b82baae1";
-import { esFechaISO } from "../kit/js/fechas.js?v=87b82baae1";
-import { aHora, aMinutos, diaSemana, libres, revisarLibre } from "../kit/js/turnos.js?v=87b82baae1";
-import { MARCA, NEGOCIO, buscarPersona } from "./marca.js?v=87b82baae1";
+import { crearGuardado, exigir, copia, nuevoId, buscar } from "../kit/js/guardado.js?v=db4997b1a3";
+import { enteroHasta, sinPasarse } from "../kit/js/topes.js?v=db4997b1a3";
+import { esFechaISO } from "../kit/js/fechas.js?v=db4997b1a3";
+import { aHora, aMinutos, diaSemana, libres, revisarLibre } from "../kit/js/turnos.js?v=db4997b1a3";
+import { AVISO_DIRECCION } from "../kit/js/leyendas.js?v=db4997b1a3";
+import { MARCA, NEGOCIO, buscarPersona } from "./marca.js?v=db4997b1a3";
 
 export const VERSION_DATOS = 3; // 2: las propiedades de fábrica traen fotos y dos, el recorrido 360
 
@@ -35,6 +36,7 @@ export const TOPES = {
     nota: 200,
     fotos: 3, // fotos sacadas con el celu en una propiedad nueva
     fotoBytes: 10 * 1024 * 1024, // antes de achicarla
+    fotoPixeles: 40_000_000,
     dias: 14, // las visitas se piden de hoy a 13 días adelante
     porVenir: 5, // visitas por venir de una misma persona
     propiedades: 200,
@@ -169,6 +171,26 @@ export const porcentajeIndice = (meses) => Math.round((Math.pow(1 + INDICE_MENSU
 
 /** Sin mayúsculas ni tildes, para buscar. */
 export const normal = (t) => String(t ?? "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/\s+/g, " ").trim();
+
+const UNIDADES = "m2|m²|mt2|mts|metros|ambientes|amb|dormitorios|dorm|habitaciones|baños|banos|plantas|pisos|cuotas|cuadras|años|anos|meses|días|dias|personas|dólares|dolares|usd|pesos";
+const SIN_CALLE = new Set(["usd", "dolares", "pesos", "precio", "valor", "desde", "hasta", "expensas", "cuota", "cuotas", "total", "anticipo", "entrega", "contado", "ano", "enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "setiembre", "octubre", "noviembre", "diciembre"]);
+const MARCA_NUMERO = `(?:n[°º.]?|nro\\.?|número|numero|al)\\s*`;
+const FIN_NUMERO = `\\b(?![.,]\\d)(?!\\s*(?:${UNIDADES})(?![\\p{L}]))`;
+const CON_CALLE = new RegExp(`\\b(?:calle|avenida|av|pasaje|pje|diagonal|bulevar|boulevard|ruta|camino)\\b\\.?\\s+(?:[\\p{L}.]+\\s+){0,3}?(?:${MARCA_NUMERO})?\\d{1,5}${FIN_NUMERO}`, "giu");
+const CON_NUMERO = new RegExp(`(\\p{L}{3,})\\.?\\s+(?:${MARCA_NUMERO}\\d{1,5}|\\d{3,5})${FIN_NUMERO}`, "giu");
+
+/** ¿El texto lleva una dirección con número de calle? ("Belgrano 1450", "Av. Argentina 245"; "2 ambientes" y "60 m²" no cuentan). */
+export function tieneDireccion(texto) {
+    const t = String(texto ?? "");
+    return t.search(CON_CALLE) >= 0 || [...t.matchAll(CON_NUMERO)].some((m) => !SIN_CALLE.has(normal(m[1])));
+}
+
+/** El mismo texto con las direcciones tapadas (para el mapa y el PDF). */
+export function ocultarDireccion(texto) {
+    return String(texto ?? "")
+        .replace(CON_CALLE, "(dirección oculta)")
+        .replace(CON_NUMERO, (m, palabra) => (SIN_CALLE.has(normal(palabra)) ? m : "(dirección oculta)"));
+}
 
 // ---------- Reglas de los alquileres (puras: reciben el alquiler y el día de hoy) ----------
 
@@ -414,7 +436,7 @@ export function buscaTexto(b) {
 
 /** `prefijo` y `reloj` cambian solo en las pruebas. */
 export function crearDatos(prefijo = MARCA.prefijo, { reloj = () => new Date() } = {}) {
-    const guardado = crearGuardado({ prefijo, version: VERSION_DATOS, semilla: () => semilla(reloj()) });
+    const guardado = crearGuardado({ prefijo, version: VERSION_DATOS, semilla: () => semilla(reloj()), formaDeLaSemilla: true });
     const db = () => guardado.db();
     const inicial = semilla(reloj());
     const hoy = () => isoDe(reloj());
@@ -490,6 +512,9 @@ export function crearDatos(prefijo = MARCA.prefijo, { reloj = () => new Date() }
         exigir(esStaff(usuario), "Las propiedades las carga la inmobiliaria.");
         const t = sinPasarse(titulo, TOPES.titulo, "el título");
         exigir(t, "Poné un título (ej: Depto 2 ambientes con balcón).");
+        exigir(!tieneDireccion(t), `El título parece llevar una dirección con número. ${AVISO_DIRECCION}`);
+        const texto = sinPasarse(descripcion, TOPES.descripcion, "la descripción");
+        exigir(!tieneDireccion(texto), `La descripción parece llevar una dirección con número. ${AVISO_DIRECCION}`);
         exigir(TIPOS[tipo], "Elegí el tipo de propiedad.");
         exigir(OPERACIONES[operacion], "Elegí si es para alquilar o vender.");
         exigir(ZONAS[zona], "Elegí la zona.");
@@ -505,7 +530,7 @@ export function crearDatos(prefijo = MARCA.prefijo, { reloj = () => new Date() }
             precio: revisarPrecio(operacion, precio),
             expensas: enteroHasta(expensas, "Las expensas", { hasta: TOPES.expensas }),
             caracteristicas: [...new Set(lista)],
-            descripcion: sinPasarse(descripcion, TOPES.descripcion, "la descripción"),
+            descripcion: texto,
             agenteId: usuario.id, estado: "disponible", publicada: ahoraISO(), fotos: [], recorrido: null, nueva: true
         };
         exigir(p.dormitorios < p.ambientes || p.ambientes === 1, "Los dormitorios tienen que ser menos que los ambientes.");

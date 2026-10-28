@@ -1,18 +1,19 @@
-import { conConsigna } from "./comunes.js?v=ffcf92064c";
+import { LEYENDA_IMPRESION } from "../../kit/js/leyendas.js?v=3b75165565";
+import { AVISO_ORIENTATIVO, conConsigna } from "./comunes.js?v=3b75165565";
 // ============================================
 // IVA: la posición del mes (débito − crédito − percepciones − saldo a favor anterior = a pagar o a favor, con el
 // vencimiento según el CUIT), el gráfico de los últimos 12 meses, los libros IVA Ventas y Compras, y los archivos
 // para bajar (Excel/CSV para el contador y los .txt del Libro IVA Digital, de prueba). La ven todos; bajar archivos
 // es cosa de Patricia (los demás también pueden mirarlos).
 // ============================================
-import { esc, descargarCSV, fechaCorta } from "../../kit/js/ui.js?v=ffcf92064c";
-import { htmlEstante, activarEstantes } from "../../kit/js/estante.js?v=ffcf92064c";
-import { estantesIva } from "../estantes.js?v=ffcf92064c";
-import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=ffcf92064c";
-import { ALICUOTAS, ORDEN_ALICUOTAS, pesos, pesosRedondo, nombrePeriodo, mesCorto, formatoCuit, periodoActual } from "../reglas.js?v=ffcf92064c";
-import { buscarPersona, MARCA } from "../marca.js?v=ffcf92064c";
-import { libroDigitalVentas, libroDigitalCompras, bajarTexto } from "../libro-digital.js?v=ffcf92064c";
-import { periodoPedido, htmlSelectorMes, activarSelectorMes, htmlTabla, diaMes, pintarConsigna } from "./comunes.js?v=ffcf92064c";
+import { esc, descargarCSV, fechaCorta } from "../../kit/js/ui.js?v=3b75165565";
+import { htmlEstante, activarEstantes } from "../../kit/js/estante.js?v=3b75165565";
+import { estantesIva } from "../estantes.js?v=3b75165565";
+import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=3b75165565";
+import { ALICUOTAS, ORDEN_ALICUOTAS, pesos, pesosRedondo, nombrePeriodo, mesCorto, formatoCuit, periodoActual } from "../reglas.js?v=3b75165565";
+import { buscarPersona, MARCA } from "../marca.js?v=3b75165565";
+import { libroDigitalVentas, libroDigitalCompras, bajarTexto } from "../libro-digital.js?v=3b75165565";
+import { periodoPedido, htmlSelectorMes, activarSelectorMes, htmlTabla, diaMes, pintarConsigna } from "./comunes.js?v=3b75165565";
 
 function pintarIva(cont, { usuario, datos, consulta, irA }) {
     const e = datos.leerEmpresa();
@@ -22,7 +23,8 @@ function pintarIva(cont, { usuario, datos, consulta, irA }) {
 
     if (e.condicionIva !== "RI") {
         cont.innerHTML = `
-            <h1 class="titulo">IVA</h1>
+            <p class="leyenda-contable">${esc(LEYENDA_IMPRESION)}</p>
+        <h1 class="titulo">IVA</h1>
             <div class="bloque"><p class="nota"><i class="ti ti-info-circle"></i> La empresa figura como ${esc(e.condicionIva === "MT" ? "monotributista" : "exenta")}: no liquida IVA. Si pasa a Responsable Inscripto (en "Tu empresa"), acá aparece la posición de cada mes.</p></div>`;
         return;
     }
@@ -36,7 +38,9 @@ function pintarIva(cont, { usuario, datos, consulta, irA }) {
         : `<span class="panel__rotulo">Saldo a favor de ${esc(nombrePeriodo(periodo))}</span><span class="panel__numero">${esc(pesos(pos.aFavor))}</span><small>Pasa al mes que viene: se descuenta del IVA a pagar</small>`;
 
     cont.innerHTML = `
+        <p class="leyenda-contable">${esc(LEYENDA_IMPRESION)}</p>
         <h1 class="titulo">IVA</h1>
+        <p class="nota">${esc(AVISO_ORIENTATIVO)}</p>
         <div class="fila-filtros">${htmlSelectorMes(periodo)}</div>
         <div class="iva-arriba">
             <div class="panel posicion-iva">${resultado}</div>

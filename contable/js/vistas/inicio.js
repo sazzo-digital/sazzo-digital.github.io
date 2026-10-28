@@ -1,14 +1,14 @@
-import { conConsigna } from "./comunes.js?v=ffcf92064c";
+import { AVISO_ORIENTATIVO, conConsigna } from "./comunes.js?v=3b75165565";
 // ============================================
 // Inicio de Sazzo Contable: el tablero de la empresa. Vendido y comprado en el mes, IVA estimado y cuándo vence,
 // quién te debe y a quién le debés, y lo último que se facturó. Arriba, el paso del recorrido de cada persona
 // (Silvina arranca facturando; Hernán y Patricia, mirando).
 // ============================================
-import { esc } from "../../kit/js/ui.js?v=ffcf92064c";
-import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=ffcf92064c";
-import { pesos, pesosRedondo, nombrePeriodo, periodoActual, correrPeriodo, signo, numeroComprobante } from "../reglas.js?v=ffcf92064c";
-import { buscarPersona } from "../marca.js?v=ffcf92064c";
-import { logoEmpresa, haceDias, pastillaTipo, diaMes, fechaCorta } from "./comunes.js?v=ffcf92064c";
+import { esc } from "../../kit/js/ui.js?v=3b75165565";
+import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=3b75165565";
+import { pesos, pesosRedondo, nombrePeriodo, periodoActual, correrPeriodo, signo, numeroComprobante } from "../reglas.js?v=3b75165565";
+import { buscarPersona } from "../marca.js?v=3b75165565";
+import { logoEmpresa, haceDias, pastillaTipo, diaMes, fechaCorta } from "./comunes.js?v=3b75165565";
 
 function pintarInicio(cont, { usuario, datos, irA }) {
     const e = datos.leerEmpresa();
@@ -38,7 +38,7 @@ function pintarInicio(cont, { usuario, datos, irA }) {
             <a class="panel panel--link" href="#/${e.modulos?.compras !== false ? "compras" : "iva"}">
                 <span class="panel__rotulo">Comprado este mes</span>
                 <span class="panel__numero">${esc(pesosRedondo(actual?.compras ?? 0))}</span>
-                <small>${pendientesArca ? `${pendientesArca} facturas esperando en ARCA` : "Todo cargado"}</small>
+                <small>${pendientesArca ? `${pendientesArca} facturas de ejemplo esperando en ARCA (simulado)` : "Todo cargado"}</small>
             </a>
             <a class="panel panel--link panel--iva" href="#/iva">
                 ${ri && pos ? `
@@ -49,6 +49,7 @@ function pintarInicio(cont, { usuario, datos, irA }) {
             </a>
         </div>
 
+        <p class="nota">${esc(AVISO_ORIENTATIVO)}</p>
         ${e.condicionIva === "MT" ? htmlMonotributo(datos.monotributo()) : ""}
         <div class="columnas">
             <section class="bloque">

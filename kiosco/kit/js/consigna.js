@@ -1,8 +1,8 @@
-import { esc, aviso } from "./ui.js?v=ce4b63aa63";
-import { linkQuieroEsto } from "./enlaces.js?v=ce4b63aa63";
-import { abrirColores } from "./colores.js?v=ce4b63aa63";
-import { contar } from "./visita.js?v=ce4b63aa63";
-import { repintarRuta } from "./rutas.js?v=ce4b63aa63";
+import { esc, aviso } from "./ui.js?v=792c943282";
+import { linkQuieroEsto } from "./enlaces.js?v=792c943282";
+import { abrirColores } from "./colores.js?v=792c943282";
+import { contar } from "./visita.js?v=792c943282";
+import { repintarRuta } from "./rutas.js?v=792c943282";
 
 export const TOPE_CONSIGNA = { pasos: 9, letras: 160 };
 

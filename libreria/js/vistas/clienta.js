@@ -1,19 +1,20 @@
-import { pintarConsigna } from "./comunes.js?v=d4aafb8120";
+import { pintarConsigna } from "./comunes.js?v=233619f5c3";
 // ============================================
 // Lo de Paula (clienta), desde el celular: elegir la lista del colegio, destildar lo que ya tiene en casa, ver el total
 // y pedirla; después, en "Mis pedidos", ver cómo va (pedida → separada → retirada).
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=d4aafb8120";
-import { TOPES, pesos } from "../datos.js?v=d4aafb8120";
-import { NEGOCIO } from "../marca.js?v=d4aafb8120";
-import { guia, activarGuias, pasos, pastillaEstado, cuando } from "./comunes.js?v=d4aafb8120";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=233619f5c3";
+import { AVISO_CAMPO } from "../../kit/js/leyendas.js?v=233619f5c3";
+import { TOPES, pesos } from "../datos.js?v=233619f5c3";
+import { NEGOCIO } from "../marca.js?v=233619f5c3";
+import { guia, activarGuias, activarFlechas, pasos, pastillaEstado, cuando } from "./comunes.js?v=233619f5c3";
 
 // La lista elegida y lo destildado quedan en memoria mientras se navega
 let listaId = "l-1";
 const sin = new Set();
 let para = null; // null = el de ejemplo
 
-const PARA_DE_EJEMPLO = "Lola";
+const PARA_DE_EJEMPLO = "Familia de ejemplo";
 
 export function vistaPedirLista(cont, { usuario, datos, irA }) {
     const listas = datos.listas();
@@ -52,6 +53,7 @@ export function vistaPedirLista(cont, { usuario, datos, irA }) {
                 <label>¿Para quién es?
                     <input name="para" maxlength="${TOPES.para}" required value="${esc(para ?? PARA_DE_EJEMPLO)}">
                 </label>
+                <p class="nota"><i class="ti ti-info-circle"></i><span>${esc(AVISO_CAMPO)} Sin nombres de chicos.</span></p>
                 <button class="boton boton--ancho boton--grande" type="submit"><i class="ti ti-send"></i> Pedir la lista</button>
                 <p class="nota"><i class="ti ti-info-circle"></i> La pagás cuando la retirás. Si algo no hay, la librería te ofrece otra opción.</p>
             </form>
@@ -73,6 +75,7 @@ export function vistaPedirLista(cont, { usuario, datos, irA }) {
     };
     actualizar();
 
+    activarFlechas(cont, "Lista del colegio", "lista");
     cont.querySelectorAll("[data-lista]").forEach((b) => b.addEventListener("click", () => {
         listaId = b.dataset.lista;
         datos.registrarPaso(usuario, "lista");

@@ -1,12 +1,13 @@
-import { pintarConsigna } from "./comunes.js?v=fcb06c7c44";
+import { pintarConsigna } from "./comunes.js?v=26036b0c55";
 // ============================================
 // Clientes (barbero): buscador, "no vuelven hace más de 30 / 45 / 60 días" con "Invitarlo" (mensaje para copiar y
 // la fecha en que se lo invitó), y la ficha de cada uno: qué se hace siempre, notas, historial y "Sacarle turno".
 // ============================================
-import { esc, aviso, vacio, fechaCorta } from "../../kit/js/ui.js?v=fcb06c7c44";
-import { NO_VUELVEN, TOPES, nombreFecha } from "../datos.js?v=fcb06c7c44";
-import { mostrarMensaje } from "./comunes.js?v=fcb06c7c44";
-import { MARCA } from "../marca.js?v=fcb06c7c44";
+import { esc, aviso, vacio, fechaCorta } from "../../kit/js/ui.js?v=26036b0c55";
+import { AVISO_CAMPO } from "../../kit/js/leyendas.js?v=26036b0c55";
+import { NO_VUELVEN, TOPES, nombreFecha } from "../datos.js?v=26036b0c55";
+import { mostrarMensaje } from "./comunes.js?v=26036b0c55";
+import { MARCA } from "../marca.js?v=26036b0c55";
 
 let noVuelven = null; // null = todos; si no, los días
 let texto = "";
@@ -22,7 +23,7 @@ export function vistaClientes(cont, { usuario, datos }) {
             <span class="solo-lector">Buscar cliente</span>
             <input type="search" name="q" maxlength="40" placeholder="Buscar por nombre" value="${esc(texto)}" autocomplete="off">
         </label>
-        <div class="chips filtros-clientes" role="tablist" aria-label="Filtro">
+        <div class="chips filtros-clientes" role="group" aria-label="Filtro">
             <button class="chip${noVuelven ? "" : " activo"}" type="button" data-nv="">Todos</button>
             ${NO_VUELVEN.map((d) => `<button class="chip chip--alerta${noVuelven === d ? " activo" : ""}" type="button" data-nv="${d}">No vuelven hace +${d} días <b>${contar(d)}</b></button>`).join("")}
         </div>
@@ -87,11 +88,12 @@ export function vistaFicha(cont, { usuario, datos, params: [id] }) {
             <div><span>Próximo turno</span><b>${c.proximo ? `${esc(nombreFecha(c.proximo.fecha))} ${esc(c.proximo.hora)}` : "—"}</b><small>${c.proximo ? `con ${esc(c.proximo.barbero)}` : c.invitadoEn ? `invitado el ${esc(fechaCorta(c.invitadoEn.slice(0, 10)))}` : ""}</small></div>
         </div>
         <form class="formulario bloque" novalidate>
+            <p class="nota"><i class="ti ti-info-circle" aria-hidden="true"></i> <span>${esc(AVISO_CAMPO)}</span></p>
             <label>Qué se hace siempre
                 <input name="siempre" maxlength="${TOPES.siempre}" value="${esc(c.siempre)}" placeholder="Ej: degradé bajo, costados al 1, arriba tijera">
             </label>
             <label>Notas
-                <textarea name="notas" rows="2" maxlength="${TOPES.notas}" placeholder="Ej: viene con el hijo los sábados">${esc(c.notas)}</textarea>
+                <textarea name="notas" rows="2" maxlength="${TOPES.notas}" placeholder="Ej: prefiere turnos a la tarde">${esc(c.notas)}</textarea>
             </label>
             <button class="boton boton--secundario" type="submit"><i class="ti ti-device-floppy"></i> Guardar ficha</button>
         </form>

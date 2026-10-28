@@ -1,4 +1,4 @@
-import { pintarConsigna } from "./comunes.js?v=7879dd46ff";
+import { pintarConsigna } from "./comunes.js?v=50ee31fa6b";
 // ============================================
 // Lo de Marcos (cliente con cuenta corriente), desde el celular:
 //   "Pedir presupuesto": escribe lo que necesita como habla, un artículo por renglón ("cano de 1/2 x 3", "teflon"),
@@ -6,12 +6,13 @@ import { pintarConsigna } from "./comunes.js?v=7879dd46ff";
 //   "Mis presupuestos": cómo va cada uno (pedido → te lo mandaron → aceptado → retirado), el PDF, "Aceptar" y su
 //   cuenta corriente (lo que debe y los últimos movimientos).
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=7879dd46ff";
-import { armarPdf, pdfListo } from "../../kit/js/pdf.js?v=7879dd46ff";
-import { TOPES, pesos, cantidadTexto } from "../datos.js?v=7879dd46ff";
-import { NEGOCIO } from "../marca.js?v=7879dd46ff";
-import { guia, activarGuias, pasos, pastillaEstado, cuando, validez, barraTope, haceDias, htmlFoto } from "./comunes.js?v=7879dd46ff";
-import { datosPdf } from "./presupuestos.js?v=7879dd46ff";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=50ee31fa6b";
+import { armarPdf, pdfListo } from "../../kit/js/pdf.js?v=50ee31fa6b";
+import { TOPES, pesos, cantidadTexto } from "../datos.js?v=50ee31fa6b";
+import { NEGOCIO } from "../marca.js?v=50ee31fa6b";
+import { AVISO_CAMPO, AVISO_DIRECCION } from "../../kit/js/leyendas.js?v=50ee31fa6b";
+import { guia, activarGuias, pasos, pastillaEstado, cuando, validez, barraTope, haceDias, htmlFoto } from "./comunes.js?v=50ee31fa6b";
+import { datosPdf } from "./presupuestos.js?v=50ee31fa6b";
 
 // Lo que va escribiendo queda en memoria mientras se navega
 const EJEMPLO = ["cano de 1/2 x 3", "4 codos de 1/2", "2 llaves de paso 1/2", "teflon"];
@@ -40,6 +41,7 @@ function pintarPedirPresupuesto(cont, { usuario, datos, irA }) {
                 <label>¿Para qué obra? <small>(si querés)</small>
                     <input name="obra" maxlength="${TOPES.obra}" value="${esc(obra ?? "Baño planta alta")}">
                 </label>
+                <p class="nota"><i class="ti ti-info-circle"></i> ${esc(AVISO_CAMPO)} ${esc(AVISO_DIRECCION)}</p>
             </form>
             <section class="bloque formulario entendido" aria-live="polite">
                 <h2 class="subtitulo"><i class="ti ti-list-details"></i> Lo que entendimos</h2>

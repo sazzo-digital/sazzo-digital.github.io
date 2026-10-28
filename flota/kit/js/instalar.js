@@ -1,4 +1,4 @@
-import { esc, aviso } from "./ui.js?v=2acd6c7b7a";
+import { esc, aviso } from "./ui.js?v=402cfc1923";
 
 let pedidoDeInstalar = null;
 let nombreApp = "la demo";
@@ -66,7 +66,7 @@ export function mostrarComoInstalar() {
         <form method="dialog" class="hoja__caja">
             <div class="hoja__titulos">
                 <h2 id="instalar-titulo">Instalá ${esc(nombreApp)}</h2>
-                <button class="boton-icono" value="cerrar" aria-label="Cerrar"><i class="ti ti-x"></i></button>
+                <button class="boton-icono" value="cerrar" aria-label="Cerrar"><i class="ti ti-x" aria-hidden="true"></i></button>
             </div>
             <p>Queda con su ícono en tu celu, como cualquier app, y la probás cuando quieras. Sigue en modo prueba: lo que cargues queda solo en tu equipo.</p>
             <ol class="instalar__pasos">${pasos.map((p) => `<li>${esc(p)}</li>`).join("")}</ol>

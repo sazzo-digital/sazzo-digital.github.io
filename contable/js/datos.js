@@ -6,17 +6,17 @@
 // en semilla.js. Todo cuelga de "la empresa actual" (la forma ya sirve para varias empresas).
 // La plata va en centavos. Si cambia la forma de los datos, subir VERSION_DATOS (se regeneran solos).
 // ============================================
-import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=ffcf92064c";
-import { enteroHasta, sinPasarse } from "../kit/js/topes.js?v=ffcf92064c";
-import { esFechaISO } from "../kit/js/fechas.js?v=ffcf92064c";
-import { MARCA } from "./marca.js?v=ffcf92064c";
-import { semilla as semillaFabrica, ID_CONSUMIDOR_FINAL } from "./semilla.js?v=ffcf92064c";
-import { armarAsientos, armarMayor, armarBalance, CUENTAS_CONTABLES } from "./contabilidad.js?v=ffcf92064c";
+import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=3b75165565";
+import { enteroHasta, sinPasarse } from "../kit/js/topes.js?v=3b75165565";
+import { esFechaISO } from "../kit/js/fechas.js?v=3b75165565";
+import { MARCA } from "./marca.js?v=3b75165565";
+import { semilla as semillaFabrica, ID_CONSUMIDOR_FINAL } from "./semilla.js?v=3b75165565";
+import { armarAsientos, armarMayor, armarBalance, CUENTAS_CONTABLES } from "./contabilidad.js?v=3b75165565";
 import {
     COMPROBANTES, NC_DE, CONDICIONES, ALICUOTAS, ORDEN_ALICUOTAS, TOPE_CF_IDENTIFICAR, signo, esAlicuota, tipoFactura,
     calcularComprobante, repartirNotaCredito, caeSimulado, revisarCuit, soloNumeros, aCentavos, fechaISO, sumarDias,
     periodoDe, periodoActual, ultimosPeriodos, correrPeriodo, vencimientoIva, numeroComprobante, pesos
-} from "./reglas.js?v=ffcf92064c";
+} from "./reglas.js?v=3b75165565";
 
 export const VERSION_DATOS = 5;
 
@@ -59,7 +59,7 @@ const puedeCargar = (quien) => ROLES_QUE_CARGAN.includes(quien?.rol);
 
 /** Las funciones de datos. `prefijo` cambia solo en las pruebas (así no tocan los datos de la demo). */
 export function crearDatos(prefijo = MARCA.prefijo, { semilla = semillaFabrica } = {}) {
-    const guardado = crearGuardado({ prefijo, version: VERSION_DATOS, semilla: () => semilla() });
+    const guardado = crearGuardado({ prefijo, version: VERSION_DATOS, semilla: () => semilla(), formaDeLaSemilla: true, revisarDatos: (d) => d.empresas.length > 0 });
 
     /** La empresa actual (la de verdad, no una copia: solo para uso interno). */
     const emp = () => {

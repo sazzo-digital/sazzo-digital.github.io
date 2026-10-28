@@ -9,14 +9,15 @@
 // se devuelven copias. Sin teléfonos, mails ni documentos: nada de datos personales. Pagos de ejemplo, sin tarjetas.
 // Si cambia la forma de los datos, subir VERSION_DATOS (se regeneran solos).
 // ============================================
-import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=6819a0f377";
-import { filtrarPorTexto } from "../kit/js/buscar.js?v=6819a0f377";
-import { sinPasarse } from "../kit/js/topes.js?v=6819a0f377";
-import { fechaLocalISO } from "../kit/js/fechas.js?v=6819a0f377";
-import { aMinutos, aHora, diaSemana } from "../kit/js/turnos.js?v=6819a0f377";
-import { esFirma } from "../kit/js/firma.js?v=6819a0f377";
-import { MEDIOS_PAGO, DIVIDIDO, revisarPagos, sumarPorMedio, textoMedio } from "../kit/js/pagos.js?v=6819a0f377";
-import { MARCA, NEGOCIO } from "./marca.js?v=6819a0f377";
+import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=6b204d1609";
+import { filtrarPorTexto } from "../kit/js/buscar.js?v=6b204d1609";
+import { sinPasarse } from "../kit/js/topes.js?v=6b204d1609";
+import { fechaLocalISO } from "../kit/js/fechas.js?v=6b204d1609";
+import { aMinutos, aHora, diaSemana } from "../kit/js/turnos.js?v=6b204d1609";
+import { esFirma } from "../kit/js/firma.js?v=6b204d1609";
+import { LEYENDA_IMPRESION } from "../kit/js/leyendas.js?v=6b204d1609";
+import { MEDIOS_PAGO, DIVIDIDO, revisarPagos, sumarPorMedio, textoMedio } from "../kit/js/pagos.js?v=6b204d1609";
+import { MARCA, NEGOCIO } from "./marca.js?v=6b204d1609";
 
 export const VERSION_DATOS = 4;
 
@@ -514,7 +515,7 @@ export function crearDatos(prefijo = MARCA.prefijo, { reloj = () => new Date() }
         return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
     };
     const minutoActual = () => reloj().getHours() * 60 + reloj().getMinutes();
-    const guardado = crearGuardado({ prefijo, version: VERSION_DATOS, semilla: () => semilla(hoy(), minutoActual()) });
+    const guardado = crearGuardado({ prefijo, version: VERSION_DATOS, semilla: () => semilla(hoy(), minutoActual()), formaDeLaSemilla: true, revisarDatos: (d) => d.planes.length > 0 && d.socios.length > 0 });
     const db = () => guardado.db();
     const firmas = new Map(); // la imagen de cada firma queda solo mientras la demo está abierta (no ocupa lugar)
 
@@ -1258,20 +1259,22 @@ export function crearDatos(prefijo = MARCA.prefijo, { reloj = () => new Date() }
         };
     }
 
+    const conLeyenda = (filas) => [...filas, filas[0].map((_, i) => (i === 0 ? LEYENDA_IMPRESION : ""))];
+
     /** Para pasar a Excel: los socios y los pagos del mes. */
     function filasSocios() {
-        return [
+        return conLeyenda([
             ["Socio", "Plan de cuota", "Vence", "Estado", "Rutina", "Días", "Hora", "Última vez", "Apto físico hasta"],
             ...listarSocios().map((a) => [a.nombreCompleto, a.cuota, fechaCorta(a.vence), a.textoCuota, a.plan ?? "Clases", a.diasTexto, a.hora, a.ultima ? fechaCorta(a.ultima) : "—", a.aptoHasta ? fechaCorta(a.aptoHasta) : "Falta"])
-        ];
+        ]);
     }
     function filasPagos() {
         const mes = hoy().slice(0, 7);
-        return [
+        return conLeyenda([
             ["Fecha", "Socio", "Plan de cuota", "Medio", "Monto"],
             ...db().pagos.filter((p) => p.estado === "confirmado" && p.confirmadoEl?.slice(0, 7) === mes).sort((a, b) => a.confirmadoEl.localeCompare(b.confirmadoEl))
                 .map((p) => [fechaCorta(p.confirmadoEl), nombreDe(socioCrudo(p.socioId)), PLANES_CUOTA.find((c) => c.id === p.cuotaId)?.texto ?? "", textoMedio(p, MEDIOS_PAGO), { valor: p.monto, formato: "pesos" }])
-        ];
+        ]);
     }
 
     // ----- El profe -----

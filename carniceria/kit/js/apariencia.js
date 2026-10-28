@@ -6,7 +6,7 @@
 // - La clave ("sazzo-tema") es compartida a propósito: el tema elegido sigue en todas las demos de Sazzo.
 // kit/js/tema.js lo aplica antes de dibujar, para que no parpadee.
 // ============================================
-import { $, $$ } from "./ui.js?v=d8a3925649";
+import { $, $$ } from "./ui.js?v=f8ec046caa";
 
 export const CLAVE_TEMA = "sazzo-tema";
 
@@ -21,7 +21,7 @@ const COLOR_BARRA = { claro: "#ddd1bb", oscuro: "#0a0e0d" };
 export function leerTema() {
     try {
         const t = localStorage.getItem(CLAVE_TEMA);
-        return TEMAS[t] ? t : "auto";
+        return Object.hasOwn(TEMAS, t) ? t : "auto";
     } catch {
         return "auto";
     }
@@ -31,7 +31,7 @@ export function leerTema() {
 export const temaVisible = () => (leerTema() === "claro" ? "claro" : "oscuro");
 
 export function aplicarTema(tema) {
-    if (!TEMAS[tema]) tema = "auto";
+    if (!Object.hasOwn(TEMAS, tema)) tema = "auto";
     if (tema === "auto") delete document.documentElement.dataset.tema;
     else document.documentElement.dataset.tema = tema;
     // La barra del navegador del celular, del mismo color que el fondo que se ve

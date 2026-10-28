@@ -4,15 +4,16 @@
 // El mecánico carga lo que encontró y los repuestos, sin ver precios. Y el presupuesto (dueño): para imprimir, con la
 // firma del cliente en pantalla y en PDF para mandarlo por WhatsApp.
 // ============================================
-import { esc, aviso, fechaCorta, fechaHora } from "../../kit/js/ui.js?v=bbb3249556";
-import { fechaLocalISO } from "../../kit/js/fechas.js?v=bbb3249556";
-import { pedirFirma, esFirma } from "../../kit/js/firma.js?v=bbb3249556";
-import { htmlBotonDictar, activarDictado } from "../../kit/js/dictado.js?v=bbb3249556";
-import { armarPdf, pdfListo } from "../../kit/js/pdf.js?v=bbb3249556";
-import { ESTADOS, REPUESTOS, MANO_DE_OBRA, TOPES, pesos } from "../datos.js?v=bbb3249556";
-import { NEGOCIO } from "../marca.js?v=bbb3249556";
-import { guia, activarGuias, chapa, pastillaEstado, textoPromesa, mostrarMensaje, consignaPersona, activarPasos } from "./comunes.js?v=bbb3249556";
-import { htmlAntesDespues, activarAntesDespues } from "../../kit/js/antes-despues.js?v=bbb3249556";
+import { esc, aviso, fechaCorta, fechaHora } from "../../kit/js/ui.js?v=3fa38b78e9";
+import { fechaLocalISO } from "../../kit/js/fechas.js?v=3fa38b78e9";
+import { AVISO_CAMPO, LEYENDA_PIE, LEYENDA_IMPRESION } from "../../kit/js/leyendas.js?v=3fa38b78e9";
+import { pedirFirma, esFirma } from "../../kit/js/firma.js?v=3fa38b78e9";
+import { htmlBotonDictar, activarDictado } from "../../kit/js/dictado.js?v=3fa38b78e9";
+import { armarPdf, pdfListo } from "../../kit/js/pdf.js?v=3fa38b78e9";
+import { ESTADOS, REPUESTOS, MANO_DE_OBRA, TOPES, pesos } from "../datos.js?v=3fa38b78e9";
+import { NEGOCIO } from "../marca.js?v=3fa38b78e9";
+import { guia, activarGuias, chapa, pastillaEstado, textoPromesa, mostrarMensaje, consignaPersona, activarPasos } from "./comunes.js?v=3fa38b78e9";
+import { htmlAntesDespues, activarAntesDespues } from "../../kit/js/antes-despues.js?v=3fa38b78e9";
 
 export function vistaOrden(cont, { usuario, datos, irA, params: [id] }) {
     const o = datos.orden(id, usuario);
@@ -71,6 +72,7 @@ export function vistaOrden(cont, { usuario, datos, irA, params: [id] }) {
             <p class="dijo">“${esc(o.dijo)}”</p>
             ${o.deja ? `<p class="nota"><i class="ti ti-briefcase"></i> Deja en el auto: ${esc(o.deja)}</p>` : ""}
             <form class="formulario encontro" novalidate>
+                ${o.editable ? `<p class="nota"><i class="ti ti-info-circle" aria-hidden="true"></i> <span>${esc(AVISO_CAMPO)}</span></p>` : ""}
                 <label>Lo que encontró el mecánico
                     <textarea name="encontro" rows="2" maxlength="${TOPES.texto}" placeholder="Ej: pastillas y discos delanteros gastados"${o.editable ? "" : " disabled"}>${esc(o.encontro)}</textarea>
                 </label>
@@ -176,7 +178,7 @@ export function vistaImprimir(cont, { usuario, datos, params: [id] }) {
                 <button class="boton" type="button" data-imprimir><i class="ti ti-printer"></i> Imprimir</button>
             </div>
         </div>
-        <p class="nota no-imprimir"><i class="ti ti-signature"></i> Probá: que ${esc(o.cliente.nombre.split(" ")[0])} firme con el dedo y mandale el PDF por WhatsApp.</p>
+        <p class="nota no-imprimir"><i class="ti ti-signature"></i> Probá: que ${esc(o.cliente.nombre.split(" ")[0])} firme con el dedo y mirá cómo queda en el PDF.</p>
         <article class="hoja">
             <span class="hoja__agua" aria-hidden="true">DEMO · datos inventados</span>
             <header class="hoja__cabeza">
@@ -196,6 +198,7 @@ export function vistaImprimir(cont, { usuario, datos, params: [id] }) {
             </table>
             ${firma ? `<figure class="hoja__firma"><img src="${esc(firma)}" alt="Firma de ${esc(o.cliente.nombre)}"><figcaption>Firma: ${esc(o.cliente.nombre)} · acepta el presupuesto</figcaption></figure>` : ""}
             <p class="hoja__aviso">Presupuesto · no válido como factura · válido por 7 días</p>
+            <p class="hoja__aviso">${esc(LEYENDA_IMPRESION)}</p>
         </article>`;
     cont.querySelector("[data-imprimir]").addEventListener("click", () => window.print());
     cont.querySelector("[data-firmar]").addEventListener("click", async () => {
@@ -211,7 +214,7 @@ export function vistaImprimir(cont, { usuario, datos, params: [id] }) {
         try {
             const blob = await armarPdf({
                 negocio: NEGOCIO,
-                pie: "Hecho con Sazzo Taller (demo)",
+                pie: LEYENDA_PIE,
                 titulo: "Presupuesto",
                 numero: o.numero,
                 fecha: fechaCorta(fechaLocalISO(0)),

@@ -3,11 +3,11 @@
 // el botón del recorrido ("Mirá lo que le llega a Diego →", del kit).
 // Todo dato que entra a HTML pasa por esc().
 // ============================================
-import { esc, cuandoFue } from "../../kit/js/ui.js?v=2acd6c7b7a";
-import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=2acd6c7b7a";
-import { htmlConsigna, htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=2acd6c7b7a";
-import { ESTADOS_VEHICULO, ESTADOS_PROBLEMA, URGENCIAS } from "../datos.js?v=2acd6c7b7a";
-import { buscarPersona, MARCA } from "../marca.js?v=2acd6c7b7a";
+import { esc, cuandoFue } from "../../kit/js/ui.js?v=402cfc1923";
+import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=402cfc1923";
+import { htmlConsigna, htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=402cfc1923";
+import { ESTADOS_VEHICULO, ESTADOS_PROBLEMA, URGENCIAS } from "../datos.js?v=402cfc1923";
+import { buscarPersona, MARCA } from "../marca.js?v=402cfc1923";
 
 /** "recién", "hace 5 minutos", "hace 3 horas" o, si fue antes de ayer, "el lunes 5/10 a las 15:20". */
 export function haceCuanto(iso) {
@@ -53,9 +53,35 @@ export const guia = (personaId, ruta, texto) => htmlGuia({ persona: buscarPerson
 
 export { activarGuias };
 
+const PASO_FLECHA = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 };
+
+export function activarFlechas(cont, etiqueta, atributo) {
+    const selector = `[role="radiogroup"][aria-label="${etiqueta}"]`;
+    const clave = atributo.replace(/-([a-z])/g, (_, letra) => letra.toUpperCase());
+    const grupo = cont.querySelector(selector);
+    if (!grupo) return;
+    const botones = () => [...grupo.querySelectorAll('[role="radio"]')];
+    botones().forEach((b) => {
+        b.tabIndex = b.getAttribute("aria-checked") === "true" ? 0 : -1;
+    });
+    if (grupo.dataset.flechas) return;
+    grupo.dataset.flechas = "1";
+    grupo.addEventListener("keydown", (e) => {
+        const paso = PASO_FLECHA[e.key];
+        const lista = botones();
+        const i = lista.indexOf(e.target);
+        if (!paso || i < 0) return;
+        e.preventDefault();
+        const elegido = lista[(i + paso + lista.length) % lista.length];
+        const valor = elegido.dataset[clave];
+        elegido.click();
+        cont.querySelector(`${selector} [data-${atributo}="${valor}"]`)?.focus();
+    });
+}
+
 const CONSIGNAS = {
     chofer: [
-        ["Tocá “Avisar un problema”, elegí qué pasa y si podés seguir, y tocá “Enviar al mecánico”.", "Le llega a Diego, el mecánico, en el momento."],
+        ["Tocá “Avisar un problema”, elegí qué pasa y si podés seguir, y tocá “Enviar al mecánico”.", "Diego, el mecánico, lo ve al entrar a su pantalla."],
         ["Avisá otro y contalo en pocas palabras (por ejemplo: chillan al frenar).", "Diego lee lo que escribiste."],
         ["Avisá uno con “Tengo que parar”.", "A Diego le aparece primero, como urgente."]
     ],

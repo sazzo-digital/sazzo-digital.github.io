@@ -1,16 +1,17 @@
-import { pintarConsigna } from "./comunes.js?v=fcb06c7c44";
+import { pintarConsigna } from "./comunes.js?v=26036b0c55";
 // ============================================
 // Pantallas del barbero (Leo): la agenda del día (un renglón por turno y los huecos libres a la vista; Leo, Fran o
 // los dos; en la compu, una columna por barbero) y "+ Turno" (cargar a mano el que pidió por mensaje o entró sin
 // turno). El turno que sacó un cliente desde el celular aparece resaltado hasta que Leo hace algo con él.
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=fcb06c7c44";
-import { aHora } from "../../kit/js/turnos.js?v=fcb06c7c44";
-import { fechaLocalISO } from "../../kit/js/fechas.js?v=fcb06c7c44";
-import { SERVICIOS, BARBEROS, TOPES, HORARIO, pesos, nombreFecha, grillaDelDia, textoLibre } from "../datos.js?v=fcb06c7c44";
-import { pastillaEstado, chipsDias, mostrarMensaje } from "./comunes.js?v=fcb06c7c44";
-import { htmlBotonTV, abrirModoTV } from "../../kit/js/modo-tv.js?v=fcb06c7c44";
-import { NEGOCIO } from "../marca.js?v=fcb06c7c44";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=26036b0c55";
+import { AVISO_CAMPO, LEYENDA_TV } from "../../kit/js/leyendas.js?v=26036b0c55";
+import { aHora } from "../../kit/js/turnos.js?v=26036b0c55";
+import { fechaLocalISO } from "../../kit/js/fechas.js?v=26036b0c55";
+import { SERVICIOS, BARBEROS, TOPES, HORARIO, pesos, nombreFecha, grillaDelDia, textoLibre } from "../datos.js?v=26036b0c55";
+import { pastillaEstado, chipsDias, mostrarMensaje } from "./comunes.js?v=26036b0c55";
+import { htmlBotonTV, abrirModoTV } from "../../kit/js/modo-tv.js?v=26036b0c55";
+import { NEGOCIO } from "../marca.js?v=26036b0c55";
 
 let ver = "todos"; // "todos" o el id de un barbero
 
@@ -37,9 +38,9 @@ export function vistaAgenda(cont, { usuario, datos, consulta }) {
                 <small>${esc(t.servicio)} · ${esc(pesos(t.precio))}${t.nuevo ? " · lo sacó desde el celular" : ""}</small>
                 ${t.estado === "reservado" ? `
                 <span class="renglon__acciones">
-                    <button class="boton boton--chico" type="button" data-marcar="llego" data-id="${esc(t.id)}"><i class="ti ti-check"></i> Llegó</button>
-                    <button class="boton boton--chico boton--secundario" type="button" data-marcar="falto" data-id="${esc(t.id)}"><i class="ti ti-user-x"></i> Faltó</button>
-                    <button class="boton boton--chico boton--secundario" type="button" data-recordar="${esc(t.id)}"><i class="ti ti-message-circle"></i> Recordarle</button>
+                    <button class="boton boton--chico" type="button" data-marcar="llego" data-id="${esc(t.id)}" aria-label="Llegó: ${esc(t.cliente)}"><i class="ti ti-check"></i> Llegó</button>
+                    <button class="boton boton--chico boton--secundario" type="button" data-marcar="falto" data-id="${esc(t.id)}" aria-label="Faltó: ${esc(t.cliente)}"><i class="ti ti-user-x"></i> Faltó</button>
+                    <button class="boton boton--chico boton--secundario" type="button" data-recordar="${esc(t.id)}" aria-label="Recordarle el turno a ${esc(t.cliente)}"><i class="ti ti-message-circle"></i> Recordarle</button>
                     <button class="boton-icono" type="button" data-cancelar="${esc(t.id)}" title="Cancelar turno" aria-label="Cancelar el turno de ${esc(t.cliente)}"><i class="ti ti-x"></i></button>
                 </span>` : pastillaEstado(t.estado)}
             </span>
@@ -89,7 +90,7 @@ export function vistaAgenda(cont, { usuario, datos, consulta }) {
             <span>Hecho <b>${esc(pesos(a.resumen.hecho))}</b></span>
             <span>Por hacer <b>${esc(pesos(a.resumen.porHacer))}</b></span>
         </div>
-        <div class="chips" role="tablist" aria-label="Barbero">
+        <div class="chips" role="group" aria-label="Barbero">
             ${BARBEROS.map((b) => `<button class="chip${activo === b.id ? " activo" : ""}" type="button" data-ver="${esc(b.id)}">${esc(b.nombre)}</button>`).join("")}
             <button class="chip chip--compu${activo === "todos" ? " activo" : ""}" type="button" data-ver="todos">Los dos</button>
         </div>
@@ -151,6 +152,7 @@ export function vistaNuevoTurno(cont, { usuario, datos, consulta }) {
         <a class="volver" href="#/inicio?fecha=${esc(estado.fecha)}"><i class="ti ti-arrow-left"></i> Agenda</a>
         <h1 class="titulo">Anotar turno</h1>
         <form class="formulario bloque" novalidate>
+            <p class="nota"><i class="ti ti-info-circle" aria-hidden="true"></i> <span>${esc(AVISO_CAMPO)}</span></p>
             <label>Cliente
                 <select name="cliente">
                     <option value="">Uno nuevo…</option>
@@ -198,7 +200,8 @@ export function vistaNuevoTurno(cont, { usuario, datos, consulta }) {
 }
 
 export function htmlTurnero({ abierto, barberos }) {
-    if (!abierto) return `<p class="modo-tv__vacio">Hoy la barbería está cerrada. ¡Te esperamos mañana!</p>`;
+    const leyenda = `<p class="modo-tv__pie">${esc(LEYENDA_TV)}</p>`;
+    if (!abierto) return `<p class="modo-tv__vacio">Hoy la barbería está cerrada. ¡Te esperamos mañana!</p>${leyenda}`;
     return `<div class="tv-grilla">${barberos.map((b) => `
         <section class="tv-tarjeta${b.ahora ? " tv-tarjeta--ahora" : " tv-tarjeta--libre"}">
             <span class="tv-tarjeta__rotulo">${esc(b.nombre)} · ahora</span>
@@ -207,5 +210,5 @@ export function htmlTurnero({ abierto, barberos }) {
             <span class="tv-tarjeta__rotulo">Sigue</span>
             <span class="tv-tarjeta__chico">${b.sigue ? `<b>${esc(b.sigue.cliente)}</b> · ${esc(b.sigue.hora)} · ${esc(b.sigue.servicio)}` : "Nadie más por ahora"}</span>
         </section>`).join("")}
-    </div>`;
+    </div>${leyenda}`;
 }

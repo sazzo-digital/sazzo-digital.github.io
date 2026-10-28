@@ -1,13 +1,14 @@
-import { pintarConsigna } from "./comunes.js?v=7879dd46ff";
+import { pintarConsigna } from "./comunes.js?v=50ee31fa6b";
 // ============================================
 // Cuentas corrientes (los del oficio que compran todo el mes y pagan después): quién debe, cuánto, hace cuánto que
 // no paga y cuánto del tope usó. En la ficha: el recordatorio armado para mandarle, anotar un pago (todo o una parte),
 // el tope (lo cambia el dueño) y qué se llevó en cada compra. El dueño abre cuentas nuevas.
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=7879dd46ff";
-import { mostrarMensaje } from "../../kit/js/mensaje.js?v=7879dd46ff";
-import { TOPES, TOPE_CUENTA_NUEVA, pesos } from "../datos.js?v=7879dd46ff";
-import { barraTope, haceDias, diasDesde, cuando } from "./comunes.js?v=7879dd46ff";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=50ee31fa6b";
+import { mostrarMensaje } from "../../kit/js/mensaje.js?v=50ee31fa6b";
+import { AVISO_CAMPO } from "../../kit/js/leyendas.js?v=50ee31fa6b";
+import { TOPES, TOPE_CUENTA_NUEVA, pesos } from "../datos.js?v=50ee31fa6b";
+import { barraTope, haceDias, diasDesde, cuando } from "./comunes.js?v=50ee31fa6b";
 
 const DIAS_ATRASADO = 30; // desde cuántos días sin pagar se marca
 
@@ -41,6 +42,7 @@ function pintarCuentas(cont, { usuario, datos }) {
             <summary><i class="ti ti-user-plus"></i> Abrir una cuenta</summary>
             <form class="formulario" novalidate>
                 <label>Nombre<input name="nombre" maxlength="${TOPES.nombre}" required placeholder="Ej: Hugo Medina"></label>
+                <p class="nota"><i class="ti ti-info-circle"></i> ${esc(AVISO_CAMPO)}</p>
                 <label>Tope<input name="tope" type="number" inputmode="numeric" min="0" max="${TOPES.tope}" step="1" value="${TOPE_CUENTA_NUEVA}"></label>
                 <button class="boton" type="submit"><i class="ti ti-plus"></i> Abrir la cuenta</button>
             </form>

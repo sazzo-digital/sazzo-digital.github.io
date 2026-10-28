@@ -1,16 +1,16 @@
-import { pintarConsigna } from "./comunes.js?v=ce4b63aa63";
+import { pintarConsigna } from "./comunes.js?v=792c943282";
 // ============================================
 // Stock y precios: productos por proveedor con "hay que pedir"; el dueño corrige precio y stock ("llegó
 // mercadería") y tiene "Subió un proveedor": elegís el proveedor y el %, ves antes → después con el redondeo de
 // kiosco y aplicás todo de una, con Deshacer. Y "La lista del proveedor en Excel": subís la lista que te mandó y los
 // precios se actualizan solos (también con Deshacer). El stock se baja a Excel. La empleada solo mira (y baja).
 // ============================================
-import { esc, aviso, vacio, mensajeDe } from "../../kit/js/ui.js?v=ce4b63aa63";
-import { bajarExcel, leerExcel } from "../../kit/js/archivos.js?v=ce4b63aa63";
-import { htmlEstante, activarEstantes } from "../../kit/js/estante.js?v=ce4b63aa63";
-import { PROVEEDORES, TOPES, pesos, estadoStock } from "../datos.js?v=ce4b63aa63";
-import { pastillaStock } from "./comunes.js?v=ce4b63aa63";
-import { MARCA } from "../marca.js?v=ce4b63aa63";
+import { esc, aviso, vacio, mensajeDe } from "../../kit/js/ui.js?v=792c943282";
+import { bajarExcel, leerExcel } from "../../kit/js/archivos.js?v=792c943282";
+import { htmlEstante, activarEstantes } from "../../kit/js/estante.js?v=792c943282";
+import { PROVEEDORES, TOPES, pesos, estadoStock } from "../datos.js?v=792c943282";
+import { pastillaStock } from "./comunes.js?v=792c943282";
+import { MARCA } from "../marca.js?v=792c943282";
 
 const RAPIDOS = [5, 10, 15, 20];
 
@@ -225,6 +225,7 @@ export function vistaLista(cont, { usuario, datos }) {
                 </label>
             </li>
         </ol>
+        <p class="nota"><i class="ti ti-info-circle"></i> El archivo se lee en este dispositivo y no se sube a ningún lado. Es una demo: mejor usá la lista de ejemplo, no una real.</p>
         <div class="resultado-lista" aria-live="polite"></div>`;
 
     const lugar = cont.querySelector(".resultado-lista");

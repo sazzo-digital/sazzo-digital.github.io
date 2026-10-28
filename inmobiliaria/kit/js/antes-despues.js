@@ -7,7 +7,7 @@
 // Sin librería (img-comparison-slider hacía lo mismo con 9 KB). Las fotos se cargan recién cuando se ven
 // (loading="lazy") y tienen su ancho y alto, así no empujan la pantalla al llegar.
 // ============================================
-import { esc } from "./ui.js?v=87b82baae1";
+import { esc } from "./ui.js?v=db4997b1a3";
 
 /** Solo fotos del propio sitio (una ruta como "img/x.webp"), nunca algo que venga de afuera. */
 const esFoto = (ruta) => typeof ruta === "string" && ruta.length <= 120 && /^[\w\-/.]+\.(webp|avif|jpe?g|png)$/i.test(ruta) && !ruta.includes("..");
@@ -23,7 +23,7 @@ export function htmlAntesDespues({ antes, despues, texto = "", ancho = 800, alto
             <img class="antes-despues__foto antes-despues__despues" src="${esc(despues)}" alt="Después${texto ? `: ${esc(texto)}` : ""}" width="${a}" height="${h}" loading="lazy" decoding="async">
             <span class="antes-despues__rotulo antes-despues__rotulo--antes" aria-hidden="true">Antes</span>
             <span class="antes-despues__rotulo antes-despues__rotulo--despues" aria-hidden="true">Después</span>
-            <span class="antes-despues__manija" aria-hidden="true"><i class="ti ti-arrows-horizontal"></i></span>
+            <span class="antes-despues__manija" aria-hidden="true"><i class="ti ti-arrows-horizontal" aria-hidden="true"></i></span>
             <input class="antes-despues__control" type="range" min="0" max="100" step="1" value="${pos}" aria-label="Deslizá para comparar el antes y el después${texto ? ` (${esc(texto)})` : ""}">
             ${texto ? `<figcaption>${esc(texto)}</figcaption>` : ""}
         </figure>`;

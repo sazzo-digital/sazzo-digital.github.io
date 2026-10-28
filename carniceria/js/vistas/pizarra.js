@@ -1,13 +1,14 @@
-import { consignaPersona, activarSerie } from "./comunes.js?v=d8a3925649";
+import { consignaPersona, activarSerie } from "./comunes.js?v=f8ec046caa";
 // ============================================
 // Pizarra para la tele: los precios por kilo de cada animal en letra enorme y la oferta del día. Para poner en una
 // tele del local (pantalla completa): cuando cambian los precios (desposte o "Subió la hacienda"), ya está al día.
 // El dueño elige la oferta del día.
 // ============================================
-import { esc, aviso } from "../../kit/js/ui.js?v=d8a3925649";
-import { pesos } from "../datos.js?v=d8a3925649";
-import { NEGOCIO } from "../marca.js?v=d8a3925649";
-import { precioDe } from "./comunes.js?v=d8a3925649";
+import { esc, aviso } from "../../kit/js/ui.js?v=f8ec046caa";
+import { pesos } from "../datos.js?v=f8ec046caa";
+import { NEGOCIO } from "../marca.js?v=f8ec046caa";
+import { precioDe } from "./comunes.js?v=f8ec046caa";
+import { LEYENDA_TV } from "../../kit/js/leyendas.js?v=f8ec046caa";
 
 export function vistaPizarra(cont, { usuario, datos }) {
     const dueno = usuario.rol === "dueno";
@@ -26,6 +27,7 @@ export function vistaPizarra(cont, { usuario, datos }) {
                 <p class="pizarra__negocio">${esc(NEGOCIO)}</p>
                 <p class="pizarra__fecha">Precios de hoy · ${esc(new Date().toLocaleDateString("es-AR", { weekday: "long", day: "numeric", month: "long" }))}</p>
             </header>
+            <p class="pizarra__leyenda">${esc(LEYENDA_TV)}</p>
             ${oferta ? `
             <div class="pizarra__oferta">
                 <span>Oferta del día</span>

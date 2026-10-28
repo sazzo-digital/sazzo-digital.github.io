@@ -13,18 +13,19 @@
 // Festejo: cuando aparece una confirmación (.hecho: turno reservado, venta cobrada, orden creada…), el ✓ entra con un
 // rebote, salen chispitas del color de la demo y el celular vibra cortito (Android). Quieto con "reducir movimiento".
 // ============================================
-import { $, $$, esc, iniciales } from "./ui.js?v=ffcf92064c";
-import { logoSazzo, nombreDemo } from "./marca.js?v=ffcf92064c";
-import { LINK_CATALOGO } from "./config.js?v=ffcf92064c";
-import { interruptorTema, activarInterruptorTema } from "./apariencia.js?v=ffcf92064c";
-import { linkOtrasDemos, linkQuieroEsto, botDelChat } from "./enlaces.js?v=ffcf92064c";
-import { abrirColores, leerNombre } from "./colores.js?v=ffcf92064c";
-import { contar } from "./visita.js?v=ffcf92064c";
-import { pintarAvisos } from "./avisos.js?v=ffcf92064c";
-import { revisarDetalle, htmlBotonDetalle, activarDetalle } from "./detalle.js?v=ffcf92064c";
-import { htmlBotonInstalarCabecera } from "./instalar.js?v=ffcf92064c";
-import { olvidarDemo } from "./guardado.js?v=ffcf92064c";
-import { htmlInterruptorPasos, activarInterruptorPasos } from "./consigna.js?v=ffcf92064c";
+import { $, $$, esc, iniciales, cajaDeAvisos } from "./ui.js?v=3b75165565";
+import { logoSazzo, nombreDemo } from "./marca.js?v=3b75165565";
+import { LINK_CATALOGO } from "./config.js?v=3b75165565";
+import { interruptorTema, activarInterruptorTema } from "./apariencia.js?v=3b75165565";
+import { linkOtrasDemos, linkQuieroEsto, botDelChat } from "./enlaces.js?v=3b75165565";
+import { abrirColores, leerNombre } from "./colores.js?v=3b75165565";
+import { contar } from "./visita.js?v=3b75165565";
+import { pintarAvisos } from "./avisos.js?v=3b75165565";
+import { revisarDetalle, htmlBotonDetalle, activarDetalle } from "./detalle.js?v=3b75165565";
+import { htmlBotonInstalarCabecera } from "./instalar.js?v=3b75165565";
+import { olvidarDemo } from "./guardado.js?v=3b75165565";
+import { htmlInterruptorPasos, activarInterruptorPasos } from "./consigna.js?v=3b75165565";
+import { LEYENDA_TV, LEYENDA_IMPRESION } from "./leyendas.js?v=3b75165565";
 
 /** La barrita de Sazzo: colores, otras demos y "Quiero esto" (los textos largos solo si hay lugar). */
 export function htmlBarraSazzo(marca, opciones, conDetalle = false) {
@@ -59,8 +60,8 @@ function htmlPersonaCabecera(usuario) {
     const rol = usuario.rolTexto ?? usuario.rol;
     const quien = `${usuario.nombre ?? ""}${rol ? ` · ${rol}` : ""}`;
     return `
-                <button class="cabecera__persona" id="persona-cabecera" type="button" title="Cambiar persona" aria-label="Cambiar persona (ahora: ${esc(quien)})">
-                    <span class="cabecera__avatar" aria-hidden="true">${esc(iniciales(usuario))}<i class="ti ti-switch-horizontal"></i></span>
+                <button class="cabecera__persona" id="persona-cabecera" type="button" title="Cambiar persona" aria-label="${esc(iniciales(usuario))} Cambiar persona (ahora: ${esc(quien)})">
+                    <span class="cabecera__avatar" aria-hidden="true">${esc(iniciales(usuario))}<i class="ti ti-switch-horizontal" aria-hidden="true"></i></span>
                     <span class="cabecera__cambiar" aria-hidden="true">Cambiar<span class="cabecera__cambiar-mas"> persona</span></span>
                 </button>`;
 }
@@ -76,6 +77,7 @@ export function htmlMarco({ marca, usuario, menu = [], cambiarPersona = true, de
             </div>
             <div class="cabecera__marca"><a href="${esc(LINK_CATALOGO)}" aria-label="Ir a Sazzo">${logoSazzo()}</a><a href="#/inicio" title="Ir al inicio">${nombreDemo(marca)}${htmlNombreNegocio(marca)}</a></div>
             <div class="cabecera__fin">${cambiarPersona ? htmlPersonaCabecera(usuario) : ""}</div>
+            <p class="cabecera__prueba"><i class="ti ti-flask" aria-hidden="true"></i> ${esc(LEYENDA_TV)}</p>
         </header>
         <div class="banda-prueba">
             <p class="banda-prueba__persona">
@@ -94,6 +96,7 @@ export function htmlMarco({ marca, usuario, menu = [], cambiarPersona = true, de
         </div>
         <main id="contenido" class="contenido" tabindex="-1"></main>
         <footer class="pie-app"></footer>
+        <p class="leyenda-impresion">${esc(LEYENDA_IMPRESION)}</p>
         <div class="pie-celu">
             ${htmlBarraSazzo(marca, undefined, !!revisarDetalle(detalle))}
             ${menu.length ? `
@@ -242,6 +245,7 @@ if (typeof document !== "undefined") {
  * `avisos` (opcional): () => los hechos de la demo para los avisos entre roles (kit/avisos.js).
  */
 export function pintarMarco(app, { marca, usuario, menu = [], alCambiarPersona, alReiniciar, avisos, detalle = null }) {
+    cajaDeAvisos();
     avisosDelMarco = typeof avisos === "function" ? { app, prefijo: marca.prefijo, usuario, avisos } : null;
     // Sin a quién cambiar (comercio de una sola persona), no hay botón de cambiar de persona
     app.innerHTML = htmlMarco({ marca, usuario, menu, cambiarPersona: !!alCambiarPersona, detalle });

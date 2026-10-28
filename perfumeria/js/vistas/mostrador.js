@@ -1,10 +1,10 @@
-import { pintarConsigna } from "./comunes.js?v=71afbca5b0";
-import { esc, fechaHora } from "../../kit/js/ui.js?v=71afbca5b0";
-import { abrirCaja, htmlMasDeLaCaja } from "../../kit/js/caja.js?v=71afbca5b0";
-import { FAMILIAS, PRESENTACIONES, MEDIOS, pesos } from "../datos.js?v=71afbca5b0";
-import { frasco } from "./comunes.js?v=71afbca5b0";
-import { mediosParaCaja, textoMedio } from "../../kit/js/pagos.js?v=71afbca5b0";
-import { MARCA, NEGOCIO } from "../marca.js?v=71afbca5b0";
+import { pintarConsigna } from "./comunes.js?v=c1eb54ed24";
+import { esc, fechaHora } from "../../kit/js/ui.js?v=c1eb54ed24";
+import { abrirCaja, htmlMasDeLaCaja } from "../../kit/js/caja.js?v=c1eb54ed24";
+import { FAMILIAS, PRESENTACIONES, MEDIOS, pesos } from "../datos.js?v=c1eb54ed24";
+import { frasco } from "./comunes.js?v=c1eb54ed24";
+import { mediosParaCaja, textoMedio } from "../../kit/js/pagos.js?v=c1eb54ed24";
+import { MARCA, NEGOCIO } from "../marca.js?v=c1eb54ed24";
 
 const MEDIOS_CAJA = mediosParaCaja(MEDIOS);
 let familia = "mas";
@@ -18,10 +18,10 @@ export function vistaMostrador(cont, { usuario, datos }) {
         <p class="nota"><i class="ti ti-info-circle" aria-hidden="true"></i> Para la que compra en el local: frascos y decants. Cada venta descuenta el stock (los decants, los ml de la botella madre).</p>
         <div class="lugar-caja lugar-caja--sin-gondola"></div>
         <section class="catalogo-mostrador" aria-label="Perfumes para vender">
-            <div class="chips" role="tablist" aria-label="Familia">
-                <button class="chip" type="button" role="tab" data-familia="mas">Lo que más sale</button>
-                <button class="chip" type="button" role="tab" data-familia="">Todos</button>
-                ${Object.entries(FAMILIAS).map(([k, f]) => `<button class="chip" type="button" role="tab" data-familia="${esc(k)}"><span class="punto" style="background:${esc(f.color)}"></span>${esc(f.texto)}</button>`).join("")}
+            <div class="chips" role="group" aria-label="Familia">
+                <button class="chip" type="button" data-familia="mas">Lo que más sale</button>
+                <button class="chip" type="button" data-familia="">Todos</button>
+                ${Object.entries(FAMILIAS).map(([k, f]) => `<button class="chip" type="button" data-familia="${esc(k)}"><span class="punto" style="background:${esc(f.color)}"></span>${esc(f.texto)}</button>`).join("")}
             </div>
             <form class="buscar buscar--mostrador" role="search">
                 <input type="search" name="q" placeholder="Buscá un perfume" aria-label="Buscá un perfume" maxlength="40" autocomplete="off">
@@ -56,7 +56,6 @@ export function vistaMostrador(cont, { usuario, datos }) {
         catalogo.querySelectorAll("[data-familia]").forEach((b) => {
             const activo = b.dataset.familia === familia;
             b.classList.toggle("activo", activo);
-            b.setAttribute("aria-selected", String(activo));
         });
         catalogo.querySelector(".perfumes").innerHTML = lista.map((p) => `
             <li class="perfume perfume--mostrador">

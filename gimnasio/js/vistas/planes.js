@@ -4,9 +4,9 @@
 // repeticiones, descanso y peso de arranque, sacar), copiar una rutina y asignarla a un alumno.
 // Cambiar una rutina cambia la de todos los que la usan; para uno solo está "Ajustar" en su ficha.
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=6819a0f377";
-import { EJERCICIOS, TOPES, kilos, cuanto } from "../datos.js?v=6819a0f377";
-import { activarConsignaPersona, pastilla } from "./comunes.js?v=6819a0f377";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=6b204d1609";
+import { EJERCICIOS, TOPES, kilos, cuanto } from "../datos.js?v=6b204d1609";
+import { activarConsignaPersona, pastilla } from "./comunes.js?v=6b204d1609";
 
 let editando = null; // "nombre", "dia|A" o "ej|A|banca": lo que está abierto para cambiar
 

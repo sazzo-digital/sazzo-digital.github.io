@@ -16,7 +16,7 @@
 // de cero" o datos renovados) se borra (guardado.js → olvidarAvisos). Funciona en el mismo aparato o en dos pestañas;
 // en dos celulares distintos no (los datos viven en cada navegador).
 // ============================================
-import { esc } from "./ui.js?v=ffcf92064c";
+import { esc } from "./ui.js?v=3b75165565";
 
 const TOPE_VISTOS = 300; // por persona (los más viejos se van)
 const TOPE_BASE = 2000;
@@ -141,7 +141,7 @@ export async function pintarAvisos(app, { prefijo, usuario, avisos }) {
     const destino = rutaSegura(a.ruta);
     app.insertAdjacentHTML("beforeend", `
         <div class="aviso-rol${a.tono === "bien" ? " aviso-rol--bien" : ""}${recien ? " aviso-rol--recien" : ""}" role="alert">
-            <span class="aviso-rol__campana" aria-hidden="true"><i class="ti ${esc(icono)}"></i></span>
+            <span class="aviso-rol__campana" aria-hidden="true"><i class="ti ${esc(icono)}" aria-hidden="true"></i></span>
             <div class="aviso-rol__texto">
                 <b>${esc(String(a.titulo ?? "¡Novedad!").slice(0, 60))}</b>
                 ${a.linea ? `<span>${esc(String(a.linea).slice(0, 90))}</span>` : ""}
@@ -149,7 +149,7 @@ export async function pintarAvisos(app, { prefijo, usuario, avisos }) {
             </div>
             <div class="aviso-rol__botones">
                 ${destino ? `<button class="boton" type="button" data-ver><i class="ti ti-arrow-right" aria-hidden="true"></i> ${esc(String(a.boton ?? "Verlo").slice(0, 30))}</button>` : ""}
-                <button class="boton-icono aviso-rol__cerrar" type="button" data-cerrar aria-label="Cerrar el aviso"><i class="ti ti-x"></i></button>
+                <button class="boton-icono aviso-rol__cerrar" type="button" data-cerrar aria-label="Cerrar el aviso"><i class="ti ti-x" aria-hidden="true"></i></button>
             </div>
         </div>`);
     const caja = app.querySelector(".aviso-rol");
@@ -163,5 +163,11 @@ export async function pintarAvisos(app, { prefijo, usuario, avisos }) {
         marcarAvisoVisto(prefijo, usuario, a);
         pintarAvisos(app, { prefijo, usuario, avisos });
     });
+    const alEscape = (e) => {
+        if (!caja.isConnected) return document.removeEventListener("keydown", alEscape);
+        if (e.key !== "Escape" || e.defaultPrevented || document.querySelector("dialog[open]")) return;
+        caja.querySelector("[data-cerrar]").click();
+    };
+    document.addEventListener("keydown", alEscape);
     if (recien) sonarAviso();
 }

@@ -5,9 +5,10 @@
 // con Quick Look, que model-viewer arma solo), aparece "Verlo en tu mesa". El visor (kit\3d\model-viewer.min.js,
 // Google, Apache-2.0, ~1 MB) se baja recién al tocar "Verlo en 3D". `colores` tiñe los materiales por su nombre.
 // ============================================
-import { esc, aviso } from "./ui.js?v=6819a0f377";
-import { alSalirDeLaPantalla } from "./rutas.js?v=6819a0f377";
-import { RUTA_3D } from "./config.js?v=6819a0f377";
+import { esc, aviso, sinMovimiento } from "./ui.js?v=6b204d1609";
+import { alSalirDeLaPantalla } from "./rutas.js?v=6b204d1609";
+import { RUTA_3D } from "./config.js?v=6b204d1609";
+import { LEYENDA_TV } from "./leyendas.js?v=6b204d1609";
 
 const VERSION_VISOR = "4.3.1";
 let visorCargado = null;
@@ -40,9 +41,10 @@ export async function verEn3D({ titulo, src, colores = {}, alfa = 0.9, nota = NO
         <div class="hoja__caja">
             <div class="hoja__titulos">
                 <h2><i class="ti ti-3d-cube-sphere" aria-hidden="true"></i> ${esc(titulo)}</h2>
-                <button class="boton-icono" type="button" data-cerrar aria-label="Cerrar"><i class="ti ti-x"></i></button>
+                <button class="boton-icono" type="button" data-cerrar aria-label="Cerrar"><i class="ti ti-x" aria-hidden="true"></i></button>
             </div>
             <div class="visor-3d__lugar"><p class="nota visor-3d__cargando"><i class="ti ti-loader-2" aria-hidden="true"></i> Cargando el 3D…</p></div>
+            <p class="nota visor-3d__leyenda">${esc(LEYENDA_TV)}</p>
             <p class="nota"><i class="ti ti-hand-finger" aria-hidden="true"></i> Giralo con el dedo. ${esc(textoNota)}</p>
         </div>`;
     document.body.append(hoja);
@@ -66,12 +68,13 @@ export async function verEn3D({ titulo, src, colores = {}, alfa = 0.9, nota = NO
     }
     if (!hoja.isConnected) return null;
     const visor = document.createElement("model-viewer");
+    const girar = !sinMovimiento();
     for (const [k, v] of Object.entries({
         src,
         alt: `${titulo} en 3D`,
         "camera-controls": "",
         "touch-action": "pan-y",
-        "auto-rotate": "",
+        ...(girar ? { "auto-rotate": "" } : {}),
         loading: "eager", // en la ventanita se ve siempre: que no espere a "aparecer en pantalla"
         reveal: "auto",
         "shadow-intensity": "1",
@@ -95,6 +98,17 @@ export async function verEn3D({ titulo, src, colores = {}, alfa = 0.9, nota = NO
     visor.addEventListener("load", pintar);
     visor.addEventListener("error", () => aviso("No se pudo mostrar el 3D en este celular.", "error"));
     hoja.querySelector(".visor-3d__lugar").replaceChildren(visor);
+    const giro = document.createElement("button");
+    giro.type = "button";
+    giro.className = "boton boton--chico boton--secundario visor-3d__giro";
+    giro.setAttribute("data-giro", "");
+    giro.setAttribute("aria-pressed", String(girar));
+    giro.innerHTML = `<i class="ti ti-rotate-clockwise" aria-hidden="true"></i> Giro automático`;
+    giro.addEventListener("click", () => {
+        const activo = visor.toggleAttribute("auto-rotate");
+        giro.setAttribute("aria-pressed", String(activo));
+    });
+    hoja.querySelector(".visor-3d__lugar").after(giro);
     if (visor.loaded) pintar();
     return visor;
 }

@@ -2,7 +2,7 @@
 // Marca, personas y "también puede tener" de Sazzo Flota (diseñada el 08/10/2026).
 // Las personas son los roles reales del rubro (nombres inventados): administradora, mecánico y chofer.
 // ============================================
-import { revisarMarca } from "../kit/js/marca.js?v=2acd6c7b7a";
+import { revisarMarca } from "../kit/js/marca.js?v=402cfc1923";
 
 export const MARCA = revisarMarca({
     id: "flota",
@@ -49,7 +49,7 @@ export const DETALLE = {
     hace: [
         "Estado de cada vehículo según sus problemas: andando, con problema o en el taller",
         "Mapa con dónde se vio por última vez cada vehículo (de ejemplo)",
-        "Historia de problemas de cada vehículo",
+        "Historia de problemas de cada vehículo, con sus papeles que vencen y el próximo service por kilómetros",
         "La administradora ve lo que hay para mirar hoy y lo último que pasó",
         "Stock de repuestos que baja solo con cada arreglo y cada service, más ventas, salidas y entradas"
     ],
@@ -57,12 +57,14 @@ export const DETALLE = {
         titulo: "Para probar ya",
         renglones: [
             "Abrí un vehículo y tocá «Hacer el service»: los repuestos bajan solos",
+            "En un vehículo mirá cuándo vencen sus papeles y cuántos km faltan para el service (verde, ámbar o rojo)",
+            "Actualizá los kilómetros de un vehículo y mirá cómo cambia el aviso del service",
             "En Repuestos anotá lo que entra, lo que vendés o lo que sale",
             "Mirá los últimos movimientos: arreglos, services, ventas y entradas"
         ]
     },
     tambien: [
-        "Que el aviso del chofer le llegue al mecánico en otro celular, al instante",
+        "Que el aviso del chofer le llegue al mecánico en su propio celular, al instante",
         "Alta y baja de vehículos y de personas, con su usuario cada uno",
         "Días y horarios de cada chofer, y quién maneja qué vehículo",
         "Combustible, recorridos y fotos de cada problema",

@@ -2,9 +2,10 @@
 // Pantallas del chofer (Ramón): su inicio y "Avisar un problema".
 // Pensado para el celular y una sola mano: botones grandes, pocas palabras, se avisa en 15 segundos.
 // ============================================
-import { esc, vacio, aviso } from "../../kit/js/ui.js?v=2acd6c7b7a";
-import { TIPOS_PROBLEMA, URGENCIAS, TOPES } from "../datos.js?v=2acd6c7b7a";
-import { haceCuanto, pastillaVehiculo, pastillaProblema, guia, activarGuias, consignaPersona, activarPasos } from "./comunes.js?v=2acd6c7b7a";
+import { esc, vacio, aviso } from "../../kit/js/ui.js?v=402cfc1923";
+import { AVISO_CAMPO } from "../../kit/js/leyendas.js?v=402cfc1923";
+import { TIPOS_PROBLEMA, URGENCIAS, TOPES } from "../datos.js?v=402cfc1923";
+import { haceCuanto, pastillaVehiculo, pastillaProblema, guia, activarGuias, consignaPersona, activarPasos } from "./comunes.js?v=402cfc1923";
 
 export function vistaInicioChofer(cont, { usuario, datos, irA }) {
     const v = datos.vehiculoDe(usuario.id);
@@ -75,6 +76,7 @@ export function vistaAvisar(cont, { usuario, datos, irA }) {
                 <textarea name="comentario" rows="2" maxlength="${TOPES.comentario}" placeholder="Ej: chillan al frenar"></textarea>
                 <small class="contador-letras" aria-live="polite">0 / ${TOPES.comentario}</small>
             </label>
+            <p class="nota"><i class="ti ti-info-circle"></i><span>${esc(AVISO_CAMPO)}</span></p>
             <button class="boton boton--ancho boton--grande" type="submit"><i class="ti ti-send"></i> Enviar al mecánico</button>
         </form>`;
 

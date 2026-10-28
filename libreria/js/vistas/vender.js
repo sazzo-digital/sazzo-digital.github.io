@@ -1,10 +1,10 @@
-import { pintarConsigna } from "./comunes.js?v=d4aafb8120";
-import { esc, aviso } from "../../kit/js/ui.js?v=d4aafb8120";
-import { TOPES, RUBROS, pesos, esISBN, precioPara } from "../datos.js?v=d4aafb8120";
-import { NEGOCIO, MARCA } from "../marca.js?v=d4aafb8120";
-import { EVENTO_REINICIO } from "../../kit/js/guardado.js?v=d4aafb8120";
-import { abrirCaja, htmlMasDeLaCaja } from "../../kit/js/caja.js?v=d4aafb8120";
-import { MEDIOS_PAGO, mediosParaCaja } from "../../kit/js/pagos.js?v=d4aafb8120";
+import { pintarConsigna } from "./comunes.js?v=233619f5c3";
+import { esc, aviso } from "../../kit/js/ui.js?v=233619f5c3";
+import { TOPES, RUBROS, pesos, esISBN, precioPara } from "../datos.js?v=233619f5c3";
+import { NEGOCIO, MARCA } from "../marca.js?v=233619f5c3";
+import { EVENTO_REINICIO } from "../../kit/js/guardado.js?v=233619f5c3";
+import { abrirCaja, htmlMasDeLaCaja } from "../../kit/js/caja.js?v=233619f5c3";
+import { MEDIOS_PAGO, mediosParaCaja } from "../../kit/js/pagos.js?v=233619f5c3";
 
 export const ticket = new Map();
 addEventListener(EVENTO_REINICIO, () => ticket.clear());
@@ -24,6 +24,7 @@ export function vistaVender(cont, { usuario, datos }) {
     pintarConsigna(cont, datos, usuario);
     const panelCargar = cont.querySelector(".cargar");
     const productos = () => datos.listarProductos().map(paraCaja);
+    const rubrosConArticulos = new Set(datos.listarProductos().map((p) => p.rubro));
 
     const caja = abrirCaja({
         dentro: cont.querySelector(".lugar-caja"),
@@ -31,8 +32,8 @@ export function vistaVender(cont, { usuario, datos }) {
         titulo: NEGOCIO,
         prefijo: MARCA.prefijo,
         productos,
-        secciones: RUBROS.filter((r) => datos.listarProductos().some((p) => p.rubro === r.id)).map((r) => ({ id: r.id, texto: r.nombre })),
-        buscar: (texto) => datos.listarProductos({ texto }).slice(0, 24).map(paraCaja),
+        secciones: RUBROS.filter((r) => rubrosConArticulos.has(r.id)).map((r) => ({ id: r.id, texto: r.nombre })),
+        buscar: (texto) => datos.listarProductos({ texto, limite: 24 }).map(paraCaja),
         buscarCodigo: (codigo) => {
             const p = datos.porCodigo(codigo);
             return p ? paraCaja(p) : null;

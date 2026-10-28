@@ -7,8 +7,9 @@
 // al tocar "Girar" (al azar, según el peso de cada uno) y la rueda frena justo en él. Con "reducir movimiento", no gira:
 // muestra el premio directo. Nada se guarda.
 // ============================================
-import { esc, aviso, sinMovimiento } from "./ui.js?v=8a5fe1d629";
-import { alSalirDeLaPantalla } from "./rutas.js?v=8a5fe1d629";
+import { esc, aviso, sinMovimiento } from "./ui.js?v=44e4746e73";
+import { alSalirDeLaPantalla } from "./rutas.js?v=44e4746e73";
+import { LEYENDA_TV } from "./leyendas.js?v=44e4746e73";
 
 export const TOPE_PREMIOS = 12;
 const TOPE_TEXTO = 28;
@@ -97,15 +98,16 @@ export function girarRuleta({ titulo = "Ruleta de premios", texto = "", premios 
             <div class="hoja__caja">
                 <div class="hoja__titulos">
                     <h2><i class="ti ti-gift" aria-hidden="true"></i> ${esc(titulo)}</h2>
-                    <button class="boton-icono" type="button" data-cerrar aria-label="Cerrar"><i class="ti ti-x"></i></button>
+                    <button class="boton-icono" type="button" data-cerrar aria-label="Cerrar"><i class="ti ti-x" aria-hidden="true"></i></button>
                 </div>
                 ${texto ? `<p class="nota">${esc(texto)}</p>` : ""}
+                <p class="nota ruleta__leyenda">${esc(LEYENDA_TV)}</p>
                 <div class="ruleta__rueda">
                     <canvas role="img" aria-label="Ruleta con ${esc(lista.length)} premios: ${esc(lista.map((p) => p.texto).join(", "))}"></canvas>
                     <span class="ruleta__flecha" aria-hidden="true"></span>
                 </div>
                 <p class="ruleta__resultado" aria-live="polite"></p>
-                <button class="boton boton--ancho boton--grande" type="button" data-girar><i class="ti ti-rotate-clockwise"></i> Girar</button>
+                <button class="boton boton--ancho boton--grande" type="button" data-girar><i class="ti ti-rotate-clockwise" aria-hidden="true"></i> Girar</button>
             </div>`;
         document.body.append(hoja);
         const lienzo = hoja.querySelector("canvas");
@@ -139,7 +141,7 @@ export function girarRuleta({ titulo = "Ruleta de premios", texto = "", premios 
                 ganado = lista[i];
                 resultado.innerHTML = `<i class="ti ti-confetti" aria-hidden="true"></i> <b>${esc(ganado.texto)}</b>`;
                 boton.disabled = false;
-                boton.innerHTML = `<i class="ti ti-check"></i> Listo`;
+                boton.innerHTML = `<i class="ti ti-check" aria-hidden="true"></i> Listo`;
                 aviso(`Salió: ${ganado.texto}`);
             };
             if (sinMovimiento()) {

@@ -3,8 +3,8 @@
 // Las personas son los roles reales del rubro (nombres inventados): la dueña (martillera), el agente que atiende
 // consultas y visitas, y una chica que busca alquilar y pide la visita desde el celular.
 // ============================================
-import { revisarMarca } from "../kit/js/marca.js?v=87b82baae1";
-import { negocioDe } from "../kit/js/colores.js?v=87b82baae1";
+import { revisarMarca } from "../kit/js/marca.js?v=db4997b1a3";
+import { negocioDe } from "../kit/js/colores.js?v=db4997b1a3";
 
 export const MARCA = revisarMarca({
     id: "inmobiliaria",
@@ -52,17 +52,25 @@ export const NEGOCIO = negocioDe(MARCA.prefijo, "Inmobiliaria Puerta Abierta"); 
 
 export const DETALLE = {
     hace: [
-        "Consultas de WhatsApp, del portal y del cartel en una lista, con quiénes buscan algo así",
-        "Ficha de la propiedad en PDF y mapa de la zona",
+        "Consultas de WhatsApp, del portal, del cartel y de Instagram en una lista (se anotan a mano)",
+        "Ficha de la propiedad en PDF (la demo muestra el archivo, no lo baja) y mapa de la zona",
         "Confirmar la visita y mandar la ficha con un mensaje listo",
         "Pagos del alquiler con recordatorio para el que no pagó",
         "Antes de que venza, preguntarle al inquilino si renueva"
     ],
+    extra: {
+        titulo: "Para probar ya",
+        renglones: [
+            "Abrí una propiedad con fotos y recorré el 360° (hay dos propiedades de ejemplo con recorrido)",
+            "Mirá en qué zona queda en el mapa: nunca se muestra la dirección exacta"
+        ]
+    },
     tambien: [
-        "El índice oficial de cada mes, para aplicar el aumento",
+        "El índice oficial de cada mes, para aplicar el aumento (la demo usa uno de ejemplo)",
         "Liquidación al propietario y recibos de alquiler",
         "Cobro del alquiler con Mercado Pago o transferencia, y avisos por Telegram o por WhatsApp con un toque",
         "Agenda de visitas en el calendario de cada agente",
+        "Recorrido 360° de cada propiedad",
         "Tasaciones y varias sucursales, con su usuario cada una"
     ]
 };

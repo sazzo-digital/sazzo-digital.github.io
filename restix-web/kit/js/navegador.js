@@ -2,7 +2,7 @@
 // Aviso "abrila en el navegador": si la demo se abrió desde adentro de Instagram, WhatsApp o Facebook, lo que se
 // carga queda guardado ahí aparte (y se puede perder). Se avisa una vez por visita, con "Copiar link" y "Seguir acá".
 // ============================================
-import { $, esc, aviso, esNavegadorDeOtraApp } from "./ui.js?v=7d06fec91a";
+import { $, esc, aviso, esNavegadorDeOtraApp } from "./ui.js?v=aa4351ebaa";
 
 const CLAVE_VISTO = "sazzo-aviso-navegador"; // solo en esta pestaña (sessionStorage): vuelve a aparecer otra visita
 
@@ -40,7 +40,7 @@ export function avisarSiEsNavegadorDeOtraApp(agente = navigator.userAgent) {
         <i class="ti ti-external-link" aria-hidden="true"></i>
         <p>${esc(texto)}</p>
         <div class="aviso-navegador__botones">
-            <button class="boton boton--chico" type="button" data-copiar><i class="ti ti-copy"></i> Copiar link</button>
+            <button class="boton boton--chico" type="button" data-copiar><i class="ti ti-copy" aria-hidden="true"></i> Copiar link</button>
             <button class="boton-link" type="button" data-seguir>Seguir acá</button>
         </div>`;
     const cerrar = () => {

@@ -1,4 +1,4 @@
-import { pintarConsigna } from "./comunes.js?v=7879dd46ff";
+import { pintarConsigna } from "./comunes.js?v=50ee31fa6b";
 // ============================================
 // Presupuestos (Osvaldo y Nahuel): los que piden los clientes desde el celu y los que se arman en el mostrador.
 // En cada uno: los renglones como los escribió el cliente, con el artículo que entendió el buscador; lo que no se
@@ -6,13 +6,14 @@ import { pintarConsigna } from "./comunes.js?v=7879dd46ff";
 // renglón. "Mandar" fija los precios por 7 días y arma el mensaje; "PDF" lo deja para compartir. Cuando lo acepta,
 // "Pasar a venta" descuenta el stock y lo cobra (de contado o a su cuenta corriente).
 // ============================================
-import { esc, aviso, vacio, fechaCorta } from "../../kit/js/ui.js?v=7879dd46ff";
-import { diaLocalDe } from "../../kit/js/fechas.js?v=7879dd46ff";
-import { mostrarMensaje } from "../../kit/js/mensaje.js?v=7879dd46ff";
-import { armarPdf, pdfListo } from "../../kit/js/pdf.js?v=7879dd46ff";
-import { ESTADOS_PRESUPUESTO, TOPES, UNIDADES, VALIDEZ_DIAS, pesos, precioConUnidad, cantidadTexto, entender, diaMes } from "../datos.js?v=7879dd46ff";
-import { NEGOCIO } from "../marca.js?v=7879dd46ff";
-import { guia, activarGuias, pasos, pastillaEstado, tarjetaPresupuesto, cuando, validez, pintarCobro, etiquetaUnidad, htmlFoto } from "./comunes.js?v=7879dd46ff";
+import { esc, aviso, vacio, fechaCorta } from "../../kit/js/ui.js?v=50ee31fa6b";
+import { diaLocalDe } from "../../kit/js/fechas.js?v=50ee31fa6b";
+import { mostrarMensaje } from "../../kit/js/mensaje.js?v=50ee31fa6b";
+import { armarPdf, pdfListo } from "../../kit/js/pdf.js?v=50ee31fa6b";
+import { ESTADOS_PRESUPUESTO, TOPES, UNIDADES, VALIDEZ_DIAS, pesos, precioConUnidad, cantidadTexto, entender, diaMes } from "../datos.js?v=50ee31fa6b";
+import { NEGOCIO } from "../marca.js?v=50ee31fa6b";
+import { AVISO_CAMPO, AVISO_DIRECCION } from "../../kit/js/leyendas.js?v=50ee31fa6b";
+import { guia, activarGuias, pasos, pastillaEstado, tarjetaPresupuesto, cuando, validez, pintarCobro, etiquetaUnidad, htmlFoto } from "./comunes.js?v=50ee31fa6b";
 
 /** Lo que va en el PDF del presupuesto (lo usan el mostrador y el cliente). */
 export const datosPdf = (pr) => ({
@@ -30,7 +31,7 @@ export const datosPdf = (pr) => ({
 
 function pintarPresupuestos(cont, { usuario, datos, consulta }) {
     const filtro = consulta.get("ver");
-    const estado = ESTADOS_PRESUPUESTO[filtro] ? filtro : null;
+    const estado = Object.hasOwn(ESTADOS_PRESUPUESTO, filtro) ? filtro : null;
     const todos = datos.listarPresupuestos(usuario);
     const lista = estado ? todos.filter((p) => p.estado === estado) : todos.filter((p) => p.estado !== "anulado");
     const cuenta = (e) => todos.filter((p) => p.estado === e).length;
@@ -81,6 +82,7 @@ function pintarNuevoPresupuesto(cont, { usuario, datos }) {
                 <label data-para>¿Para quién?<input name="para" maxlength="${TOPES.nombre}" placeholder="Ej: Jorge, el vecino de la esquina"></label>
             </div>
             <label>Obra <small>(si querés)</small><input name="obra" maxlength="${TOPES.obra}" placeholder="Ej: Pintura del frente"></label>
+            <p class="nota"><i class="ti ti-info-circle"></i> ${esc(AVISO_CAMPO)} ${esc(AVISO_DIRECCION)}</p>
             <button class="boton" type="submit"><i class="ti ti-check"></i> Armar</button>
             <p class="nota"><i class="ti ti-info-circle"></i> Cada renglón se entiende solo (cantidad, metros y artículo); lo que no, lo elegís después.</p>
         </form>`;

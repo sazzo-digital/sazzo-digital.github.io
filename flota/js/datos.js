@@ -5,10 +5,10 @@
 // Reglas del kit: exigir() en lo que modifica, topes en todo lo que se carga, nada se borra y se devuelven copias.
 // Si cambia la forma de los datos, subir VERSION_DATOS (se regeneran solos).
 // ============================================
-import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=2acd6c7b7a";
-import { enteroHasta, sinPasarse } from "../kit/js/topes.js?v=2acd6c7b7a";
-import { fechaLocalISO, diasHasta } from "../kit/js/fechas.js?v=2acd6c7b7a";
-import { MARCA, PERSONAS } from "./marca.js?v=2acd6c7b7a";
+import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=402cfc1923";
+import { enteroHasta, sinPasarse } from "../kit/js/topes.js?v=402cfc1923";
+import { fechaLocalISO, diasHasta } from "../kit/js/fechas.js?v=402cfc1923";
+import { MARCA, PERSONAS } from "./marca.js?v=402cfc1923";
 
 export const VERSION_DATOS = 3;
 
@@ -22,7 +22,8 @@ export const TOPES = {
     entrada: 999,
     stock: 9_999,
     detalle: 60,
-    movimientos: 500
+    movimientos: 500,
+    problemas: 300
 };
 
 export const SERVICE_CADA_KM = { camion: 10_000, utilitario: 10_000, camioneta: 10_000, moto: 5_000 };
@@ -36,6 +37,7 @@ export const MOTIVOS_STOCK = {
 
 export const SERVICE_CERCA_KM = 1000; // desde cuántos km antes del service se avisa
 export const PAPEL_POR_VENCER_DIAS = 15; // desde cuántos días antes del vencimiento se avisa
+export const PAPEL_RENUEVA_DIAS = 365;
 
 // ---------- Catálogos fijos ----------
 export const TIPOS_PROBLEMA = [
@@ -83,7 +85,7 @@ export const UBICACIONES = {
     "v-2": { lat: -38.9573, lng: -68.0445, lugar: "En el taller" },
     "v-3": { lat: -38.9516, lng: -68.0591, lugar: "Centro" },
     "v-4": { lat: -38.9688, lng: -68.0823, lugar: "Base" },
-    "v-5": { lat: -38.9688, lng: -68.0823, lugar: "Base" },
+    "v-5": { lat: -38.9712, lng: -68.0795, lugar: "Base" },
     "v-6": { lat: -38.9067, lng: -68.0702, lugar: "Ruta, zona norte" },
     "v-7": { lat: -38.9442, lng: -68.0310, lugar: "Puente, zona este" },
     "v-8": { lat: -38.9591, lng: -68.0639, lugar: "Repartiendo, centro" }
@@ -197,11 +199,35 @@ export function ordenProblemas(a, b) {
     return peso(a) - peso(b) || b.avisoEn.localeCompare(a.avisoEn);
 }
 
+// ---------- Forma de lo guardado ----------
+
+export const FORMA_GUARDADO = {
+    listas: {
+        choferes: { id: "texto", nombre: "texto" },
+        vehiculos: { id: "texto", tipo: Object.keys(TIPOS_VEHICULO), nombre: "texto", km: "numero", proximoService: "numero" },
+        problemas: {
+            id: "texto", vehiculoId: "texto", tipo: TIPOS_PROBLEMA.map((t) => t.id), urgencia: URGENCIAS.map((u) => u.id),
+            comentario: "texto", avisoPor: "texto", avisoEn: "texto", estado: Object.keys(ESTADOS_PROBLEMA)
+        },
+        repuestos: { id: "texto", nombre: "texto", unidad: "texto", cantidad: "numero", minimo: "numero" }
+    }
+};
+
+const esObjeto = (x) => x !== null && typeof x === "object" && !Array.isArray(x);
+const usadosBien = (lista) => Array.isArray(lista) && lista.every((u) => esObjeto(u) && typeof u.nombre === "string" && Number.isFinite(u.cantidad));
+
+export function datosConForma(g) {
+    return g.vehiculos.every((v) => Array.isArray(v.papeles) && v.papeles.every((p) => esObjeto(p) && typeof p.tipo === "string" && /^\d{4}-\d{2}-\d{2}$/.test(p.vence))
+            && (v.ultimoService === undefined || (esObjeto(v.ultimoService) && usadosBien(v.ultimoService.repuestos))))
+        && g.problemas.every((p) => usadosBien(p.repuestos))
+        && (g.movimientosStock === undefined || (Array.isArray(g.movimientosStock) && g.movimientosStock.every((m) => esObjeto(m) && Number.isFinite(m.cantidad) && typeof m.nombre === "string")));
+}
+
 // ---------- Funciones de datos ----------
 
 /** Las funciones de datos. `prefijo` cambia solo en las pruebas (así no tocan los datos de la demo). */
 export function crearDatos(prefijo = MARCA.prefijo) {
-    const guardado = crearGuardado({ prefijo, version: VERSION_DATOS, semilla });
+    const guardado = crearGuardado({ prefijo, version: VERSION_DATOS, semilla, forma: FORMA_GUARDADO, revisarDatos: datosConForma });
     const db = () => guardado.db();
     const inicial = semilla();
 
@@ -333,6 +359,8 @@ export function crearDatos(prefijo = MARCA.prefijo) {
         const texto = sinPasarse(comentario, TOPES.comentario, "el comentario");
         exigir(db().problemas.filter(estaAbierto).length < TOPES.abiertos,
             `Ya hay ${TOPES.abiertos} problemas sin arreglar. Es una demo: tocá "Empezar de cero" arriba.`);
+        exigir(db().problemas.length < TOPES.problemas,
+            `Ya hay ${TOPES.problemas} problemas en la historia. Es una demo: tocá "Empezar de cero" arriba.`);
         const p = {
             id: nuevoId("p"), vehiculoId: v.id, tipo, urgencia, comentario: texto,
             avisoPor: usuario.nombre, avisoEn: ahora(),
@@ -387,6 +415,18 @@ export function crearDatos(prefijo = MARCA.prefijo) {
         const n = enteroHasta(km, "El kilometraje", { hasta: TOPES.km });
         exigir(n >= v.km, `No puede tener menos km que antes (${v.km.toLocaleString("es-AR")}).`);
         v.km = n;
+        guardado.persistir();
+        return armarVehiculo(v);
+    }
+
+    function renovarPapel(usuario, vehiculoId, tipo) {
+        exigir(["admin", "mecanico"].includes(usuario?.rol), "Los papeles los renuevan la administradora o el mecánico.");
+        const v = buscar(db().vehiculos, vehiculoId, "Ese vehículo no existe.");
+        const papel = v.papeles.find((p) => p.tipo === tipo);
+        exigir(papel, "Ese papel no existe.");
+        exigir(estadoPapel(papel).nivel !== "ok", `${papel.tipo} ya está al día.`);
+        papel.vence = fechaLocalISO(PAPEL_RENUEVA_DIAS);
+        papel.renovadoEn = ahora();
         guardado.persistir();
         return armarVehiculo(v);
     }
@@ -467,7 +507,7 @@ export function crearDatos(prefijo = MARCA.prefijo) {
         guardado, pasos,
         listarVehiculos, ficha, vehiculoDe, problemasAbiertos, avisosDe, listarRepuestos,
         resumen, paraMirar, movimientos,
-        avisarProblema, tomarProblema, cerrarProblema, cargarKm,
+        avisarProblema, tomarProblema, cerrarProblema, cargarKm, renovarPapel,
         hacerService, moverStock, movimientosStock
     };
 }

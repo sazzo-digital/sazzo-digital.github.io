@@ -1,15 +1,13 @@
-import { conConsigna } from "./comunes.js?v=ffcf92064c";
+import { conConsigna } from "./comunes.js?v=3b75165565";
 // ============================================
 // Compras: las facturas de los proveedores del mes, "Traer de ARCA" (simulado: trae de un toque las que ARCA tiene
 // en Mis Comprobantes y faltan cargar) y cargar una a mano, con el IVA calculado solo. Una compra mal cargada se
 // anula (no se borra). Solo administración carga; Hernán y Patricia miran.
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=ffcf92064c";
-import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=ffcf92064c";
-import { TOPES } from "../datos.js?v=ffcf92064c";
-import { ALICUOTAS, ORDEN_ALICUOTAS, pesos, numeroComprobante, nombrePeriodo, periodoActual, fechaISO, aCentavos } from "../reglas.js?v=ffcf92064c";
-import { buscarPersona } from "../marca.js?v=ffcf92064c";
-import { diaMes, periodoPedido, htmlSelectorMes, activarSelectorMes, conEspera, nombreDe } from "./comunes.js?v=ffcf92064c";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=3b75165565";
+import { TOPES } from "../datos.js?v=3b75165565";
+import { ALICUOTAS, ORDEN_ALICUOTAS, pesos, numeroComprobante, nombrePeriodo, periodoActual, fechaISO, aCentavos } from "../reglas.js?v=3b75165565";
+import { diaMes, periodoPedido, htmlSelectorMes, activarSelectorMes, conEspera, nombreDe } from "./comunes.js?v=3b75165565";
 
 const puedeCargar = (u) => u.rol === "admin";
 
@@ -20,27 +18,18 @@ function pintarCompras(cont, { usuario, datos, consulta, irA }) {
     const credito = vigentes.reduce((s, c) => s + (c.letra === "A" ? c.iva : 0), 0);
     const total = vigentes.reduce((s, c) => s + c.total, 0);
     const pendientes = periodo === periodoActual() ? datos.pendientesArca() : [];
-    const traidas = consulta?.get("traidas");
-    const patricia = buscarPersona("u-contadora");
 
     cont.innerHTML = `
         <div class="titulo-con-accion">
             <h1 class="titulo">Compras</h1>
             ${puedeCargar(usuario) ? `<a class="boton boton--secundario" href="#/compras/nueva"><i class="ti ti-plus"></i> Cargar una compra</a>` : ""}
         </div>
-        ${traidas ? `
-        <div class="hecho">
-            <i class="ti ti-circle-check" aria-hidden="true"></i>
-            <h2 class="titulo">Listo: ${esc(traidas)} facturas traídas de ARCA</h2>
-            <p>El crédito fiscal del mes ya las incluye.</p>
-        </div>
-        ${htmlGuia({ persona: patricia, ruta: "/iva", texto: "Mirá cómo la contadora ya tiene el IVA del mes" })}` : ""}
         ${pendientes.length ? `
         <div class="bloque aviso-arca">
-            <h2 class="subtitulo"><i class="ti ti-cloud-download"></i> ARCA tiene ${pendientes.length} facturas tuyas sin cargar</h2>
+            <h2 class="subtitulo"><i class="ti ti-cloud-download"></i> ARCA (simulado): ${pendientes.length} facturas de ejemplo sin cargar</h2>
             <p>Son de este mes, de ${esc([...new Set(pendientes.map((p) => p.emisor.nombre))].slice(0, 3).join(", "))}${new Set(pendientes.map((p) => p.emisor.nombre)).size > 3 ? " y otros" : ""}: suman ${esc(pesos(pendientes.reduce((s, p) => s + p.total, 0)))} con ${esc(pesos(pendientes.reduce((s, p) => s + p.iva, 0)))} de IVA a tu favor.</p>
             ${puedeCargar(usuario)
-                ? `<button class="boton boton--grande" type="button" data-traer><i class="ti ti-cloud-download"></i> Traer de ARCA</button>`
+                ? `<button class="boton boton--grande" type="button" data-traer><i class="ti ti-cloud-download"></i> Traer de ARCA (simulado)</button>`
                 : `<p class="nota"><i class="ti ti-lock"></i> Las trae Silvina (administración).</p>`}
         </div>` : ""}
         <div class="fila-filtros">${htmlSelectorMes(periodo)}</div>
@@ -55,7 +44,7 @@ function pintarCompras(cont, { usuario, datos, consulta, irA }) {
                 <span class="tipo tipo--${esc(c.letra)}">F${esc(c.letra)}</span>
                 <span class="comprobante-fila__texto">
                     <b>${esc(c.emisor.nombre)}</b>
-                    <small>${esc(numeroComprobante(c.puntoVenta, c.numero))} · ${esc(diaMes(c.fecha))}${c.origen === "arca" ? ` · <span class="marca-arca"><i class="ti ti-cloud-check"></i> de ARCA</span>` : ""}${c.anulada ? ` · anulada por ${esc(nombreDe(c.anuladaPor))}` : ""}</small>
+                    <small>${esc(numeroComprobante(c.puntoVenta, c.numero))} · ${esc(diaMes(c.fecha))}${c.origen === "arca" ? ` · <span class="marca-arca"><i class="ti ti-cloud-check"></i> de ARCA (simulado)</span>` : ""}${c.anulada ? ` · anulada por ${esc(nombreDe(c.anuladaPor))}` : ""}</small>
                 </span>
                 <span class="compra__montos"><b class="monto">${esc(pesos(c.total))}</b>${c.iva ? `<small>IVA ${esc(pesos(c.iva))}</small>` : ""}</span>
                 ${puedeCargar(usuario) && !c.anulada ? `<button class="boton-icono" type="button" data-anular="${esc(c.id)}" title="Anular (mal cargada)" aria-label="Anular la compra de ${esc(c.emisor.nombre)}"><i class="ti ti-ban"></i></button>` : ""}
@@ -63,12 +52,13 @@ function pintarCompras(cont, { usuario, datos, consulta, irA }) {
         </ul>` : vacio("No hay compras cargadas en este mes.", "ti-shopping-cart")}`;
 
     activarSelectorMes(cont, "/compras");
-    activarGuias(cont, irA);
 
     cont.querySelector("[data-traer]")?.addEventListener("click", async () => {
         try {
-            const nuevas = await conEspera("Consultando Mis Comprobantes en ARCA…", () => datos.traerDeArca(usuario), 1400);
-            location.hash = `#/compras?traidas=${nuevas.length}`;
+            const nuevas = await conEspera("Consultando ARCA (simulado)…", () => datos.traerDeArca(usuario), 1400);
+            history.replaceState(null, "", "#/compras");
+            aviso(`${nuevas.length} facturas de ejemplo traídas de ARCA (simulado).`);
+            vistaCompras(cont, { usuario, datos, consulta: new URLSearchParams(), irA });
         } catch (err) {
             aviso(err, "error");
         }

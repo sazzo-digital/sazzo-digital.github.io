@@ -1102,13 +1102,20 @@
     text-underline-offset: 3px;
 }
 
-.sazzo-chat__telefono-legal {
+.sazzo-chat__telefono-legal,
+.sazzo-chat__legal {
     margin: 0;
     color: var(--sc-suave);
     font-size: 0.72rem;
 }
 
-.sazzo-chat__telefono-legal a {
+.sazzo-chat__legal {
+    margin-bottom: 0.55rem;
+    line-height: 1.35;
+}
+
+.sazzo-chat__telefono-legal a,
+.sazzo-chat__legal a {
     color: inherit;
 }
 

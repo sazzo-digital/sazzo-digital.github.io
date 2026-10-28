@@ -1,15 +1,15 @@
-import { conConsigna } from "./comunes.js?v=ffcf92064c";
+import { conConsigna } from "./comunes.js?v=3b75165565";
 // ============================================
 // Tu empresa: todo se modifica. Razón social, CUIT, condición frente al IVA, domicilio, punto de venta, logo
 // (se achica en el navegador antes de guardarlo), colores (la ventanita del kit) y qué pantallas se usan.
 // Lo cambian Silvina y Hernán; Patricia lo ve. Nada de esto viene del link: se escribe acá.
 // ============================================
-import { esc, aviso } from "../../kit/js/ui.js?v=ffcf92064c";
-import { abrirColores } from "../../kit/js/colores.js?v=ffcf92064c";
-import { TOPES, MODULOS } from "../datos.js?v=ffcf92064c";
-import { MARCA } from "../marca.js?v=ffcf92064c";
-import { formatoCuit, CONDICIONES, fechaISO } from "../reglas.js?v=ffcf92064c";
-import { logoEmpresa, condicionTexto, pintarConsigna } from "./comunes.js?v=ffcf92064c";
+import { esc, aviso } from "../../kit/js/ui.js?v=3b75165565";
+import { abrirColores } from "../../kit/js/colores.js?v=3b75165565";
+import { TOPES, MODULOS } from "../datos.js?v=3b75165565";
+import { MARCA } from "../marca.js?v=3b75165565";
+import { formatoCuit, CONDICIONES, fechaISO } from "../reglas.js?v=3b75165565";
+import { logoEmpresa, condicionTexto, pintarConsigna } from "./comunes.js?v=3b75165565";
 
 const puedeCambiar = (u) => u.rol === "admin" || u.rol === "dueno";
 const LADO_LOGO = 240; // px: el logo se guarda chico (pesa poco y se ve bien en la factura)
@@ -33,11 +33,12 @@ function pintarEmpresa(cont, { usuario, datos, alCambiarModulos }) {
             <label>Razón social<input name="razonSocial" maxlength="${TOPES.nombre}" value="${esc(e.razonSocial)}"${des}></label>
             <label>Nombre de fantasía (opcional)<input name="fantasia" maxlength="${TOPES.fantasia}" value="${esc(e.fantasia ?? "")}"${des}></label>
             <div class="formulario__fila">
-                <label>CUIT<input name="cuit" inputmode="numeric" maxlength="13" value="${esc(formatoCuit(e.cuit))}"${des}></label>
+                <label>CUIT<input name="cuit" inputmode="numeric" maxlength="13" aria-describedby="aviso-cuit" value="${esc(formatoCuit(e.cuit))}"${des}></label>
                 <label>Condición frente al IVA
                     <select name="condicionIva"${des}>${["RI", "MT", "EX"].map((k) => `<option value="${k}"${k === e.condicionIva ? " selected" : ""}>${esc(CONDICIONES[k].texto)}</option>`).join("")}</select>
                 </label>
             </div>
+            <p class="nota" id="aviso-cuit">Usá el CUIT de ejemplo: no cargues un CUIT real en esta demo.</p>
             <label class="tope-monotributo"${e.condicionIva === "MT" ? "" : " hidden"}>Tope anual de tu categoría de monotributo <small>(lo ves en ARCA; vacío, no se controla)</small>
                 <input name="topeMonotributo" inputmode="decimal" maxlength="20" placeholder="Ej: el de tu categoría" value="${e.topeMonotributo ? esc(String(e.topeMonotributo / 100)) : ""}"${des}>
             </label>

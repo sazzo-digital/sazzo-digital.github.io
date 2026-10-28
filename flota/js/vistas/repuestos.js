@@ -2,9 +2,10 @@
 // Repuestos (administradora y mecánico): "hay / queda poco / no hay". Se descuentan solos cuando el mecánico
 // cierra un arreglo diciendo qué usó.
 // ============================================
-import { esc, aviso } from "../../kit/js/ui.js?v=2acd6c7b7a";
-import { cantidadCon, MOTIVOS_STOCK, TOPES } from "../datos.js?v=2acd6c7b7a";
-import { haceCuanto, consignaPersona, activarPasos } from "./comunes.js?v=2acd6c7b7a";
+import { esc, aviso } from "../../kit/js/ui.js?v=402cfc1923";
+import { AVISO_CAMPO } from "../../kit/js/leyendas.js?v=402cfc1923";
+import { cantidadCon, MOTIVOS_STOCK, TOPES } from "../datos.js?v=402cfc1923";
+import { haceCuanto, consignaPersona, activarPasos, activarFlechas } from "./comunes.js?v=402cfc1923";
 
 const ESTADOS = {
     "no-hay": { texto: "No hay", clase: "problema", icono: "ti-circle-x" },
@@ -44,8 +45,9 @@ export function vistaRepuestos(cont, { usuario, datos }) {
                         <input name="cantidad" type="number" inputmode="numeric" min="1" max="${TOPES.entrada}" step="1" value="1">
                     </label>
                     <label>Detalle <small>(si querés)</small>
-                        <input name="detalle" maxlength="${TOPES.detalle}" placeholder="${moviendo.motivo === "entrada" ? "Ej: compra al proveedor" : moviendo.motivo === "venta" ? "Ej: le vendí a un taller" : "Ej: para el auto del dueño"}" autocomplete="off">
+                        <input name="detalle" maxlength="${TOPES.detalle}" placeholder="${moviendo.motivo === "entrada" ? "Ej: compra al proveedor" : moviendo.motivo === "venta" ? "Ej: venta de mostrador" : "Ej: uso interno"}" autocomplete="off">
                     </label>
+                    <p class="nota"><i class="ti ti-info-circle"></i><span>${esc(AVISO_CAMPO)}</span></p>
                     <button class="boton boton--ancho" type="submit"><i class="ti ti-check"></i> Anotar</button>
                     <button class="boton-link" type="button" data-cerrar-mover>Cancelar</button>
                 </form>` : ""}
@@ -62,6 +64,7 @@ export function vistaRepuestos(cont, { usuario, datos }) {
             </li>`).join("")}</ul>` : `<p class="nota">Todavía no hubo movimientos. Probá con "Entró" o hacé un service desde un vehículo.</p>`}`;
 
     activarPasos(cont);
+    activarFlechas(cont, "Qué pasó", "motivo-elegido");
     const otraVez = () => vistaRepuestos(cont, { usuario, datos });
     cont.querySelectorAll("[data-mover]").forEach((b) => b.addEventListener("click", () => {
         moviendo = moviendo?.id === b.dataset.mover && moviendo.motivo === b.dataset.motivo ? null : { id: b.dataset.mover, motivo: b.dataset.motivo };

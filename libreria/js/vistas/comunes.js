@@ -3,12 +3,12 @@
 // de estado de un pedido, los pasos de una lista (pedida → separada → entregada) y "hace cuánto".
 // Todo dato que entra a HTML pasa por esc().
 // ============================================
-import { esc } from "../../kit/js/ui.js?v=d4aafb8120";
-import { diaLocalDe, fechaLocalISO } from "../../kit/js/fechas.js?v=d4aafb8120";
-import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=d4aafb8120";
-import { ESTADOS_PEDIDO, pesos } from "../datos.js?v=d4aafb8120";
-import { MARCA, buscarPersona } from "../marca.js?v=d4aafb8120";
-import { htmlConsigna, htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=d4aafb8120";
+import { esc } from "../../kit/js/ui.js?v=233619f5c3";
+import { diaLocalDe, fechaLocalISO } from "../../kit/js/fechas.js?v=233619f5c3";
+import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=233619f5c3";
+import { ESTADOS_PEDIDO, pesos } from "../datos.js?v=233619f5c3";
+import { MARCA, buscarPersona } from "../marca.js?v=233619f5c3";
+import { htmlConsigna, htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=233619f5c3";
 
 const CONSIGNAS = {
     duena: [
@@ -44,6 +44,32 @@ export function pintarConsigna(cont, datos, usuario) {
 /** Botón del recorrido con la persona de Librería: guia("u-empleado", "/listas", "Mirá lo que le llega a Joaquín"). */
 export const guia = (personaId, ruta, texto) => htmlGuia({ persona: buscarPersona(personaId), ruta, texto });
 export { activarGuias };
+
+const PASO_FLECHA = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 };
+
+export function activarFlechas(cont, etiqueta, atributo) {
+    const selector = `[role="radiogroup"][aria-label="${etiqueta}"]`;
+    const clave = atributo.replace(/-([a-z])/g, (_, letra) => letra.toUpperCase());
+    const grupo = cont.querySelector(selector);
+    if (!grupo) return;
+    const botones = () => [...grupo.querySelectorAll('[role="radio"]')];
+    botones().forEach((b) => {
+        b.tabIndex = b.getAttribute("aria-checked") === "true" ? 0 : -1;
+    });
+    if (grupo.dataset.flechas) return;
+    grupo.dataset.flechas = "1";
+    grupo.addEventListener("keydown", (e) => {
+        const paso = PASO_FLECHA[e.key];
+        const lista = botones();
+        const i = lista.indexOf(e.target);
+        if (!paso || i < 0) return;
+        e.preventDefault();
+        const elegido = lista[(i + paso + lista.length) % lista.length];
+        const valor = elegido.dataset[clave];
+        elegido.click();
+        cont.querySelector(`${selector} [data-${atributo}="${valor}"]`)?.focus();
+    });
+}
 
 const STOCK = {
     sin: { texto: "No hay", clase: "mal", icono: "ti-circle-x" },

@@ -1,14 +1,15 @@
-import { conConsigna } from "./comunes.js?v=ffcf92064c";
+import { LEYENDA_IMPRESION } from "../../kit/js/leyendas.js?v=3b75165565";
+import { conConsigna } from "./comunes.js?v=3b75165565";
 // ============================================
 // Contabilidad: libro diario (los asientos salen solos de cada factura, compra, cobro y pago), mayor de cada cuenta
 // y balance de sumas y saldos. Solo para mirar: en la demo no hay asientos manuales.
 // ============================================
-import { esc } from "../../kit/js/ui.js?v=ffcf92064c";
-import { htmlEstante, activarEstantes } from "../../kit/js/estante.js?v=ffcf92064c";
-import { agruparPorMes } from "../estantes.js?v=ffcf92064c";
-import { pesos, nombrePeriodo, periodoActual, correrPeriodo } from "../reglas.js?v=ffcf92064c";
-import { nombreCuenta } from "../contabilidad.js?v=ffcf92064c";
-import { periodoPedido, htmlSelectorMes, activarSelectorMes, htmlTabla, fechaCorta, diaMes } from "./comunes.js?v=ffcf92064c";
+import { esc } from "../../kit/js/ui.js?v=3b75165565";
+import { htmlEstante, activarEstantes } from "../../kit/js/estante.js?v=3b75165565";
+import { agruparPorMes } from "../estantes.js?v=3b75165565";
+import { pesos, nombrePeriodo, periodoActual, correrPeriodo } from "../reglas.js?v=3b75165565";
+import { nombreCuenta } from "../contabilidad.js?v=3b75165565";
+import { periodoPedido, htmlSelectorMes, activarSelectorMes, htmlTabla, fechaCorta, diaMes } from "./comunes.js?v=3b75165565";
 
 const VISTAS = { diario: "Libro diario", mayor: "Mayor", balance: "Balance" };
 const MAX_ASIENTOS = 60; // en pantalla (el resto, cambiando de mes)
@@ -18,6 +19,7 @@ function pintarContabilidad(cont, { datos, consulta }) {
     const periodo = periodoPedido(consulta);
     const todos = ver === "diario" && (!consulta?.get("p") || consulta.get("p") === "todos");
     cont.innerHTML = `
+        <p class="leyenda-contable">${esc(LEYENDA_IMPRESION)}</p>
         <h1 class="titulo">Contabilidad</h1>
         <div class="pestanas" role="tablist">
             ${Object.entries(VISTAS).map(([k, v]) => `<a role="tab" class="pestana${k === ver ? " activa" : ""}" aria-selected="${k === ver}" href="#/contabilidad?ver=${k}&p=${esc(periodo)}">${esc(v)}</a>`).join("")}

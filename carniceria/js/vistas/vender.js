@@ -1,4 +1,4 @@
-import { consignaPersona, activarSerie } from "./comunes.js?v=d8a3925649";
+import { consignaPersona, activarSerie } from "./comunes.js?v=f8ec046caa";
 // ============================================
 // Vender (Ricardo y Darío), en el mostrador: los cortes que más salen y los de cada animal a mano, y un buscador que
 // entiende cómo pide la gente ("chori", "molida") y perdona errores ("bacio"). Pesaje: se toca el corte y se escribe
@@ -7,17 +7,18 @@ import { consignaPersona, activarSerie } from "./comunes.js?v=d8a3925649";
 // peso. Ticket con vuelto, alias para la transferencia, "ding" al cobrar y la vista previa del ticket.
 // En la compu, dos columnas (cortes | ticket); en el celular, el ticket abajo con una barrita arriba que lleva a él.
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=d8a3925649";
-import { puedeEscanear, escanear } from "../../kit/js/escaner.js?v=d8a3925649";
-import { mantenerPantallaPrendida, htmlCopiable, activarCopiables, htmlBotonSonido, activarBotonSonido, ding } from "../../kit/js/celular.js?v=d8a3925649";
-import { TOPES, MEDIOS, ALIAS, ANIMALES, ETIQUETA, pesos, kilos, aGramos, precioPorPeso, gramosPara, leerEtiqueta } from "../datos.js?v=d8a3925649";
-import { textoMedio, DIVIDIDO, partesIniciales, htmlDosMedios, activarDosMedios } from "../../kit/js/pagos.js?v=d8a3925649";
-import { MARCA, NEGOCIO } from "../marca.js?v=d8a3925649";
-import { campoKg, kgEnCampo, precioDe, hora } from "./comunes.js?v=d8a3925649";
-import { EVENTO_REINICIO } from "../../kit/js/guardado.js?v=d8a3925649";
-import { puedeConectarBalanza, conectarBalanza } from "../../kit/js/balanza.js?v=d8a3925649";
-import { abrirModoTV } from "../../kit/js/modo-tv.js?v=d8a3925649";
-import { htmlMasDeLaCaja } from "../../kit/js/caja.js?v=d8a3925649";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=f8ec046caa";
+import { puedeEscanear, escanear } from "../../kit/js/escaner.js?v=f8ec046caa";
+import { mantenerPantallaPrendida, htmlCopiable, activarCopiables, htmlBotonSonido, activarBotonSonido, ding } from "../../kit/js/celular.js?v=f8ec046caa";
+import { TOPES, MEDIOS, ALIAS, ANIMALES, ETIQUETA, pesos, kilos, aGramos, precioPorPeso, gramosPara, leerEtiqueta } from "../datos.js?v=f8ec046caa";
+import { textoMedio, DIVIDIDO, partesIniciales, htmlDosMedios, activarDosMedios } from "../../kit/js/pagos.js?v=f8ec046caa";
+import { MARCA, NEGOCIO } from "../marca.js?v=f8ec046caa";
+import { campoKg, kgEnCampo, precioDe, hora } from "./comunes.js?v=f8ec046caa";
+import { EVENTO_REINICIO } from "../../kit/js/guardado.js?v=f8ec046caa";
+import { puedeConectarBalanza, conectarBalanza } from "../../kit/js/balanza.js?v=f8ec046caa";
+import { abrirModoTV } from "../../kit/js/modo-tv.js?v=f8ec046caa";
+import { htmlMasDeLaCaja } from "../../kit/js/caja.js?v=f8ec046caa";
+import { LEYENDA_PIE } from "../../kit/js/leyendas.js?v=f8ec046caa";
 
 // El ticket en curso queda en memoria mientras se navega (se vacía al cobrar)
 export const ticket = new Map(); // articuloId → { gramos } o { unidades }
@@ -533,7 +534,8 @@ export function vistaVender(cont, { usuario, datos }) {
 export function htmlTicket(v) {
     const fecha = new Date(v.fecha);
     return `
-        <div class="papel-ticket" role="img" aria-label="Vista previa del ticket">
+        <section class="papel-ticket" aria-label="Ticket de prueba">
+            <h3 class="solo-lector">Ticket de prueba</h3>
             <p class="papel-ticket__negocio">${esc(NEGOCIO)}</p>
             <p>${esc(fecha.toLocaleDateString("es-AR"))} ${esc(hora(v.fecha))} · atendió ${esc(v.por)}</p>
             <hr>
@@ -543,8 +545,8 @@ export function htmlTicket(v) {
             <hr>
             <p class="papel-ticket__renglon papel-ticket__total"><span>TOTAL</span><span>${esc(pesos(v.total))}</span></p>
             <p>${esc(textoMedio(v, MEDIOS))}${v.vuelto !== null && v.vuelto !== undefined ? ` · pagó ${esc(pesos(v.pagaCon))} · vuelto ${esc(pesos(v.vuelto))}` : ""}</p>
-            <p class="papel-ticket__demo">DEMO · no es un comprobante</p>
-        </div>`;
+            <p class="papel-ticket__demo">${esc(LEYENDA_PIE)}</p>
+        </section>`;
 }
 
 export function htmlTVBalanza(corte, simulada = true) {

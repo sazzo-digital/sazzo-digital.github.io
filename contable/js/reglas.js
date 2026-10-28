@@ -113,21 +113,24 @@ export const pesosRedondo = (centavos) => {
  * desde/hasta van en pesos. Más de 2 decimales se redondea.
  */
 export function aCentavos(valor, que, { desde = 0.01, hasta }) {
-    let n = valor;
+    let t = String(valor);
     if (typeof valor === "string") {
-        let t = valor.trim().replace(/\$|\s/g, "");
+        t = valor.trim().replace(/\$|\s/g, "");
         if (t.length > 20) throw new Error(`${que}: el número es demasiado largo.`);
-        // Como se escribe acá: "1.234,56" (punto de miles, coma decimal) o "50.000" (solo puntos de miles).
-        // "1234.5" (un punto que no separa miles) se toma como decimal.
         if (t.includes(",")) t = t.replace(/\./g, "").replace(",", ".");
         else if (/^\d{1,3}(\.\d{3})+$/.test(t)) t = t.replace(/\./g, "");
-        n = t === "" ? NaN : Number(t);
     }
+    const n = t === "" ? NaN : Number(t);
+    if (!["string", "number"].includes(typeof valor)) throw new Error(`${que} tiene que ser un número.`);
     if (typeof n !== "number" || !Number.isFinite(n)) throw new Error(`${que} tiene que ser un número.`);
     if (n < desde || n > hasta) {
         throw new Error(`${que} tiene que ser de ${pesos(Math.round(desde * 100))} a ${pesos(Math.round(hasta * 100))}.`);
     }
-    return Math.round(n * 100);
+    if (!/^\d+(\.\d+)?$/.test(t)) throw new Error(`${que} tiene que ser un número.`);
+    const [entero, decimal = ""] = t.split(".");
+    const centavos = BigInt(entero) * 100n + BigInt(decimal.padEnd(2, "0").slice(0, 2)) + (decimal[2] >= "5" ? 1n : 0n);
+    if (centavos > BigInt(Number.MAX_SAFE_INTEGER)) throw new Error(`${que}: el número es demasiado grande.`);
+    return Number(centavos);
 }
 
 // ---------- Cálculo de un comprobante ----------
@@ -174,25 +177,43 @@ export function calcularComprobante(renglones, letra) {
  * queda, toma exacto lo restante (así la suma de las notas da justo la factura, sin centavos sueltos).
  */
 export function repartirNotaCredito(restante, monto) {
+    const sinGrupos = Object.keys(restante.grupos).length === 0;
+    const netoSinIva = sinGrupos ? restante.total - restante.exento : 0;
+    const limites = [...Object.values(restante.grupos).flatMap((g) => [g.neto, g.iva]), restante.exento];
+    if (!Number.isSafeInteger(monto) || monto <= 0 || monto > restante.total || !Number.isSafeInteger(restante.total) ||
+        limites.some((n) => !Number.isSafeInteger(n) || n < 0) || netoSinIva < 0 || limites.reduce((s, n) => s + n, netoSinIva) !== restante.total) {
+        throw new Error("El importe de la nota no coincide con lo que queda de la factura.");
+    }
     if (monto === restante.total) {
         const grupos = structuredClone(restante.grupos);
-        const neto = Object.values(grupos).reduce((s, g) => s + g.neto, 0);
+        const neto = Object.values(grupos).reduce((s, g) => s + g.neto, netoSinIva);
         const iva = Object.values(grupos).reduce((s, g) => s + g.iva, 0);
         return { grupos, neto, iva, exento: restante.exento, total: restante.total };
     }
     const grupos = {};
-    for (const [a, g] of Object.entries(restante.grupos)) {
-        const totalGrupo = Math.round(((g.neto + g.iva) * monto) / restante.total);
-        const n = Math.round((totalGrupo * 1000) / (1000 + ALICUOTAS[a].porMil));
-        grupos[a] = { neto: n, iva: totalGrupo - n };
+    const entradas = Object.entries(restante.grupos);
+    const capacidades = [...entradas.map(([, g]) => g.neto + g.iva), netoSinIva, restante.exento];
+    const total = BigInt(restante.total);
+    const partes = capacidades.map((capacidad, i) => {
+        const producto = BigInt(capacidad) * BigInt(monto);
+        return { i, valor: Number(producto / total), resto: producto % total };
+    });
+    let faltan = monto - partes.reduce((s, p) => s + p.valor, 0);
+    for (const p of partes.slice().sort((a, b) => a.resto === b.resto ? a.i - b.i : a.resto > b.resto ? -1 : 1)) {
+        if (faltan && p.valor < capacidades[p.i]) {
+            p.valor++;
+            faltan--;
+        }
     }
-    let exento = Math.round((restante.exento * monto) / restante.total);
-    // Los centavos que sobran o faltan por redondear van al último grupo (o al exento si no hay grupos)
-    const suma = () => Object.values(grupos).reduce((s, g) => s + g.neto + g.iva, 0) + exento;
-    const claves = Object.keys(grupos);
-    if (claves.length) grupos[claves.at(-1)].neto += monto - suma();
-    else exento += monto - suma();
-    const neto = Object.values(grupos).reduce((s, g) => s + g.neto, 0);
+    entradas.forEach(([a, g], i) => {
+        const totalGrupo = partes[i].valor;
+        const capacidad = g.neto + g.iva;
+        const proporcional = capacidad ? Number((BigInt(totalGrupo) * BigInt(g.neto) * 2n + BigInt(capacidad)) / (2n * BigInt(capacidad))) : 0;
+        const n = Math.max(totalGrupo - g.iva, Math.min(g.neto, proporcional));
+        grupos[a] = { neto: n, iva: totalGrupo - n };
+    });
+    const exento = partes.at(-1).valor;
+    const neto = Object.values(grupos).reduce((s, g) => s + g.neto, partes.at(-2).valor);
     const iva = Object.values(grupos).reduce((s, g) => s + g.iva, 0);
     return { grupos, neto, iva, exento, total: monto };
 }

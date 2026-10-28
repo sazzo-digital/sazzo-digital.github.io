@@ -1,5 +1,6 @@
-import { esc } from "./ui.js?v=2acd6c7b7a";
-import { mantenerPantallaPrendida } from "./celular.js?v=2acd6c7b7a";
+import { esc } from "./ui.js?v=402cfc1923";
+import { mantenerPantallaPrendida } from "./celular.js?v=402cfc1923";
+import { LEYENDA_TV } from "./leyendas.js?v=402cfc1923";
 
 export const TOPES_TV = { minimoMs: 2000, maximoMs: 60000 };
 
@@ -8,7 +9,7 @@ let cerrarAnterior = null;
 const horaDe = (d) => d.toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit", hour12: false });
 
 export function htmlBotonTV(texto = "Modo TV") {
-    return `<button class="boton boton--secundario boton--chico boton-tv" type="button" data-modo-tv><i class="ti ti-device-tv"></i> ${esc(texto)}</button>`;
+    return `<button class="boton boton--secundario boton--chico boton-tv" type="button" data-modo-tv><i class="ti ti-device-tv" aria-hidden="true"></i> ${esc(texto)}</button>`;
 }
 
 export function abrirModoTV({ titulo = "", icono = "ti-device-tv", armar, cadaMs = 5000, reloj = () => new Date(), alTocar = null } = {}) {
@@ -24,10 +25,13 @@ export function abrirModoTV({ titulo = "", icono = "ti-device-tv", armar, cadaMs
         <header class="modo-tv__cabeza">
             <b class="modo-tv__titulo"><i class="ti ${esc(icono)}" aria-hidden="true"></i>${esc(titulo)}</b>
             <span class="modo-tv__hora" data-tv-hora></span>
-            <button class="modo-tv__salir" type="button" data-tv-salir aria-label="Salir del modo TV"><i class="ti ti-x"></i> Salir</button>
+            <button class="modo-tv__salir" type="button" data-tv-salir aria-label="Salir del modo TV"><i class="ti ti-x" aria-hidden="true"></i> Salir</button>
         </header>
         <div class="modo-tv__cuerpo" aria-live="polite" data-tv-cuerpo></div>
-        <p class="modo-tv__pie">Para la tele del local: conectala a la compu o al celu y dejala así. Se actualiza sola.</p>`;
+        <p class="modo-tv__pie"><b class="modo-tv__leyenda">${esc(LEYENDA_TV)}</b> · Para la tele del local: conectala a la compu o al celu y dejala así. Se actualiza sola.</p>`;
+    const anterior = document.activeElement;
+    const tapados = [...document.body.children].filter((nodo) => !nodo.inert);
+    tapados.forEach((nodo) => (nodo.inert = true));
     document.body.append(caja);
     const cuerpo = caja.querySelector("[data-tv-cuerpo]");
     if (alTocar) cuerpo.addEventListener("click", (e) => alTocar(e));
@@ -59,9 +63,25 @@ export function abrirModoTV({ titulo = "", icono = "ti-device-tv", armar, cadaMs
         document.removeEventListener("fullscreenchange", alCambiarPantalla);
         if (document.fullscreenElement) document.exitFullscreen?.().catch?.(() => {});
         caja.remove();
+        tapados.forEach((nodo) => (nodo.inert = false));
+        if (anterior?.isConnected) anterior.focus?.();
     };
     const alTeclear = (e) => {
-        if (e.key === "Escape") cerrar();
+        if (e.key === "Escape") return cerrar();
+        if (e.key !== "Tab") return;
+        const botones = [...caja.querySelectorAll("button:not([disabled]), a[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex='-1'])")];
+        const primero = botones[0];
+        const ultimo = botones.at(-1);
+        if (!botones.length || !caja.contains(document.activeElement)) {
+            e.preventDefault();
+            (primero ?? caja.querySelector("[data-tv-salir]")).focus();
+        } else if (e.shiftKey && document.activeElement === primero) {
+            e.preventDefault();
+            ultimo.focus();
+        } else if (!e.shiftKey && document.activeElement === ultimo) {
+            e.preventDefault();
+            primero.focus();
+        }
     };
     const alCambiarPantalla = () => {
         if (document.fullscreenElement) entroPantallaCompleta = true;

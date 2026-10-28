@@ -1,12 +1,13 @@
-import { pintarConsigna } from "./comunes.js?v=ce4b63aa63";
+import { pintarConsigna } from "./comunes.js?v=792c943282";
 // ============================================
 // Fiados: la libreta. Quién debe, cuánto y desde cuándo; anotar un cliente nuevo; en la ficha, cobrar (todo o una
 // parte) y ver qué se llevó en cada fiado. El tope de cada cliente lo cambia el dueño.
 // ============================================
-import { esc, aviso, vacio, fechaCorta } from "../../kit/js/ui.js?v=ce4b63aa63";
-import { diaLocalDe, fechaLocalISO } from "../../kit/js/fechas.js?v=ce4b63aa63";
-import { TOPES, pesos } from "../datos.js?v=ce4b63aa63";
-import { haceDias, hora } from "./comunes.js?v=ce4b63aa63";
+import { esc, aviso, vacio, fechaCorta } from "../../kit/js/ui.js?v=792c943282";
+import { AVISO_CAMPO } from "../../kit/js/leyendas.js?v=792c943282";
+import { diaLocalDe, fechaLocalISO } from "../../kit/js/fechas.js?v=792c943282";
+import { TOPES, pesos } from "../datos.js?v=792c943282";
+import { haceDias, hora } from "./comunes.js?v=792c943282";
 
 const barraTope = (c) => {
     const pct = c.tope ? Math.min(100, Math.round((c.deuda / c.tope) * 100)) : 100;
@@ -39,6 +40,7 @@ export function vistaFiados(cont, { usuario, datos }) {
             <form class="formulario" novalidate>
                 <label>Nombre<input name="nombre" maxlength="${TOPES.nombre}" required></label>
                 <label>Para reconocerlo (si querés)<input name="detalle" maxlength="${TOPES.detalle}" placeholder="Ej: el del 2° A"></label>
+                <p class="nota"><i class="ti ti-info-circle"></i> ${esc(AVISO_CAMPO)}</p>
                 <button class="boton" type="submit"><i class="ti ti-plus"></i> Anotar</button>
                 <p class="nota"><i class="ti ti-info-circle"></i> Arranca con un tope de ${esc(pesos(30_000))}${usuario.rol === "dueno" ? " (lo podés cambiar en su ficha)" : " (lo cambia Rubén)"}.</p>
             </form>

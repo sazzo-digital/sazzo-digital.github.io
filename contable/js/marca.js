@@ -3,8 +3,8 @@
 // Las personas son los roles reales de una pyme Responsable Inscripta (nombres inventados): administración, el dueño
 // y la contadora.
 // ============================================
-import { revisarMarca } from "../kit/js/marca.js?v=ffcf92064c";
-import { negocioDe } from "../kit/js/colores.js?v=ffcf92064c";
+import { revisarMarca } from "../kit/js/marca.js?v=3b75165565";
+import { negocioDe } from "../kit/js/colores.js?v=3b75165565";
 
 export const MARCA = revisarMarca({
     id: "contable",
@@ -52,28 +52,29 @@ export const NEGOCIO = negocioDe(MARCA.prefijo, "Distribuidora Los Álamos S.R.L
 
 export const DETALLE = {
     hace: [
-        "Factura A, B o C y notas de crédito de ejemplo, sin validez fiscal; si sos monotributista, tu tope de categoría",
+        "Factura A o B (y C si la empresa es monotributista) y notas de crédito de ejemplo, sin validez fiscal",
         "Cuentas corrientes: quién te debe, a quién le debés, cobros y pagos",
-        "Libro IVA Digital (.txt) y libros en Excel para la contadora",
-        "Libro diario, mayor y balance de sumas y saldos que se arman solos",
-        "Tu empresa: razón social, CUIT, logo, colores y qué pantallas se usan"
+        "Libros de IVA en CSV para Excel y Libro IVA Digital de prueba (.txt): la demo muestra el archivo, no lo baja",
+        "Libro diario, mayor y balance de sumas y saldos que se arman solos con cada factura y compra",
+        "Tu empresa: razón social, CUIT de ejemplo, logo, colores y qué pantallas se usan"
     ],
     extra: {
-        titulo: "Para ver con tu contador",
+        titulo: "Para probar ya",
         renglones: [
-            "Asientos a mano, con plantillas para amortizaciones y ajustes",
-            "Correcciones con contraasiento: nada se borra ni se edita",
-            "Cierre de cada mes: nadie puede cargar nada con fecha de un mes cerrado",
-            "Cierre de cada ejercicio, con el criterio de tu contador",
-            "Plan de cuentas a medida",
-            "Libros para que tu contador los revise y los rubrique, y registro de quién cargó cada cosa"
+            "Como Silvina, hacé una factura A y traé las compras de ARCA (simulado)",
+            "Como Hernán, mirá el IVA del mes: el débito, el crédito y cuánto toca pagar",
+            "Como Patricia, mirá los libros de IVA, el diario, el mayor y el balance",
+            "En «Tu empresa» pasala a monotributista y cargá el tope: ves la factura C y cuánto te queda"
         ]
     },
     tambien: [
         "Conexión con ARCA, a evaluar con tu contador: la validez fiscal depende de su alta y de sus certificados",
-        "Traer las compras desde \"Mis Comprobantes\" de ARCA con el archivo que da ARCA",
+        "Traer las compras desde «Mis Comprobantes» de ARCA con el archivo que da ARCA",
         "Varias empresas a la vez, para un estudio contable o un grupo de empresas",
         "Importar el extracto del banco para conciliar",
-        "Usuarios con contraseña y permisos para cada persona del equipo"
+        "Usuarios con contraseña y permisos para cada persona del equipo",
+        "Asientos a mano y correcciones con contraasiento, sin borrar nada, a revisar con tu contador",
+        "Cierre de cada mes y de cada ejercicio, con el criterio de tu contador",
+        "Plan de cuentas a medida y libros para rubricar, a evaluar con tu contador"
     ]
 };

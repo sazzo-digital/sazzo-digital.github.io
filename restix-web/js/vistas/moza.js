@@ -3,13 +3,13 @@
 // grilla), la comanda de una mesa (al enviar se separa solo lo de la cocina y lo de la barra), el cobro dividiendo la
 // cuenta (todo junto, en partes iguales o por lo que consumió cada uno, cada parte con su medio de pago) y la caja.
 // ============================================
-import { esc, aviso, vacio, fechaCorta } from "../../kit/js/ui.js?v=7d06fec91a";
-import { CATEGORIAS, MEDIOS, MEDIOS_PERSONAL, MOTIVOS_PERSONAL, TOPES, carta, dividir } from "../datos.js?v=7d06fec91a";
-import { MARCA, NEGOCIO, PERSONAS } from "../marca.js?v=7d06fec91a";
-import { htmlBotonSonido, activarBotonSonido, ding } from "../../kit/js/celular.js?v=7d06fec91a";
-import { ticket, importe, guia, activarGuias, haceMin, hora, consignaPersona } from "./comunes.js?v=7d06fec91a";
-import { activarConsigna } from "../../kit/js/consigna.js?v=7d06fec91a";
-import { diaLocalDe } from "../../kit/js/fechas.js?v=7d06fec91a";
+import { esc, aviso, vacio, fechaCorta } from "../../kit/js/ui.js?v=aa4351ebaa";
+import { CATEGORIAS, MEDIOS, MEDIOS_PERSONAL, MOTIVOS_PERSONAL, TOPES, carta, dividir, pesos } from "../datos.js?v=aa4351ebaa";
+import { MARCA, NEGOCIO, PERSONAS } from "../marca.js?v=aa4351ebaa";
+import { htmlBotonSonido, activarBotonSonido, ding } from "../../kit/js/celular.js?v=aa4351ebaa";
+import { ticket, importe, guia, activarGuias, haceMin, hora, consignaPersona } from "./comunes.js?v=aa4351ebaa";
+import { activarConsigna } from "../../kit/js/consigna.js?v=aa4351ebaa";
+import { diaLocalDe } from "../../kit/js/fechas.js?v=aa4351ebaa";
 
 const ESTADO_MESA = { libre: "Libre", abierta: "Abierta", cobrando: "Cobrando" };
 
@@ -25,17 +25,23 @@ export function vistaPlano(cont, { usuario, datos, irA }) {
     const estados = { libre: ["libre", "libres"], abierta: ["abierta", "abiertas"], cocina: ["en cocina", "en cocina"], lista: ["con comida lista", "con comida lista"], cobrando: ["cobrando", "cobrando"] };
     const cuentas = Object.fromEntries(Object.keys(estados).map((estado) => [estado, p.sectores.flatMap((s) => s.mesas).filter((m) => estadoVisual(m) === estado).length]));
     const panel = (id) => `id="sector-${esc(id)}" role="tabpanel" aria-labelledby="pestana-${esc(id)}" data-sector="${esc(id)}"${id === elegido ? "" : " hidden"}`;
+    const decirMesa = (m) => {
+        if (m.estado === "libre") return `${m.nombre}: ${ESTADO_MESA[m.estado]}`;
+        const marcas = [m.estado === "cobrando" ? "cobrando" : "", m.cocinaPendiente ? "la cocina está en eso" : "", m.comidaLista ? "comida lista" : "", m.sinMandar ? "hay cosas sin mandar" : ""].filter(Boolean);
+        return [`${m.nombre}: ${ESTADO_MESA[m.estado]}`, `${m.abierta.personas} comensales`, `${m.minutos} minutos`, pesos(m.total), ...marcas].join(", ");
+    };
     const tile = (m) => `
-        <a class="mesa${m.total >= 1_000_000 ? " mesa--importe-largo" : ""} mesa--${esc(m.estado)}${m.id === mesaPaso ? " mesa--paso" : ""}" data-estado="${esc(estadoVisual(m))}" href="#/mesa/${esc(m.id)}" aria-label="${esc(m.nombre)}: ${esc(ESTADO_MESA[m.estado])}">
-            <b class="mesa__numero">${esc(m.nombre.replace(/^\D+/, ""))}</b>
+        <a class="mesa${m.total >= 1_000_000 ? " mesa--importe-largo" : ""} mesa--${esc(m.estado)}${m.id === mesaPaso ? " mesa--paso" : ""}" data-estado="${esc(estadoVisual(m))}" href="#/mesa/${esc(m.id)}">
+            <span class="solo-lector">${esc(decirMesa(m))}</span>
+            <b class="mesa__numero" aria-hidden="true">${esc(m.nombre.replace(/^\D+/, ""))}</b>
             ${m.estado === "libre" ? "" : `
-            <small><i class="ti ti-users" aria-hidden="true"></i> ${esc(m.abierta.personas)} · ${esc(m.minutos)}'</small>
-            <small class="mesa__total">${importe(m.total)}</small>
-            <span class="mesa__marcas">
-                ${m.estado === "cobrando" ? `<i class="ti ti-cash" title="Cobrando"></i>` : ""}
-                ${m.cocinaPendiente ? `<i class="ti ti-flame" title="La cocina está en eso"></i>` : ""}
-                ${m.comidaLista ? `<i class="ti ti-circle-check" title="Comida lista"></i>` : ""}
-                ${m.sinMandar ? `<i class="ti ti-send" title="Hay cosas sin mandar"></i>` : ""}
+            <small aria-hidden="true"><i class="ti ti-users" aria-hidden="true"></i> ${esc(m.abierta.personas)} · ${esc(m.minutos)}'</small>
+            <small class="mesa__total" aria-hidden="true">${importe(m.total)}</small>
+            <span class="mesa__marcas" aria-hidden="true">
+                ${m.estado === "cobrando" ? `<i class="ti ti-cash"></i>` : ""}
+                ${m.cocinaPendiente ? `<i class="ti ti-flame"></i>` : ""}
+                ${m.comidaLista ? `<i class="ti ti-circle-check"></i>` : ""}
+                ${m.sinMandar ? `<i class="ti ti-send"></i>` : ""}
             </span>`}
             ${m.abierta?.heredada ? `<small class="mesa__heredada">viene del turno anterior</small>` : ""}
             ${m.id === mesaPaso ? `<span class="mesa__paso">Tocá acá</span>` : ""}
@@ -365,7 +371,7 @@ export function vistaCobro(cont, { usuario, datos, params: [id] }) {
             ${estado.modo === "items" ? `
             <ul class="unidades">${unidades.map((u) => `
                 <li><span>${esc(u.nombre)}<small>${importe(u.precio)}</small></span>
-                    <span class="chips chips--chicos mesa-opciones">${Array.from({ length: estado.cuantos }, (_, i) => `<button class="chip${estado.asignado[u.clave] === i ? " activo" : ""}" type="button" data-unidad="${esc(u.clave)}" data-persona="${esc(i)}">${esc(i + 1)}</button>`).join("")}</span>
+                    <span class="chips chips--chicos mesa-opciones">${Array.from({ length: estado.cuantos }, (_, i) => `<button class="chip${estado.asignado[u.clave] === i ? " activo" : ""}" type="button" data-unidad="${esc(u.clave)}" data-persona="${esc(i)}" aria-pressed="${estado.asignado[u.clave] === i}">${esc(i + 1)}</button>`).join("")}</span>
                 </li>`).join("")}
             </ul>` : ""}
             <ul class="partes">${lista.map((monto, i) => `

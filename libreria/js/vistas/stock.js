@@ -1,4 +1,4 @@
-import { pintarConsigna } from "./comunes.js?v=d4aafb8120";
+import { pintarConsigna } from "./comunes.js?v=233619f5c3";
 // ============================================
 // Stock y precios. Todos ven el stock por rubro, con "hay que pedir" y el precio (y el de por mayor).
 // La dueña además ve el costo y el margen de cada artículo y los corrige ahí mismo, y tiene:
@@ -9,12 +9,12 @@ import { pintarConsigna } from "./comunes.js?v=d4aafb8120";
 //   "Pedidos a proveedores": lo que bajó del mínimo, por proveedor, con el mensaje para copiar y "Llegó".
 //   "Cargar artículo": con costo y margen (el precio sale solo).
 // ============================================
-import { esc, aviso, vacio, mensajeDe } from "../../kit/js/ui.js?v=d4aafb8120";
-import { mostrarMensaje } from "../../kit/js/mensaje.js?v=d4aafb8120";
-import { leerExcel } from "../../kit/js/archivos.js?v=d4aafb8120";
-import { htmlEstante, activarEstantes } from "../../kit/js/estante.js?v=d4aafb8120";
-import { PROVEEDORES, RUBROS, TOPES, DESCUENTO_MAYOR, nombreRubro, pesos, precioDe } from "../datos.js?v=d4aafb8120";
-import { pastillaStock } from "./comunes.js?v=d4aafb8120";
+import { esc, aviso, vacio, mensajeDe } from "../../kit/js/ui.js?v=233619f5c3";
+import { mostrarMensaje } from "../../kit/js/mensaje.js?v=233619f5c3";
+import { leerExcel } from "../../kit/js/archivos.js?v=233619f5c3";
+import { htmlEstante, activarEstantes } from "../../kit/js/estante.js?v=233619f5c3";
+import { PROVEEDORES, RUBROS, TOPES, DESCUENTO_MAYOR, nombreRubro, pesos, precioDe } from "../datos.js?v=233619f5c3";
+import { pastillaStock } from "./comunes.js?v=233619f5c3";
 
 const RAPIDOS = [5, 10, 15, 20];
 let textoBuscado = ""; // el buscador de Stock recuerda lo escrito mientras se navega
@@ -340,12 +340,13 @@ export function vistaLista(cont, { usuario, datos }) {
                 <button class="boton boton--chico boton--secundario" type="button" data-ejemplo><i class="ti ti-file-spreadsheet"></i> Usar la lista de ejemplo</button>
             </li>
             <li>
-                <span>Subila (o la que te mandó tu proveedor: con una columna "Costo" o "Precio" y otra "Código" o "Artículo").</span>
+                <span>O subí un Excel de prueba, con una columna "Costo" o "Precio" y otra "Código" o "Artículo".</span>
                 <label class="boton boton--chico subir-excel"><i class="ti ti-upload"></i> Subir el Excel
                     <input type="file" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" data-archivo>
                 </label>
             </li>
         </ol>
+        <p class="nota"><i class="ti ti-lock"></i><span>El archivo se lee en este navegador y no se sube a ningún lado. Es una demo: usá un Excel de ejemplo, no la lista real de tu proveedor.</span></p>
         <div class="resultado-excel resultado-aumento" aria-live="polite"></div>`;
     pintarConsigna(cont, datos, usuario);
 

@@ -6,12 +6,12 @@
 // Reglas del kit: exigir() en lo que modifica, topes en todo lo que se carga, nada se borra (se anula o se libera)
 // y se devuelven copias. Si cambia la forma de los datos, subir VERSION_DATOS (se regeneran solos).
 // ============================================
-import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=8a5fe1d629";
-import { sinPasarse } from "../kit/js/topes.js?v=8a5fe1d629";
-import { fechaLocalISO, diaLocalDe } from "../kit/js/fechas.js?v=8a5fe1d629";
-import { aMinutos, aHora, diaSemana, proximosDias, franjas, fijosDelDia, ocupados, libres, revisarLibre, sePisan } from "../kit/js/turnos.js?v=8a5fe1d629";
-import { MARCA, PERSONAS } from "./marca.js?v=8a5fe1d629";
-import { MEDIOS_PAGO, DIVIDIDO, revisarPagos } from "../kit/js/pagos.js?v=8a5fe1d629";
+import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=44e4746e73";
+import { sinPasarse } from "../kit/js/topes.js?v=44e4746e73";
+import { fechaLocalISO, diaLocalDe } from "../kit/js/fechas.js?v=44e4746e73";
+import { aMinutos, aHora, diaSemana, proximosDias, franjas, fijosDelDia, ocupados, libres, revisarLibre, sePisan } from "../kit/js/turnos.js?v=44e4746e73";
+import { MARCA, PERSONAS } from "./marca.js?v=44e4746e73";
+import { MEDIOS_PAGO, DIVIDIDO, revisarPagos } from "../kit/js/pagos.js?v=44e4746e73";
 
 export const VERSION_DATOS = 5;
 
@@ -185,7 +185,7 @@ export function semilla() {
  * (para probar lo que depende de la hora, como cancelar con poca anticipación).
  */
 export function crearDatos(prefijo = MARCA.prefijo, { reloj = () => new Date() } = {}) {
-    const guardado = crearGuardado({ prefijo, version: VERSION_DATOS, semilla });
+    const guardado = crearGuardado({ prefijo, version: VERSION_DATOS, semilla, formaDeLaSemilla: true });
     const db = () => guardado.db();
 
     const series = {"dueno": ["sena", "llegaron", "fijo"], "cliente": ["reserva", "pedido", "cancelar"]};

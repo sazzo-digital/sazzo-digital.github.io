@@ -10,13 +10,13 @@
 // Las ventas guardan el precio y el costo del momento: si después sube un proveedor, lo vendido no cambia.
 // Si cambia la forma de los datos, subir VERSION_DATOS (se regeneran solos).
 // ============================================
-import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=d4aafb8120";
-import { enteroHasta, sinPasarse } from "../kit/js/topes.js?v=d4aafb8120";
-import { diaLocalDe, fechaLocalISO } from "../kit/js/fechas.js?v=d4aafb8120";
-import { columnasDe, numeroDe, textoParaComparar } from "../kit/js/tablas.js?v=d4aafb8120";
-import { filtrarPorTexto, comoSuena } from "../kit/js/buscar.js?v=d4aafb8120";
-import { MARCA, NEGOCIO, PERSONAS, buscarPersona } from "./marca.js?v=d4aafb8120";
-import { MEDIOS_PAGO, DIVIDIDO, revisarPagos, sumarPorMedio } from "../kit/js/pagos.js?v=d4aafb8120";
+import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=233619f5c3";
+import { enteroHasta, sinPasarse } from "../kit/js/topes.js?v=233619f5c3";
+import { diaLocalDe, fechaLocalISO } from "../kit/js/fechas.js?v=233619f5c3";
+import { columnasDe, numeroDe, textoParaComparar } from "../kit/js/tablas.js?v=233619f5c3";
+import { filtrarPorTexto, comoSuena } from "../kit/js/buscar.js?v=233619f5c3";
+import { MARCA, NEGOCIO, PERSONAS, buscarPersona } from "./marca.js?v=233619f5c3";
+import { MEDIOS_PAGO, DIVIDIDO, revisarPagos, sumarPorMedio } from "../kit/js/pagos.js?v=233619f5c3";
 
 export const VERSION_DATOS = 5;
 
@@ -30,7 +30,7 @@ export const TOPES = {
     stock: 9_999,
     pagaCon: 10_000_000,
     nombre: 50, // letras del nombre de un artículo
-    para: 40, // "Para Lola · 1° B"
+    para: 40,
     aumentoMin: -50, // % de "Subió un proveedor"
     aumentoMax: 100,
     mayorDesde: 999, // desde cuántas unidades va el precio por mayor
@@ -241,7 +241,7 @@ const CATALOGO = {
 
 // Las listas que dejaron los colegios: [colegio, grado, [[nombre del artículo, cantidad], …]]
 const LISTAS = [
-    ["Escuela N° 12", "1° grado", [
+    ["Escuela de ejemplo", "1° grado", [
         ["Cuaderno tapa dura 48 h rayado rojo", 2],
         ["Lápiz negro HB", 3],
         ["Goma de borrar blanca", 2],
@@ -256,7 +256,7 @@ const LISTAS = [
         ["Plastilina x10", 1],
         ["Etiquetas escolares x24", 1]
     ]],
-    ["Colegio del Parque", "4° grado", [
+    ["Colegio de ejemplo", "4° grado", [
         ["Carpeta N° 3 tapa dura", 1],
         ["Repuesto N° 3 rayado 96 h", 2],
         ["Repuesto N° 3 cuadriculado 96 h", 1],
@@ -274,7 +274,7 @@ const LISTAS = [
         ["Compás escolar", 1],
         ["Manual de 4° grado · Ciencias y Sociales", 1]
     ]],
-    ["Escuela Técnica N° 3", "1° año", [
+    ["Escuela Técnica de ejemplo", "1° año", [
         ["Cuaderno universitario 80 h espiral", 3],
         ["Carpeta A4 con anillos", 1],
         ["Repuesto A4 rayado 96 h", 2],
@@ -378,7 +378,7 @@ export function semilla() {
         };
     };
     const ortiz = pedidoDe(101, "l-2", "Familia Ortiz · 4° B", "web", "separada", 1);
-    const benja = pedidoDe(102, "l-1", "Benja · 1° A", "mostrador", "entregada", 1);
+    const benja = pedidoDe(102, "l-1", "Familia Soto · 1° A", "mostrador", "entregada", 1);
     benja.entregado = momento(1, 18);
     const ventaBenja = { id: "v-lista-102", fecha: benja.entregado, items: benja.items.map((i) => ({ productoId: i.productoId, nombre: i.nombre, rubro: productos.find((p) => p.id === i.productoId).rubro, precio: i.precio, costo: i.costo, cantidad: i.cantidad, mayor: false })), medio: "transferencia", pagaCon: null, vuelto: null, por: "Joaquín", pedidoId: benja.id };
     ventaBenja.total = totalDe(ventaBenja.items);
@@ -402,8 +402,33 @@ const ORDEN_ESTADO = { nueva: 0, separada: 1, entregada: 2, anulada: 3 };
 
 // ---------- Funciones de datos ----------
 
+export const FORMA_GUARDADO = {
+    listas: {
+        productos: { id: "texto", nombre: "texto", rubro: "texto", costo: "numero", margen: "numero", precio: "numero", stock: "numero", minimo: "numero", servicio: "booleano" },
+        listas: { id: "texto", colegio: "texto", grado: "texto" },
+        pedidos: { id: "texto", numero: "numero", listaId: "texto", estado: Object.keys(ESTADOS_PEDIDO), para: "texto", creado: "texto" },
+        ventas: { id: "texto", fecha: "texto", total: "numero", medio: "texto" },
+        cambios: { id: "texto", tipo: "texto", fecha: "texto" },
+        entradas: { id: "texto", proveedorId: "texto", fecha: "texto" },
+        cierres: { id: "texto", dia: "texto", fecha: "texto", contado: "numero" }
+    }
+};
+
+const esObjeto = (x) => x !== null && typeof x === "object" && !Array.isArray(x);
+const renglonesBien = (lista, campos) => Array.isArray(lista) && lista.every((r) => esObjeto(r) && campos.every((c) => Number.isFinite(r[c])));
+
+export function datosConForma(g) {
+    return g.listas.every((l) => renglonesBien(l.items, ["cantidad"]))
+        && g.pedidos.every((p) => renglonesBien(p.items, ["cantidad", "precio"]))
+        && g.ventas.every((v) => renglonesBien(v.items, ["cantidad", "precio"]))
+        && g.cambios.every((c) => renglonesBien(c.cambios, ["costoAntes", "costoDespues", "margenAntes", "margenDespues", "antes", "despues"]))
+        && g.entradas.every((e) => Array.isArray(e.items))
+        && esObjeto(g.pasosPersonas ?? {})
+        && Object.values(g.pasosPersonas ?? {}).every(Array.isArray);
+}
+
 export function crearDatos(prefijo = MARCA.prefijo) {
-    const guardado = crearGuardado({ prefijo, version: VERSION_DATOS, semilla });
+    const guardado = crearGuardado({ prefijo, version: VERSION_DATOS, semilla, forma: FORMA_GUARDADO, revisarDatos: datosConForma });
     const db = () => guardado.db();
     const series = { duena: ["aumento", "margen", "recibo"], clienta: ["lista", "destildada", "pedido"] };
     const cerrada = (pe) => ["entregada", "anulada"].includes(pe?.estado);
@@ -434,6 +459,9 @@ export function crearDatos(prefijo = MARCA.prefijo) {
         proveedor: proveedor(p.proveedorId)?.nombre ?? (p.servicio ? "Servicio" : "Sin proveedor")
     });
     const revisarTope = (lista, tope, que) => exigir(lista.length < tope, `Ya hay ${tope} ${que}. Es una demo: tocá "Empezar de cero" arriba.`);
+    const pasaDeLosTopes = (costo, margen) => costo > TOPES.costo || margen > TOPES.margen || precioDe(costo, margen) > TOPES.precio;
+    const exigirDentroDeLosTopes = (nombre, costo, margen) =>
+        exigir(!pasaDeLosTopes(costo, margen), `Con ese cambio "${nombre}" pasaría del máximo de la demo (${pesos(TOPES.costo)} de costo y ${pesos(TOPES.precio)} de precio). Probá con un número más chico.`);
 
     // ----- Artículos -----
 
@@ -442,13 +470,13 @@ export function crearDatos(prefijo = MARCA.prefijo) {
      * (con los sinónimos y el código); si así no encuentra nada, con la búsqueda que perdona errores del kit
      * ("kuaderno", "lapisera asul", "virome"), los más parecidos primero.
      */
-    function listarProductos({ texto = "", rubro = null, proveedorId = null } = {}) {
+    function listarProductos({ texto = "", rubro = null, proveedorId = null, limite = Infinity } = {}) {
         const base = db().productos
             .filter((p) => (!rubro || p.rubro === rubro) && (!proveedorId || p.proveedorId === proveedorId))
             .sort((a, b) => a.nombre.localeCompare(b.nombre, "es"));
-        if (!normal(texto)) return base.map(armarProducto);
+        if (!normal(texto)) return base.slice(0, limite).map(armarProducto);
         const tal = base.filter((p) => coincide(p, texto));
-        return (tal.length ? tal : filtrarPorTexto(base, conSinonimos(texto), (p) => p.nombre)).map(armarProducto);
+        return (tal.length ? tal : filtrarPorTexto(base, conSinonimos(texto), (p) => p.nombre)).slice(0, limite).map(armarProducto);
     }
 
     const producto = (id) => armarProducto(buscar(db().productos, id, "Ese artículo no existe."));
@@ -493,6 +521,7 @@ export function crearDatos(prefijo = MARCA.prefijo) {
             exigir(esDuena(usuario), "El costo y el margen los carga la dueña.");
             costoFinal = enteroHasta(costo, "El costo", { desde: 1, hasta: TOPES.costo });
             margenFinal = margen === undefined || margen === null ? margenDeRubro(rubro) : enteroHasta(margen, "El margen", { hasta: TOPES.margen });
+            exigirDentroDeLosTopes(n, costoFinal, margenFinal);
             precioFinal = precioDe(costoFinal, margenFinal);
         } else {
             precioFinal = enteroHasta(precio, "El precio", { desde: 1, hasta: TOPES.precio });
@@ -526,6 +555,7 @@ export function crearDatos(prefijo = MARCA.prefijo) {
             mayorDesde: mayorDesde === undefined ? p.mayorDesde : mayorDesde === null ? null : enteroHasta(mayorDesde, "La cantidad por mayor", { desde: 2, hasta: TOPES.mayorDesde })
         };
         const cambiaPrecio = nuevo.costo !== p.costo || nuevo.margen !== p.margen;
+        if (cambiaPrecio) exigirDentroDeLosTopes(p.nombre, nuevo.costo, nuevo.margen);
         Object.assign(p, nuevo);
         if (cambiaPrecio) p.precio = precioDe(p.costo, p.margen);
         guardado.persistir();
@@ -553,7 +583,11 @@ export function crearDatos(prefijo = MARCA.prefijo) {
         return db().productos
             .filter((p) => p.proveedorId === proveedorId)
             .sort((a, b) => a.nombre.localeCompare(b.nombre, "es"))
-            .map((p) => filaCambio(p, Math.max(1, Math.round(p.costo * (1 + pct / 100))), p.margen));
+            .map((p) => {
+                const costo = Math.max(1, Math.round(p.costo * (1 + pct / 100)));
+                exigirDentroDeLosTopes(p.nombre, costo, p.margen);
+                return filaCambio(p, costo, p.margen);
+            });
     }
 
     /** Antes → después de cada artículo del rubro con el margen nuevo (el costo no cambia). */
@@ -563,7 +597,10 @@ export function crearDatos(prefijo = MARCA.prefijo) {
         return db().productos
             .filter((p) => p.rubro === rubro)
             .sort((a, b) => a.nombre.localeCompare(b.nombre, "es"))
-            .map((p) => filaCambio(p, p.costo, m));
+            .map((p) => {
+                exigirDentroDeLosTopes(p.nombre, p.costo, m);
+                return filaCambio(p, p.costo, m);
+            });
     }
 
     function guardarCambio(usuario, tipo, detalle, cambios) {
@@ -651,6 +688,10 @@ export function crearDatos(prefijo = MARCA.prefijo) {
             const p = (codigo && db().productos.find((x) => x.codigo === codigo)) || (nombre && porNombre.get(textoParaComparar(nombre)));
             if (!p) {
                 if (noEstan.length < 50) noEstan.push((nombre || codigo).slice(0, TOPES.nombre));
+                continue;
+            }
+            if (pasaDeLosTopes(costo, p.margen)) {
+                malos++;
                 continue;
             }
             if (vistos.has(p.id)) continue;
@@ -777,7 +818,7 @@ export function crearDatos(prefijo = MARCA.prefijo) {
         const items = l.items.filter((i) => i.productoId && !sin.includes(i.productoId));
         exigir(items.length, "Destildaste todo: no queda nada para pedir.");
         const quien = sinPasarse(para, TOPES.para, "para quién es");
-        exigir(quien, "Poné para quién es la lista (ej: Lola · 1° B).");
+        exigir(quien, "Poné para quién es la lista (ej: Familia de ejemplo · 1° B).");
         revisarTope(db().pedidos, TOPES.pedidos, "pedidos de listas");
         const pe = {
             id: nuevoId("pe"), numero: Math.max(100, ...db().pedidos.map((x) => x.numero)) + 1,

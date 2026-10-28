@@ -1,5 +1,5 @@
 const PREFIJO = "sazzo-perfumeria";
-const COPIA = `${PREFIJO}-71afbca5b0`;
+const COPIA = `${PREFIJO}-c1eb54ed24`;
 const BASICO = ["./", "manifest.webmanifest"];
 
 self.addEventListener("install", (e) => {

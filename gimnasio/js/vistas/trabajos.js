@@ -1,5 +1,6 @@
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=6819a0f377";
-import { DIAS, ORDEN_SEMANA, TOPES } from "../datos.js?v=6819a0f377";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=6b204d1609";
+import { AVISO_CAMPO } from "../../kit/js/leyendas.js?v=6b204d1609";
+import { DIAS, ORDEN_SEMANA, TOPES } from "../datos.js?v=6b204d1609";
 
 const puntos = (t) => `
     <ol class="trabajo__semana" aria-label="Últimos 7 días: ${esc(t.hechos)} de ${esc(t.meta)}">
@@ -75,6 +76,7 @@ export function htmlTrabajosProfe(a) {
                 </li>`).join("")}
             </ul>` : vacio(`${a.nombre} no tiene trabajos para la semana.`, "ti-checklist")}
             <form class="formulario trabajo-nuevo" novalidate>
+                <p class="nota"><i class="ti ti-info-circle" aria-hidden="true"></i> <span>${esc(AVISO_CAMPO)} Sin datos de salud.</span></p>
                 <label>Nuevo trabajo (lo ve en su celu)
                     <input name="texto" maxlength="${TOPES.trabajo}" placeholder="Ej: Caminar 30 minutos" autocomplete="off">
                 </label>

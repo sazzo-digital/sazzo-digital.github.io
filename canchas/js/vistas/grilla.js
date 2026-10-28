@@ -1,17 +1,18 @@
-import { pintarConsigna } from "./comunes.js?v=8a5fe1d629";
+import { pintarConsigna } from "./comunes.js?v=44e4746e73";
 // ============================================
 // Pantallas del dueño (Gustavo): la grilla del día (canchas en columnas, horas de media en media; se luce en la
 // compu y en el celu se desliza de costado), el detalle de un turno (llegaron, faltaron, cobrar seña, liberar) y
 // "Anotar turno" en un casillero libre (para cuando llaman por teléfono).
 // Los turnos que reservó un jugador y Gustavo todavía no miró aparecen arriba y marcados "Nuevo".
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=8a5fe1d629";
-import { mantenerPantallaPrendida } from "../../kit/js/celular.js?v=8a5fe1d629";
-import { aHora } from "../../kit/js/turnos.js?v=8a5fe1d629";
-import { TOPES, CANCHAS, TIPOS, pesos, nombreFecha, horarioDe } from "../datos.js?v=8a5fe1d629";
-import { pastillaSena, pastillaEstado, chipsDias } from "./comunes.js?v=8a5fe1d629";
-import { buscarPersona, MARCA } from "../marca.js?v=8a5fe1d629";
-import { htmlCuenta, pedirCantina, cobrarCuenta } from "./cuenta.js?v=8a5fe1d629";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=44e4746e73";
+import { AVISO_CAMPO } from "../../kit/js/leyendas.js?v=44e4746e73";
+import { mantenerPantallaPrendida } from "../../kit/js/celular.js?v=44e4746e73";
+import { aHora } from "../../kit/js/turnos.js?v=44e4746e73";
+import { TOPES, CANCHAS, TIPOS, pesos, nombreFecha, horarioDe } from "../datos.js?v=44e4746e73";
+import { pastillaSena, pastillaEstado, chipsDias } from "./comunes.js?v=44e4746e73";
+import { buscarPersona, MARCA } from "../marca.js?v=44e4746e73";
+import { htmlCuenta, pedirCantina, cobrarCuenta } from "./cuenta.js?v=44e4746e73";
 
 const PASO = 30; // la grilla va de media hora en media hora (entran los turnos de 60 y los de 90 min)
 
@@ -184,6 +185,7 @@ export function vistaAnotar(cont, { usuario, datos, consulta }) {
             <label>Nombre del grupo
                 <input name="grupo" maxlength="${TOPES.grupo}" placeholder="Ej: Los de la oficina" autocomplete="off">
             </label>
+            <p class="nota"><i class="ti ti-info-circle"></i> ${esc(AVISO_CAMPO)}</p>
             <p class="nota"><i class="ti ti-phone"></i> Para cuando llaman por teléfono: la seña de ${esc(pesos(tipo.sena))} queda a cobrar.</p>
             <button class="boton boton--ancho" type="submit"><i class="ti ti-plus"></i> Anotar</button>
         </form>`;

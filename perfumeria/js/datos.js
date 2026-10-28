@@ -6,12 +6,12 @@
 // Reglas del kit: exigir() en lo que modifica, topes en todo lo que se carga, nada se borra (se cancela) y se
 // devuelven copias. Si cambia la forma de los datos, subir VERSION_DATOS (se regeneran solos).
 // ============================================
-import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=71afbca5b0";
-import { filtrarPorTexto } from "../kit/js/buscar.js?v=71afbca5b0";
-import { enteroHasta } from "../kit/js/topes.js?v=71afbca5b0";
-import { fechaLocalISO, diaLocalDe } from "../kit/js/fechas.js?v=71afbca5b0";
-import { MARCA, NEGOCIO, PERSONAS } from "./marca.js?v=71afbca5b0";
-import { MEDIOS_PAGO, DIVIDIDO, revisarPagos } from "../kit/js/pagos.js?v=71afbca5b0";
+import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=c1eb54ed24";
+import { filtrarPorTexto } from "../kit/js/buscar.js?v=c1eb54ed24";
+import { enteroHasta } from "../kit/js/topes.js?v=c1eb54ed24";
+import { fechaLocalISO, diaLocalDe } from "../kit/js/fechas.js?v=c1eb54ed24";
+import { MARCA, NEGOCIO, PERSONAS } from "./marca.js?v=c1eb54ed24";
+import { MEDIOS_PAGO, DIVIDIDO, revisarPagos } from "../kit/js/pagos.js?v=c1eb54ed24";
 
 export const VERSION_DATOS = 4;
 
@@ -188,7 +188,7 @@ export function semilla() {
 // ---------- Funciones de datos ----------
 
 export function crearDatos(prefijo = MARCA.prefijo) {
-    const guardado = crearGuardado({ prefijo, version: VERSION_DATOS, semilla });
+    const guardado = crearGuardado({ prefijo, version: VERSION_DATOS, semilla, formaDeLaSemilla: true });
     const db = () => guardado.db();
 
     const series = {"duena": ["preparar", "avisar", "saludar"], "cliente": ["recomendar", "sumar", "pedido"]};

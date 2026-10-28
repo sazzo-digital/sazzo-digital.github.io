@@ -3,8 +3,8 @@
 // Las personas son los roles reales del rubro (nombres inventados): el dueño, el carnicero del mostrador y una clienta
 // que pide desde el celular.
 // ============================================
-import { revisarMarca } from "../kit/js/marca.js?v=d8a3925649";
-import { negocioDe } from "../kit/js/colores.js?v=d8a3925649";
+import { revisarMarca } from "../kit/js/marca.js?v=f8ec046caa";
+import { negocioDe } from "../kit/js/colores.js?v=f8ec046caa";
 
 export const MARCA = revisarMarca({
     id: "carniceria",
@@ -54,8 +54,8 @@ export const DETALLE = {
     hace: [
         "Pizarra de precios para la tele del local, en pantalla completa",
         "Subió la hacienda: precio sugerido de cada corte con tu margen",
-        "La balanza: leer su etiqueta con la cámara, conectarla a la compu (Chrome o Edge) o mostrarla en la tele",
-        "Desposte en PDF y merma promedio por animal",
+        "Balanza simulada en la demo; las etiquetas de ejemplo se leen con la cámara y el peso se ve en la tele",
+        "Desposte en PDF (la demo muestra el archivo, no lo baja) y merma promedio por animal",
         "Caja del día con lo vendido en kilos y en plata"
     ],
     extra: {
@@ -66,10 +66,10 @@ export const DETALLE = {
         ]
     },
     tambien: [
-        "La balanza conectada a la compu del mostrador, según el modelo",
+        "La balanza conectada a la compu del mostrador, según el modelo: se prueba con la que tengas",
         "Etiquetas y tickets para imprimir",
         "Cobro con Mercado Pago o QR",
-        "Aviso por Telegram (si el cliente activa el bot) o por WhatsApp con un toque, cuando el pedido está listo",
+        "Aviso por Telegram o por WhatsApp con un toque, cuando el pedido está listo",
         "Envíos a domicilio, con la lista del día",
         "Varias cajas o sucursales, con su usuario cada una"
     ]

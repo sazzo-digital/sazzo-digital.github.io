@@ -3,13 +3,14 @@
 // atender primero (visitas pedidas desde la página, sin contestar, sin seguimiento), la ficha de cada consulta
 // (confirmar la visita, mandar la ficha en PDF y el mensaje, ofrecer otras propiedades, notas) y "Anotar consulta".
 // ============================================
-import { esc, aviso, vacio, mensajeDe } from "../../kit/js/ui.js?v=87b82baae1";
-import { aHora } from "../../kit/js/turnos.js?v=87b82baae1";
-import { TOPES, TIPOS, ZONAS, OPERACIONES, ORIGENES, ESTADOS_CONSULTA } from "../datos.js?v=87b82baae1";
-import { bajarFicha } from "./propiedades.js?v=87b82baae1";
+import { esc, aviso, vacio, mensajeDe } from "../../kit/js/ui.js?v=db4997b1a3";
+import { aHora } from "../../kit/js/turnos.js?v=db4997b1a3";
+import { AVISO_CAMPO } from "../../kit/js/leyendas.js?v=db4997b1a3";
+import { TOPES, TIPOS, ZONAS, OPERACIONES, ORIGENES, ESTADOS_CONSULTA } from "../datos.js?v=db4997b1a3";
+import { bajarFicha } from "./propiedades.js?v=db4997b1a3";
 import {
     guia, activarGuias, pastillaConsulta, pastillaVisita, mostrarMensaje, hace, mayuscula, htmlFoto, medidas, hrefPropiedad, consignaPersona, activarPasos
-} from "./comunes.js?v=87b82baae1";
+} from "./comunes.js?v=db4997b1a3";
 
 let filtroEstado = "abiertas";
 const FILTROS = { abiertas: "Abiertas", nueva: "Nuevas", agendada: "Con visita", todas: "Todas" };
@@ -155,6 +156,7 @@ export function vistaConsulta(cont, { usuario, datos, params: [id], irA }) {
                     <input id="nota-texto" name="texto" type="text" maxlength="${TOPES.nota}" placeholder="Ej: tiene gato, prefiere planta baja" autocomplete="off">
                     <button class="boton" type="submit"><i class="ti ti-plus"></i> Anotar</button>
                 </div>
+                <p class="nota"><i class="ti ti-info-circle"></i><span>${esc(AVISO_CAMPO)}</span></p>
             </form>
         </section>
         ${c.visitas.length ? `
@@ -266,6 +268,7 @@ export function vistaNuevaConsulta(cont, { usuario, datos }) {
                 <label>Nombre<input name="nombre" type="text" maxlength="${TOPES.nombre}" required placeholder="Ej: Laura" autocomplete="off"></label>
                 <label>Llegó por<select name="origen">${Object.entries(ORIGENES).filter(([k]) => k !== "web").map(([k, o]) => `<option value="${esc(k)}">${esc(o.texto)}</option>`).join("")}</select></label>
             </div>
+            <p class="nota"><i class="ti ti-info-circle"></i><span>${esc(AVISO_CAMPO)}</span></p>
             <label>Preguntó por <small>(opcional)</small><select name="propiedad"><option value="">Ninguna en especial</option>${propiedades.map((p) => `<option value="${esc(p.id)}">${esc(p.titulo)} · ${esc(p.precioTexto)}</option>`).join("")}</select></label>
             <fieldset class="grupo busca-elegir">
                 <legend>Qué busca</legend>

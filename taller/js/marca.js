@@ -2,8 +2,8 @@
 // Marca, personas y "también puede tener" de Sazzo Taller (diseñada el 08/10/2026).
 // Las personas son los roles reales del rubro (nombres inventados): el dueño y un mecánico.
 // ============================================
-import { revisarMarca } from "../kit/js/marca.js?v=bbb3249556";
-import { negocioDe } from "../kit/js/colores.js?v=bbb3249556";
+import { revisarMarca } from "../kit/js/marca.js?v=3fa38b78e9";
+import { negocioDe } from "../kit/js/colores.js?v=3fa38b78e9";
 
 export const MARCA = revisarMarca({
     id: "taller",
@@ -44,12 +44,20 @@ export const DETALLE = {
     hace: [
         "Al mecánico le llegan las órdenes sin precios",
         "La orden pasa por aprobado, falta repuesto, terminado y entregado",
-        "Historial de cada auto y de cada cliente",
-        "Mensaje listo para escribirle al cliente",
-        "Fotos del antes y después del arreglo, para mostrarle al cliente"
+        "Historial de cada auto y cliente, y «Para llamar»: autos con service vencido (6 meses o 10.000 km)",
+        "Presupuesto con firma del cliente y PDF (la demo muestra el archivo, no lo baja), también para imprimir",
+        "Mensaje listo para copiar o compartir con el cliente, y dictado por voz de lo que encontró el mecánico"
     ],
+    extra: {
+        titulo: "Para probar ya",
+        renglones: [
+            "Como Raúl, abrí un presupuesto y tocá «Presupuesto: imprimir, firma y PDF»: firmá con el dedo",
+            "Abrí una orden terminada: deslizá para comparar el antes y el después (es un dibujo de ejemplo)",
+            "Como Raúl, entrá a Autos y tocá «Para llamar»: los del service vencido, con el mensaje para escribirles"
+        ]
+    },
     tambien: [
-        "Mandar el presupuesto y el \"ya está listo\" por WhatsApp, con un toque",
+        "Mandar el presupuesto y el «ya está listo» por WhatsApp, con un toque",
         "Sacar las fotos con el celu y que queden guardadas en la orden",
         "Stock de repuestos que se descuenta solo",
         "Turnos para traer el auto y cuenta corriente de cada cliente",

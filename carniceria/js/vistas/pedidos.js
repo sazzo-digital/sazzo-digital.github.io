@@ -1,17 +1,18 @@
-import { consignaPersona, activarSerie } from "./comunes.js?v=d8a3925649";
+import { consignaPersona, activarSerie } from "./comunes.js?v=f8ec046caa";
 // ============================================
 // Pedidos (Ricardo y Darío): los que llegan del celu o se anotan en el mostrador, los del día por hora de retiro.
 // En cada pedido: se escribe lo que pesó cada corte (pidió 1,5, pesó 1,62): el total se ajusta solo y dice la
 // diferencia. "Listo: avisarle" lo separa (se descuenta del stock) y arma el mensaje para WhatsApp; "Cobrar y
 // entregar" lo pasa a la caja; o se anula (lo separado vuelve al stock).
 // ============================================
-import { DIVIDIDO, partesIniciales, htmlDosMedios, activarDosMedios } from "../../kit/js/pagos.js?v=d8a3925649";
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=d8a3925649";
-import { mostrarMensaje } from "../../kit/js/mensaje.js?v=d8a3925649";
-import { htmlCopiable, activarCopiables, ding } from "../../kit/js/celular.js?v=d8a3925649";
-import { ESTADOS_PEDIDO, MEDIOS, RETIROS, TOPES, ALIAS, pesos, kilos, aGramos, precioPorPeso } from "../datos.js?v=d8a3925649";
-import { MARCA } from "../marca.js?v=d8a3925649";
-import { guia, activarGuias, pasos, pastillaEstado, tarjetaPedido, cuando, campoKg, kgEnCampo, loPedido } from "./comunes.js?v=d8a3925649";
+import { DIVIDIDO, partesIniciales, htmlDosMedios, activarDosMedios } from "../../kit/js/pagos.js?v=f8ec046caa";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=f8ec046caa";
+import { mostrarMensaje } from "../../kit/js/mensaje.js?v=f8ec046caa";
+import { AVISO_CAMPO } from "../../kit/js/leyendas.js?v=f8ec046caa";
+import { htmlCopiable, activarCopiables, ding } from "../../kit/js/celular.js?v=f8ec046caa";
+import { ESTADOS_PEDIDO, MEDIOS, RETIROS, TOPES, ALIAS, pesos, kilos, aGramos, precioPorPeso } from "../datos.js?v=f8ec046caa";
+import { MARCA } from "../marca.js?v=f8ec046caa";
+import { guia, activarGuias, pasos, pastillaEstado, tarjetaPedido, cuando, campoKg, kgEnCampo, loPedido } from "./comunes.js?v=f8ec046caa";
 
 /** Billetes "redondos" para cobrar un pedido: el próximo múltiplo de $10.000, de $20.000 y $50.000. */
 const billetesPara = (total) => [...new Set([10_000, 20_000, 50_000].map((b) => Math.ceil(Math.max(1, total) / b) * b))].slice(0, 3);
@@ -19,7 +20,7 @@ const cuandoRetira = (pe) => (pe.retiro === RETIROS[0] ? "lo antes posible" : `a
 
 export function vistaPedidos(cont, { usuario, datos, consulta }) {
     const filtro = consulta.get("ver");
-    const estado = ESTADOS_PEDIDO[filtro] ? filtro : null;
+    const estado = Object.hasOwn(ESTADOS_PEDIDO, filtro) ? filtro : null;
     const todos = datos.listarPedidos(usuario);
     const lista = estado ? todos.filter((p) => p.estado === estado) : todos.filter((p) => p.estado !== "anulado");
     const cuenta = (e) => todos.filter((p) => p.estado === e).length;
@@ -81,6 +82,7 @@ export function vistaNuevoPedido(cont, { usuario, datos }) {
             }).join("")}</ul>` : ""}
             <form class="formulario bloque confirmar" novalidate>
                 <label>¿Para quién es?<input name="para" maxlength="${TOPES.para}" required placeholder="Ej: Marta, la del 3° B"></label>
+                <p class="nota"><i class="ti ti-info-circle"></i> ${esc(AVISO_CAMPO)}</p>
                 <p class="rotulo-chico">¿Cuándo lo retira?</p>
                 <div class="chips">${RETIROS.map((r) => `<button class="chip${retiro === r ? " activo" : ""}" type="button" data-retiro="${esc(r)}">${esc(r)}</button>`).join("")}</div>
                 <button class="boton boton--ancho" type="submit"${elegidos.size ? "" : " disabled"}><i class="ti ti-check"></i> Anotar el pedido</button>

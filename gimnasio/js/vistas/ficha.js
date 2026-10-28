@@ -5,14 +5,15 @@
 // - Vane (dueña): la cuota y los pagos (registrar, confirmar el aviso de transferencia, deshacer, recordatorio armado),
 //   el apto físico y el reglamento firmado en pantalla, si viene o no (invitar a volver) y la baja.
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=6819a0f377";
-import { MEDIOS_PAGO, DIVIDIDO, textoMedio, partesIniciales, htmlDosMedios, activarDosMedios } from "../../kit/js/pagos.js?v=6819a0f377";
-import { pedirFirma } from "../../kit/js/firma.js?v=6819a0f377";
-import { armarPdf, pdfListo } from "../../kit/js/pdf.js?v=6819a0f377";
-import { NEGOCIO, MARCA } from "../marca.js?v=6819a0f377";
-import { TOPES, REINVITAR_DIAS, pesos, kilos, cuanto, fechaCorta, nombreFecha } from "../datos.js?v=6819a0f377";
-import { activarConsignaPersona, guia, activarGuias, pastilla, pastillaCuota, cara, haceDias, graficoPeso, barrasSemanas, mostrarMensaje } from "./comunes.js?v=6819a0f377";
-import { htmlTrabajosProfe, activarTrabajosProfe } from "./trabajos.js?v=6819a0f377";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=6b204d1609";
+import { MEDIOS_PAGO, DIVIDIDO, textoMedio, partesIniciales, htmlDosMedios, activarDosMedios } from "../../kit/js/pagos.js?v=6b204d1609";
+import { pedirFirma } from "../../kit/js/firma.js?v=6b204d1609";
+import { AVISO_CAMPO, LEYENDA_IMPRESION } from "../../kit/js/leyendas.js?v=6b204d1609";
+import { armarPdf, pdfListo } from "../../kit/js/pdf.js?v=6b204d1609";
+import { NEGOCIO, MARCA } from "../marca.js?v=6b204d1609";
+import { TOPES, REINVITAR_DIAS, pesos, kilos, cuanto, fechaCorta, nombreFecha } from "../datos.js?v=6b204d1609";
+import { activarConsignaPersona, guia, activarGuias, pastilla, pastillaCuota, cara, haceDias, graficoPeso, barrasSemanas, mostrarMensaje } from "./comunes.js?v=6b204d1609";
+import { htmlTrabajosProfe, activarTrabajosProfe } from "./trabajos.js?v=6b204d1609";
 
 let ajustando = null; // "diaId|ejercicioId" del ejercicio que el profe está ajustando
 let medio = "efectivo"; // lo último elegido al registrar un pago
@@ -34,7 +35,7 @@ export function vistaFicha(cont, opciones) {
             <div><span>Última vez</span><b>${a.ultima ? esc(nombreFecha(a.ultima, hoy)) : "—"}</b><small>${esc(haceDias(a.sinVenir))}</small></div>
             <div><span>Últimos 30 días</span><b>${esc(a.asistenciasMes)} ${a.asistenciasMes === 1 ? "vez" : "veces"}</b><small>le tocan ${esc(a.dias.length)} por semana</small></div>
             <div><span>Hoy le toca</span><b>${a.hoyLeToca ? `Día ${esc(a.hoyLeToca)}` : "—"}</b><small>${a.hoyLeToca ? esc(a.rutina?.find((d) => d.id === a.hoyLeToca)?.nombre ?? "") : "no viene hoy"}</small></div>
-            <div><span>Apto físico</span><b>${a.sinApto ? "Falta" : `Hasta ${esc(fechaCorta(a.aptoHasta))}`}</b><small>${a.reglamentoEl ? `reglamento firmado el ${esc(fechaCorta(a.reglamentoEl))}` : "falta firmar el reglamento"}</small></div>
+            <div><span>Apto físico</span><b>${a.sinApto ? "Falta" : `Hasta ${esc(fechaCorta(a.aptoHasta))}`}</b><small>${a.reglamentoEl ? `reglamento firmado el ${esc(fechaCorta(a.reglamentoEl))} (simulado)` : "falta firmar el reglamento"}</small></div>
         </div>
         ${esProfe ? htmlProfe(a, datos) : htmlDuena(a, datos)}`;
 
@@ -107,6 +108,7 @@ function htmlProfe(a, datos) {
         ${htmlTrabajosProfe(a)}
         <h2 class="subtitulo"><i class="ti ti-message-2" aria-hidden="true"></i> Notas para ${esc(a.nombre)}</h2>
         <form class="formulario bloque nota-nueva" novalidate>
+            <p class="nota"><i class="ti ti-info-circle" aria-hidden="true"></i> <span>${esc(AVISO_CAMPO)} Sin datos de salud.</span></p>
             <label>Nota (la ve en su celu)
                 <textarea name="nota" rows="2" maxlength="${TOPES.nota}" placeholder="Ej: Bien ahí, el lunes subimos a 62,5"></textarea>
             </label>
@@ -180,7 +182,7 @@ function activarProfe(cont, opciones, a) {
             const r = datos.rutinaParaPapel(a.id);
             const blob = await armarPdf({
                 negocio: NEGOCIO,
-                pie: "Hecho con Sazzo Gimnasio (demo)",
+                pie: LEYENDA_IMPRESION,
                 titulo: "Rutina",
                 numero: r.plan,
                 fecha: fechaCorta(datos.hoy()),
@@ -254,7 +256,8 @@ function htmlDuena(a, datos) {
                     <h2 class="subtitulo"><i class="ti ti-file-certificate" aria-hidden="true"></i> Apto físico y reglamento</h2>
                     <p class="nota"><span>Apto físico: <b>${a.sinApto ? "falta" : `vale hasta el ${esc(fechaCorta(a.aptoHasta))}`}</b></span></p>
                     ${a.sinApto ? `<button class="boton boton--chico" type="button" data-apto><i class="ti ti-file-check" aria-hidden="true"></i> Trajo el apto hoy</button>` : ""}
-                    <p class="nota"><span>Reglamento: <b>${a.reglamentoEl ? `firmado el ${esc(fechaCorta(a.reglamentoEl))}` : "sin firmar"}</b></span></p>
+                    <p class="nota"><span>Reglamento: <b>${a.reglamentoEl ? `firmado el ${esc(fechaCorta(a.reglamentoEl))} (simulado)` : "sin firmar"}</b></span></p>
+                    <p class="nota"><i class="ti ti-info-circle" aria-hidden="true"></i> <span>La firma es simulada: el dibujo se ve mientras la demo está abierta y no se guarda.</span></p>
                     ${a.firma ? `<img class="firma-imagen" src="${esc(a.firma)}" alt="Firma de ${esc(a.nombre)}">` : ""}
                     <button class="boton boton--chico boton--secundario" type="button" data-firmar><i class="ti ti-signature" aria-hidden="true"></i> ${a.reglamentoEl ? "Firmar de nuevo" : "Firmar el reglamento"}</button>
                 </section>
@@ -338,9 +341,9 @@ function activarDuena(cont, opciones, a) {
     });
     cont.querySelector("[data-apto]")?.addEventListener("click", hacer(() => datos.anotarApto(usuario, a.id), "Apto físico anotado por un año"));
     cont.querySelector("[data-firmar]").addEventListener("click", async () => {
-        const firma = await pedirFirma({ titulo: "Reglamento del gimnasio", texto: `${a.nombreCompleto} leyó y acepta el reglamento de ${NEGOCIO} (de ejemplo).` });
+        const firma = await pedirFirma({ titulo: "Reglamento del gimnasio", texto: `${a.nombreCompleto} leyó y acepta el reglamento de ${NEGOCIO} (de ejemplo). Firma simulada: se ve mientras la demo está abierta y no se guarda.` });
         if (!firma || !cont.isConnected) return;
-        hacer(() => datos.firmarReglamento(usuario, a.id, firma), "Reglamento firmado")();
+        hacer(() => datos.firmarReglamento(usuario, a.id, firma), "Reglamento firmado (simulado)")();
     });
     cont.querySelector("[data-baja]")?.addEventListener("click", () => {
         if (confirm(`¿Dar de baja a ${a.nombre}? No se borra: queda en "Bajas".`)) hacer(() => datos.darDeBaja(usuario, a.id), `${a.nombre} quedó dado de baja`)();

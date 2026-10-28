@@ -2,13 +2,13 @@
 // La cocina (Beto; la moza también la puede mirar): los pedidos que llegan, lo más viejo primero, con cuánto hace que
 // esperan (en rojo si pasan los 15 minutos). "Listo" lo saca y la mesa ve "comida lista".
 // ============================================
-import { esc, aviso } from "../../kit/js/ui.js?v=7d06fec91a";
-import { mantenerPantallaPrendida, htmlBotonVoz, activarBotonVoz, decir } from "../../kit/js/celular.js?v=7d06fec91a";
-import { MARCA, NEGOCIO } from "../marca.js?v=7d06fec91a";
-import { ticket, guia, activarGuias, haceMin, hora, consignaPersona } from "./comunes.js?v=7d06fec91a";
-import { activarConsigna } from "../../kit/js/consigna.js?v=7d06fec91a";
-import { htmlBotonTV, abrirModoTV } from "../../kit/js/modo-tv.js?v=7d06fec91a";
-import { alSalirDeLaPantalla } from "../../kit/js/rutas.js?v=7d06fec91a";
+import { esc, aviso } from "../../kit/js/ui.js?v=aa4351ebaa";
+import { mantenerPantallaPrendida, htmlBotonVoz, activarBotonVoz, decir } from "../../kit/js/celular.js?v=aa4351ebaa";
+import { MARCA, NEGOCIO } from "../marca.js?v=aa4351ebaa";
+import { ticket, guia, activarGuias, haceMin, hora, consignaPersona } from "./comunes.js?v=aa4351ebaa";
+import { activarConsigna } from "../../kit/js/consigna.js?v=aa4351ebaa";
+import { htmlBotonTV, abrirModoTV } from "../../kit/js/modo-tv.js?v=aa4351ebaa";
+import { alSalirDeLaPantalla } from "../../kit/js/rutas.js?v=aa4351ebaa";
 
 const DEMORA_MIN = 15;
 const relojes = new WeakMap();

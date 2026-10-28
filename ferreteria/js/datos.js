@@ -15,13 +15,13 @@
 // Reglas del kit: exigir() en lo que modifica, topes en todo lo que se carga, nada se borra y se devuelven copias.
 // Las ventas guardan el precio y el costo del momento. Si cambia la forma de los datos, subir VERSION_DATOS.
 // ============================================
-import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=7879dd46ff";
-import { enteroHasta, sinPasarse } from "../kit/js/topes.js?v=7879dd46ff";
-import { diaLocalDe, fechaLocalISO } from "../kit/js/fechas.js?v=7879dd46ff";
-import { columnasDe, numeroDe, textoParaComparar } from "../kit/js/tablas.js?v=7879dd46ff";
-import { filtrarPorTexto, comoSuena } from "../kit/js/buscar.js?v=7879dd46ff";
-import { MARCA, NEGOCIO, buscarPersona } from "./marca.js?v=7879dd46ff";
-import { MEDIOS_PAGO, DIVIDIDO, revisarPagos, sumarPorMedio } from "../kit/js/pagos.js?v=7879dd46ff";
+import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=50ee31fa6b";
+import { enteroHasta, sinPasarse } from "../kit/js/topes.js?v=50ee31fa6b";
+import { diaLocalDe, fechaLocalISO } from "../kit/js/fechas.js?v=50ee31fa6b";
+import { columnasDe, numeroDe, textoParaComparar } from "../kit/js/tablas.js?v=50ee31fa6b";
+import { filtrarPorTexto, comoSuena } from "../kit/js/buscar.js?v=50ee31fa6b";
+import { MARCA, NEGOCIO, buscarPersona } from "./marca.js?v=50ee31fa6b";
+import { MEDIOS_PAGO, DIVIDIDO, revisarPagos, sumarPorMedio } from "../kit/js/pagos.js?v=50ee31fa6b";
 
 export const VERSION_DATOS = 4;
 
@@ -584,7 +584,7 @@ const ORDEN_ESTADO = { pedido: 0, aceptado: 1, enviado: 2, vendido: 3, anulado: 
 // ---------- Funciones de datos ----------
 
 export function crearDatos(prefijo = MARCA.prefijo) {
-    const guardado = crearGuardado({ prefijo, version: VERSION_DATOS, semilla });
+    const guardado = crearGuardado({ prefijo, version: VERSION_DATOS, semilla, formaDeLaSemilla: true });
     const db = () => guardado.db();
     const proveedor = (id) => PROVEEDORES.find((p) => p.id === id) ?? null;
     const armarProducto = (p) => ({

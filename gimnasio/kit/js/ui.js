@@ -3,8 +3,9 @@
 // Solo lo genérico: lo propio de cada rubro (estados, pastillas, unidades…) va en cada demo.
 // Todo dato que entra a HTML pasa por esc().
 // ============================================
-import { esDeProgramacion, contarFalla } from "./visita.js?v=6819a0f377";
-import { mostrarArchivoDeDemo } from "./archivos.js?v=6819a0f377";
+import { esDeProgramacion, contarFalla } from "./visita.js?v=6b204d1609";
+import { mostrarArchivoDeDemo } from "./archivos.js?v=6b204d1609";
+import "./accesibilidad.js?v=6b204d1609";
 
 export const $ = (selector, raiz = document) => raiz.querySelector(selector);
 export const $$ = (selector, raiz = document) => [...raiz.querySelectorAll(selector)];
@@ -78,7 +79,7 @@ export function animarNumeros(raiz = document) {
 export function textoCSV(filas) {
     const celda = (valor) => {
         let t = String(valor ?? "");
-        if (/^[=+\-@\t\r]/.test(t)) t = `'${t}`;
+        if (!(typeof valor === "number" && Number.isFinite(valor)) && /^[=+\-@\t\r]/.test(t)) t = `'${t}`;
         return /[";\n\r]/.test(t) ? `"${t.replace(/"/g, '""')}"` : t;
     };
     return "﻿" + filas.map((f) => f.map(celda).join(";")).join("\r\n");
@@ -125,7 +126,7 @@ export function cuandoFue(iso) {
 }
 
 export const vacio = (mensaje, icono = "ti-alert-triangle") =>
-    `<div class="vacio"><i class="ti ${esc(icono)}"></i><p>${esc(mensaje)}</p></div>`;
+    `<div class="vacio"><i class="ti ${esc(icono)}" aria-hidden="true"></i><p>${esc(mensaje)}</p></div>`;
 
 /**
  * Cartelito que aparece abajo unos segundos. tipo: "ok", "info" o "error".
@@ -144,6 +145,34 @@ export function mensajeDe(e) {
     return MENSAJE_FALLA;
 }
 
+/**
+ * El lugar de los cartelitos, creado vacío antes del primer aviso (los lectores de pantalla anuncian lo que entra a una
+ * zona viva que ya estaba). Dos listas: "status" (cortés) para lo normal y "alert" (urgente) para los errores.
+ */
+export function cajaDeAvisos(raiz = document) {
+    let caja = raiz.querySelector(".avisos");
+    if (!caja) {
+        caja = raiz.createElement("div");
+        caja.className = "avisos";
+        const normales = raiz.createElement("div");
+        normales.className = "avisos__lista";
+        normales.setAttribute("role", "status");
+        const urgentes = raiz.createElement("div");
+        urgentes.className = "avisos__lista";
+        urgentes.setAttribute("role", "alert");
+        caja.append(normales, urgentes);
+        raiz.body.append(caja);
+    }
+    return caja;
+}
+
+const listaDeAvisos = (urgente) => cajaDeAvisos().children[urgente ? 1 : 0];
+
+if (typeof document !== "undefined") {
+    if (document.body) cajaDeAvisos();
+    else document.addEventListener("DOMContentLoaded", () => cajaDeAvisos(), { once: true });
+}
+
 /** Cartelito abajo. `mensaje` puede ser un texto o el error atajado (aviso(err, "error")): ver mensajeDe. */
 export function aviso(mensaje, tipo = "ok") {
     if (mensaje !== null && typeof mensaje === "object") mensaje = mensajeDe(mensaje);
@@ -154,13 +183,7 @@ export function aviso(mensaje, tipo = "ok") {
             // sin vibración
         }
     }
-    let caja = $(".avisos");
-    if (!caja) {
-        caja = document.createElement("div");
-        caja.className = "avisos";
-        caja.setAttribute("role", "status");
-        document.body.append(caja);
-    }
+    const lista = listaDeAvisos(tipo === "error");
     const dura = tipo === "error" ? 8000 : 3500;
     const icono = { ok: "ti-circle-check", info: "ti-info-circle", error: "ti-alert-circle" }[tipo] ?? "ti-info-circle";
     const el = document.createElement("p");
@@ -175,7 +198,7 @@ export function aviso(mensaje, tipo = "ok") {
         setTimeout(() => el.remove(), 180);
     };
     el.addEventListener("click", cerrar);
-    caja.append(el);
+    lista.append(el);
     setTimeout(cerrar, dura);
     return el;
 }

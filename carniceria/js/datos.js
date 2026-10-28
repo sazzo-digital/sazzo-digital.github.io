@@ -11,12 +11,12 @@
 // Reglas del kit: exigir() en lo que modifica, topes en todo lo que se carga, nada se borra y se devuelven copias.
 // Las ventas guardan el precio y el costo del momento. Si cambia la forma de los datos, subir VERSION_DATOS.
 // ============================================
-import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=d8a3925649";
-import { enteroHasta, sinPasarse } from "../kit/js/topes.js?v=d8a3925649";
-import { diaLocalDe, fechaLocalISO } from "../kit/js/fechas.js?v=d8a3925649";
-import { filtrarPorTexto, comoSuena } from "../kit/js/buscar.js?v=d8a3925649";
-import { MARCA, NEGOCIO, buscarPersona } from "./marca.js?v=d8a3925649";
-import { MEDIOS_PAGO, DIVIDIDO, revisarPagos, sumarPorMedio } from "../kit/js/pagos.js?v=d8a3925649";
+import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=f8ec046caa";
+import { enteroHasta, sinPasarse } from "../kit/js/topes.js?v=f8ec046caa";
+import { diaLocalDe, fechaLocalISO } from "../kit/js/fechas.js?v=f8ec046caa";
+import { filtrarPorTexto, comoSuena } from "../kit/js/buscar.js?v=f8ec046caa";
+import { MARCA, NEGOCIO, buscarPersona } from "./marca.js?v=f8ec046caa";
+import { MEDIOS_PAGO, DIVIDIDO, revisarPagos, sumarPorMedio } from "../kit/js/pagos.js?v=f8ec046caa";
 
 export const VERSION_DATOS = 4;
 
@@ -525,7 +525,7 @@ const ORDEN_PEDIDO = { nuevo: 0, listo: 1, entregado: 2, anulado: 3 };
 // ---------- Funciones de datos ----------
 
 export function crearDatos(prefijo = MARCA.prefijo) {
-    const guardado = crearGuardado({ prefijo, version: VERSION_DATOS, semilla });
+    const guardado = crearGuardado({ prefijo, version: VERSION_DATOS, semilla, formaDeLaSemilla: true });
     const db = () => guardado.db();
     const proveedor = (id) => PROVEEDORES.find((p) => p.id === id) ?? null;
     const revisarTope = (lista, tope, que) => exigir(lista.length < tope, `Ya hay ${tope} ${que}. Es una demo: tocá "Empezar de cero" arriba.`);

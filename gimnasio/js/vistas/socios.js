@@ -3,12 +3,13 @@
 // filtros que importan (cuota vencida, vence esta semana, avisaron que pagaron, no vienen hace +3 semanas, sin apto,
 // bajas) con la acción de cada uno a mano (recordatorio, confirmar, invitar), el buscador, Excel y el alta.
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=6819a0f377";
-import { MEDIOS_PAGO } from "../../kit/js/pagos.js?v=6819a0f377";
-import { bajarExcel } from "../../kit/js/archivos.js?v=6819a0f377";
-import { NEGOCIO } from "../marca.js?v=6819a0f377";
-import { PLANES_CUOTA, HORAS, DIAS_CORTOS, ORDEN_SEMANA, TOPES, REAVISAR_DIAS, REINVITAR_DIAS, pesos, fechaCorta } from "../datos.js?v=6819a0f377";
-import { activarConsignaPersona, guia, activarGuias, pastilla, pastillaCuota, cara, haceDias, mostrarMensaje } from "./comunes.js?v=6819a0f377";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=6b204d1609";
+import { MEDIOS_PAGO } from "../../kit/js/pagos.js?v=6b204d1609";
+import { bajarExcel } from "../../kit/js/archivos.js?v=6b204d1609";
+import { AVISO_CAMPO } from "../../kit/js/leyendas.js?v=6b204d1609";
+import { NEGOCIO } from "../marca.js?v=6b204d1609";
+import { PLANES_CUOTA, HORAS, DIAS_CORTOS, ORDEN_SEMANA, TOPES, REAVISAR_DIAS, REINVITAR_DIAS, pesos, fechaCorta } from "../datos.js?v=6b204d1609";
+import { activarConsignaPersona, guia, activarGuias, pastilla, pastillaCuota, cara, haceDias, mostrarMensaje } from "./comunes.js?v=6b204d1609";
 
 let filtro = "pronto"; // de entrada, los que vencen esta semana: lo primero que mira la dueña
 let texto = "";
@@ -81,9 +82,9 @@ export function vistaSocios(cont, opciones) {
 
     function accion(a) {
         if (a.baja) return "";
-        if (filtro === "avisaron" && a.avisoPago) return `<button class="boton boton--chico" type="button" data-confirmar="${esc(a.avisoPago.id)}" data-nombre="${esc(a.nombre)}"><i class="ti ti-check" aria-hidden="true"></i> Llegó: confirmar</button>`;
-        if (filtro === "no-vienen") return `<button class="boton boton--chico" type="button" data-invitar="${esc(a.id)}"${hacePoco(a.invitadoEn, REINVITAR_DIAS) ? " disabled" : ""}><i class="ti ti-message-circle" aria-hidden="true"></i> ${hacePoco(a.invitadoEn, REINVITAR_DIAS) ? "Invitado" : "Invitar"}</button>`;
-        if (filtro === "pronto" || filtro === "vencida") return `<button class="boton boton--chico" type="button" data-recordar="${esc(a.id)}"${hacePoco(a.recordadoEn, REAVISAR_DIAS) ? " disabled" : ""}><i class="ti ti-message-circle" aria-hidden="true"></i> ${hacePoco(a.recordadoEn, REAVISAR_DIAS) ? "Recordado" : "Recordatorio"}</button>`;
+        if (filtro === "avisaron" && a.avisoPago) return `<button class="boton boton--chico" type="button" data-confirmar="${esc(a.avisoPago.id)}" data-nombre="${esc(a.nombre)}" aria-label="Llegó: confirmar el pago de ${esc(a.nombre)}"><i class="ti ti-check" aria-hidden="true"></i> Llegó: confirmar</button>`;
+        if (filtro === "no-vienen") return `<button class="boton boton--chico" type="button" data-invitar="${esc(a.id)}"${hacePoco(a.invitadoEn, REINVITAR_DIAS) ? " disabled" : ""} aria-label="${hacePoco(a.invitadoEn, REINVITAR_DIAS) ? "Invitado" : "Invitar"}: ${esc(a.nombre)}"><i class="ti ti-message-circle" aria-hidden="true"></i> ${hacePoco(a.invitadoEn, REINVITAR_DIAS) ? "Invitado" : "Invitar"}</button>`;
+        if (filtro === "pronto" || filtro === "vencida") return `<button class="boton boton--chico" type="button" data-recordar="${esc(a.id)}"${hacePoco(a.recordadoEn, REAVISAR_DIAS) ? " disabled" : ""} aria-label="${hacePoco(a.recordadoEn, REAVISAR_DIAS) ? "Recordado" : "Recordatorio"}: ${esc(a.nombre)}"><i class="ti ti-message-circle" aria-hidden="true"></i> ${hacePoco(a.recordadoEn, REAVISAR_DIAS) ? "Recordado" : "Recordatorio"}</button>`;
         return "";
     }
 
@@ -160,6 +161,7 @@ export function vistaAlta(cont, { usuario, datos }) {
         <a class="volver" href="#/inicio"><i class="ti ti-arrow-left" aria-hidden="true"></i> Socios</a>
         <h1 class="titulo">Socio nuevo</h1>
         <form class="formulario bloque alta" novalidate>
+            <p class="nota"><i class="ti ti-lock" aria-hidden="true"></i><span>${esc(AVISO_CAMPO)} Sin teléfono, mail, documento ni datos de salud.</span></p>
             <label>Nombre
                 <input name="nombre" maxlength="${TOPES.nombre}" autocomplete="off" required placeholder="Ej: Rosa">
             </label>
@@ -193,7 +195,6 @@ export function vistaAlta(cont, { usuario, datos }) {
                     ${Object.entries(MEDIOS_PAGO).map(([id, texto]) => `<button class="chip${medioAlta === id ? " activo" : ""}" type="button" role="radio" aria-checked="${medioAlta === id}" data-medio="${esc(id)}">${esc(texto)}</button>`).join("")}
                 </div>
             </fieldset>
-            <p class="nota"><i class="ti ti-lock" aria-hidden="true"></i><span>Sin teléfono, mail ni documento: es una demo con datos inventados.</span></p>
             <button class="boton boton--ancho" type="submit"><i class="ti ti-user-plus" aria-hidden="true"></i> Dar de alta y cobrar el primer mes</button>
         </form>`;
 

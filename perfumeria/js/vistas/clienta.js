@@ -1,14 +1,14 @@
-import { consignaPersona, pintarConsigna } from "./comunes.js?v=71afbca5b0";
+import { consignaPersona, pintarConsigna } from "./comunes.js?v=c1eb54ed24";
 // ============================================
 // Pantallas de la clienta (Julieta), pensadas para el celular: el catálogo (filtros por familia y para quién,
 // "Recomendame uno"), cada perfume con sus notas y presentaciones, "Tu pedido" (el carrito) y "Mis pedidos".
 // El pedido no pide ningún dato: Julieta ya entró como ella. Retiro en el local.
 // ============================================
-import { esc, aviso, vacio, fechaCorta, mensajeDe } from "../../kit/js/ui.js?v=71afbca5b0";
-import { verEn3D } from "../../kit/js/modelo3d.js?v=71afbca5b0";
-import { FAMILIAS, PARA, PRESENTACIONES, TOPES, pesos, frasco3D, notaFrasco } from "../datos.js?v=71afbca5b0";
-import { NEGOCIO } from "../marca.js?v=71afbca5b0";
-import { frasco, carrito, itemsDelCarrito, unidadesEnCarrito, guia, activarGuias, pastillaPedido } from "./comunes.js?v=71afbca5b0";
+import { esc, aviso, vacio, fechaCorta, mensajeDe } from "../../kit/js/ui.js?v=c1eb54ed24";
+import { verEn3D } from "../../kit/js/modelo3d.js?v=c1eb54ed24";
+import { FAMILIAS, PARA, PRESENTACIONES, TOPES, pesos, frasco3D, notaFrasco } from "../datos.js?v=c1eb54ed24";
+import { NEGOCIO } from "../marca.js?v=c1eb54ed24";
+import { frasco, carrito, itemsDelCarrito, unidadesEnCarrito, guia, activarGuias, pastillaPedido } from "./comunes.js?v=c1eb54ed24";
 
 let familia = null;
 let para = null;
@@ -61,11 +61,11 @@ export function vistaCatalogo(cont, { datos, usuario }) {
             <ul class="perfumes sugeridos"></ul>
         </details>
         <p class="rotulo-chico">Todos los perfumes</p>
-        <div class="chips" role="tablist" aria-label="Familia">
+        <div class="chips" role="group" aria-label="Familia">
             <button class="chip${familia ? "" : " activo"}" type="button" data-familia="">Todas</button>
             ${Object.entries(FAMILIAS).map(([k, f]) => `<button class="chip${familia === k ? " activo" : ""}" type="button" data-familia="${k}"><span class="punto" style="background:${esc(f.color)}"></span>${esc(f.texto)}</button>`).join("")}
         </div>
-        <div class="chips" role="tablist" aria-label="Para quién">
+        <div class="chips" role="group" aria-label="Para quién">
             <button class="chip${para ? "" : " activo"}" type="button" data-para="">Todos</button>
             <button class="chip${para === "mujer" ? " activo" : ""}" type="button" data-para="mujer">Para ella</button>
             <button class="chip${para === "hombre" ? " activo" : ""}" type="button" data-para="hombre">Para él</button>

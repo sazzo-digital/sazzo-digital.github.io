@@ -1,5 +1,5 @@
 const PREFIJO = "sazzo-gimnasio";
-const COPIA = `${PREFIJO}-6819a0f377`;
+const COPIA = `${PREFIJO}-6b204d1609`;
 const BASICO = ["./", "manifest.webmanifest"];
 
 self.addEventListener("install", (e) => {

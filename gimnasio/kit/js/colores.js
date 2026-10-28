@@ -9,7 +9,8 @@
 //   primero se aplica). La imagen se lee EN el celular (se achica a 64 × 64 y se cuentan los colores): no se sube a
 //   ningún lado ni se guarda. Logo en blanco y negro → se avisa y se elige de la lista.
 // ============================================
-import { $, $$, esc } from "./ui.js?v=6819a0f377";
+import { $, $$, esc } from "./ui.js?v=6b204d1609";
+import { revisarTamanoImagen, CABECERA_IMAGEN } from "./archivos.js?v=6b204d1609";
 
 // Fondos contra los que tiene que leerse el acento (base/_temas.scss)
 const TARJETA_CLARA = "#e9dfcc";
@@ -162,6 +163,8 @@ const TOPE_LOGO = 15 * 1024 * 1024; // 15 MB: una foto del logo con el celular e
 export async function coloresDeLogo(archivo) {
     if (!archivo || !/^image\//.test(archivo.type)) throw new Error("Elegí una imagen: el logo de tu negocio.");
     if (archivo.size > TOPE_LOGO) throw new Error("La imagen es muy pesada (máximo 15 MB).");
+    const demasiadoGrande = revisarTamanoImagen(await archivo.slice(0, CABECERA_IMAGEN).arrayBuffer());
+    if (demasiadoGrande) throw new Error(demasiadoGrande);
     try {
         const imagen = await cargarImagen(archivo);
         const ancho = imagen.width || imagen.naturalWidth || 64;
@@ -209,7 +212,8 @@ export const claveNombre = (prefijo) => `${prefijo}-nombre`;
 const nombresEnMemoria = new Map(); // sin localStorage (ventana privada estricta): hasta recargar
 
 /** Sin caracteres de control ni < >, espacios de a uno y con tope. */
-export const limpiarNombre = (texto) => String(texto ?? "").replace(/[\u0000-\u001f\u007f<>]/g, "").replace(/\s+/g, " ").trim().slice(0, TOPE_NOMBRE);
+const INVISIBLES = /[\u0000-\u001f\u007f-\u009f<>­؜᠎​-‏‪-‮⁠-⁤⁦-⁩﻿]/g;
+export const limpiarNombre = (texto) => String(texto ?? "").replace(INVISIBLES, "").replace(/\s+/g, " ").trim().slice(0, TOPE_NOMBRE);
 
 export function leerNombre(prefijo) {
     try {
@@ -255,7 +259,7 @@ export function abrirColores(prefijo, { alElegir } = {}) {
         <form method="dialog" class="hoja__caja">
             <div class="hoja__titulos">
                 <h2 id="colores-titulo"><i class="ti ti-palette" aria-hidden="true"></i> Probala con tus colores</h2>
-                <button class="boton-icono" value="cerrar" aria-label="Cerrar"><i class="ti ti-x"></i></button>
+                <button class="boton-icono" value="cerrar" aria-label="Cerrar"><i class="ti ti-x" aria-hidden="true"></i></button>
             </div>
             <p class="nota">Elegí el color de tu negocio y mirá cómo queda. Si no se lee bien, lo ajustamos solos.</p>
             <label class="colores__nombre">

@@ -3,18 +3,20 @@
 // el mapa, nunca la dirección; Valeria pide la visita, la inmobiliaria ve quiénes buscan algo así y baja el PDF) y
 // "Cargar propiedad" (con fotos sacadas con el celu, que no se suben a ningún lado).
 // ============================================
-import { esc, aviso, vacio, mensajeDe, fechaCorta } from "../../kit/js/ui.js?v=87b82baae1";
-import { fechaLocalISO, diaLocalDe } from "../../kit/js/fechas.js?v=87b82baae1";
-import { mostrarMapa } from "../../kit/js/mapa.js?v=87b82baae1";
-import { armarPdf, pdfListo, fotoParaPdf } from "../../kit/js/pdf.js?v=87b82baae1";
-import { TOPES, TIPOS, ZONAS, OPERACIONES, CARACTERISTICAS, RADIO_ZONA, pesos, dolares } from "../datos.js?v=87b82baae1";
-import { NEGOCIO } from "../marca.js?v=87b82baae1";
-import { fotosDe, urlRecorrido, achicarFoto, guardarFotosEnMemoria, revisarArchivoFoto } from "../fotos.js?v=87b82baae1";
-import { abrirRecorrido } from "../visor360.js?v=87b82baae1";
+import { esc, aviso, vacio, mensajeDe, fechaCorta } from "../../kit/js/ui.js?v=db4997b1a3";
+import { fechaLocalISO, diaLocalDe } from "../../kit/js/fechas.js?v=db4997b1a3";
+import { mostrarMapa } from "../../kit/js/mapa.js?v=db4997b1a3";
+import { armarPdf, pdfListo, fotoParaPdf } from "../../kit/js/pdf.js?v=db4997b1a3";
+import { alSalirDeLaPantalla } from "../../kit/js/rutas.js?v=db4997b1a3";
+import { AVISO_CAMPO, AVISO_DIRECCION } from "../../kit/js/leyendas.js?v=db4997b1a3";
+import { TOPES, TIPOS, ZONAS, OPERACIONES, CARACTERISTICAS, RADIO_ZONA, pesos, dolares, ocultarDireccion } from "../datos.js?v=db4997b1a3";
+import { NEGOCIO } from "../marca.js?v=db4997b1a3";
+import { fotosDe, urlRecorrido, achicarFoto, guardarFotosEnMemoria, revisarArchivoFoto, liberarUrl } from "../fotos.js?v=db4997b1a3";
+import { abrirRecorrido } from "../visor360.js?v=db4997b1a3";
 import {
     guia, activarGuias, tarjetaPropiedad, htmlFoto, medidas, hrefPropiedad, pastillaPropiedad, pastillaVisita,
     pastillaConsulta, mostrarMensaje, mayuscula, consignaPersona, activarPasos
-} from "./comunes.js?v=87b82baae1";
+} from "./comunes.js?v=db4997b1a3";
 
 // Lo elegido en los filtros queda mientras se navega
 const filtro = { operacion: null, zona: null, ambientes: null, hasta: null, mapa: false };
@@ -56,7 +58,7 @@ export function vistaPropiedades(cont, { usuario, datos }) {
                 <p class="nota"><i class="ti ti-map-pin"></i><span>Cada punto es la zona de una propiedad, no su dirección: la dirección exacta se pasa al confirmar la visita.</span></p>`;
             const mapa = lugar.querySelector(".mapa");
             mostrarMapa(mapa, lista.map((p, i) => ({
-                ...puntoDe(p, i), titulo: p.titulo, texto: `${p.precioTexto} · ${p.zonaNombre}`,
+                ...puntoDe(p, i), titulo: ocultarDireccion(p.titulo), texto: `${p.precioTexto} · ${p.zonaNombre}`,
                 color: p.operacion === "venta" ? "#d97706" : "#7c3aed", link: hrefPropiedad(usuario, p.id).replace(/&#x2F;|&#47;/g, "/")
             })), { zoomMaximo: 14 }).then((m) => {
                 if (!m && mapa.isConnected) mapa.outerHTML = vacio("No se pudo cargar el mapa. Probá de nuevo con mejor señal.", "ti-map-off");
@@ -125,6 +127,8 @@ export function vistaPropiedades(cont, { usuario, datos }) {
 
 // ---------- Ficha ----------
 
+export const textoFicha = (p) => `${ocultarDireccion(p.titulo)}\n\n${ocultarDireccion(p.descripcion || "")}${p.caracteristicas.length ? `\n\nTiene: ${p.caracteristicas.join(", ")}.` : ""}\n\nLa dirección exacta se pasa al confirmar la visita.`;
+
 /** La ficha de la propiedad en PDF (con "DEMO · datos inventados" cruzado, del kit). */
 export async function pdfFicha(p) {
     const datosPdf = [
@@ -148,10 +152,10 @@ export async function pdfFicha(p) {
         titulo: "Ficha",
         fecha: fechaCorta(fechaLocalISO(0)),
         datos: datosPdf,
-        texto: `${p.titulo}\n\n${p.descripcion || ""}${p.caracteristicas.length ? `\n\nTiene: ${p.caracteristicas.join(", ")}.` : ""}\n\nLa dirección exacta se pasa al confirmar la visita.`,
+        texto: textoFicha(p),
         aviso: "Ficha informativa: precio y condiciones sujetos a cambios"
     });
-    pdfListo(blob, `Ficha ${p.titulo} ${NEGOCIO}`);
+    pdfListo(blob, `Ficha ${ocultarDireccion(p.titulo)} ${NEGOCIO}`);
 }
 
 export async function bajarFicha(boton, p) {
@@ -321,12 +325,20 @@ export function vistaFicha(cont, { usuario, datos, params: [id], irA }) {
 // ---------- Cargar propiedad ----------
 
 export function vistaNuevaPropiedad(cont, { usuario, datos }) {
-    let fotos = []; // direcciones locales de las fotos achicadas (no se suben)
+    let fotos = [];
+    let procesando = 0;
+    let activa = true;
+    alSalirDeLaPantalla(() => {
+        activa = false;
+        fotos.forEach(liberarUrl);
+        fotos = [];
+    });
     cont.innerHTML = `
         <a class="volver" href="#/propiedades"><i class="ti ti-arrow-left"></i> Propiedades</a>
         <h1 class="titulo">Cargar propiedad</h1>
         <form class="formulario bloque" novalidate>
             <label>Título<input name="titulo" type="text" maxlength="${TOPES.titulo}" required placeholder="Ej: Depto 2 ambientes con balcón" autocomplete="off"></label>
+            <p class="nota"><i class="ti ti-info-circle"></i><span>${esc(AVISO_DIRECCION)}</span></p>
             <div class="formulario__fila">
                 <label>Operación<select name="operacion">${Object.entries(OPERACIONES).map(([k, v]) => `<option value="${esc(k)}">${esc(v)}</option>`).join("")}</select></label>
                 <label>Tipo<select name="tipo">${Object.entries(TIPOS).map(([k, v]) => `<option value="${esc(k)}">${esc(v.texto)}</option>`).join("")}</select></label>
@@ -348,12 +360,13 @@ export function vistaNuevaPropiedad(cont, { usuario, datos }) {
                 ${CARACTERISTICAS.map((c) => `<label class="casilla"><input type="checkbox" name="caracteristicas" value="${esc(c)}"> ${esc(c)}</label>`).join("")}
             </fieldset>
             <label>Descripción<textarea name="descripcion" rows="3" maxlength="${TOPES.descripcion}" placeholder="Lo que la hace especial"></textarea></label>
+            <p class="nota"><i class="ti ti-info-circle"></i><span>${esc(AVISO_DIRECCION)} ${esc(AVISO_CAMPO)}</span></p>
             <div class="fotos-nuevas">
                 <p class="rotulo-chico">Fotos (hasta ${TOPES.fotos})</p>
                 <div class="fotos-nuevas__lista"></div>
                 <label class="boton boton--secundario fotos-nuevas__boton"><i class="ti ti-camera"></i> Sacar o elegir una foto
                     <input type="file" accept="image/*" capture="environment" hidden data-foto></label>
-                <p class="nota"><i class="ti ti-lock"></i><span>Las fotos se achican en este equipo y no se suben a ningún lado: es una demo (se ven mientras la tengas abierta).</span></p>
+                <p class="nota"><i class="ti ti-lock"></i><span>No subas fotos reales: elegí fotos de ejemplo. Se achican en este equipo y no se suben a ningún lado: es una demo (se ven mientras la tengas abierta).</span></p>
             </div>
             <p class="formulario__error" role="alert" hidden></p>
             <button class="boton boton--ancho boton--grande" type="submit"><i class="ti ti-check"></i> Publicar</button>
@@ -369,12 +382,18 @@ export function vistaNuevaPropiedad(cont, { usuario, datos }) {
         precio.placeholder = venta ? "80000" : "500000";
     });
 
+    const publicar = form.querySelector("[type=submit]");
+    const textoPublicar = publicar.innerHTML;
+    const pintarPublicar = () => {
+        publicar.disabled = procesando > 0;
+        publicar.innerHTML = procesando > 0 ? `<i class="ti ti-loader-2"></i> Procesando la foto…` : textoPublicar;
+    };
     const pintarFotos = () => {
         cont.querySelector(".fotos-nuevas__lista").innerHTML = fotos.map((url, i) => `
             <span class="foto-nueva"><img src="${esc(url)}" alt="Foto ${i + 1}"><button class="boton-icono" type="button" data-sacar="${i}" aria-label="Sacar la foto ${i + 1}"><i class="ti ti-x"></i></button></span>`).join("");
-        cont.querySelector(".fotos-nuevas__boton").hidden = fotos.length >= TOPES.fotos;
+        cont.querySelector(".fotos-nuevas__boton").hidden = fotos.length + procesando >= TOPES.fotos;
         cont.querySelectorAll("[data-sacar]").forEach((b) => b.addEventListener("click", () => {
-            URL.revokeObjectURL(fotos[Number(b.dataset.sacar)]);
+            liberarUrl(fotos[Number(b.dataset.sacar)]);
             fotos.splice(Number(b.dataset.sacar), 1);
             pintarFotos();
         }));
@@ -384,17 +403,28 @@ export function vistaNuevaPropiedad(cont, { usuario, datos }) {
         e.target.value = "";
         const problema = revisarArchivoFoto(archivo);
         if (problema) return aviso(problema, "error");
-        if (fotos.length >= TOPES.fotos) return aviso(`Hasta ${TOPES.fotos} fotos en la demo.`, "error");
+        if (fotos.length + procesando >= TOPES.fotos) return aviso(`Hasta ${TOPES.fotos} fotos en la demo.`, "error");
+        procesando++;
+        pintarPublicar();
+        pintarFotos();
         try {
-            fotos.push(await achicarFoto(archivo));
-            pintarFotos();
+            const url = await achicarFoto(archivo);
+            if (!activa) return liberarUrl(url);
+            fotos.push(url);
         } catch (err) {
-            aviso(err, "error");
+            if (activa) aviso(err, "error");
+        } finally {
+            procesando--;
+            if (activa) {
+                pintarPublicar();
+                pintarFotos();
+            }
         }
     });
 
     form.addEventListener("submit", (e) => {
         e.preventDefault();
+        if (procesando || !activa) return;
         const f = new FormData(form);
         const numero = (k) => (f.get(k) === "" ? NaN : Number(f.get(k)));
         try {
@@ -405,6 +435,7 @@ export function vistaNuevaPropiedad(cont, { usuario, datos }) {
                 caracteristicas: f.getAll("caracteristicas"), descripcion: f.get("descripcion")
             });
             guardarFotosEnMemoria(p.id, fotos);
+            fotos = [];
             aviso("Propiedad publicada");
             location.hash = `#/propiedades/${p.id}`;
         } catch (err) {

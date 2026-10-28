@@ -267,7 +267,7 @@ a { color: inherit; }
 .sorpresa__frase, .sorpresa__texto, .sorpresa__link { padding-inline: .4rem; }
 .sorpresa__frase { font: 700 clamp(1.2rem, 4.6vw, 1.45rem)/1.2 var(--fuente-titulos); }
 .sorpresa__texto { color: var(--texto-suave); font-size: .92rem; }
-.sorpresa__link { display: inline-flex; align-items: center; gap: .35rem; margin-top: .3rem; color: color-mix(in srgb, var(--acento) 55%, var(--texto)); font-weight: 600; font-size: .9rem; }
+.sorpresa__link { display: inline-flex; align-items: center; gap: .35rem; margin-top: .3rem; color: color-mix(in srgb, var(--acento) 28%, var(--texto)); font-weight: 600; font-size: .9rem; }
 @media (min-width: 900px) {
     .sorpresas__fila { display: grid; grid-template-columns: repeat(3, 1fr); overflow: visible; margin-inline: 0; padding-inline: 0; }
 }
@@ -605,6 +605,7 @@ a { color: inherit; }
     max-width: var(--ancho); margin: 2rem auto 0; padding-top: 1.1rem; border-top: 1px solid var(--borde);
     display: flex; flex-wrap: wrap; justify-content: space-between; gap: .5rem 1.5rem; font-size: .8rem;
 }
+.pie__marcas { flex-basis: 100%; margin: 0; color: var(--texto-suave); }
 .pie__version { margin-left: .4rem; font-family: var(--fuente-numeros); color: var(--texto-suave); }
 
 /* 11. Animaciones */

@@ -4,18 +4,18 @@
 // consultas, la agenda y las propiedades; Graciela (dueña) arranca por "Este mes" y lleva los alquileres.
 // irA() cambia de persona sin pasar por "Probala como…" (botones del recorrido: "Mirá lo que le llega a Tomás →").
 // ============================================
-import { $, conFundido } from "../kit/js/ui.js?v=87b82baae1";
-import { iniciarDemo } from "../kit/js/arranque.js?v=87b82baae1";
-import { vistaIngreso } from "../kit/js/ingreso.js?v=87b82baae1";
-import { pintarMarco } from "../kit/js/marco.js?v=87b82baae1";
-import { mostrarRuta } from "../kit/js/rutas.js?v=87b82baae1";
-import { vistaAcerca } from "../kit/js/acerca.js?v=87b82baae1";
-import { MARCA, PERSONAS, DETALLE, buscarPersona } from "./marca.js?v=87b82baae1";
-import { aparte } from "../kit/js/aparte.js?v=87b82baae1";
-import { leerSesionGuardada } from "../kit/js/guardado.js?v=87b82baae1";
+import { $, conFundido } from "../kit/js/ui.js?v=db4997b1a3";
+import { iniciarDemo } from "../kit/js/arranque.js?v=db4997b1a3";
+import { vistaIngreso } from "../kit/js/ingreso.js?v=db4997b1a3";
+import { pintarMarco } from "../kit/js/marco.js?v=db4997b1a3";
+import { mostrarRuta } from "../kit/js/rutas.js?v=db4997b1a3";
+import { vistaAcerca } from "../kit/js/acerca.js?v=db4997b1a3";
+import { MARCA, PERSONAS, DETALLE, buscarPersona } from "./marca.js?v=db4997b1a3";
+import { aparte } from "../kit/js/aparte.js?v=db4997b1a3";
+import { leerSesionGuardada } from "../kit/js/guardado.js?v=db4997b1a3";
 
 // Los datos de ejemplo y las pantallas se bajan aparte (al terminar de cargar): "Probala como…" aparece sin esperarlos
-const pantallas = aparte(() => import("./pantallas.js?v=87b82baae1"));
+const pantallas = aparte(() => import("./pantallas.js?v=db4997b1a3"));
 const { vistaPropiedades, vistaFicha, vistaNuevaPropiedad, vistaPedirVisita, vistaMisVisitas, vistaConsultas, vistaConsulta, vistaNuevaConsulta, vistaAgenda, vistaEsteMes, vistaAlquileres, vistaAlquiler, avisosDe } = pantallas.funciones;
 
 iniciarDemo(MARCA);
@@ -105,6 +105,7 @@ async function entrar(persona) {
         menu: MENU[usuario.rol],
         alCambiarPersona: ingresar,
         alReiniciar: () => {
+            pantallas.funciones.liberarFotos();
             datos.guardado.reiniciar();
             mostrar();
         }

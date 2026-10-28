@@ -2,15 +2,16 @@
 // Vehículos (administradora y mecánico): lista con filtro por estado y la ficha de cada uno
 // (estado, chofer de hoy, km y service, papeles con vencimiento e historia de problemas).
 // ============================================
-import { esc, vacio, aviso, fechaCorta } from "../../kit/js/ui.js?v=2acd6c7b7a";
-import { mostrarMapa } from "../../kit/js/mapa.js?v=2acd6c7b7a";
-import { ESTADOS_VEHICULO, TOPES, UBICACIONES, COLOR_ESTADO, SERVICE_CADA_KM, cantidadCon } from "../datos.js?v=2acd6c7b7a";
-import { haceCuanto, pastillaVehiculo, pastillaProblema, historiaProblema, textoRepuestos, consignaPersona, activarPasos } from "./comunes.js?v=2acd6c7b7a";
+import { esc, vacio, aviso, fechaCorta } from "../../kit/js/ui.js?v=402cfc1923";
+import { mostrarMapa } from "../../kit/js/mapa.js?v=402cfc1923";
+import { AVISO_CAMPO } from "../../kit/js/leyendas.js?v=402cfc1923";
+import { ESTADOS_VEHICULO, TOPES, UBICACIONES, COLOR_ESTADO, SERVICE_CADA_KM, cantidadCon } from "../datos.js?v=402cfc1923";
+import { haceCuanto, pastillaVehiculo, pastillaProblema, historiaProblema, textoRepuestos, consignaPersona, activarPasos } from "./comunes.js?v=402cfc1923";
 
 const km = (n) => `${n.toLocaleString("es-AR")} km`;
 
 export function vistaVehiculos(cont, { datos, consulta }) {
-    const filtro = ESTADOS_VEHICULO[consulta.get("estado")] ? consulta.get("estado") : null;
+    const filtro = Object.hasOwn(ESTADOS_VEHICULO, consulta.get("estado")) ? consulta.get("estado") : null;
     const enMapa = consulta.get("ver") === "mapa";
     const todos = datos.listarVehiculos();
     const lista = todos.filter((v) => !filtro || v.estado === filtro);
@@ -34,7 +35,7 @@ export function vistaVehiculos(cont, { datos, consulta }) {
         </nav>
         ${enMapa && lista.length ? `
         <div class="mapa" role="region" aria-label="Mapa con dónde se vio por última vez cada vehículo"></div>
-        <p class="nota"><i class="ti ti-map-pin" aria-hidden="true"></i> Dónde se vio por última vez cada uno (de ejemplo). En la versión real lo manda el GPS o el celular del chofer.</p>
+        <p class="nota"><i class="ti ti-map-pin" aria-hidden="true"></i> Dónde se vio por última vez cada uno (de ejemplo). En la versión real lo manda el GPS o el celular del chofer. Los estados también son de ejemplo: no dicen si un vehículo puede circular.</p>
         <ul class="mapa__referencias">${Object.entries(ESTADOS_VEHICULO).map(([id, e]) => `<li><span style="background:${COLOR_ESTADO[id]}"></span>${esc(e.texto)}</li>`).join("")}</ul>`
         : lista.length ? `<ul class="tarjetas">${lista.map((v) => `
             <li><a class="tarjeta tarjeta--link" href="#/vehiculos/${esc(v.id)}">
@@ -76,7 +77,7 @@ export function vistaFicha(cont, { usuario, datos, params: [id] }) {
             <div><dt>Chofer de hoy</dt><dd>${esc(v.chofer ?? "Nadie")}</dd></div>
             <div><dt>Kilómetros</dt><dd>${esc(km(v.km))}</dd></div>
             <div class="datos--${nivelService}"><dt>Próximo service</dt><dd>${esc(km(v.proximoService))}<small>${s.faltan > 0 ? `faltan ${esc(km(s.faltan))}` : `se pasó por ${esc(km(-s.faltan))}`}</small></dd></div>
-            ${v.papeles.map((p) => `<div class="datos--${nivelPapel[p.nivel]}"><dt>${esc(p.tipo)}</dt><dd>${esc(fechaCorta(p.vence))}<small>${esc(textoPapel(p))}</small></dd></div>`).join("")}
+            ${v.papeles.map((p) => `<div class="datos--${nivelPapel[p.nivel]}"><dt>${esc(p.tipo)}</dt><dd>${esc(fechaCorta(p.vence))}<small>${esc(textoPapel(p))}</small>${p.nivel === "ok" ? "" : `<button class="boton boton--chico boton--secundario" type="button" data-renovar="${esc(p.tipo)}"><i class="ti ti-refresh" aria-hidden="true"></i> Renovar</button>`}</dd></div>`).join("")}
         </dl>
         <a class="boton boton--ancho boton--secundario" href="#/service/${esc(v.id)}"><i class="ti ti-tool"></i> Hacer el service</a>
         ${v.ultimoService ? `<p class="nota"><i class="ti ti-gauge" aria-hidden="true"></i> Último service a los ${esc(km(v.ultimoService.km))}, por ${esc(v.ultimoService.por)}: ${esc(textoRepuestos(v.ultimoService.repuestos))}${v.ultimoService.nota ? ` · ${esc(v.ultimoService.nota)}` : ""}.</p>` : ""}
@@ -102,6 +103,15 @@ export function vistaFicha(cont, { usuario, datos, params: [id] }) {
             </li>`).join("")}</ul>` : vacio("Este vehículo no tuvo problemas.", "ti-mood-smile")}`;
 
     activarPasos(cont);
+    cont.querySelectorAll("[data-renovar]").forEach((b) => b.addEventListener("click", () => {
+        try {
+            datos.renovarPapel(usuario, v.id, b.dataset.renovar);
+            aviso(`${b.dataset.renovar} renovado por un año`);
+            vistaFicha(cont, { usuario, datos, params: [id] });
+        } catch (err) {
+            aviso(err, "error");
+        }
+    }));
     cont.querySelector(".km").addEventListener("submit", (e) => {
         e.preventDefault();
         const valor = e.target.km.value.trim();
@@ -141,6 +151,7 @@ export function vistaService(cont, { usuario, datos, params: [id] }) {
             <label>Nota (si querés)
                 <textarea name="nota" rows="2" maxlength="${TOPES.nota}" placeholder="Ej: cambio de aceite y filtro"></textarea>
             </label>
+            <p class="nota"><i class="ti ti-info-circle"></i><span>${esc(AVISO_CAMPO)}</span></p>
             <button class="boton boton--ancho boton--grande" type="submit"><i class="ti ti-circle-check"></i> Service hecho</button>
         </form>`;
     const cambiar = (rid, paso) => {

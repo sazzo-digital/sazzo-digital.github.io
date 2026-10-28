@@ -6,13 +6,13 @@
 // Las ventas guardan el precio del momento: si después sube un proveedor, lo vendido no cambia.
 // Si cambia la forma de los datos, subir VERSION_DATOS (se regeneran solos).
 // ============================================
-import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=ce4b63aa63";
-import { enteroHasta, sinPasarse } from "../kit/js/topes.js?v=ce4b63aa63";
-import { diaLocalDe, fechaLocalISO } from "../kit/js/fechas.js?v=ce4b63aa63";
-import { columnasDe, numeroDe, textoParaComparar } from "../kit/js/tablas.js?v=ce4b63aa63";
-import { filtrarPorTexto } from "../kit/js/buscar.js?v=ce4b63aa63";
-import { MARCA, PERSONAS } from "./marca.js?v=ce4b63aa63";
-import { MEDIOS_PAGO, DIVIDIDO, revisarPagos, sumarPorMedio } from "../kit/js/pagos.js?v=ce4b63aa63";
+import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=792c943282";
+import { enteroHasta, sinPasarse } from "../kit/js/topes.js?v=792c943282";
+import { diaLocalDe, fechaLocalISO } from "../kit/js/fechas.js?v=792c943282";
+import { columnasDe, numeroDe, textoParaComparar } from "../kit/js/tablas.js?v=792c943282";
+import { filtrarPorTexto } from "../kit/js/buscar.js?v=792c943282";
+import { MARCA, PERSONAS } from "./marca.js?v=792c943282";
+import { MEDIOS_PAGO, DIVIDIDO, revisarPagos, sumarPorMedio } from "../kit/js/pagos.js?v=792c943282";
 
 export const VERSION_DATOS = 3;
 
@@ -276,7 +276,7 @@ const esDelKiosco = (u) => u?.rol === "dueno" || u?.rol === "empleada";
 // ---------- Funciones de datos ----------
 
 export function crearDatos(prefijo = MARCA.prefijo) {
-    const guardado = crearGuardado({ prefijo, version: VERSION_DATOS, semilla });
+    const guardado = crearGuardado({ prefijo, version: VERSION_DATOS, semilla, formaDeLaSemilla: true });
     const db = () => guardado.db();
 
     const series = {"dueno": ["aumento", "lista", "tope"], "empleada": ["venta", "fiado", "cobro"]};

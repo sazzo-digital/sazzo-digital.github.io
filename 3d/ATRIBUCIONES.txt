@@ -1,0 +1,32 @@
+Modelos 3D de las demos de Sazzo: atribuciones
+
+Los siete modelos 3D (.glb) de las demos son obras de terceros bajo la licencia Creative Commons Atribución 4.0
+Internacional (CC BY 4.0): https://creativecommons.org/licenses/by/4.0/
+Se bajaron de Objaverse (Hugging Face), que los toma de Sketchfab; el enlace de cada original está abajo.
+
+CAMBIOS HECHOS (la licencia pide decirlo): se llevaron a tamaño real (los frascos a 12-15 cm, la pizza a 33-36 cm, las
+papas a 20 cm), se centraron, y se achicaron para el celular con glTF-Transform v4.5.1 (texturas a WebP y geometría
+cuantizada). En los frascos, el material del perfume se renombró a "liquido" para teñirlo con el color de cada
+familia. Al frasco moderno se le sacó la tapa suelta. El dibujo y las texturas son los del autor.
+
+Demo Perfumería (demos\perfumeria\img\)
+  frasco-clasico.glb      "perfume" por Mgabrov (https://sketchfab.com/Mgabrov)
+                          Original: https://sketchfab.com/3d-models/perfume-a1f355ffea18473a99f04c3009ae48cb
+  frasco-perita.glb       "A01612093 PERFUME K" por kessiajc (https://sketchfab.com/kessiajc)
+                          Original: https://sketchfab.com/3d-models/a01612093-perfume-k-1f577fff540c449f85cb29d91bf18d07
+  frasco-atomizador.glb   "perfume bottle" por frannnny (https://sketchfab.com/frannnny)
+                          Original: https://sketchfab.com/3d-models/perfume-bottle-dd73546279534fb0a45ec4b9f7569bbf
+  frasco-moderno.glb      "Perfume bottle" por israfitul (https://sketchfab.com/israfitul)
+                          Original: https://sketchfab.com/3d-models/perfume-bottle-7d332fcc6762484495e22d2e1065bb46
+
+Demo Restix (demos\restix-web\img\)
+  pizza.glb               "Pizza Bella" por ARtemis 3D (https://sketchfab.com/ARtemis3D)
+                          Original: https://sketchfab.com/3d-models/pizza-bella-59df3535085c4598b094095c948ab310
+  hamburguesa.glb         "Kincaid's Cheeseburger" por McClatchy New Ventures Lab (https://sketchfab.com/McClatchyNVL)
+                          Original: https://sketchfab.com/3d-models/kincaids-cheeseburger-330d21f1a6224195a0f0f4319379e99d
+  papas.glb               "French fries tray" por emm (https://sketchfab.com/edemaistre)
+                          Original: https://sketchfab.com/3d-models/french-fries-tray-51a0806ac1674209baa6dd89d830d1a8
+
+Cada .glb trae también estos datos adentro (asset.extras: author, license, source, title).
+
+El visor: @google/model-viewer 4.3.1 (Apache-2.0), su licencia está en LICENSE-model-viewer.txt.

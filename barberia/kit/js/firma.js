@@ -5,35 +5,51 @@
 // La firma es tinta oscura sobre blanco (como un papel), en el modo claro y en el oscuro. Queda solo en la memoria
 // de la pantalla: no se guarda. Librería: signature_pad (kit\libs\, MIT), se baja al abrir la ventanita.
 // ============================================
-import { esc, aviso } from "./ui.js?v=fcb06c7c44";
-import { alSalirDeLaPantalla } from "./rutas.js?v=fcb06c7c44";
-import { cargarLibreria } from "./archivos.js?v=fcb06c7c44";
+import { esc, aviso } from "./ui.js?v=26036b0c55";
+import { alSalirDeLaPantalla } from "./rutas.js?v=26036b0c55";
+import { cargarLibreria } from "./archivos.js?v=26036b0c55";
 
 export const TOPE_FIRMA = 400 * 1024; // letras de la imagen (una firma normal ocupa entre 10 y 60 KB)
 
 /** ¿Es una firma que armó pedirFirma? (para no meter cualquier cosa en un PDF o un <img>) */
 export const esFirma = (dato) => typeof dato === "string" && dato.length <= TOPE_FIRMA && /^data:image\/png;base64,[A-Za-z0-9+/]+=*$/.test(dato);
 
+export function firmaDeEjemplo() {
+    const lienzo = document.createElement("canvas");
+    lienzo.width = 480;
+    lienzo.height = 160;
+    const ctx = lienzo.getContext("2d");
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(0, 0, 480, 160);
+    ctx.fillStyle = "#14213d";
+    ctx.font = "italic 44px cursive";
+    ctx.textBaseline = "middle";
+    ctx.fillText("Firma de ejemplo", 24, 80);
+    return lienzo.toDataURL("image/png");
+}
+
 export function pedirFirma({ titulo = "Firma", texto = "" } = {}) {
     return new Promise((resolver) => {
         document.querySelector("dialog.firma")?.remove();
         const hoja = document.createElement("dialog");
         hoja.className = "hoja firma";
+        hoja.setAttribute("aria-labelledby", "firma-titulo");
         hoja.innerHTML = `
             <div class="hoja__caja">
                 <div class="hoja__titulos">
-                    <h2><i class="ti ti-signature" aria-hidden="true"></i> ${esc(titulo)}</h2>
-                    <button class="boton-icono" type="button" data-cerrar aria-label="Cerrar"><i class="ti ti-x"></i></button>
+                    <h2 id="firma-titulo"><i class="ti ti-signature" aria-hidden="true"></i> ${esc(titulo)}</h2>
+                    <button class="boton-icono" type="button" data-cerrar aria-label="Cerrar"><i class="ti ti-x" aria-hidden="true"></i></button>
                 </div>
                 ${texto ? `<p class="nota">${esc(texto)}</p>` : ""}
                 <div class="firma__papel">
-                    <canvas aria-label="Lugar para firmar con el dedo"></canvas>
+                    <canvas role="img" aria-label="Lugar para firmar con el dedo o el mouse" aria-describedby="firma-ayuda"></canvas>
                     <span class="firma__linea" aria-hidden="true">Firmá acá</span>
                 </div>
                 <div class="firma__acciones">
-                    <button class="boton boton--secundario" type="button" data-borrar><i class="ti ti-eraser"></i> Borrar</button>
-                    <button class="boton" type="button" data-listo disabled><i class="ti ti-check"></i> Listo</button>
+                    <button class="boton boton--secundario" type="button" data-borrar><i class="ti ti-eraser" aria-hidden="true"></i> Borrar</button>
+                    <button class="boton" type="button" data-listo disabled><i class="ti ti-check" aria-hidden="true"></i> Listo</button>
                 </div>
+                <button class="boton-link" type="button" data-sin-dibujar id="firma-ayuda">Sin dibujar: aceptar con una firma de ejemplo</button>
             </div>`;
         document.body.append(hoja);
         const lienzo = hoja.querySelector("canvas");
@@ -67,6 +83,15 @@ export function pedirFirma({ titulo = "Firma", texto = "" } = {}) {
         hoja.querySelector("[data-borrar]").addEventListener("click", () => {
             pad?.clear();
             listo.disabled = true;
+        });
+        hoja.querySelector("[data-sin-dibujar]").addEventListener("click", () => {
+            const imagen = firmaDeEjemplo();
+            if (!esFirma(imagen)) {
+                aviso("No se pudo armar la firma de ejemplo. Probá dibujándola.", "error");
+                return;
+            }
+            resultado = imagen;
+            cerrar();
         });
         listo.addEventListener("click", () => {
             if (!pad || pad.isEmpty()) return;

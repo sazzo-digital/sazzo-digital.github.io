@@ -6,9 +6,10 @@
 // por tenerlo. La cámara pide permiso, se ve en una ventanita y se apaga al leer, al cerrar, al cambiar de pantalla
 // o al esconder la pestaña. Nada sale del celular: la imagen no se guarda ni se manda.
 // ============================================
-import { aviso } from "./ui.js?v=ffcf92064c";
-import { alSalirDeLaPantalla } from "./rutas.js?v=ffcf92064c";
-import { RUTA_ESCANER } from "./config.js?v=ffcf92064c";
+import { aviso, esc } from "./ui.js?v=3b75165565";
+import { alSalirDeLaPantalla } from "./rutas.js?v=3b75165565";
+import { RUTA_ESCANER } from "./config.js?v=3b75165565";
+import { LEYENDA_TV } from "./leyendas.js?v=3b75165565";
 
 export const FORMATOS_PRODUCTOS = ["ean_13", "ean_8", "upc_a", "upc_e", "code_128"];
 export const TOPE_CODIGO = 40; // letras: un código de producto real tiene 8 a 14
@@ -56,14 +57,29 @@ export async function escanear(alLeer, { formatos = FORMATOS_PRODUCTOS, texto = 
     capa.className = "camara";
     capa.setAttribute("role", "dialog");
     capa.setAttribute("aria-label", "Escanear con la cámara");
+    capa.setAttribute("aria-modal", "true");
+    capa.setAttribute("aria-describedby", "camara-texto");
     capa.innerHTML = `
         <div class="camara__caja">
-            <video playsinline muted></video>
-            <p class="camara__texto"></p>
-            <button class="boton boton--secundario" type="button"><i class="ti ti-x"></i> Cerrar</button>
+            <video playsinline muted aria-label="Imagen de la cámara"></video>
+            <p class="camara__texto" id="camara-texto"></p>
+            <p class="camara__texto camara__leyenda">${esc(LEYENDA_TV)}</p>
+            <button class="boton boton--secundario" type="button"><i class="ti ti-x" aria-hidden="true"></i> Cerrar</button>
         </div>`;
     capa.querySelector(".camara__texto").textContent = texto;
+    const disparador = document.activeElement;
     document.body.append(capa);
+    const cerrarBoton = capa.querySelector("button");
+    cerrarBoton.focus();
+    capa.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
+            e.stopPropagation();
+            cerrar();
+        } else if (e.key === "Tab") {
+            e.preventDefault();
+            cerrarBoton.focus();
+        }
+    });
     let flujo = null;
     let seguir = true;
     const pedirCamara = camaraQueSeApaga({ seguir: () => seguir, guardar: (c) => (flujo = c) });
@@ -73,6 +89,7 @@ export async function escanear(alLeer, { formatos = FORMATOS_PRODUCTOS, texto = 
         flujo?.getTracks().forEach((t) => t.stop());
         capa.remove();
         document.removeEventListener("visibilitychange", alEsconder);
+        if (disparador?.isConnected) disparador.focus?.();
     };
     const alEsconder = () => {
         if (document.visibilityState === "hidden") cerrar();

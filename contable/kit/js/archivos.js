@@ -5,9 +5,9 @@
 //   entregarArchivo(blob, "presupuesto-104.pdf");    // en la demo: una hoja, no se baja nada
 // Las librerías (kit\libs\, ver su LEEME) se bajan recién la primera vez que alguien toca el botón.
 // ============================================
-import { esc, aviso, mensajeDe } from "./ui.js?v=ffcf92064c";
-import { alSalirDeLaPantalla } from "./rutas.js?v=ffcf92064c";
-import { RUTA_LIBS } from "./config.js?v=ffcf92064c";
+import { esc, aviso, mensajeDe } from "./ui.js?v=3b75165565";
+import { alSalirDeLaPantalla } from "./rutas.js?v=3b75165565";
+import { RUTA_LIBS } from "./config.js?v=3b75165565";
 
 const VERSIONES = {
     "write-excel-file.min.js": "4.1.1",
@@ -72,7 +72,7 @@ export function mostrarArchivoDeDemo(nombre, bytes) {
         <div class="hoja__caja">
             <div class="hoja__titulos">
                 <h2><i class="ti ti-info-circle" aria-hidden="true"></i> No se descargó nada: es una demo</h2>
-                <button class="boton-icono" type="button" data-cerrar aria-label="Cerrar"><i class="ti ti-x"></i></button>
+                <button class="boton-icono" type="button" data-cerrar aria-label="Cerrar"><i class="ti ti-x" aria-hidden="true"></i></button>
             </div>
             <p class="archivo-listo__nombre"><i class="ti ti-file" aria-hidden="true"></i> ${esc(nombre)} <small>${esc(pesoCorto(bytes))}</small></p>
             <p>En tu versión, al tocar este botón se guarda este archivo en tu celu o en tu compu. Acá no se guardó nada.</p>
@@ -102,6 +102,65 @@ export function entregarArchivo(blob, nombre) {
     return mostrarArchivoDeDemo(nombre, blob.size);
 }
 
+// ---------- Imágenes ----------
+
+export const TOPE_IMAGEN = { lado: 8000, pixeles: 40 * 1000 * 1000 };
+export const CABECERA_IMAGEN = 256 * 1024;
+
+export function dimensionesDeImagen(buffer) {
+    const v = new DataView(buffer);
+    const n = v.byteLength;
+    if (n >= 24 && v.getUint32(0) === 0x89504e47 && v.getUint32(4) === 0x0d0a1a0a) return { ancho: v.getUint32(16), alto: v.getUint32(20) };
+    if (n >= 10 && v.getUint32(0) === 0x47494638) return { ancho: v.getUint16(6, true), alto: v.getUint16(8, true) };
+    if (n >= 4 && v.getUint16(0) === 0xffd8) {
+        let p = 2;
+        while (p + 9 < n) {
+            if (v.getUint8(p) !== 0xff) {
+                p++;
+                continue;
+            }
+            const marca = v.getUint8(p + 1);
+            if (marca === 0xff) {
+                p++;
+                continue;
+            }
+            if (marca === 0x01 || (marca >= 0xd0 && marca <= 0xd9)) {
+                p += 2;
+                continue;
+            }
+            if (marca >= 0xc0 && marca <= 0xcf && marca !== 0xc4 && marca !== 0xc8 && marca !== 0xcc) {
+                return { alto: v.getUint16(p + 5), ancho: v.getUint16(p + 7) };
+            }
+            p += 2 + v.getUint16(p + 2);
+        }
+        return null;
+    }
+    if (n >= 30 && v.getUint32(0) === 0x52494646 && v.getUint32(8) === 0x57454250) {
+        const tipo = v.getUint32(12);
+        if (tipo === 0x56503820) return { ancho: v.getUint16(26, true) & 0x3fff, alto: v.getUint16(28, true) & 0x3fff };
+        if (tipo === 0x5650384c) {
+            const bits = v.getUint32(21, true);
+            return { ancho: (bits & 0x3fff) + 1, alto: ((bits >> 14) & 0x3fff) + 1 };
+        }
+        if (tipo === 0x56503858) {
+            return {
+                ancho: 1 + (v.getUint8(24) | (v.getUint8(25) << 8) | (v.getUint8(26) << 16)),
+                alto: 1 + (v.getUint8(27) | (v.getUint8(28) << 8) | (v.getUint8(29) << 16))
+            };
+        }
+    }
+    return null;
+}
+
+export function revisarTamanoImagen(buffer) {
+    const d = dimensionesDeImagen(buffer);
+    if (!d) return null;
+    if (!d.ancho || !d.alto || d.ancho > TOPE_IMAGEN.lado || d.alto > TOPE_IMAGEN.lado || d.ancho * d.alto > TOPE_IMAGEN.pixeles) {
+        return `La imagen es demasiado grande (máximo ${TOPE_IMAGEN.lado} píxeles de lado). Probá con una más chica.`;
+    }
+    return null;
+}
+
 // ---------- Excel ----------
 
 // Topes de lo que se lee de un Excel (viene de afuera: puede ser cualquier cosa)
@@ -118,7 +177,7 @@ function celdaLeida(valor) {
     if (typeof valor === "number") return Number.isFinite(valor) ? valor : null;
     if (typeof valor === "boolean") return valor;
     if (valor instanceof Date) return Number.isNaN(valor.getTime()) ? null : valor.toISOString().slice(0, 10);
-    const t = String(valor).replace(/[\u0000-\u001f\u007f]/g, " ").trim();
+    const t = String(valor).replace(/[\u0000-\u001f\u007f-\u009f]/g, " ").replace(/[­؜᠎​-‏‪-‮⁠-⁤⁦-⁩﻿]/g, "").trim();
     return t ? t.slice(0, TOPES_EXCEL.letras) : null;
 }
 
@@ -221,4 +280,4 @@ export async function bajarExcel(nombre, filas, opciones = {}) {
 }
 
 // Encontrar columnas y leer precios de lo que vino en el Excel: en tablas.js (sin pantalla, para los datos)
-export { columnasDe, numeroDe, textoParaComparar } from "./tablas.js?v=ffcf92064c";
+export { columnasDe, numeroDe, textoParaComparar } from "./tablas.js?v=3b75165565";

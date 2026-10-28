@@ -13,8 +13,8 @@
 // pasan a los caracteres que esa letra tiene (tildes, ñ, ¿¡, °, comillas sí; emojis no).
 // Librería: jsPDF (kit\libs\, MIT, ~410 KB), se carga recién al tocar el botón.
 // ============================================
-import { cargarLibreria, entregarArchivo, nombreDeArchivo } from "./archivos.js?v=8a5fe1d629";
-import { esFirma } from "./firma.js?v=8a5fe1d629";
+import { cargarLibreria, entregarArchivo, nombreDeArchivo } from "./archivos.js?v=44e4746e73";
+import { esFirma } from "./firma.js?v=44e4746e73";
 
 const TOPE_TEXTO = 600;
 const TOPE_FILAS = 200;
@@ -48,7 +48,7 @@ export async function fotoParaPdf(url, { lado = 1200 } = {}) {
 const NO_ESCRIBIBLE = /[^\n\x20-\x7e -ÿŒœŠšŸŽžƒˆ˜–—‘-‚“-„†-•…‰‹›€™]/g;
 
 /** Un texto listo para el PDF: sin caracteres que la letra no tiene y con tope de largo. */
-export const paraPdf = (t, tope = TOPE_TEXTO) => String(t ?? "").replace(/\r\n?/g, "\n").replace(/\t/g, " ").replace(NO_ESCRIBIBLE, "").slice(0, tope);
+export const paraPdf = (t, tope = TOPE_TEXTO) => String(t ?? "").replace(/\r\n?/g, "\n").replace(/\t/g, " ").replace(/−/g, "-").replace(NO_ESCRIBIBLE, "").slice(0, tope);
 
 const aRGB = (hex) => {
     const n = /^#[0-9a-f]{6}$/i.test(hex) ? Number.parseInt(hex.slice(1), 16) : 0x333333;

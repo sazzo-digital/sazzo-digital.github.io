@@ -7,7 +7,7 @@
 // - Las que se sacan con el celu al cargar una propiedad se achican en el equipo (hasta 1200 px, JPEG) y quedan en
 //   memoria mientras la demo está abierta: no se suben a ningún lado ni se guardan (como la firma de Taller).
 // ============================================
-import { TOPES } from "./datos.js?v=87b82baae1";
+import { TOPES } from "./datos.js?v=db4997b1a3";
 
 const CARPETA = "img/fotos/";
 const CUANTAS = { p1: 3, p2: 3, p3: 3, p4: 2, p5: 3, p6: 2, p7: 2, p8: 3, p9: 3, p10: 3, p11: 2, p12: 2 };
@@ -39,10 +39,44 @@ export function revisarArchivoFoto(archivo) {
     return null;
 }
 
+const creadas = new Set();
+
+export function liberarUrl(url) {
+    URL.revokeObjectURL(url);
+    creadas.delete(url);
+}
+
+export function liberarFotos() {
+    enMemoria.clear();
+    [...creadas].forEach(liberarUrl);
+}
+
+export const pixelesPermitidos = (ancho, alto, tope = TOPES.fotoPixeles) => ancho > 0 && alto > 0 && ancho * alto <= tope;
+
+function medirFoto(archivo) {
+    return new Promise((listo, fallo) => {
+        const url = URL.createObjectURL(archivo);
+        const imagen = new Image();
+        imagen.onload = () => {
+            URL.revokeObjectURL(url);
+            listo({ ancho: imagen.naturalWidth, alto: imagen.naturalHeight });
+        };
+        imagen.onerror = () => {
+            URL.revokeObjectURL(url);
+            fallo(new Error("No se pudo leer la foto. Probá con otra (JPG o PNG)."));
+        };
+        imagen.src = url;
+    });
+}
+
 /** Achica la foto en el equipo (sin subirla) y devuelve su dirección local. */
-export async function achicarFoto(archivo) {
+export async function achicarFoto(archivo, tope = TOPES.fotoPixeles) {
     const error = revisarArchivoFoto(archivo);
     if (error) throw new Error(error);
+    const { ancho, alto } = await medirFoto(archivo);
+    if (!pixelesPermitidos(ancho, alto, tope)) {
+        throw new Error(`La foto es muy grande (${ancho} × ${alto}): máximo ${Math.round(tope / 1_000_000)} megapíxeles.`);
+    }
     let imagen;
     try {
         imagen = await createImageBitmap(archivo);
@@ -56,11 +90,18 @@ export async function achicarFoto(archivo) {
     lienzo.getContext("2d").drawImage(imagen, 0, 0, lienzo.width, lienzo.height);
     imagen.close?.();
     const blob = await new Promise((listo) => lienzo.toBlob(listo, "image/jpeg", 0.82));
+    lienzo.width = 0;
+    lienzo.height = 0;
     if (!blob) throw new Error("No se pudo achicar la foto.");
-    return URL.createObjectURL(blob);
+    const url = URL.createObjectURL(blob);
+    creadas.add(url);
+    return url;
 }
 
 /** Deja las fotos del celu de una propiedad recién cargada (hasta el tope). */
 export function guardarFotosEnMemoria(propiedadId, urls) {
-    enMemoria.set(propiedadId, urls.slice(0, TOPES.fotos));
+    const quedan = urls.slice(0, TOPES.fotos);
+    (enMemoria.get(propiedadId) ?? []).forEach(liberarUrl);
+    urls.slice(TOPES.fotos).forEach(liberarUrl);
+    enMemoria.set(propiedadId, quedan);
 }

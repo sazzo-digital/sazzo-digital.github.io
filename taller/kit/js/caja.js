@@ -1,7 +1,8 @@
-import { esc, aviso, sinMovimiento } from "./ui.js?v=bbb3249556";
-import { puedeEscanear, escanearSeguido } from "./escaner.js?v=bbb3249556";
-import { pip, vibrar, htmlBotonSonido, activarBotonSonido, htmlCopiable, activarCopiables } from "./celular.js?v=bbb3249556";
-import { DIVIDIDO, revisarPagos } from "./pagos.js?v=bbb3249556";
+import { esc, aviso, sinMovimiento } from "./ui.js?v=3fa38b78e9";
+import { puedeEscanear, escanearSeguido } from "./escaner.js?v=3fa38b78e9";
+import { pip, vibrar, htmlBotonSonido, activarBotonSonido, htmlCopiable, activarCopiables } from "./celular.js?v=3fa38b78e9";
+import { DIVIDIDO, revisarPagos } from "./pagos.js?v=3fa38b78e9";
+import { LEYENDA_IMPRESION } from "./leyendas.js?v=3fa38b78e9";
 
 export const TOPE_RENGLONES = 30;
 export const TOPE_CANTIDAD = 99;
@@ -66,10 +67,10 @@ export function abrirCaja({
     capa.setAttribute("aria-label", `Caja · ${titulo}`);
     capa.innerHTML = `
         <header class="caja-super__cabeza">
-            ${dentro ? "" : `<button class="boton-icono" type="button" data-cerrar aria-label="Cerrar la caja"><i class="ti ti-x"></i></button>`}
+            ${dentro ? "" : `<button class="boton-icono" type="button" data-cerrar aria-label="Cerrar la caja"><i class="ti ti-x" aria-hidden="true"></i></button>`}
             <b class="caja-super__titulo">Caja · ${esc(titulo)}</b>
             ${htmlBotonSonido(prefijo)}
-            ${escaneo && puedeEscanear() ? `<button class="boton boton--chico" type="button" data-escanear><i class="ti ti-scan"></i> Escanear</button>` : ""}
+            ${escaneo && puedeEscanear() ? `<button class="boton boton--chico" type="button" data-escanear><i class="ti ti-scan" aria-hidden="true"></i> Escanear</button>` : ""}
         </header>
         <div class="caja-super__cuerpo">
             <div class="pantalla-caja">
@@ -79,7 +80,7 @@ export function abrirCaja({
             </div>
             <section class="caja-super__lado" aria-label="Productos">
                 <div class="visor" hidden>
-                    <video playsinline muted></video>
+                    <video playsinline muted aria-label="Imagen de la cámara"></video>
                     <span class="visor__esquinas" aria-hidden="true"></span>
                     <span class="visor__linea" aria-hidden="true"></span>
                     <span class="visor__estado">Buscando QR…</span>
@@ -92,7 +93,7 @@ export function abrirCaja({
                     <button class="gondola__flecha" type="button" data-seccion-paso="1" aria-label="Sección siguiente"><i class="ti ti-arrow-right" aria-hidden="true"></i></button>
                 </div>` : ""}
                 <div class="gondola"></div>
-                ${imagenQR ? `<button class="boton-link caja-super__qr" type="button" data-ver-qr><i class="ti ti-qrcode"></i> Ver los QR para escanear (o imprimirlos)</button>` : ""}
+                ${imagenQR ? `<button class="boton-link caja-super__qr" type="button" data-ver-qr><i class="ti ti-qrcode" aria-hidden="true"></i> Ver los QR para escanear (o imprimirlos)</button>` : ""}
             </section>
             <section class="caja-super__ticket" aria-label="Ticket">
                 <ul class="caja-super__renglones"></ul>
@@ -161,11 +162,11 @@ export function abrirCaja({
                 <span class="caja-super__nombre">${esc(r.nombre)}${r.medida ? ` <small>${esc(r.medida)}</small>` : ""}${r.mayor ? ` <span class="pastilla pastilla--bien">por mayor ${esc(pesosCaja(r.precio))} c/u</span>` : ""}${r.quedan !== null && r.quedan <= STOCK_BAJO ? ` <span class="pastilla pastilla--ojo">${r.quedan ? `quedan ${esc(r.quedan)}` : "no quedan más"}</span>` : ""}</span>
                 <b class="caja-super__importe">${esc(pesosCaja(r.subtotal))}</b>
                 <span class="caja-super__botones">
-                    <button class="boton-icono" type="button" data-menos="${esc(r.id)}" aria-label="Uno menos de ${esc(r.nombre)}"><i class="ti ti-minus"></i></button>
-                    <button class="boton-icono" type="button" data-mas="${esc(r.id)}" aria-label="Uno más de ${esc(r.nombre)}"><i class="ti ti-plus"></i></button>
-                    <button class="boton-icono caja-super__sacar" type="button" data-sacar="${esc(r.id)}" aria-label="Sacar ${esc(r.nombre)} del ticket"><i class="ti ti-trash"></i></button>
+                    <button class="boton-icono" type="button" data-menos="${esc(r.id)}" aria-label="Uno menos de ${esc(r.nombre)}"><i class="ti ti-minus" aria-hidden="true"></i></button>
+                    <button class="boton-icono" type="button" data-mas="${esc(r.id)}" aria-label="Uno más de ${esc(r.nombre)}"><i class="ti ti-plus" aria-hidden="true"></i></button>
+                    <button class="boton-icono caja-super__sacar" type="button" data-sacar="${esc(r.id)}" aria-label="Sacar ${esc(r.nombre)} del ticket"><i class="ti ti-trash" aria-hidden="true"></i></button>
                 </span>
-            </li>`).join("") + `<li class="caja-super__vaciar"><button class="boton-link" type="button" data-vaciar><i class="ti ti-trash"></i> Vaciar el ticket</button></li>`
+            </li>`).join("") + `<li class="caja-super__vaciar"><button class="boton-link" type="button" data-vaciar><i class="ti ti-trash" aria-hidden="true"></i> Vaciar el ticket</button></li>`
             : `<li class="caja-super__vacio"><i class="ti ti-shopping-cart" aria-hidden="true"></i> Escaneá o tocá un producto para empezar.</li>`;
         capa.querySelector("[data-total]").textContent = pesosCaja(total);
         if (!renglones.length) capa.querySelector("[data-ultimo]").textContent = "Esperando el primer producto";
@@ -266,13 +267,13 @@ export function abrirCaja({
         pararCamara?.();
         pararCamara = null;
         visor.hidden = true;
-        if (botonEscanear) botonEscanear.innerHTML = `<i class="ti ti-scan"></i> Escanear`;
+        if (botonEscanear) botonEscanear.innerHTML = `<i class="ti ti-scan" aria-hidden="true"></i> Escanear`;
     };
 
     botonEscanear?.addEventListener("click", () => {
         if (pararCamara) return apagarCamara();
         visor.hidden = false;
-        botonEscanear.innerHTML = `<i class="ti ti-camera-off"></i> Apagar`;
+        botonEscanear.innerHTML = `<i class="ti ti-camera-off" aria-hidden="true"></i> Apagar`;
         pararCamara = escanearSeguido(visor.querySelector("video"), leer, {
             alFallar: (e) => {
                 apagarCamara();
@@ -324,7 +325,7 @@ export function abrirCaja({
                     <p class="hoja-cobro__vuelto" data-cliente-aviso></p>
                 </div>` : ""}
                 ${paraDividir.length > 1 ? `
-                <button class="boton-link hoja-cobro__dividir-boton" type="button" data-dividir aria-pressed="false"><i class="ti ti-arrows-split"></i> Dividir el pago (por ejemplo, mitad y mitad)</button>
+                <button class="boton-link hoja-cobro__dividir-boton" type="button" data-dividir aria-pressed="false"><i class="ti ti-arrows-split" aria-hidden="true"></i> Dividir el pago (por ejemplo, mitad y mitad)</button>
                 <div class="hoja-cobro__dividir" hidden>
                     ${[0, 1].map((i) => `
                     <div class="hoja-cobro__parte">
@@ -333,7 +334,7 @@ export function abrirCaja({
                     </div>`).join("")}
                     <p class="hoja-cobro__vuelto" data-dividir-aviso></p>
                 </div>` : ""}
-                <button class="boton boton--grande boton--ancho" type="button" data-confirmar><i class="ti ti-check"></i> Confirmar</button>
+                <button class="boton boton--grande boton--ancho" type="button" data-confirmar><i class="ti ti-check" aria-hidden="true"></i> Confirmar</button>
                 <button class="boton-link" type="button" data-volver>Volver al ticket</button>
             </div>`;
         lugarHojas.append(hoja);
@@ -422,7 +423,7 @@ export function abrirCaja({
                         <p>${esc(pesosCaja(total))} · ${esc(pagos ? pagos.map((x) => `${medios.find((m) => m.id === x.medio)?.texto ?? x.medio} ${pesosCaja(x.monto)}`).join(" + ") : medios.find((m) => m.id === medio)?.texto ?? "")}${hecho?.cliente?.nombre ? ` · ${esc(hecho.cliente.nombre)}` : ""}</p>
                         ${vuelto !== null && vuelto !== undefined ? `<p class="hoja-cobro__vuelto-grande">Vuelto <b>${esc(pesosCaja(vuelto))}</b></p>` : ""}
                     </div>
-                    <button class="boton boton--grande boton--ancho" type="button" data-siguiente><i class="ti ti-arrow-right"></i> Siguiente cliente</button>`;
+                    <button class="boton boton--grande boton--ancho" type="button" data-siguiente><i class="ti ti-arrow-right" aria-hidden="true"></i> Siguiente cliente</button>`;
                 despues?.(hecho, hoja.querySelector(".hoja-cobro__lista"));
                 hoja.querySelector("[data-siguiente]").addEventListener("click", () => hoja.remove());
                 hoja.querySelector("[data-siguiente]").focus();
@@ -445,19 +446,21 @@ export function abrirCaja({
             hoja.innerHTML = i < 0 ? `
                 <div class="hoja-qr__barra">
                     <b>QR de los productos</b>
-                    <button class="boton boton--chico boton--secundario" type="button" data-imprimir><i class="ti ti-printer"></i> Imprimir</button>
-                    <button class="boton-icono" type="button" data-cerrar-qr aria-label="Cerrar"><i class="ti ti-x"></i></button>
+                    <button class="boton boton--chico boton--secundario" type="button" data-imprimir><i class="ti ti-printer" aria-hidden="true"></i> Imprimir</button>
+                    <button class="boton-icono" type="button" data-cerrar-qr aria-label="Cerrar"><i class="ti ti-x" aria-hidden="true"></i></button>
                 </div>
+                <p class="hoja-qr__leyenda">${esc(LEYENDA_IMPRESION)}</p>
                 <p class="nota">Abrí esta pantalla en otro celu o imprimila, y escaneá desde la caja. Tocá uno para verlo grande.</p>
                 <ul class="hoja-qr__grilla">${lista.map((p, n) => `
-                    <li><button type="button" data-uno="${n}"><img src="${esc(imagenQR(p))}" alt="" width="120" height="120" loading="lazy"><span>${esc(p.nombre)}</span></button></li>`).join("")}</ul>`
+                    <li><button type="button" data-uno="${n}"><img src="${esc(imagenQR(p))}" alt="" width="120" height="120"><span>${esc(p.nombre)}</span></button></li>`).join("")}</ul>`
                 : `
                 <div class="hoja-qr__uno">
                     <img src="${esc(imagenQR(lista[i]))}" alt="QR de ${esc(lista[i].nombre)}" width="280" height="280">
                     <b>${esc(lista[i].nombre)}</b>
+                    <p class="hoja-qr__leyenda">${esc(LEYENDA_IMPRESION)}</p>
                     <div class="acciones">
-                        <button class="boton boton--secundario" type="button" data-todos><i class="ti ti-layout-grid"></i> Todos</button>
-                        <button class="boton" type="button" data-siguiente-qr>Siguiente <i class="ti ti-arrow-right"></i></button>
+                        <button class="boton boton--secundario" type="button" data-todos><i class="ti ti-layout-grid" aria-hidden="true"></i> Todos</button>
+                        <button class="boton" type="button" data-siguiente-qr>Siguiente <i class="ti ti-arrow-right" aria-hidden="true"></i></button>
                     </div>
                 </div>`;
             hoja.querySelector("[data-imprimir]")?.addEventListener("click", () => print());
@@ -560,7 +563,7 @@ export const MAS_DE_LA_CAJA = [
     "Apertura con el cambio inicial y cierre con arqueo: lo que tiene que haber contra lo contado, por cada medio de pago",
     "Retiros y gastos anotados (pago a un proveedor, un delivery, el cambio que se lleva el dueño)",
     "Varias cajas o puestos a la vez, con su usuario cada uno",
-    "Factura electrónica de cada venta, conectada a ARCA",
+    "Factura electrónica de cada venta (la conexión con ARCA se evalúa con tu contador)",
     "Impresora de tickets y cajón de dinero que se abre solo",
     "Reportes del día, la semana y el mes, para pasar a Excel"
 ];

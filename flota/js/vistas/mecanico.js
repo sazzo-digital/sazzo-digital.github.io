@@ -2,9 +2,10 @@
 // Pantallas del mecánico (Diego): los problemas abiertos (los que tienen que parar y los nuevos primero),
 // "Me hago cargo" y "Listo, arreglado" con los repuestos que usó (se descuentan solos).
 // ============================================
-import { esc, vacio, aviso } from "../../kit/js/ui.js?v=2acd6c7b7a";
-import { TOPES, cantidadCon } from "../datos.js?v=2acd6c7b7a";
-import { haceCuanto, pastillaVehiculo, pastillaUrgencia, pastillaProblema, guia, activarGuias, textoRepuestos, consignaPersona, activarPasos } from "./comunes.js?v=2acd6c7b7a";
+import { esc, vacio, aviso } from "../../kit/js/ui.js?v=402cfc1923";
+import { AVISO_CAMPO } from "../../kit/js/leyendas.js?v=402cfc1923";
+import { TOPES, cantidadCon } from "../datos.js?v=402cfc1923";
+import { haceCuanto, pastillaVehiculo, pastillaUrgencia, pastillaProblema, guia, activarGuias, textoRepuestos, consignaPersona, activarPasos } from "./comunes.js?v=402cfc1923";
 
 export function vistaInicioMecanico(cont, { usuario, datos, irA }) {
     const abiertos = datos.problemasAbiertos();
@@ -79,6 +80,7 @@ export function vistaArreglar(cont, { usuario, datos, irA, params: [id] }) {
             <label>Nota (si querés)
                 <textarea name="nota" rows="2" maxlength="${TOPES.nota}" placeholder="Ej: pastillas delanteras nuevas"></textarea>
             </label>
+            <p class="nota"><i class="ti ti-info-circle"></i><span>${esc(AVISO_CAMPO)}</span></p>
             <button class="boton boton--ancho boton--grande" type="submit"><i class="ti ti-circle-check"></i> Listo, arreglado</button>
         </form>`;
 

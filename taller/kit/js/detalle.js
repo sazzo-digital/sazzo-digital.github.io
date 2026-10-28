@@ -1,8 +1,8 @@
-import { esc } from "./ui.js?v=bbb3249556";
-import { nombreDemo } from "./marca.js?v=bbb3249556";
-import { contar } from "./visita.js?v=bbb3249556";
-import { abrirColores } from "./colores.js?v=bbb3249556";
-import { htmlBotonInstalar } from "./instalar.js?v=bbb3249556";
+import { esc } from "./ui.js?v=3fa38b78e9";
+import { nombreDemo } from "./marca.js?v=3fa38b78e9";
+import { contar } from "./visita.js?v=3fa38b78e9";
+import { abrirColores } from "./colores.js?v=3fa38b78e9";
+import { htmlBotonInstalar } from "./instalar.js?v=3fa38b78e9";
 
 export const TOPE_DETALLE = { hace: 5, extra: 6, tambien: 8, letras: 120, titulo: 50 };
 
@@ -43,7 +43,7 @@ export function htmlDetalle(detalle) {
     if (!d) return "";
     return [
         bloque("Lo que también podés probar", "ti-check", d.hace),
-        d.extra ? bloque(d.extra.titulo, "ti-star", d.extra.renglones) : "",
+        d.extra ? bloque(d.extra.titulo, "ti-check", d.extra.renglones) : "",
         bloque("La versión real también puede tener", "ti-plus", d.tambien)
     ].join("");
 }
@@ -60,7 +60,7 @@ export function abrirDetalle(marca, detalle) {
         <form method="dialog" class="hoja__caja">
             <div class="hoja__titulos detalle__titulos">
                 <h2 id="detalle-titulo">${nombreDemo(marca)}<span class="detalle__en">en detalle</span></h2>
-                <button class="boton-icono" value="cerrar" aria-label="Cerrar"><i class="ti ti-x"></i></button>
+                <button class="boton-icono" value="cerrar" aria-label="Cerrar"><i class="ti ti-x" aria-hidden="true"></i></button>
             </div>
             ${htmlDetalle(detalle)}
             <button class="boton boton--secundario boton--ancho" type="button" data-colores-detalle><i class="ti ti-palette" aria-hidden="true"></i> Probala con tus colores</button>

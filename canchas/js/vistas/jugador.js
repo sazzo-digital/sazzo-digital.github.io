@@ -1,16 +1,17 @@
-import { consignaPersona, pintarConsigna } from "./comunes.js?v=8a5fe1d629";
+import { consignaPersona, pintarConsigna } from "./comunes.js?v=44e4746e73";
 // ============================================
 // Pantallas del jugador (Fede), pensadas para el celular: "Reservá tu cancha" (día, tipo, hora libre, cancha,
 // nombre del grupo y seña simulada) y "Mis turnos" (con Cancelar y la regla de la seña a la vista).
 // Lo ocupado se ve, pero no se puede tocar: nunca se pisan.
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=8a5fe1d629";
-import { TIPOS, TOPES, CANCELAR_HORAS, pesos, nombreFecha } from "../datos.js?v=8a5fe1d629";
-import { NEGOCIO } from "../marca.js?v=8a5fe1d629";
-import { guia, activarGuias, pastillaSena, pastillaEstado, chipsDias } from "./comunes.js?v=8a5fe1d629";
-import { aHora, minutoAhora } from "../../kit/js/turnos.js?v=8a5fe1d629";
-import { htmlCopiable, activarCopiables } from "../../kit/js/celular.js?v=8a5fe1d629";
-import { htmlCuenta, pedirCantina } from "./cuenta.js?v=8a5fe1d629";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=44e4746e73";
+import { AVISO_CAMPO } from "../../kit/js/leyendas.js?v=44e4746e73";
+import { TIPOS, TOPES, CANCELAR_HORAS, pesos, nombreFecha } from "../datos.js?v=44e4746e73";
+import { NEGOCIO } from "../marca.js?v=44e4746e73";
+import { guia, activarGuias, pastillaSena, pastillaEstado, chipsDias } from "./comunes.js?v=44e4746e73";
+import { aHora, minutoAhora } from "../../kit/js/turnos.js?v=44e4746e73";
+import { htmlCopiable, activarCopiables } from "../../kit/js/celular.js?v=44e4746e73";
+import { htmlCuenta, pedirCantina } from "./cuenta.js?v=44e4746e73";
 
 // Lo elegido queda mientras se navega
 let fecha = null;
@@ -69,6 +70,7 @@ export function vistaReservar(cont, { usuario, datos, irA }) {
                 <label>Nombre del grupo
                     <input name="grupo" maxlength="${TOPES.grupo}" placeholder="Ej: Los del martes" autocomplete="off">
                 </label>
+                <p class="nota"><i class="ti ti-info-circle"></i> ${esc(AVISO_CAMPO)}</p>
                 <p class="nota"><i class="ti ti-info-circle"></i> Turno ${esc(pesos(t.precio))}. Seña ${esc(pesos(t.sena))}: si cancelás con más de ${CANCELAR_HORAS} h, se devuelve.</p>
                 <p class="alias">La seña va al alias ${htmlCopiable("el.potrero.canchas", "Copiar el alias")}</p>
                 <button class="boton boton--ancho boton--grande" type="submit"><i class="ti ti-credit-card"></i> Pagar seña ${esc(pesos(t.sena))} (simulado)</button>
@@ -111,8 +113,8 @@ export function vistaReservar(cont, { usuario, datos, irA }) {
         </div>
         ${consignaPersona(datos, usuario)}
         ${chipsDias(dias, fecha)}
-        <div class="chips tipos" role="tablist" aria-label="Tipo de cancha">
-            ${Object.entries(TIPOS).map(([id, t]) => `<button class="chip" type="button" role="tab" data-tipo="${id}">${esc(t.texto)}</button>`).join("")}
+        <div class="chips tipos" role="group" aria-label="Tipo de cancha">
+            ${Object.entries(TIPOS).map(([id, t]) => `<button class="chip" type="button" data-tipo="${id}">${esc(t.texto)}</button>`).join("")}
         </div>
         <div class="horas"></div>
         <div class="confirmar"></div>`;

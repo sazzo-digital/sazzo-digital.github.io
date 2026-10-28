@@ -1,14 +1,14 @@
-import { pintarConsigna } from "./comunes.js?v=71afbca5b0";
+import { pintarConsigna } from "./comunes.js?v=c1eb54ed24";
 // ============================================
 // Pantallas de la dueña (Carolina): los pedidos (el día arriba; los nuevos resaltados; preparado → avisar →
 // entregado), el stock (frascos y botellas madre en ml, lo que hay que pedir primero) y las clientas (lo que compra
 // cada una y "Cumplen este mes" con el saludo para copiar).
 // ============================================
-import { esc, aviso, vacio, fechaCorta, fechaHora } from "../../kit/js/ui.js?v=71afbca5b0";
-import { htmlEstante, activarEstantes } from "../../kit/js/estante.js?v=71afbca5b0";
-import { TOPES, MADRE_POCO_ML, MEDIOS, FAMILIAS, pesos } from "../datos.js?v=71afbca5b0";
-import { frasco, pastillaPedido, mostrarMensaje } from "./comunes.js?v=71afbca5b0";
-import { MARCA } from "../marca.js?v=71afbca5b0";
+import { esc, aviso, vacio, fechaCorta, fechaHora } from "../../kit/js/ui.js?v=c1eb54ed24";
+import { htmlEstante, activarEstantes } from "../../kit/js/estante.js?v=c1eb54ed24";
+import { TOPES, MADRE_POCO_ML, MEDIOS, FAMILIAS, pesos } from "../datos.js?v=c1eb54ed24";
+import { frasco, pastillaPedido, mostrarMensaje } from "./comunes.js?v=c1eb54ed24";
+import { MARCA } from "../marca.js?v=c1eb54ed24";
 
 let cobrando = null;
 let medioCobro = "efectivo";
@@ -213,7 +213,7 @@ export function vistaClientas(cont, { usuario, datos }) {
     const lista = soloCumple ? cumplen : datos.clientas(usuario);
     cont.innerHTML = `
         <h1 class="titulo">Clientas</h1>
-        <div class="chips" role="tablist">
+        <div class="chips" role="group" aria-label="Clientas">
             <button class="chip${soloCumple ? "" : " activo"}" type="button" data-cumple="">Todas</button>
             <button class="chip chip--alerta${soloCumple ? " activo" : ""}" type="button" data-cumple="1"><i class="ti ti-cake"></i> Cumplen en ${esc(mes)} <b>${cumplen.length}</b></button>
         </div>

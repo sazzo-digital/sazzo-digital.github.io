@@ -5,8 +5,8 @@
 //   mostrarMensaje("Avisar que está listo", "Hola Silvia! Tu auto ya está listo…");
 // Todo pasa por esc(). Si el navegador no deja usar el portapapeles, deja el texto seleccionado para copiarlo a mano.
 // ============================================
-import { esc, aviso } from "./ui.js?v=87b82baae1";
-import { puedeCompartir, compartir } from "./celular.js?v=87b82baae1";
+import { esc, aviso } from "./ui.js?v=db4997b1a3";
+import { puedeCompartir, compartir } from "./celular.js?v=db4997b1a3";
 
 export const NOTA_MENSAJE = "En la versión real, este botón abre WhatsApp con el mensaje escrito. En la demo, lo copiás.";
 export const NOTA_MENSAJE_COMPARTIR = "En la versión real, el mensaje le llega al cliente por WhatsApp. En la demo, lo compartís o lo copiás vos.";
@@ -22,18 +22,18 @@ export function mostrarMensaje(titulo, mensaje, { nota, alConfirmar, pregunta = 
     const ventana = document.createElement("dialog");
     ventana.className = "mensaje";
     ventana.innerHTML = `
-        <h2 class="subtitulo"><i class="ti ti-message-circle"></i> ${esc(titulo)}</h2>
+        <h2 class="subtitulo"><i class="ti ti-message-circle" aria-hidden="true"></i> ${esc(titulo)}</h2>
         <p class="mensaje__texto">${esc(texto)}</p>
-        ${nota ? `<p class="nota"><i class="ti ti-info-circle"></i> ${esc(nota)}</p>` : ""}
+        ${nota ? `<p class="nota"><i class="ti ti-info-circle" aria-hidden="true"></i> ${esc(nota)}</p>` : ""}
         <div class="mensaje__acciones">
-            ${conCompartir ? `<button class="boton" type="button" data-compartir><i class="ti ti-share"></i> Compartir</button>` : ""}
-            <button class="boton${conCompartir ? " boton--secundario" : ""}" type="button" data-copiar><i class="ti ti-copy"></i> Copiar mensaje</button>
+            ${conCompartir ? `<button class="boton" type="button" data-compartir><i class="ti ti-share" aria-hidden="true"></i> Compartir</button>` : ""}
+            <button class="boton${conCompartir ? " boton--secundario" : ""}" type="button" data-copiar><i class="ti ti-copy" aria-hidden="true"></i> Copiar mensaje</button>
             ${conConfirmar ? "" : `<button class="boton boton--secundario" type="button" data-cerrar>Cerrar</button>`}
         </div>
         ${conConfirmar ? `
         <div class="mensaje__confirmar">
             <p class="mensaje__pregunta">${esc(pregunta)}</p>
-            <button class="boton boton--ancho" type="button" data-si><i class="ti ti-check"></i> Sí, lo mandé</button>
+            <button class="boton boton--ancho" type="button" data-si><i class="ti ti-check" aria-hidden="true"></i> Sí, lo mandé</button>
             <button class="boton boton--secundario boton--ancho" type="button" data-no>No</button>
         </div>` : ""}`;
     document.body.append(ventana);

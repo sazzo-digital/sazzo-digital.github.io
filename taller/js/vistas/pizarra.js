@@ -3,11 +3,12 @@
 // una columna por estado; en el celu, uno abajo del otro con pastillas para filtrar. El mecánico ve solo sus autos.
 // "+ Entró un auto": se escribe la patente y, si ya vino, completa solo el auto, el cliente y la última vez.
 // ============================================
-import { esc, aviso } from "../../kit/js/ui.js?v=bbb3249556";
-import { fechaLocalISO } from "../../kit/js/fechas.js?v=bbb3249556";
-import { TOPES, NAFTA, MECANICOS, esPatente, formatoPatente } from "../datos.js?v=bbb3249556";
-import { NEGOCIO } from "../marca.js?v=bbb3249556";
-import { guia, activarGuias, chapa, pastillaEstado, textoPromesa, consignaPersona, activarPasos } from "./comunes.js?v=bbb3249556";
+import { esc, aviso } from "../../kit/js/ui.js?v=3fa38b78e9";
+import { fechaLocalISO } from "../../kit/js/fechas.js?v=3fa38b78e9";
+import { AVISO_CAMPO } from "../../kit/js/leyendas.js?v=3fa38b78e9";
+import { TOPES, NAFTA, MECANICOS, esPatente, formatoPatente } from "../datos.js?v=3fa38b78e9";
+import { NEGOCIO } from "../marca.js?v=3fa38b78e9";
+import { guia, activarGuias, chapa, pastillaEstado, textoPromesa, consignaPersona, activarPasos } from "./comunes.js?v=3fa38b78e9";
 
 let filtro = "todos";
 
@@ -36,7 +37,7 @@ export function vistaPizarra(cont, { usuario, datos }) {
             <span><b>${esc(p.contadores.esperando)}</b> esperando repuesto</span>
             ${dueno ? `<span class="${p.contadores.sinAvisar ? "tira__alerta" : ""}"><b>${esc(p.contadores.sinAvisar)}</b> ${p.contadores.sinAvisar === 1 ? "listo sin avisar" : "listos sin avisar"}</span>` : ""}
         </div>
-        <div class="chips" role="tablist" aria-label="Estado">
+        <div class="chips" role="group" aria-label="Estado">
             <button class="chip${filtro === "todos" ? " activo" : ""}" type="button" data-filtro="todos">Todos</button>
             ${p.grupos.map((g) => `<button class="chip${filtro === g.estado ? " activo" : ""}" type="button" data-filtro="${esc(g.estado)}">${esc(g.texto)} <b>${g.ordenes.length}</b></button>`).join("")}
         </div>
@@ -60,6 +61,7 @@ export function vistaEntro(cont, { usuario, datos, irA, consulta }) {
         <a class="volver" href="#/inicio"><i class="ti ti-arrow-left"></i> Taller</a>
         <h1 class="titulo">Entró un auto</h1>
         <form class="formulario bloque" novalidate>
+            <p class="nota"><i class="ti ti-info-circle" aria-hidden="true"></i> <span>${esc(AVISO_CAMPO)}</span></p>
             <label class="patente-campo">Patente
                 <input name="patente" maxlength="12" placeholder="AB 123 CD" autocomplete="off" autocapitalize="characters">
             </label>
@@ -67,7 +69,7 @@ export function vistaEntro(cont, { usuario, datos, irA, consulta }) {
             <div class="primera-vez" hidden>
                 <div class="formulario__fila">
                     <label>Auto (marca y modelo)<input name="modelo" maxlength="${TOPES.nombre}" placeholder="Ej: Fiat Uno"></label>
-                    <label>Cliente<input name="cliente" maxlength="${TOPES.nombre}" placeholder="Nombre y apellido"></label>
+                    <label>Cliente<input name="cliente" maxlength="${TOPES.nombre}" placeholder="Ej: Cliente de ejemplo"></label>
                 </div>
             </div>
             <label>¿Qué le pasa? (con las palabras del cliente)

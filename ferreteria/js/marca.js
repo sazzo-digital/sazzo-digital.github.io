@@ -3,8 +3,8 @@
 // Las personas son los roles reales del rubro (nombres inventados): el dueño, el empleado del mostrador y un cliente
 // con cuenta corriente que pide presupuestos desde el celular.
 // ============================================
-import { revisarMarca } from "../kit/js/marca.js?v=7879dd46ff";
-import { negocioDe } from "../kit/js/colores.js?v=7879dd46ff";
+import { revisarMarca } from "../kit/js/marca.js?v=50ee31fa6b";
+import { negocioDe } from "../kit/js/colores.js?v=50ee31fa6b";
 
 export const MARCA = revisarMarca({
     id: "ferreteria",
@@ -53,8 +53,8 @@ export const NEGOCIO = negocioDe(MARCA.prefijo, "Ferretería La Escuadra"); // n
 
 export const DETALLE = {
     hace: [
-        "Presupuesto en PDF que el cliente acepta desde su celu",
-        "Caja como la del súper con lector de códigos, y cobro con dos medios a la vez",
+        "Presupuesto en PDF (la demo muestra el archivo, no lo baja) que el cliente acepta desde su celu",
+        "Caja como la del súper con escáner de códigos por cámara, cobro con dos medios y vista previa del ticket",
         "Pedidos a proveedores con lo que hay que pedir",
         "La lista del proveedor desde Excel y precios con tu margen por rubro",
         "Recordatorio para las cuentas corrientes, y la caja con lo que más plata dejó"
@@ -62,14 +62,14 @@ export const DETALLE = {
     extra: {
         titulo: "Para probar ya",
         renglones: [
-            "Como Marcos, pedí como hablás y sumá la foto de lo que se rompió",
+            "Como Marcos, pedí como hablás y sumá una foto de ejemplo (en la demo es siempre la misma)",
             "Como Nahuel, entrás directo al pedido: elegís qué es lo de la foto y se lo mandás en 3 toques",
             "Cuando lo acepta, pasalo a venta: se descuenta del stock y va a su cuenta corriente"
         ]
     },
     tambien: [
         "Mandar el presupuesto por WhatsApp con un toque",
-        "Cobro con Mercado Pago o QR, y lector de códigos",
+        "Cobro con Mercado Pago o QR, y lector de códigos físico",
         "Presupuestos y tickets para imprimir",
         "Varias cajas, sucursales o depósito, con su usuario cada una"
     ]

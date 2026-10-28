@@ -4,10 +4,10 @@
 // - Con alguien adentro: la pantalla entera (vistaAcerca), desde el menú o la cabecera de la demo.
 // Nada de datos personales: firma Sazzo. El contacto ("Quiero esto para mi negocio") llega en el paso 2.
 // ============================================
-import { esc } from "./ui.js?v=d4aafb8120";
-import { logoSazzo, nombreDemo } from "./marca.js?v=d4aafb8120";
-import { LINK_CATALOGO } from "./config.js?v=d4aafb8120";
-import { htmlInterruptorPasos, activarInterruptorPasos } from "./consigna.js?v=d4aafb8120";
+import { esc } from "./ui.js?v=233619f5c3";
+import { logoSazzo, nombreDemo } from "./marca.js?v=233619f5c3";
+import { LINK_CATALOGO } from "./config.js?v=233619f5c3";
+import { htmlInterruptorPasos, activarInterruptorPasos } from "./consigna.js?v=233619f5c3";
 
 const AVISO_DEMO =
     "Es una demo: los datos son inventados y quedan guardados solo en este navegador. No te pedimos ningún dato. La versión real se arma a medida de cada negocio.";
@@ -36,7 +36,7 @@ export const pieAcerca = (marca) => `
 /** Pantalla Acerca de (con alguien adentro). volver: [ruta, texto] del link de arriba. */
 export function vistaAcerca(cont, { marca, volver = ["#/inicio", "Inicio"] }) {
     cont.innerHTML = `
-        <a class="volver" href="${esc(volver[0])}"><i class="ti ti-arrow-left"></i> ${esc(volver[1])}</a>
+        <a class="volver" href="${esc(volver[0])}"><i class="ti ti-arrow-left" aria-hidden="true"></i> ${esc(volver[1])}</a>
         <section class="bloque acerca-pagina">
             <div class="acerca-pagina__marca">
                 <a href="${esc(LINK_CATALOGO)}" aria-label="Ir a Sazzo" title="Ir a Sazzo">${logoSazzo("logo logo--grande")}</a>

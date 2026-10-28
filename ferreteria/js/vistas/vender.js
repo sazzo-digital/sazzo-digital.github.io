@@ -1,10 +1,11 @@
-import { pintarConsigna } from "./comunes.js?v=7879dd46ff";
-import { esc, aviso, fechaHora } from "../../kit/js/ui.js?v=7879dd46ff";
-import { TOPES, MEDIOS, RUBROS, UNIDADES, pesos, cantidadTexto, precioPara } from "../datos.js?v=7879dd46ff";
-import { textoMedio, mediosParaCaja } from "../../kit/js/pagos.js?v=7879dd46ff";
-import { NEGOCIO, MARCA } from "../marca.js?v=7879dd46ff";
-import { EVENTO_REINICIO } from "../../kit/js/guardado.js?v=7879dd46ff";
-import { abrirCaja, htmlMasDeLaCaja } from "../../kit/js/caja.js?v=7879dd46ff";
+import { pintarConsigna } from "./comunes.js?v=50ee31fa6b";
+import { esc, aviso, fechaHora } from "../../kit/js/ui.js?v=50ee31fa6b";
+import { TOPES, MEDIOS, RUBROS, UNIDADES, pesos, cantidadTexto, precioPara } from "../datos.js?v=50ee31fa6b";
+import { textoMedio, mediosParaCaja } from "../../kit/js/pagos.js?v=50ee31fa6b";
+import { NEGOCIO, MARCA } from "../marca.js?v=50ee31fa6b";
+import { EVENTO_REINICIO } from "../../kit/js/guardado.js?v=50ee31fa6b";
+import { abrirCaja, htmlMasDeLaCaja } from "../../kit/js/caja.js?v=50ee31fa6b";
+import { LEYENDA_PIE } from "../../kit/js/leyendas.js?v=50ee31fa6b";
 
 export const ticket = new Map();
 addEventListener(EVENTO_REINICIO, () => ticket.clear());
@@ -122,9 +123,10 @@ function pintarVender(cont, { usuario, datos }) {
     }
 }
 
-function htmlTicketPrevia(v) {
+export function htmlTicketPrevia(v) {
     return `
-        <div class="ticket-papel" role="img" aria-label="Vista previa del ticket">
+        <section class="ticket-papel" aria-label="Ticket de prueba">
+            <h3 class="solo-lector">Ticket de prueba</h3>
             <b class="ticket-papel__negocio">${esc(NEGOCIO)}</b>
             <span>${esc(fechaHora(v.fecha))} · atendió ${esc(v.por)}</span>
             <hr>
@@ -134,8 +136,8 @@ function htmlTicketPrevia(v) {
             <span class="ticket-papel__renglon ticket-papel__total"><span>TOTAL</span><b>${esc(pesos(v.total))}</b></span>
             <span>${esc(textoMedio(v, MEDIOS))}${v.vuelto !== null ? ` · vuelto ${esc(pesos(v.vuelto))}` : ""}</span>
             <hr>
-            <small>Demo de Sazzo · no válido como factura</small>
-        </div>`;
+            <small>${esc(LEYENDA_PIE)}</small>
+        </section>`;
 }
 
 export function vistaVender(cont, opciones, ...args) {

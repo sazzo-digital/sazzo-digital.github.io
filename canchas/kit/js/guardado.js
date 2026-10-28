@@ -21,11 +21,93 @@
 //   minutos"). Mientras la usa (cada cambio que guarda), no se renuevan. Se avisa con un cartelito.
 // ============================================
 
-import { aviso, esc } from "./ui.js?v=8a5fe1d629";
-import { olvidarAvisos } from "./avisos.js?v=8a5fe1d629";
+import { aviso, esc } from "./ui.js?v=44e4746e73";
+import { olvidarAvisos } from "./avisos.js?v=44e4746e73";
 
 /** Nombres compartidos entre el catálogo y todas las demos (no pueden ser el prefijo de una demo). */
-export const COMPARTIDAS = ["sazzo-origen", "sazzo-equipo", "sazzo-tema", "sazzo-yo"];
+export const COMPARTIDAS = [
+    "sazzo-origen",
+    "sazzo-equipo",
+    "sazzo-tema",
+    "sazzo-yo",
+    "sazzo-interes",
+    "sazzo-aviso-navegador",
+    "sazzo-dictado-avisado",
+    "sazzo-chat-visitante",
+    "sazzo-chat-libre",
+    "sazzo-chat-plegado",
+    "sazzo-chat-persona",
+    "sazzo-chat-telefono",
+    "sazzo-chat-tema",
+    "sazzo-chat-panel",
+    "sazzo-chat-invita",
+    "sazzo-cuota",
+    "sazzo-cuota-vuelta",
+    "sazzo-panel-clave",
+    "sazzo-panel-vistos",
+    "sazzo-panel-sonido"
+];
+
+export const esCompartida = (prefijo) => COMPARTIDAS.some((c) => c === prefijo || c.startsWith(`${prefijo}-`));
+
+const esObjeto = (v) => v !== null && typeof v === "object" && !Array.isArray(v);
+const COMPROBAR = {
+    texto: (v) => typeof v === "string",
+    numero: (v) => Number.isFinite(v),
+    booleano: (v) => typeof v === "boolean"
+};
+
+function campoValido(valor, regla) {
+    if (typeof regla === "string" && regla.endsWith("?")) {
+        if (valor == null) return true;
+        regla = regla.slice(0, -1);
+    }
+    if (Array.isArray(regla)) return regla.includes(valor);
+    const comprobar = COMPROBAR[regla];
+    return comprobar ? comprobar(valor) : true;
+}
+
+export function revisarForma(datos, forma = {}) {
+    if (!esObjeto(datos)) return { ok: false, arreglos: 0 };
+    let arreglos = 0;
+    for (const nombre of forma.objetos ?? []) {
+        if (!esObjeto(datos[nombre])) return { ok: false, arreglos };
+    }
+    for (const [nombre, campos] of Object.entries(forma.listas ?? {})) {
+        if (!Array.isArray(datos[nombre])) {
+            datos[nombre] = [];
+            arreglos++;
+            continue;
+        }
+        if (campos === null) continue;
+        const lista = datos[nombre];
+        const buenos = lista.filter((r) => esObjeto(r) && Object.entries(campos ?? {}).every(([campo, regla]) => campoValido(r[campo], regla)));
+        const descartados = lista.length - buenos.length;
+        if (descartados * 2 > lista.length) return { ok: false, arreglos };
+        if (descartados) {
+            datos[nombre] = buenos;
+            arreglos += descartados;
+        }
+    }
+    return { ok: true, arreglos };
+}
+
+export function formaDeLaMuestra(muestra) {
+    const forma = { listas: {} };
+    for (const [nombre, valor] of Object.entries(muestra ?? {})) {
+        if (Array.isArray(valor)) forma.listas[nombre] = esObjeto(valor[0]) ? {} : null;
+    }
+    return forma;
+}
+
+export const EVENTO_CONFLICTO = "sazzo-conflicto";
+export const MENSAJE_DANADO = "Los datos guardados estaban dañados: se armaron de nuevo.";
+export const MENSAJE_REPARADO = "Había datos dañados: se arreglaron.";
+export const SUFIJO_COPIA = " Quedó una copia de lo anterior.";
+export const MENSAJE_CONFLICTO = "Otra pestaña cambió los datos al mismo tiempo. Mirá que esté todo y repetí lo que falte.";
+export const TOPE_COPIA = 1024 * 1024;
+
+const nuevaRevision = () => `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 8)}`;
 
 /** El día de hoy en este equipo ("2026-10-09"): el día para el que se armaron los datos de ejemplo. */
 export function hoyLocal(fecha = new Date()) {
@@ -66,9 +148,11 @@ export function leerSesionGuardada(prefijo) {
 }
 
 export function olvidarDemo(prefijo) {
-    if (!/^sazzo-[a-z0-9]+(-[a-z0-9]+)*$/.test(prefijo ?? "") || COMPARTIDAS.includes(prefijo)) return 0;
+    if (!/^sazzo-[a-z0-9]+(-[a-z0-9]+)*$/.test(prefijo ?? "") || esCompartida(prefijo)) return 0;
     try {
-        const claves = Object.keys(localStorage).filter((k) => k.startsWith(`${prefijo}-`));
+        const todas = Object.keys(localStorage);
+        const hermanas = todas.filter((k) => k.endsWith("-datos") && k.startsWith(`${prefijo}-`)).map((k) => k.slice(0, -6)).filter((h) => h !== prefijo);
+        const claves = todas.filter((k) => k.startsWith(`${prefijo}-`) && !hermanas.some((h) => k.startsWith(`${h}-`)));
         claves.forEach((k) => localStorage.removeItem(k));
         return claves.length;
     } catch {
@@ -76,16 +160,68 @@ export function olvidarDemo(prefijo) {
     }
 }
 
-export function crearGuardado({ prefijo, version, semilla, turnoAbierto, preguntaAlVolver } = {}) {
+export function crearGuardado({ prefijo, version, semilla, turnoAbierto, preguntaAlVolver, forma, revisarDatos, formaDeLaSemilla } = {}) {
     if (!/^sazzo-[a-z0-9]+(-[a-z0-9]+)*$/.test(prefijo ?? "")) {
         throw new Error(`El prefijo de la demo tiene que ser "sazzo-" y su nombre en minúsculas (ej: "sazzo-kiosco"). Llegó: ${JSON.stringify(prefijo)}.`);
     }
-    if (COMPARTIDAS.includes(prefijo)) throw new Error(`"${prefijo}" es un nombre compartido entre todas las demos: elegí otro prefijo.`);
+    if (esCompartida(prefijo)) throw new Error(`"${prefijo}" es un nombre compartido entre todas las demos: elegí otro prefijo.`);
     if (!Number.isInteger(version) || version < 1) throw new Error("La versión de los datos tiene que ser un número entero desde 1.");
     if (typeof semilla !== "function") throw new Error("Falta la función que crea los datos de prueba (semilla).");
 
-    const claves = { datos: `${prefijo}-datos`, sesion: claveSesion(prefijo) };
+    const claves = { datos: `${prefijo}-datos`, sesion: claveSesion(prefijo), revision: `${prefijo}-revision`, copia: `${prefijo}-copia-danada` };
     let cache = null;
+    let revisionPropia = null;
+
+    function leerRevision() {
+        try {
+            return localStorage.getItem(claves.revision);
+        } catch {
+            return null;
+        }
+    }
+
+    function guardarCopia(crudo) {
+        if (typeof crudo !== "string" || crudo.length > TOPE_COPIA) return false;
+        try {
+            localStorage.setItem(claves.copia, crudo);
+            return true;
+        } catch {
+            return false;
+        }
+    }
+
+    function copiaDanada() {
+        try {
+            return localStorage.getItem(claves.copia);
+        } catch {
+            return null;
+        }
+    }
+
+    let formaPropia = forma;
+
+    function revisarGuardados(guardados) {
+        if (!formaPropia && formaDeLaSemilla === true) {
+            try {
+                formaPropia = formaDeLaMuestra(semilla());
+            } catch {
+                formaPropia = { listas: {} };
+            }
+        }
+        const estado = formaPropia ? revisarForma(guardados, formaPropia) : { ok: true, arreglos: 0 };
+        if (estado.ok && typeof revisarDatos === "function") {
+            try {
+                if (revisarDatos(guardados) === false) estado.ok = false;
+            } catch {
+                estado.ok = false;
+            }
+        }
+        return estado;
+    }
+
+    const avisarAlUsuario = (texto) => {
+        if (typeof document !== "undefined" && document.body) aviso(texto, "info");
+    };
     let sesionEnMemoria = null; // por si el navegador no deja usar localStorage (ventana privada, permisos)
     let yaAviso = false; // el aviso de "no se pudo guardar" sale una sola vez (hasta "Empezar de cero")
 
@@ -143,8 +279,20 @@ export function crearGuardado({ prefijo, version, semilla, turnoAbierto, pregunt
 
     function persistir() {
         if (cache && !preguntando) cache.usadoEl = Date.now(); // la última vez que se usó (ver SIN_USO_RENUEVA)
+        const choque = leerRevision() !== revisionPropia;
         try {
             localStorage.setItem(claves.datos, JSON.stringify(cache));
+            const nueva = nuevaRevision();
+            try {
+                localStorage.setItem(claves.revision, nueva);
+                revisionPropia = nueva;
+            } catch {
+                revisionPropia = null;
+            }
+            if (choque && typeof document !== "undefined" && document.body) {
+                dispatchEvent(new CustomEvent(EVENTO_CONFLICTO, { detail: { prefijo } }));
+                aviso(MENSAJE_CONFLICTO, "info");
+            }
             return true;
         } catch (e) {
             // sin localStorage (o lleno): los datos quedan solo en memoria hasta recargar
@@ -157,30 +305,65 @@ export function crearGuardado({ prefijo, version, semilla, turnoAbierto, pregunt
     }
 
     function db() {
-        if (cache) return cache;
+        if (cache) {
+            if (leerRevision() === revisionPropia) return cache;
+            cache = null;
+        }
+        revisionPropia = leerRevision();
         let deOtroDia = false;
         let turno = null;
+        let vigente = null;
+        let danado = null;
+        let crudo = null;
+        let arreglos = 0;
         try {
-            const guardados = JSON.parse(localStorage.getItem(claves.datos));
-            if (guardados?.version === version) {
-                const sinUso = Date.now() - Number(guardados.usadoEl || 0);
-                if (guardados.armadoEl === hoyLocal() && sinUso >= 0 && sinUso < SIN_USO_RENUEVA) return (cache = guardados);
-                if (hayTurnoAbierto(guardados)) turno = { guardados, sinUso };
-                else deOtroDia = true;
+            crudo = localStorage.getItem(claves.datos);
+            if (crudo !== null) {
+                let guardados = null;
+                try {
+                    guardados = JSON.parse(crudo);
+                } catch {
+                    guardados = null;
+                }
+                if (!esObjeto(guardados)) danado = crudo;
+                else if (guardados.version === version) {
+                    const estado = revisarGuardados(guardados);
+                    if (!estado.ok) danado = crudo;
+                    else {
+                        arreglos = estado.arreglos;
+                        const sinUso = Date.now() - Number(guardados.usadoEl || 0);
+                        if (guardados.armadoEl === hoyLocal() && sinUso >= 0 && sinUso < SIN_USO_RENUEVA) vigente = guardados;
+                        else if (hayTurnoAbierto(guardados)) turno = { guardados, sinUso };
+                        else deOtroDia = true;
+                    }
+                }
             }
         } catch {
-            // datos rotos o sin acceso: se regeneran
+            danado = null;
+        }
+        const arreglar = () => {
+            const conCopia = guardarCopia(crudo);
+            persistir();
+            avisarAlUsuario(`${MENSAJE_REPARADO}${conCopia ? SUFIJO_COPIA : ""}`);
+        };
+        if (vigente) {
+            cache = vigente;
+            if (arreglos) arreglar();
+            return cache;
         }
         if (turno) {
             cache = turno.guardados;
             if (turno.sinUso >= SIN_USO_RENUEVA) preguntarPorElTurno(turno.sinUso);
             else cache.armadoEl = hoyLocal();
+            if (arreglos) arreglar();
             return cache;
         }
+        const conCopia = danado !== null && guardarCopia(danado);
         cache = { ...semilla(), version, armadoEl: hoyLocal(), usadoEl: Date.now() };
         olvidarAvisos(prefijo); // datos nuevos: los avisos entre roles arrancan de cero (kit/avisos.js)
         persistir();
-        if (deOtroDia && typeof document !== "undefined" && document.body) aviso(MENSAJE_RENOVADOS, "info");
+        if (danado !== null) avisarAlUsuario(`${MENSAJE_DANADO}${conCopia ? SUFIJO_COPIA : ""}`);
+        else if (deOtroDia && typeof document !== "undefined" && document.body) aviso(MENSAJE_RENOVADOS, "info");
         return cache;
     }
 
@@ -199,10 +382,13 @@ export function crearGuardado({ prefijo, version, semilla, turnoAbierto, pregunt
     /** "Empezar de cero": borra los datos de ESTA demo; al volver a leerlos aparecen los de fábrica. */
     function reiniciar() {
         cache = null;
+        revisionPropia = null;
         olvidarAvisos(prefijo);
         yaAviso = false;
         try {
             localStorage.removeItem(claves.datos);
+            localStorage.removeItem(claves.revision);
+            localStorage.removeItem(claves.copia);
         } catch {
             // nada que borrar
         }
@@ -228,7 +414,7 @@ export function crearGuardado({ prefijo, version, semilla, turnoAbierto, pregunt
         }
     }
 
-    return { prefijo, claves, db, persistir, olvidarCache, reiniciar, leerSesion, guardarSesion };
+    return { prefijo, claves, db, persistir, olvidarCache, reiniciar, leerSesion, guardarSesion, copiaDanada };
 }
 
 /** Lleno (QuotaExceededError) o sin permiso: la demo sigue andando, pero se avisa que lo nuevo no queda. */

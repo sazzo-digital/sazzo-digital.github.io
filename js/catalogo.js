@@ -2,8 +2,8 @@
 // Catálogo de Sazzo: arma las tarjetas de demos (desde demos.js), las animaciones al bajar, los botones de
 // contacto (desde config.js), guarda de dónde vino la visita (?o=papel / ?o=ig) y avisa a la medición.
 // ============================================
-import { DEMOS, TRABAJOS, SERVICIOS_HECHOS } from "./demos.js?v=a777b3699e";
-import { CONTACTO, MEDICION, LINK_DEMOS, RUTA_LIBS, RUTA_CHAT } from "./config.js?v=a777b3699e";
+import { DEMOS, TRABAJOS, SERVICIOS_HECHOS } from "./demos.js?v=04e6d55082";
+import { CONTACTO, MEDICION, LINK_DEMOS, RUTA_LIBS, RUTA_CHAT } from "./config.js?v=04e6d55082";
 
 const $ = (selector, raiz = document) => raiz.querySelector(selector);
 const $$ = (selector, raiz = document) => [...raiz.querySelectorAll(selector)];
@@ -126,7 +126,7 @@ function tarjeta(demo) {
     const renglones = demo.pantalla.map((r, i) => `<div class="celu__renglon" style="--i:${i}">${esc(r)}</div>`).join("");
     const link = demo.estado === "activa" ? linkDe(demo) : null;
     const boton = link
-        ? `<a class="boton boton--chico" href="${esc(link)}" data-demo="${esc(demo.id)}">Probala ahora <svg class="icono" aria-hidden="true"><use href="#i-flecha"/></svg></a>`
+        ? `<a class="boton boton--chico" href="${esc(link)}" data-demo="${esc(demo.id)}" aria-label="Probala ahora: ${esc(demo.nombre)}">Probala ahora <svg class="icono" aria-hidden="true"><use href="#i-flecha"/></svg></a>`
         : `<span class="boton boton--chico boton--apagado" aria-disabled="true">Muy pronto</span>`;
     return `
         <article class="demo revelar" id="demo-${esc(demo.id)}" style="--acento:${esc(demo.acento)}">
@@ -141,7 +141,7 @@ function tarjeta(demo) {
                 <p class="demo__rubro">${esc(demo.rubro)}</p>
                 <p class="demo__pregunta">${esc(demo.pregunta)}</p>
                 ${listaTildes(demo.items, "demo__items")}
-                ${demo.detalle ? `<button class="demo__detalle" type="button" data-detalle="${esc(demo.id)}"><svg class="icono" aria-hidden="true"><use href="#i-detalle"/></svg> Ver en detalle</button>` : ""}
+                ${demo.detalle ? `<button class="demo__detalle" type="button" data-detalle="${esc(demo.id)}" aria-label="Ver en detalle: ${esc(demo.nombre)}"><svg class="icono" aria-hidden="true"><use href="#i-detalle"/></svg> Ver en detalle</button>` : ""}
                 ${demo.enVivo ? `<p class="demo__vivo"><svg class="icono" aria-hidden="true"><use href="#i-vivo"/></svg><span><strong>En vivo:</strong> ${esc(demo.enVivo)}</span></p>` : ""}
                 <div class="demo__pie">
                     ${boton}
@@ -375,6 +375,22 @@ opcionesFlujo.forEach((b) => b.addEventListener("click", () => {
 
 // Cantidad de rubros en la portada (sale de la lista)
 $$("[data-contar]").forEach((el) => { el.dataset.contar = visibles.length; el.textContent = visibles.length; });
+$$("[data-cantidad]").forEach((el) => { el.textContent = visibles.length; });
+const nombresRubros = visibles.map((d) => d.rubroCorto).filter(Boolean);
+const textoRubros = nombresRubros.length > 1 ? `${nombresRubros.slice(0, -1).join(", ")} y ${nombresRubros.at(-1)}` : nombresRubros.join("");
+if (textoRubros) $$("[data-rubros]").forEach((el) => { el.textContent = textoRubros; });
+const guionPreguntas = $$('script[type="application/ld+json"]').find((s) => s.textContent.includes("FAQPage"));
+if (guionPreguntas) {
+    try {
+        const preguntas = JSON.parse(guionPreguntas.textContent);
+        preguntas.mainEntity = $$(".pregunta").map((p) => ({
+            "@type": "Question",
+            name: $("summary", p).textContent.trim(),
+            acceptedAnswer: { "@type": "Answer", text: $("p", p).textContent.trim() }
+        }));
+        guionPreguntas.textContent = JSON.stringify(preguntas);
+    } catch {}
+}
 
 // Datos para Google (JSON-LD, schema.org): Sazzo y la lista de demos activas, armada desde demos.js y config.js (así no
 // se escribe dos veces). Google lee lo que arma el JavaScript. Sin precios (no van en el catálogo).
@@ -459,7 +475,7 @@ if ((linkWhatsapp || usuarioInstagram) && typeof ventanaContacto.showModal === "
 const botChat = /^https:\/\/[\w.-]+\/web$|^http:\/\/(localhost|127\.0\.0\.1):\d{2,5}\/web$/.test(CONTACTO.chat ?? "") ? CONTACTO.chat : null;
 if (botChat) {
     const guion = document.createElement("script");
-    guion.src = `${RUTA_CHAT}chat-web.js?v=4961579887`;
+    guion.src = `${RUTA_CHAT}chat-web.js?v=1afe1d79d9`;
     Object.assign(guion.dataset, {
         bot: botChat, origen: "catalogo", privacidad: "privacidad.html",
         whatsapp: linkWhatsapp ? CONTACTO.whatsapp : "", instagram: usuarioInstagram ?? "", mensaje: CONTACTO.mensaje

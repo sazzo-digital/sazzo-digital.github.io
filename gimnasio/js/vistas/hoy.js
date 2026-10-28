@@ -4,13 +4,13 @@
 // descanso (con "ding" y vibración al terminar, si prendió el sonido). Si levanta más que nunca: "¡Nuevo récord!".
 // Si hoy descansa, le dice cuándo le toca y puede entrenar igual otro día de su rutina.
 // ============================================
-import { esc, aviso } from "../../kit/js/ui.js?v=6819a0f377";
-import { alSalirDeLaPantalla } from "../../kit/js/rutas.js?v=6819a0f377";
-import { mantenerPantallaPrendida, vibrar, ding, htmlBotonSonido, activarBotonSonido } from "../../kit/js/celular.js?v=6819a0f377";
-import { MARCA, NEGOCIO } from "../marca.js?v=6819a0f377";
-import { SOCIO_DE, kilos, cuanto } from "../datos.js?v=6819a0f377";
-import { activarConsignaPersona, guia, activarGuias, pastilla, pastillaCuota } from "./comunes.js?v=6819a0f377";
-import { htmlTrabajosSocio, activarTrabajosSocio } from "./trabajos.js?v=6819a0f377";
+import { esc, aviso } from "../../kit/js/ui.js?v=6b204d1609";
+import { alSalirDeLaPantalla } from "../../kit/js/rutas.js?v=6b204d1609";
+import { mantenerPantallaPrendida, vibrar, ding, htmlBotonSonido, activarBotonSonido } from "../../kit/js/celular.js?v=6b204d1609";
+import { MARCA, NEGOCIO } from "../marca.js?v=6b204d1609";
+import { SOCIO_DE, kilos, cuanto } from "../datos.js?v=6b204d1609";
+import { activarConsignaPersona, guia, activarGuias, pastilla, pastillaCuota } from "./comunes.js?v=6b204d1609";
+import { htmlTrabajosSocio, activarTrabajosSocio } from "./trabajos.js?v=6b204d1609";
 
 // Lo que queda mientras se navega: lo escrito en cada ejercicio, el último récord (para festejarlo una vez) y el descanso
 const borrador = {};
@@ -178,6 +178,8 @@ export function vistaHoy(cont, { usuario, datos, irA }) {
             capa.className = "qr-entrada";
             capa.setAttribute("role", "dialog");
             capa.setAttribute("aria-label", "Mi QR de entrada");
+            capa.setAttribute("aria-modal", "true");
+            const disparador = document.activeElement;
             capa.innerHTML = `
                 <div class="qr-entrada__caja">
                     <img src="img/qr/${encodeURIComponent(h.socioId)}.svg" alt="Tu QR de entrada" width="260" height="260">
@@ -186,15 +188,24 @@ export function vistaHoy(cont, { usuario, datos, irA }) {
                     <button class="boton boton--ancho" type="button" data-cerrar-qr>Listo</button>
                 </div>`;
             document.body.append(capa);
-            const teclas = (e) => e.key === "Escape" && cerrar();
+            const boton = capa.querySelector("[data-cerrar-qr]");
+            boton.focus();
+            const teclas = (e) => {
+                if (e.key === "Escape") cerrar();
+                else if (e.key === "Tab") {
+                    e.preventDefault();
+                    boton.focus();
+                }
+            };
             const cerrar = () => {
                 capa.remove();
                 removeEventListener("hashchange", cerrar);
                 removeEventListener("keydown", teclas);
+                if (disparador?.isConnected) disparador.focus?.();
             };
             addEventListener("hashchange", cerrar);
             addEventListener("keydown", teclas);
-            capa.querySelector("[data-cerrar-qr]").addEventListener("click", cerrar);
+            boton.addEventListener("click", cerrar);
             capa.addEventListener("click", (e) => e.target === capa && cerrar());
         });
         cont.querySelector("[data-llegue]")?.addEventListener("click", () => {

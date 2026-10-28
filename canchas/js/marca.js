@@ -2,8 +2,8 @@
 // Marca, personas y "también puede tener" de Sazzo Canchas (diseñada el 08/10/2026).
 // Las personas son los roles reales del rubro (nombres inventados): el dueño del complejo y un jugador.
 // ============================================
-import { revisarMarca } from "../kit/js/marca.js?v=8a5fe1d629";
-import { negocioDe } from "../kit/js/colores.js?v=8a5fe1d629";
+import { revisarMarca } from "../kit/js/marca.js?v=44e4746e73";
+import { negocioDe } from "../kit/js/colores.js?v=44e4746e73";
 
 export const MARCA = revisarMarca({
     id: "canchas",
@@ -43,10 +43,10 @@ export const NEGOCIO = negocioDe(MARCA.prefijo, "Complejo El Potrero"); // nombr
 export const DETALLE = {
     hace: [
         "Fútbol 5, Fútbol 7 y pádel, cada una con su duración y su seña",
-        "El dueño anota desde la grilla los turnos que llegan por teléfono",
-        "Marcar si llegaron o faltaron, y cobrar la seña",
+        "El dueño anota desde la grilla los turnos que llegan por teléfono, marca si llegaron o faltaron y cobra la seña",
+        "Turnos fijos de cada semana, con «Liberar esta semana» si un grupo avisa que no viene",
         "Cantina: el jugador pide desde su turno y el dueño cobra la cuenta, dividida entre todos",
-        "El jugador ve sus turnos y puede cancelar o volver a reservar"
+        "El jugador ve sus turnos y los cancela (con más de 12 h la seña se devuelve) o reserva otro"
     ],
     extra: {
         titulo: "Para probar ya",
@@ -59,9 +59,9 @@ export const DETALLE = {
     },
     tambien: [
         "Que el turno le llegue al dueño en su celular, al instante",
-        "Seña con Mercado Pago o transferencia",
+        "Cobro real de la seña con Mercado Pago o transferencia (en la demo es simulado)",
         "Botón para avisarle al grupo por WhatsApp",
-        "Torneos, \"falta uno\" y avisos por lluvia",
+        "Torneos, «falta uno» y avisos por lluvia",
         "Varios complejos, con su usuario cada uno"
     ]
 };

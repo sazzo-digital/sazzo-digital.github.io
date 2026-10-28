@@ -1,4 +1,4 @@
-import { consignaPersona, activarSerie } from "./comunes.js?v=d8a3925649";
+import { consignaPersona, activarSerie } from "./comunes.js?v=f8ec046caa";
 // ============================================
 // Desposte: lo que entra (media res, media res de cerdo o cajón de pollo) se despieza y se pesa corte por corte.
 //   Lista: los despostes abiertos (lo que falta pesar), "Entró mercadería" (el dueño) y el historial con la merma de
@@ -8,12 +8,12 @@ import { consignaPersona, activarSerie } from "./comunes.js?v=d8a3925649";
 //   El dueño ve además el costo real por kilo de cada corte y el precio sugerido con su margen ("Aplicar", con
 //   Deshacer) y lo baja en PDF. Darío carga los pesos; los costos los ve Ricardo.
 // ============================================
-import { esc, aviso, vacio, fechaCorta } from "../../kit/js/ui.js?v=d8a3925649";
-import { armarPdf, pdfListo } from "../../kit/js/pdf.js?v=d8a3925649";
-import { TOPES, TIPOS_INGRESO, PROVEEDORES, pesos, kilos, aGramos, mermaEsperada } from "../datos.js?v=d8a3925649";
-import { NEGOCIO, MARCA } from "../marca.js?v=d8a3925649";
-import { htmlMediaRes, activarMediaRes, ZONAS } from "../media-res.js?v=d8a3925649";
-import { guia, activarGuias, cuando, campoKg, kgEnCampo, porcentaje, unDecimal } from "./comunes.js?v=d8a3925649";
+import { esc, aviso, vacio, fechaCorta } from "../../kit/js/ui.js?v=f8ec046caa";
+import { armarPdf, pdfListo } from "../../kit/js/pdf.js?v=f8ec046caa";
+import { TOPES, TIPOS_INGRESO, PROVEEDORES, pesos, kilos, aGramos, mermaEsperada } from "../datos.js?v=f8ec046caa";
+import { NEGOCIO, MARCA } from "../marca.js?v=f8ec046caa";
+import { htmlMediaRes, activarMediaRes, ZONAS } from "../media-res.js?v=f8ec046caa";
+import { guia, activarGuias, cuando, campoKg, kgEnCampo, porcentaje, unDecimal } from "./comunes.js?v=f8ec046caa";
 
 /** La merma contra la esperada: pastilla verde (igual o menos), amarilla (hasta 1,5 puntos más) o roja. */
 function pastillaMerma(merma, esperada) {
@@ -324,7 +324,7 @@ export function vistaDesposte(cont, opciones, recien = null) {
             const blob = await armarPdf({
                 negocio: NEGOCIO, titulo: `Desposte · ${d.tipoNombre}`, numero: String(d.numero), fecha: fechaCorta(d.fecha),
                 datos: [["Proveedor", d.proveedor], ["Tropa o lote", d.tropa], ["Entró", kilos(d.ingresoG, 1)], ["Despostó", d.despostadoPor ?? "—"], ...(dueno ? [["Costo", `${pesos(d.costoKg)}/kg`]] : []), ["Merma", `${unDecimal(r.merma)} (esperada ${unDecimal(r.esperada)})`]],
-                columnas: dueno ? ["Corte", "Esperado", "Pesado", "Dif.", "Costo real/kg", "Sugerido/kg"] : ["Corte", "Esperado", "Pesado", "Dif."],
+                columnas: dueno ? ["Corte", "Esperado", "Pesado", "Dif.", "Costo/kg", "Sugerido"] : ["Corte", "Esperado", "Pesado", "Dif."],
                 filas: [
                     ...filas.map((f) => {
                         const s = sugeridos.find((x) => x.id === f.articuloId);

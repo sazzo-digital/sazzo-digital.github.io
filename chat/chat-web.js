@@ -16,6 +16,7 @@
     const PAUSA_LIBRE = 12 * 3600000;
     let pausaBot = null;
     const VALIDO = /^[A-Za-z0-9-]{8,40}$/;
+    const ent = (t) => String(t).replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
     const TEXTOS = {
         abrir: "Escribinos",
         pregunta: "¿Te ayudo a elegir tu demo?",
@@ -48,6 +49,7 @@
         telefonoMandar: "Mandar",
         telefonoNo: "No, gracias",
         telefonoLegal: "Lo usamos solo para responderte. Más info en",
+        legal: "No pongas datos de tus clientes ni datos personales. Lo que escribas pasa por Cloudflare, Groq y Telegram. Al cargar la página, el chat consulta si hay alguien en línea. Más info en",
         telefonoListo: "¡Listo! Te escribimos a ese número 🙌",
         telefonoMal: "Revisá el número: tiene que tener entre 8 y 15 dígitos.",
     };
@@ -135,11 +137,11 @@
                 </ul>
                 <div class="sazzo-chat__acciones">
                     <button class="sazzo-chat__persona" type="button">${TEXTOS.persona}</button>
-                    <a class="sazzo-chat__red" href="https://wa.me/${WHATSAPP}?text=${encodeURIComponent(MENSAJE)}" target="_blank" rel="noopener" title="WhatsApp de Sazzo"${WHATSAPP ? "" : " hidden"}>
+                    <a class="sazzo-chat__red" href="https://wa.me/${ent(WHATSAPP)}?text=${encodeURIComponent(MENSAJE)}" target="_blank" rel="noopener" title="WhatsApp de Sazzo"${WHATSAPP ? "" : " hidden"}>
                         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 19.5l1.2-3.6A8 8 0 1 1 8.6 18.6z"/><path d="M9.2 8.6c.3 2.6 2.4 4.9 5.2 5.4l1-1.3-1.8-.9-.8.8c-1-.4-1.9-1.3-2.3-2.3l.8-.8-.9-1.8z"/></svg>
                         <span class="sazzo-chat__oculto">WhatsApp de Sazzo</span>
                     </a>
-                    <a class="sazzo-chat__red" href="https://instagram.com/${INSTAGRAM}" target="_blank" rel="noopener" title="Instagram de Sazzo"${INSTAGRAM ? "" : " hidden"}>
+                    <a class="sazzo-chat__red" href="https://instagram.com/${ent(INSTAGRAM)}" target="_blank" rel="noopener" title="Instagram de Sazzo"${INSTAGRAM ? "" : " hidden"}>
                         <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="5"/><circle cx="12" cy="12" r="3.6"/><circle cx="16.6" cy="7.4" r="0.6"/></svg>
                         <span class="sazzo-chat__oculto">Instagram de Sazzo</span>
                     </a>
@@ -158,14 +160,15 @@
                     <button class="sazzo-chat__telefono-mandar" type="submit">${TEXTOS.telefonoMandar}</button>
                 </div>
                 <button class="sazzo-chat__telefono-no" type="button">${TEXTOS.telefonoNo}</button>
-                <p class="sazzo-chat__telefono-legal">${TEXTOS.telefonoLegal} <a href="${PRIVACIDAD}" target="_blank" rel="noopener">Privacidad</a>.</p>
+                <p class="sazzo-chat__telefono-legal">${TEXTOS.telefonoLegal} <a href="${ent(PRIVACIDAD)}" target="_blank" rel="noopener">Privacidad</a>.</p>
             </form>
             <div class="sazzo-chat__rubros" hidden></div>
             <div class="sazzo-chat__rubros sazzo-chat__opciones" hidden></div>
             <p class="sazzo-chat__aviso" role="alert" hidden></p>
             <form class="sazzo-chat__form">
+                <p class="sazzo-chat__legal" id="sazzo-chat-legal">${TEXTOS.legal} <a href="${ent(PRIVACIDAD)}" target="_blank" rel="noopener">Privacidad</a>.</p>
                 <div class="sazzo-chat__fila">
-                    <textarea rows="1" maxlength="500" placeholder="${TEXTOS.lugar}" aria-label="Tu mensaje"></textarea>
+                    <textarea rows="1" maxlength="500" placeholder="${TEXTOS.lugar}" aria-label="Tu mensaje" aria-describedby="sazzo-chat-legal"></textarea>
                     <button class="sazzo-chat__mandar" type="submit" aria-label="Mandar">
                         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l16-8-6 16-2.5-6.5z"/></svg>
                     </button>

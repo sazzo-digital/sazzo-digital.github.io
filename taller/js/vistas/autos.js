@@ -2,9 +2,9 @@
 // Autos y clientes: buscar por patente o por nombre; cada auto con todas sus visitas. Y "Para llamar": los que tienen
 // el service vencido (más de 6 meses o 10.000 km) y no están en el taller, con el mensaje para recordárselo.
 // ============================================
-import { esc, aviso, vacio, fechaCorta } from "../../kit/js/ui.js?v=bbb3249556";
-import { pesos } from "../datos.js?v=bbb3249556";
-import { chapa, pastillaEstado, mostrarMensaje } from "./comunes.js?v=bbb3249556";
+import { esc, aviso, vacio, fechaCorta } from "../../kit/js/ui.js?v=3fa38b78e9";
+import { pesos } from "../datos.js?v=3fa38b78e9";
+import { chapa, pastillaEstado, mostrarMensaje } from "./comunes.js?v=3fa38b78e9";
 
 let vista = "todos"; // "todos" o "llamar"
 let texto = "";
@@ -16,7 +16,7 @@ export function vistaAutos(cont, { usuario, datos }) {
     cont.innerHTML = `
         <h1 class="titulo">Autos y clientes</h1>
         ${dueno ? `
-        <div class="chips" role="tablist">
+        <div class="chips" role="group" aria-label="Ver autos">
             <button class="chip${vista === "todos" ? " activo" : ""}" type="button" data-vista="todos">Todos</button>
             <button class="chip chip--alerta${vista === "llamar" ? " activo" : ""}" type="button" data-vista="llamar">Para llamar <b>${llamar.length}</b></button>
         </div>` : ""}

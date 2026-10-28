@@ -7,16 +7,16 @@
 // trae `wow`, esa línea va arriba de las personas: le dice a quien llega de Instagram qué va a pasar.
 // y qué hacer al elegir una (alElegir(id): guardar la sesión y arrancar la demo).
 // ============================================
-import { $, $$, esc, iniciales, mensajeDe } from "./ui.js?v=6819a0f377";
-import { logoSazzo, nombreDemo } from "./marca.js?v=6819a0f377";
-import { LINK_CATALOGO } from "./config.js?v=6819a0f377";
-import { pieAcerca } from "./acerca.js?v=6819a0f377";
-import { linkOtrasDemos, linkQuieroEsto, botDelChat } from "./enlaces.js?v=6819a0f377";
-import { activarBotonesSazzo, htmlBarraSazzo, medirPie } from "./marco.js?v=6819a0f377";
-import { revisarDetalle, htmlBotonDetalle } from "./detalle.js?v=6819a0f377";
-import { htmlBotonInstalar } from "./instalar.js?v=6819a0f377";
-import { contar, contarPantalla } from "./visita.js?v=6819a0f377";
-import { soltarPantalla } from "./rutas.js?v=6819a0f377";
+import { $, $$, esc, iniciales, mensajeDe } from "./ui.js?v=6b204d1609";
+import { logoSazzo, nombreDemo } from "./marca.js?v=6b204d1609";
+import { LINK_CATALOGO } from "./config.js?v=6b204d1609";
+import { pieAcerca } from "./acerca.js?v=6b204d1609";
+import { linkOtrasDemos, linkQuieroEsto, botDelChat } from "./enlaces.js?v=6b204d1609";
+import { activarBotonesSazzo, htmlBarraSazzo, medirPie } from "./marco.js?v=6b204d1609";
+import { revisarDetalle, htmlBotonDetalle } from "./detalle.js?v=6b204d1609";
+import { htmlBotonInstalar } from "./instalar.js?v=6b204d1609";
+import { contar, contarPantalla } from "./visita.js?v=6b204d1609";
+import { soltarPantalla } from "./rutas.js?v=6b204d1609";
 
 function htmlCompleta(marca) {
     if (!marca.completa) return "";
@@ -56,9 +56,9 @@ export function htmlIngreso({ marca, personas, detalle = null, contacto }) {
             ${htmlBotonInstalar("boton boton--secundario boton--ancho ingreso__instalar")}
             <p class="nota ingreso__nota"><i class="ti ti-flask" aria-hidden="true"></i> Modo prueba: datos inventados, guardados solo en este navegador. No te pedimos ningún dato.</p>
             <div class="ingreso__sazzo">
-                <a class="boton boton--secundario" href="${esc(linkOtrasDemos())}" data-otras-demos><i class="ti ti-layout-grid"></i> Ver otras demos</a>
-                <a class="boton boton--secundario" href="${esc(quiero.href)}" data-quiero-esto${quiero.externo ? ' target="_blank" rel="noopener"' : ""}><i class="ti ti-brand-whatsapp"></i> Quiero esto para mi negocio</a>
-                ${asistente ? `<button class="boton boton--secundario" type="button" data-abrir-chat data-asistente><i class="ti ti-message-chatbot"></i> Chateá con Sazzo</button>` : ""}
+                <a class="boton boton--secundario" href="${esc(linkOtrasDemos())}" data-otras-demos><i class="ti ti-layout-grid" aria-hidden="true"></i> Ver otras demos</a>
+                <a class="boton boton--secundario" href="${esc(quiero.href)}" data-quiero-esto${quiero.externo ? ' target="_blank" rel="noopener"' : ""}><i class="ti ti-brand-whatsapp" aria-hidden="true"></i> Quiero esto para mi negocio</a>
+                ${asistente ? `<button class="boton boton--secundario" type="button" data-abrir-chat data-asistente><i class="ti ti-message-chatbot" aria-hidden="true"></i> Chateá con Sazzo</button>` : ""}
             </div>
             ${pieAcerca(marca)}
         </main>

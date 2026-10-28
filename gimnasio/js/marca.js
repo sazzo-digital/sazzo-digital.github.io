@@ -2,8 +2,8 @@
 // Marca, personas y "también puede tener" de Sazzo Gimnasio (propuesta aprobada el 10/10/2026).
 // Las personas son los roles reales del rubro (nombres inventados): la dueña, el profe de musculación y un socio.
 // ============================================
-import { revisarMarca } from "../kit/js/marca.js?v=6819a0f377";
-import { negocioDe } from "../kit/js/colores.js?v=6819a0f377";
+import { revisarMarca } from "../kit/js/marca.js?v=6b204d1609";
+import { negocioDe } from "../kit/js/colores.js?v=6b204d1609";
 
 export const MARCA = revisarMarca({
     id: "gimnasio",
@@ -52,10 +52,10 @@ export const NEGOCIO = negocioDe(MARCA.prefijo, "Gimnasio Núcleo"); // nombre d
 export const DETALLE = {
     hace: [
         "El profe arma rutinas, se las asigna a cada alumno y le deja notas",
-        "Rutina en PDF para imprimir o mandar",
-        "Socio nuevo con apto físico y reglamento firmado con el dedo",
+        "Rutina en PDF (la demo muestra el archivo, no lo baja)",
+        "Socio nuevo con apto físico y reglamento «firmado» con el dedo (firma simulada, sin validez)",
         "Cómo anda el gimnasio: a qué hora viene la gente y socios por plan de cuota",
-        "El socio avisa que transfirió y la dueña lo confirma; los pagos se pasan a Excel"
+        "El socio avisa que transfirió y la dueña lo confirma; socios y pagos a Excel (la demo muestra el archivo)"
     ],
     extra: {
         titulo: "Para probar ya",
@@ -66,7 +66,7 @@ export const DETALLE = {
         ]
     },
     tambien: [
-        "Cobro de la cuota con Mercado Pago",
+        "Cobro de la cuota con Mercado Pago o débito automático",
         "Recordatorio de la cuota por Telegram, o por WhatsApp con un toque",
         "Videos de cada ejercicio en la rutina",
         "Varias sedes, con su usuario cada profe",

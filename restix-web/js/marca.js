@@ -3,8 +3,8 @@
 // rehecho con el kit). Las personas son los roles reales del rubro (nombres inventados): la moza, el de la cocina y
 // (desde el 10/10) una clienta que abre la carta con el QR de la mesa.
 // ============================================
-import { revisarMarca } from "../kit/js/marca.js?v=7d06fec91a";
-import { negocioDe } from "../kit/js/colores.js?v=7d06fec91a";
+import { revisarMarca } from "../kit/js/marca.js?v=aa4351ebaa";
+import { negocioDe } from "../kit/js/colores.js?v=aa4351ebaa";
 
 export const MARCA = revisarMarca({
     id: "restix-web",
@@ -56,15 +56,16 @@ export const NEGOCIO = negocioDe(MARCA.prefijo, "Bar El Farol"); // nombre de ej
 
 export const DETALLE = {
     hace: [
-        "Cobro dividiendo la cuenta en partes iguales",
-        "La cocina marca \"Listo\" y la moza se entera",
-        "Caja del turno con los cobros y el cierre de caja",
+        "Cobro de la mesa: todo junto, en partes iguales o por lo que consumió cada uno",
+        "La cocina marca «Listo» y la moza se entera; los pedidos nuevos se pueden leer en voz alta",
+        "Caja del turno con los cobros (efectivo, débito, crédito, transferencia o QR) y el cierre de caja",
         "Pedidos en la tele: lo que está en preparación y lo que ya salió",
-        "Cobro en efectivo, débito, crédito, transferencia o QR"
+        "Bandeja de delivery simulada (Pedidos Ya de ejemplo): se acepta, pasa por la cocina y suma a la caja"
     ],
     tambien: [
         "Imprimir la comanda en la cocina y en la barra, sola",
         "Cambiar la carta y los precios cuando quieras",
+        "Un QR en cada mesa que abre la carta (en la demo se simula)",
         "Stock de barriles y bebidas que se descuenta con cada pinta",
         "Resúmenes del mes: lo más vendido y cuánto entró",
         "Funciona en la compu del local, aunque se corte internet"

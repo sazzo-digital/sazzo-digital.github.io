@@ -1,13 +1,14 @@
-import { pintarConsigna } from "./comunes.js?v=d4aafb8120";
+import { pintarConsigna } from "./comunes.js?v=233619f5c3";
 // ============================================
 // Listas escolares (Mariela y Joaquín): los pedidos de listas que llegan del celu o se arman en el mostrador.
 // En cada pedido: si alcanza el stock de cada artículo (y, si no, otro de la misma familia: el cuaderno rojo por el
 // azul), "Separar" (se descuenta del stock), "Avisar" (mensaje para copiar) y "Cobrar y entregar" (queda como venta).
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=d4aafb8120";
-import { mostrarMensaje } from "../../kit/js/mensaje.js?v=d4aafb8120";
-import { ESTADOS_PEDIDO, MEDIOS, TOPES, pesos } from "../datos.js?v=d4aafb8120";
-import { guia, activarGuias, pasos, pastillaEstado, tarjetaPedido, cuando } from "./comunes.js?v=d4aafb8120";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=233619f5c3";
+import { mostrarMensaje } from "../../kit/js/mensaje.js?v=233619f5c3";
+import { AVISO_CAMPO } from "../../kit/js/leyendas.js?v=233619f5c3";
+import { ESTADOS_PEDIDO, MEDIOS, TOPES, pesos } from "../datos.js?v=233619f5c3";
+import { guia, activarGuias, activarFlechas, pasos, pastillaEstado, tarjetaPedido, cuando } from "./comunes.js?v=233619f5c3";
 
 /** Billetes "redondos" para cobrar una lista: el próximo múltiplo de $10.000, de $50.000 y $100.000. */
 const billetesPara = (total) => [...new Set([10_000, 50_000, 100_000].map((b) => Math.ceil(Math.max(1, total) / b) * b))].slice(0, 3);
@@ -73,12 +74,14 @@ export function vistaNuevaLista(cont, { usuario, datos }) {
                 <form class="bloque formulario resumen-lista" novalidate>
                     <div class="total"><span>Total</span><b>${esc(pesos(elegidos.reduce((t, i) => t + i.subtotal, 0)))}</b></div>
                     <label>¿Para quién es?
-                        <input name="para" maxlength="${TOPES.para}" required placeholder="Ej: Martina · ${esc(l.grado)}">
+                        <input name="para" maxlength="${TOPES.para}" required placeholder="Ej: Familia de ejemplo · ${esc(l.grado)}">
                     </label>
+                    <p class="nota"><i class="ti ti-info-circle"></i><span>${esc(AVISO_CAMPO)} Sin nombres de chicos.</span></p>
                     <button class="boton boton--ancho" type="submit"><i class="ti ti-check"></i> Anotar la lista</button>
                 </form>
             </div>`;
         pintarConsigna(cont, datos, usuario);
+        activarFlechas(cont, "Lista del colegio", "lista");
         cont.querySelectorAll("[data-lista]").forEach((b) => b.addEventListener("click", () => {
             listaId = b.dataset.lista;
             sin.clear();
@@ -215,6 +218,7 @@ export function vistaPedido(cont, opciones, recien = null) {
                 </label>
                 <div class="billetes">${billetesPara(pe.total).map((b) => `<button class="chip" type="button" data-billete="${b}">${esc(pesos(b))}</button>`).join("")}</div>
                 <p class="vuelto" aria-live="polite"></p>` : "";
+            activarFlechas(f, "Cómo paga", "medio");
             f.querySelectorAll("[data-medio]").forEach((b) => b.addEventListener("click", () => {
                 medio = b.dataset.medio;
                 pintarPago();

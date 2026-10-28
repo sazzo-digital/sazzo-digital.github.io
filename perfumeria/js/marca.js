@@ -2,8 +2,8 @@
 // Marca, personas y "también puede tener" de Sazzo Perfumería (diseñada el 08/10/2026).
 // Las personas son los roles reales del rubro (nombres inventados): la dueña y una clienta.
 // ============================================
-import { revisarMarca } from "../kit/js/marca.js?v=71afbca5b0";
-import { negocioDe } from "../kit/js/colores.js?v=71afbca5b0";
+import { revisarMarca } from "../kit/js/marca.js?v=c1eb54ed24";
+import { negocioDe } from "../kit/js/colores.js?v=c1eb54ed24";
 
 export const MARCA = revisarMarca({
     id: "perfumeria",
@@ -42,17 +42,17 @@ export const NEGOCIO = negocioDe(MARCA.prefijo, "Perfumería Esencia"); // nombr
 
 export const DETALLE = {
     hace: [
-        "Catálogo con buscador que perdona errores y frascos para ver en 3D",
+        "Catálogo con buscador que perdona errores y frascos en 3D; «Verlo en tu mesa» si el celu lo permite",
         "Frasco de 50 o 100 ml, o decant de 5 o 10 ml",
-        "La clienta sigue su pedido desde \"Mis pedidos\"",
+        "La clienta sigue su pedido desde «Mis pedidos»",
         "La dueña ve los pedidos nuevos y los preparados para retirar, y marca cuándo se entregó",
         "Venta en el mostrador y cobro del pedido, con el stock de frascos y de la botella madre al día"
     ],
     extra: {
         titulo: "Para probar ya",
         renglones: [
-            "Abrí un perfume y tocá «Verlo en 3D»: frascos escaneados que girás con el dedo",
-            "Cada familia tiene su frasco, y el perfume toma su color",
+            "Abrí un perfume y tocá «Verlo en 3D»: el frasco gira con el dedo (es de ejemplo)",
+            "Cada perfume toma el color de su familia: hay cinco familias y cuatro modelos de frasco",
             "Como Carolina, cobrá un pedido y entregalo, con el vuelto calculado",
             "Vendé en el mostrador con la caja: frascos y decants, y el stock baja solo"
         ]

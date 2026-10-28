@@ -6,12 +6,12 @@
 // Reglas del kit: exigir() en lo que modifica, topes en todo lo que se carga, nada se borra (se cancela) y se
 // devuelven copias. Si cambia la forma de los datos, subir VERSION_DATOS (se regeneran solos).
 // ============================================
-import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=fcb06c7c44";
-import { filtrarPorTexto } from "../kit/js/buscar.js?v=fcb06c7c44";
-import { sinPasarse } from "../kit/js/topes.js?v=fcb06c7c44";
-import { fechaLocalISO } from "../kit/js/fechas.js?v=fcb06c7c44";
-import { aMinutos, aHora, diaSemana, proximosDias, ocupados, libres, revisarLibre } from "../kit/js/turnos.js?v=fcb06c7c44";
-import { MARCA, PERSONAS } from "./marca.js?v=fcb06c7c44";
+import { crearGuardado, exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=26036b0c55";
+import { filtrarPorTexto } from "../kit/js/buscar.js?v=26036b0c55";
+import { sinPasarse } from "../kit/js/topes.js?v=26036b0c55";
+import { fechaLocalISO } from "../kit/js/fechas.js?v=26036b0c55";
+import { aMinutos, aHora, diaSemana, proximosDias, ocupados, libres, revisarLibre } from "../kit/js/turnos.js?v=26036b0c55";
+import { MARCA, PERSONAS } from "./marca.js?v=26036b0c55";
 
 export const VERSION_DATOS = 2;
 
@@ -228,7 +228,7 @@ export function textoLibre(minutos) {
 
 /** `prefijo` y `reloj` cambian solo en las pruebas. */
 export function crearDatos(prefijo = MARCA.prefijo, { reloj = () => new Date() } = {}) {
-    const guardado = crearGuardado({ prefijo, version: VERSION_DATOS, semilla });
+    const guardado = crearGuardado({ prefijo, version: VERSION_DATOS, semilla, formaDeLaSemilla: true });
     const db = () => guardado.db();
 
     const series = {"barbero": ["filtro", "invitar", "llego"], "cliente": ["reserva", "otro", "cancelar"]};

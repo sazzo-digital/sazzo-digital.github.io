@@ -3,8 +3,8 @@
 // Las personas son los roles reales del rubro (nombres inventados): la dueña, el empleado del mostrador y una mamá
 // que pide la lista escolar desde el celular.
 // ============================================
-import { revisarMarca } from "../kit/js/marca.js?v=d4aafb8120";
-import { negocioDe } from "../kit/js/colores.js?v=d4aafb8120";
+import { revisarMarca } from "../kit/js/marca.js?v=233619f5c3";
+import { negocioDe } from "../kit/js/colores.js?v=233619f5c3";
 
 export const MARCA = revisarMarca({
     id: "libreria",
@@ -53,15 +53,15 @@ export const NEGOCIO = negocioDe(MARCA.prefijo, "Librería Punto y Coma"); // no
 export const DETALLE = {
     hace: [
         "La clienta destilda lo que ya tiene y el local separa la lista, la cobra y la entrega",
-        "Pedidos a proveedores armados con lo que falta, y \"Llegó: sumar al stock\"",
-        "La lista del proveedor desde Excel y \"Subir precios por proveedor\" sin perder tu margen",
+        "Pedidos a proveedores armados con lo que falta, y «Llegó: sumar al stock»",
+        "La lista del proveedor desde Excel y «Subir precios por proveedor» sin perder tu margen",
         "Caja del día con la ganancia, lo más vendido y los últimos 7 días",
-        "Caja como la del súper: góndola por rubro, lector de códigos y cobro con dos medios a la vez"
+        "Caja como la del súper: góndola por rubro, escáner de códigos con la cámara y cobro con dos medios a la vez"
     ],
     tambien: [
         "Pasar el stock, las ventas y la ganancia a Excel",
-        "Cobro con Mercado Pago o QR, y tickets para imprimir",
-        "Aviso por Telegram (si el cliente activa el bot) o por WhatsApp con un toque, cuando la lista está separada",
+        "Cobro con Mercado Pago o QR, lector de códigos físico y tickets para imprimir",
+        "Aviso por Telegram o por WhatsApp con un toque, cuando la lista está separada",
         "Cuenta corriente para colegios, oficinas y clientes de siempre",
         "Varias cajas o sucursales, con su usuario cada una"
     ]
