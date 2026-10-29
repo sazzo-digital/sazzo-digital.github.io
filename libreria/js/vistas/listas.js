@@ -1,14 +1,14 @@
-import { pintarConsigna } from "./comunes.js?v=233619f5c3";
+import { pintarConsigna } from "./comunes.js?v=fd92d86921";
 // ============================================
 // Listas escolares (Mariela y Joaquín): los pedidos de listas que llegan del celu o se arman en el mostrador.
 // En cada pedido: si alcanza el stock de cada artículo (y, si no, otro de la misma familia: el cuaderno rojo por el
 // azul), "Separar" (se descuenta del stock), "Avisar" (mensaje para copiar) y "Cobrar y entregar" (queda como venta).
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=233619f5c3";
-import { mostrarMensaje } from "../../kit/js/mensaje.js?v=233619f5c3";
-import { AVISO_CAMPO } from "../../kit/js/leyendas.js?v=233619f5c3";
-import { ESTADOS_PEDIDO, MEDIOS, TOPES, pesos } from "../datos.js?v=233619f5c3";
-import { guia, activarGuias, activarFlechas, pasos, pastillaEstado, tarjetaPedido, cuando } from "./comunes.js?v=233619f5c3";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=fd92d86921";
+import { mostrarMensaje } from "../../kit/js/mensaje.js?v=fd92d86921";
+import { AVISO_CAMPO } from "../../kit/js/leyendas.js?v=fd92d86921";
+import { ESTADOS_PEDIDO, MEDIOS, TOPES, pesos } from "../datos.js?v=fd92d86921";
+import { guia, activarGuias, activarFlechas, pasos, pastillaEstado, tarjetaPedido, cuando } from "./comunes.js?v=fd92d86921";
 
 /** Billetes "redondos" para cobrar una lista: el próximo múltiplo de $10.000, de $50.000 y $100.000. */
 const billetesPara = (total) => [...new Set([10_000, 50_000, 100_000].map((b) => Math.ceil(Math.max(1, total) / b) * b))].slice(0, 3);

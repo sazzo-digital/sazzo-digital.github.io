@@ -1,11 +1,11 @@
-import { pintarConsigna } from "./comunes.js?v=50ee31fa6b";
-import { esc, aviso, fechaHora } from "../../kit/js/ui.js?v=50ee31fa6b";
-import { TOPES, MEDIOS, RUBROS, UNIDADES, pesos, cantidadTexto, precioPara } from "../datos.js?v=50ee31fa6b";
-import { textoMedio, mediosParaCaja } from "../../kit/js/pagos.js?v=50ee31fa6b";
-import { NEGOCIO, MARCA } from "../marca.js?v=50ee31fa6b";
-import { EVENTO_REINICIO } from "../../kit/js/guardado.js?v=50ee31fa6b";
-import { abrirCaja, htmlMasDeLaCaja } from "../../kit/js/caja.js?v=50ee31fa6b";
-import { LEYENDA_PIE } from "../../kit/js/leyendas.js?v=50ee31fa6b";
+import { pintarConsigna } from "./comunes.js?v=b5ba01410e";
+import { esc, aviso, fechaHora } from "../../kit/js/ui.js?v=b5ba01410e";
+import { TOPES, MEDIOS, RUBROS, UNIDADES, pesos, cantidadTexto, precioPara } from "../datos.js?v=b5ba01410e";
+import { textoMedio, mediosParaCaja } from "../../kit/js/pagos.js?v=b5ba01410e";
+import { NEGOCIO, MARCA } from "../marca.js?v=b5ba01410e";
+import { EVENTO_REINICIO } from "../../kit/js/guardado.js?v=b5ba01410e";
+import { abrirCaja, htmlMasDeLaCaja } from "../../kit/js/caja.js?v=b5ba01410e";
+import { LEYENDA_PIE } from "../../kit/js/leyendas.js?v=b5ba01410e";
 
 export const ticket = new Map();
 addEventListener(EVENTO_REINICIO, () => ticket.clear());

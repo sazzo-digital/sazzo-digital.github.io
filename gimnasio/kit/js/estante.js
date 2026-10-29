@@ -1,4 +1,4 @@
-import { esc } from "./ui.js?v=6b204d1609";
+import { esc } from "./ui.js?v=f8ba432cdc";
 
 export const TOPE_ESTANTE = { titulo: 60, cantidad: 100_000 };
 

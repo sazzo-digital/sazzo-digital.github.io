@@ -1,4 +1,4 @@
-import { consignaPersona, activarSerie, pintarConsigna } from "./comunes.js?v=f8ec046caa";
+import { consignaPersona, activarSerie, pintarConsigna } from "./comunes.js?v=c78b41fdf7";
 // ============================================
 // Precios y stock. Todos ven los kilos que quedan de cada corte (por animal), con "hay que despostar" (los que salen
 // de la media res) o "hay que pedir", y el precio por kilo. El dueño además:
@@ -7,13 +7,13 @@ import { consignaPersona, activarSerie, pintarConsigna } from "./comunes.js?v=f8
 //   "Cargar un corte" y la "Pizarra para la tele".
 // También acá: las etiquetas de ejemplo de la balanza (para probar el escáner sin balanza).
 // ============================================
-import { esc, aviso, vacio, mensajeDe } from "../../kit/js/ui.js?v=f8ec046caa";
-import { htmlEstante, activarEstantes } from "../../kit/js/estante.js?v=f8ec046caa";
-import { ANIMALES, TOPES, nombreAnimal, pesos, kilos, armarEtiqueta } from "../datos.js?v=f8ec046caa";
-import { NEGOCIO } from "../marca.js?v=f8ec046caa";
-import { svgEAN } from "../codigo-barras.js?v=f8ec046caa";
-import { htmlCopiable, activarCopiables } from "../../kit/js/celular.js?v=f8ec046caa";
-import { pastillaStock, precioDe, campoKg, kgEnCampo, cuantoHay } from "./comunes.js?v=f8ec046caa";
+import { esc, aviso, vacio, mensajeDe } from "../../kit/js/ui.js?v=c78b41fdf7";
+import { htmlEstante, activarEstantes } from "../../kit/js/estante.js?v=c78b41fdf7";
+import { ANIMALES, TOPES, nombreAnimal, pesos, kilos, armarEtiqueta } from "../datos.js?v=c78b41fdf7";
+import { NEGOCIO } from "../marca.js?v=c78b41fdf7";
+import { svgEAN } from "../codigo-barras.js?v=c78b41fdf7";
+import { htmlCopiable, activarCopiables } from "../../kit/js/celular.js?v=c78b41fdf7";
+import { pastillaStock, precioDe, campoKg, kgEnCampo, cuantoHay } from "./comunes.js?v=c78b41fdf7";
 
 const RAPIDOS = [5, 8, 10, 15];
 let textoBuscado = ""; // el buscador recuerda lo escrito mientras se navega

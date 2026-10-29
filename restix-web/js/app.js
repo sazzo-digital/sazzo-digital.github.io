@@ -3,19 +3,19 @@
 // Lara (moza) ve el salón, la cocina (solo mirar) y la caja; Beto, la cocina; Flor (cliente), la carta del QR.
 // irA() cambia de persona sin pasar por "Probala como…" (botón del recorrido: "Mirá lo que le llega a la cocina →").
 // ============================================
-import { $, conFundido } from "../kit/js/ui.js?v=aa4351ebaa";
-import { iniciarDemo } from "../kit/js/arranque.js?v=aa4351ebaa";
-import { vistaIngreso } from "../kit/js/ingreso.js?v=aa4351ebaa";
-import { pintarMarco } from "../kit/js/marco.js?v=aa4351ebaa";
-import { mostrarRuta, soltarPantalla } from "../kit/js/rutas.js?v=aa4351ebaa";
-import { vistaAcerca } from "../kit/js/acerca.js?v=aa4351ebaa";
-import { MARCA, PERSONAS, DETALLE, buscarPersona } from "./marca.js?v=aa4351ebaa";
-import { aparte } from "../kit/js/aparte.js?v=aa4351ebaa";
-import { leerSesionGuardada } from "../kit/js/guardado.js?v=aa4351ebaa";
-import { esperarPantallas } from "./carga.js?v=aa4351ebaa";
+import { $, conFundido } from "../kit/js/ui.js?v=a22e4d6a0a";
+import { iniciarDemo } from "../kit/js/arranque.js?v=a22e4d6a0a";
+import { vistaIngreso } from "../kit/js/ingreso.js?v=a22e4d6a0a";
+import { pintarMarco } from "../kit/js/marco.js?v=a22e4d6a0a";
+import { mostrarRuta, soltarPantalla } from "../kit/js/rutas.js?v=a22e4d6a0a";
+import { vistaAcerca } from "../kit/js/acerca.js?v=a22e4d6a0a";
+import { MARCA, PERSONAS, DETALLE, buscarPersona } from "./marca.js?v=a22e4d6a0a";
+import { aparte } from "../kit/js/aparte.js?v=a22e4d6a0a";
+import { leerSesionGuardada } from "../kit/js/guardado.js?v=a22e4d6a0a";
+import { esperarPantallas } from "./carga.js?v=a22e4d6a0a";
 
 // Los datos de ejemplo y las pantallas se bajan aparte (al terminar de cargar): "Probala como…" aparece sin esperarlos
-const pantallas = aparte(() => import("./pantallas.js?v=aa4351ebaa"));
+const pantallas = aparte(() => import("./pantallas.js?v=a22e4d6a0a"));
 const { vistaInicio, vistaMesa, vistaCobro, vistaCaja, vistaCocina, avisosDe } = pantallas.funciones;
 
 iniciarDemo(MARCA);
@@ -73,6 +73,7 @@ async function entrar(persona) {
     usuario = persona;
     contenido = pintarMarco(app, {
         avisos: () => avisosDe(datos), // avisos entre roles (vistas/avisos.js, kit/avisos.js)
+        sinSonido: true,
         marca: MARCA,
         detalle: DETALLE,
         usuario,

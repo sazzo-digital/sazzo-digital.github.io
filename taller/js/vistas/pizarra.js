@@ -3,12 +3,12 @@
 // una columna por estado; en el celu, uno abajo del otro con pastillas para filtrar. El mecánico ve solo sus autos.
 // "+ Entró un auto": se escribe la patente y, si ya vino, completa solo el auto, el cliente y la última vez.
 // ============================================
-import { esc, aviso } from "../../kit/js/ui.js?v=3fa38b78e9";
-import { fechaLocalISO } from "../../kit/js/fechas.js?v=3fa38b78e9";
-import { AVISO_CAMPO } from "../../kit/js/leyendas.js?v=3fa38b78e9";
-import { TOPES, NAFTA, MECANICOS, esPatente, formatoPatente } from "../datos.js?v=3fa38b78e9";
-import { NEGOCIO } from "../marca.js?v=3fa38b78e9";
-import { guia, activarGuias, chapa, pastillaEstado, textoPromesa, consignaPersona, activarPasos } from "./comunes.js?v=3fa38b78e9";
+import { esc, aviso } from "../../kit/js/ui.js?v=e7e4a2d57a";
+import { fechaLocalISO } from "../../kit/js/fechas.js?v=e7e4a2d57a";
+import { AVISO_CAMPO } from "../../kit/js/leyendas.js?v=e7e4a2d57a";
+import { TOPES, NAFTA, MECANICOS, esPatente, formatoPatente } from "../datos.js?v=e7e4a2d57a";
+import { NEGOCIO } from "../marca.js?v=e7e4a2d57a";
+import { guia, activarGuias, chapa, pastillaEstado, textoPromesa, consignaPersona, activarPasos } from "./comunes.js?v=e7e4a2d57a";
 
 let filtro = "todos";
 

@@ -16,7 +16,7 @@
 // de cero" o datos renovados) se borra (guardado.js → olvidarAvisos). Funciona en el mismo aparato o en dos pestañas;
 // en dos celulares distintos no (los datos viven en cada navegador).
 // ============================================
-import { esc } from "./ui.js?v=26036b0c55";
+import { esc } from "./ui.js?v=514ca9a71d";
 
 const TOPE_VISTOS = 300; // por persona (los más viejos se van)
 const TOPE_BASE = 2000;
@@ -118,7 +118,7 @@ const rutaActual = () => location.hash.replace(/^#/, "").split("?")[0];
 const rutaSegura = (r) => (typeof r === "string" && /^\/[\w\-/]{0,80}$/.test(r) ? r : null);
 
 /** Pinta (o saca) el aviso de arriba y los numeritos. Lo llama el marco después de cada pantalla. */
-export async function pintarAvisos(app, { prefijo, usuario, avisos }) {
+export async function pintarAvisos(app, { prefijo, usuario, avisos, sinSonido = false }) {
     if (!app || !usuario || typeof avisos !== "function") return;
     let todos;
     try {
@@ -156,12 +156,12 @@ export async function pintarAvisos(app, { prefijo, usuario, avisos }) {
     caja.querySelector("[data-ver]")?.addEventListener("click", () => {
         marcarAvisoVisto(prefijo, usuario, a);
         caja.remove();
-        if (`#${destino}` === location.hash) pintarAvisos(app, { prefijo, usuario, avisos });
+        if (`#${destino}` === location.hash) pintarAvisos(app, { prefijo, usuario, avisos, sinSonido });
         else location.hash = `#${destino}`;
     });
     caja.querySelector("[data-cerrar]").addEventListener("click", () => {
         marcarAvisoVisto(prefijo, usuario, a);
-        pintarAvisos(app, { prefijo, usuario, avisos });
+        pintarAvisos(app, { prefijo, usuario, avisos, sinSonido });
     });
     const alEscape = (e) => {
         if (!caja.isConnected) return document.removeEventListener("keydown", alEscape);
@@ -169,5 +169,5 @@ export async function pintarAvisos(app, { prefijo, usuario, avisos }) {
         caja.querySelector("[data-cerrar]").click();
     };
     document.addEventListener("keydown", alEscape);
-    if (recien) sonarAviso();
+    if (recien && !sinSonido) sonarAviso();
 }

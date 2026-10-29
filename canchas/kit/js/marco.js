@@ -13,19 +13,19 @@
 // Festejo: cuando aparece una confirmación (.hecho: turno reservado, venta cobrada, orden creada…), el ✓ entra con un
 // rebote, salen chispitas del color de la demo y el celular vibra cortito (Android). Quieto con "reducir movimiento".
 // ============================================
-import { $, $$, esc, iniciales, cajaDeAvisos } from "./ui.js?v=44e4746e73";
-import { logoSazzo, nombreDemo } from "./marca.js?v=44e4746e73";
-import { LINK_CATALOGO } from "./config.js?v=44e4746e73";
-import { interruptorTema, activarInterruptorTema } from "./apariencia.js?v=44e4746e73";
-import { linkOtrasDemos, linkQuieroEsto, botDelChat } from "./enlaces.js?v=44e4746e73";
-import { abrirColores, leerNombre } from "./colores.js?v=44e4746e73";
-import { contar } from "./visita.js?v=44e4746e73";
-import { pintarAvisos } from "./avisos.js?v=44e4746e73";
-import { revisarDetalle, htmlBotonDetalle, activarDetalle } from "./detalle.js?v=44e4746e73";
-import { htmlBotonInstalarCabecera } from "./instalar.js?v=44e4746e73";
-import { olvidarDemo } from "./guardado.js?v=44e4746e73";
-import { htmlInterruptorPasos, activarInterruptorPasos } from "./consigna.js?v=44e4746e73";
-import { LEYENDA_TV, LEYENDA_IMPRESION } from "./leyendas.js?v=44e4746e73";
+import { $, $$, esc, iniciales, cajaDeAvisos } from "./ui.js?v=07075873d3";
+import { logoSazzo, nombreDemo } from "./marca.js?v=07075873d3";
+import { LINK_CATALOGO } from "./config.js?v=07075873d3";
+import { interruptorTema, activarInterruptorTema } from "./apariencia.js?v=07075873d3";
+import { linkOtrasDemos, linkQuieroEsto, botDelChat } from "./enlaces.js?v=07075873d3";
+import { abrirColores, leerNombre } from "./colores.js?v=07075873d3";
+import { contar } from "./visita.js?v=07075873d3";
+import { pintarAvisos } from "./avisos.js?v=07075873d3";
+import { revisarDetalle, htmlBotonDetalle, activarDetalle } from "./detalle.js?v=07075873d3";
+import { htmlBotonInstalarCabecera } from "./instalar.js?v=07075873d3";
+import { olvidarDemo } from "./guardado.js?v=07075873d3";
+import { htmlInterruptorPasos, activarInterruptorPasos } from "./consigna.js?v=07075873d3";
+import { LEYENDA_TV, LEYENDA_IMPRESION } from "./leyendas.js?v=07075873d3";
 
 /** La barrita de Sazzo: colores, otras demos y "Quiero esto" (los textos largos solo si hay lugar). */
 export function htmlBarraSazzo(marca, opciones, conDetalle = false) {
@@ -244,9 +244,9 @@ if (typeof document !== "undefined") {
  * Dibuja el marco adentro de `app`, conecta sus botones y devuelve el lugar donde van las pantallas.
  * `avisos` (opcional): () => los hechos de la demo para los avisos entre roles (kit/avisos.js).
  */
-export function pintarMarco(app, { marca, usuario, menu = [], alCambiarPersona, alReiniciar, avisos, detalle = null }) {
+export function pintarMarco(app, { marca, usuario, menu = [], alCambiarPersona, alReiniciar, avisos, sinSonido = false, detalle = null }) {
     cajaDeAvisos();
-    avisosDelMarco = typeof avisos === "function" ? { app, prefijo: marca.prefijo, usuario, avisos } : null;
+    avisosDelMarco = typeof avisos === "function" ? { app, prefijo: marca.prefijo, usuario, avisos, sinSonido } : null;
     // Sin a quién cambiar (comercio de una sola persona), no hay botón de cambiar de persona
     app.innerHTML = htmlMarco({ marca, usuario, menu, cambiarPersona: !!alCambiarPersona, detalle });
     app.classList.toggle("sin-menu", !menu.length);

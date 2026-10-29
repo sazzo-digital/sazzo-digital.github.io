@@ -1,13 +1,13 @@
-import { pintarConsigna } from "./comunes.js?v=792c943282";
+import { pintarConsigna } from "./comunes.js?v=0d0af3824b";
 // ============================================
 // Fiados: la libreta. Quién debe, cuánto y desde cuándo; anotar un cliente nuevo; en la ficha, cobrar (todo o una
 // parte) y ver qué se llevó en cada fiado. El tope de cada cliente lo cambia el dueño.
 // ============================================
-import { esc, aviso, vacio, fechaCorta } from "../../kit/js/ui.js?v=792c943282";
-import { AVISO_CAMPO } from "../../kit/js/leyendas.js?v=792c943282";
-import { diaLocalDe, fechaLocalISO } from "../../kit/js/fechas.js?v=792c943282";
-import { TOPES, pesos } from "../datos.js?v=792c943282";
-import { haceDias, hora } from "./comunes.js?v=792c943282";
+import { esc, aviso, vacio, fechaCorta } from "../../kit/js/ui.js?v=0d0af3824b";
+import { AVISO_CAMPO } from "../../kit/js/leyendas.js?v=0d0af3824b";
+import { diaLocalDe, fechaLocalISO } from "../../kit/js/fechas.js?v=0d0af3824b";
+import { TOPES, pesos } from "../datos.js?v=0d0af3824b";
+import { haceDias, hora } from "./comunes.js?v=0d0af3824b";
 
 const barraTope = (c) => {
     const pct = c.tope ? Math.min(100, Math.round((c.deuda / c.tope) * 100)) : 100;

@@ -3,13 +3,12 @@
 // grilla), la comanda de una mesa (al enviar se separa solo lo de la cocina y lo de la barra), el cobro dividiendo la
 // cuenta (todo junto, en partes iguales o por lo que consumió cada uno, cada parte con su medio de pago) y la caja.
 // ============================================
-import { esc, aviso, vacio, fechaCorta } from "../../kit/js/ui.js?v=aa4351ebaa";
-import { CATEGORIAS, MEDIOS, MEDIOS_PERSONAL, MOTIVOS_PERSONAL, TOPES, carta, dividir, pesos } from "../datos.js?v=aa4351ebaa";
-import { MARCA, NEGOCIO, PERSONAS } from "../marca.js?v=aa4351ebaa";
-import { htmlBotonSonido, activarBotonSonido, ding } from "../../kit/js/celular.js?v=aa4351ebaa";
-import { ticket, importe, guia, activarGuias, haceMin, hora, consignaPersona } from "./comunes.js?v=aa4351ebaa";
-import { activarConsigna } from "../../kit/js/consigna.js?v=aa4351ebaa";
-import { diaLocalDe } from "../../kit/js/fechas.js?v=aa4351ebaa";
+import { esc, aviso, vacio, fechaCorta } from "../../kit/js/ui.js?v=a22e4d6a0a";
+import { CATEGORIAS, MEDIOS, MEDIOS_PERSONAL, MOTIVOS_PERSONAL, TOPES, carta, dividir, pesos } from "../datos.js?v=a22e4d6a0a";
+import { MARCA, NEGOCIO, PERSONAS } from "../marca.js?v=a22e4d6a0a";
+import { ticket, importe, guia, activarGuias, haceMin, hora, consignaPersona } from "./comunes.js?v=a22e4d6a0a";
+import { activarConsigna } from "../../kit/js/consigna.js?v=a22e4d6a0a";
+import { diaLocalDe } from "../../kit/js/fechas.js?v=a22e4d6a0a";
 
 const ESTADO_MESA = { libre: "Libre", abierta: "Abierta", cobrando: "Cobrando" };
 
@@ -355,7 +354,7 @@ export function vistaCobro(cont, { usuario, datos, params: [id] }) {
         lista.forEach((_, i) => { estado.medios[i] ??= i === 0 ? "efectivo" : "qr"; });
         cont.innerHTML = `
             <a class="volver" href="#/mesa/${esc(m.id)}"><i class="ti ti-arrow-left"></i> ${esc(m.nombre)}</a>
-            <div class="titulo-con-accion"><h1 class="titulo">Cobrar ${esc(m.nombre)}</h1>${htmlBotonSonido(MARCA.prefijo)}</div>
+            <h1 class="titulo">Cobrar ${esc(m.nombre)}</h1>
             ${consignaPersona(datos, usuario)}
             ${estado.cambio ? `<p class="alerta alerta--alerta" role="status">La cuenta cambió: revisá el total</p>` : ""}
             ${m.sinMandar ? `<p class="nota">Hay cosas sin mandar: mandalas o sacalas antes de cobrar.</p>` : ""}
@@ -401,14 +400,12 @@ export function vistaCobro(cont, { usuario, datos, params: [id] }) {
             pintar();
         }));
         activarConsigna(cont, MARCA);
-        activarBotonSonido(cont, MARCA.prefijo); // "ding" al cobrar, apagado de entrada
         cont.querySelector("[data-cobrar]").addEventListener("click", () => {
             const resumen = montos().map((monto, i) => ({ monto, medio: estado.medios[i] }));
             const partes = resumen.filter((p) => p.monto > 0);
             try {
                 const cobro = datos.cobrar(usuario, m.id, { partes, modo: estado.modo });
                 cobrosEnCurso.delete(datos);
-                ding(MARCA.prefijo);
                 cont.innerHTML = `
                     <div class="hecho">
                         <i class="ti ti-circle-check" aria-hidden="true"></i>

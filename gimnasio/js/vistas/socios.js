@@ -3,13 +3,13 @@
 // filtros que importan (cuota vencida, vence esta semana, avisaron que pagaron, no vienen hace +3 semanas, sin apto,
 // bajas) con la acción de cada uno a mano (recordatorio, confirmar, invitar), el buscador, Excel y el alta.
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=6b204d1609";
-import { MEDIOS_PAGO } from "../../kit/js/pagos.js?v=6b204d1609";
-import { bajarExcel } from "../../kit/js/archivos.js?v=6b204d1609";
-import { AVISO_CAMPO } from "../../kit/js/leyendas.js?v=6b204d1609";
-import { NEGOCIO } from "../marca.js?v=6b204d1609";
-import { PLANES_CUOTA, HORAS, DIAS_CORTOS, ORDEN_SEMANA, TOPES, REAVISAR_DIAS, REINVITAR_DIAS, pesos, fechaCorta } from "../datos.js?v=6b204d1609";
-import { activarConsignaPersona, guia, activarGuias, pastilla, pastillaCuota, cara, haceDias, mostrarMensaje } from "./comunes.js?v=6b204d1609";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=f8ba432cdc";
+import { MEDIOS_PAGO } from "../../kit/js/pagos.js?v=f8ba432cdc";
+import { bajarExcel } from "../../kit/js/archivos.js?v=f8ba432cdc";
+import { AVISO_CAMPO } from "../../kit/js/leyendas.js?v=f8ba432cdc";
+import { NEGOCIO } from "../marca.js?v=f8ba432cdc";
+import { PLANES_CUOTA, HORAS, DIAS_CORTOS, ORDEN_SEMANA, TOPES, REAVISAR_DIAS, REINVITAR_DIAS, pesos, fechaCorta } from "../datos.js?v=f8ba432cdc";
+import { activarConsignaPersona, guia, activarGuias, pastilla, pastillaCuota, cara, haceDias, mostrarMensaje } from "./comunes.js?v=f8ba432cdc";
 
 let filtro = "pronto"; // de entrada, los que vencen esta semana: lo primero que mira la dueña
 let texto = "";

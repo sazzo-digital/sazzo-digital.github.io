@@ -6,12 +6,12 @@
 // Reglas del kit: exigir() en lo que modifica, topes en todo lo que se carga y se devuelven copias.
 // Si cambia la forma de los datos, subir VERSION_DATOS (se regeneran solos).
 // ============================================
-import { exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=aa4351ebaa";
-import { enteroHasta, sinPasarse } from "../kit/js/topes.js?v=aa4351ebaa";
-import { fechaLocalISO } from "../kit/js/fechas.js?v=aa4351ebaa";
-import { MARCA, PERSONAS } from "./marca.js?v=aa4351ebaa";
-import { MEDIOS_PAGO } from "../kit/js/pagos.js?v=aa4351ebaa";
-import { crearGuardadoRestix } from "./guardado.js?v=aa4351ebaa";
+import { exigir, copia, nuevoId, ahora, buscar } from "../kit/js/guardado.js?v=a22e4d6a0a";
+import { enteroHasta, sinPasarse } from "../kit/js/topes.js?v=a22e4d6a0a";
+import { fechaLocalISO } from "../kit/js/fechas.js?v=a22e4d6a0a";
+import { MARCA, PERSONAS } from "./marca.js?v=a22e4d6a0a";
+import { MEDIOS_PAGO } from "../kit/js/pagos.js?v=a22e4d6a0a";
+import { crearGuardadoRestix } from "./guardado.js?v=a22e4d6a0a";
 
 export const VERSION_DATOS = 9;
 export const PASOS_CARTA = ["pizzas", "hamburguesa-3d", "minutas"];

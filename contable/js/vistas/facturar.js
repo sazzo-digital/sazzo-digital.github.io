@@ -1,24 +1,24 @@
-import { conConsigna } from "./comunes.js?v=3b75165565";
+import { conConsigna } from "./comunes.js?v=a9e9b17545";
 // ============================================
 // Facturar: la lista de comprobantes del mes, la factura nueva (la letra sale sola según el cliente, los totales se
 // ven mientras se carga y "Pidiendo CAE a ARCA…" simulado) y el comprobante emitido, listo para imprimir con la marca
 // de agua "DEMO · SIN VALIDEZ FISCAL", el CAE de prueba y el lugar del QR dibujado. Desde ahí, la nota de crédito.
 // Solo administración carga; Hernán y Patricia miran.
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=3b75165565";
-import { htmlEstante, activarEstantes } from "../../kit/js/estante.js?v=3b75165565";
-import { agruparPorEstado } from "../estantes.js?v=3b75165565";
-import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=3b75165565";
-import { TOPES, CUENTAS, ID_CONSUMIDOR_FINAL } from "../datos.js?v=3b75165565";
-import { PRODUCTOS } from "../semilla.js?v=3b75165565";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=a9e9b17545";
+import { htmlEstante, activarEstantes } from "../../kit/js/estante.js?v=a9e9b17545";
+import { agruparPorEstado } from "../estantes.js?v=a9e9b17545";
+import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=a9e9b17545";
+import { TOPES, CUENTAS, ID_CONSUMIDOR_FINAL } from "../datos.js?v=a9e9b17545";
+import { PRODUCTOS } from "../semilla.js?v=a9e9b17545";
 import {
     COMPROBANTES, ALICUOTAS, ORDEN_ALICUOTAS, TOPE_CF_IDENTIFICAR, pesos, numeroComprobante, formatoCuit, nombrePeriodo, signo
-} from "../reglas.js?v=3b75165565";
-import { buscarPersona } from "../marca.js?v=3b75165565";
+} from "../reglas.js?v=a9e9b17545";
+import { buscarPersona } from "../marca.js?v=a9e9b17545";
 import {
     fechaCorta, diaMes, pastillaTipo, periodoPedido, htmlSelectorMes, activarSelectorMes, documento, condicionTexto,
     logoEmpresa, conEspera, nombreDe
-} from "./comunes.js?v=3b75165565";
+} from "./comunes.js?v=a9e9b17545";
 
 const puedeCargar = (u) => u.rol === "admin";
 const OPCIONES_ALICUOTA = [...ORDEN_ALICUOTAS, "ex"];

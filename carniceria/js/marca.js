@@ -3,8 +3,8 @@
 // Las personas son los roles reales del rubro (nombres inventados): el dueño, el carnicero del mostrador y una clienta
 // que pide desde el celular.
 // ============================================
-import { revisarMarca } from "../kit/js/marca.js?v=f8ec046caa";
-import { negocioDe } from "../kit/js/colores.js?v=f8ec046caa";
+import { revisarMarca } from "../kit/js/marca.js?v=c78b41fdf7";
+import { negocioDe } from "../kit/js/colores.js?v=c78b41fdf7";
 
 export const MARCA = revisarMarca({
     id: "carniceria",

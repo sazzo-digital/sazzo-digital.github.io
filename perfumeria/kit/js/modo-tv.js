@@ -1,6 +1,6 @@
-import { esc } from "./ui.js?v=c1eb54ed24";
-import { mantenerPantallaPrendida } from "./celular.js?v=c1eb54ed24";
-import { LEYENDA_TV } from "./leyendas.js?v=c1eb54ed24";
+import { esc } from "./ui.js?v=3139c971e2";
+import { mantenerPantallaPrendida } from "./celular.js?v=3139c971e2";
+import { LEYENDA_TV } from "./leyendas.js?v=3139c971e2";
 
 export const TOPES_TV = { minimoMs: 2000, maximoMs: 60000 };
 

@@ -9,8 +9,8 @@
 //   primero se aplica). La imagen se lee EN el celular (se achica a 64 × 64 y se cuentan los colores): no se sube a
 //   ningún lado ni se guarda. Logo en blanco y negro → se avisa y se elige de la lista.
 // ============================================
-import { $, $$, esc } from "./ui.js?v=aa4351ebaa";
-import { revisarTamanoImagen, CABECERA_IMAGEN } from "./archivos.js?v=aa4351ebaa";
+import { $, $$, esc } from "./ui.js?v=a22e4d6a0a";
+import { revisarTamanoImagen, CABECERA_IMAGEN } from "./archivos.js?v=a22e4d6a0a";
 
 // Fondos contra los que tiene que leerse el acento (base/_temas.scss)
 const TARJETA_CLARA = "#e9dfcc";

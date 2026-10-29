@@ -1,14 +1,14 @@
-import { pintarConsigna } from "./comunes.js?v=50ee31fa6b";
+import { pintarConsigna } from "./comunes.js?v=b5ba01410e";
 // ============================================
 // Cuentas corrientes (los del oficio que compran todo el mes y pagan después): quién debe, cuánto, hace cuánto que
 // no paga y cuánto del tope usó. En la ficha: el recordatorio armado para mandarle, anotar un pago (todo o una parte),
 // el tope (lo cambia el dueño) y qué se llevó en cada compra. El dueño abre cuentas nuevas.
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=50ee31fa6b";
-import { mostrarMensaje } from "../../kit/js/mensaje.js?v=50ee31fa6b";
-import { AVISO_CAMPO } from "../../kit/js/leyendas.js?v=50ee31fa6b";
-import { TOPES, TOPE_CUENTA_NUEVA, pesos } from "../datos.js?v=50ee31fa6b";
-import { barraTope, haceDias, diasDesde, cuando } from "./comunes.js?v=50ee31fa6b";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=b5ba01410e";
+import { mostrarMensaje } from "../../kit/js/mensaje.js?v=b5ba01410e";
+import { AVISO_CAMPO } from "../../kit/js/leyendas.js?v=b5ba01410e";
+import { TOPES, TOPE_CUENTA_NUEVA, pesos } from "../datos.js?v=b5ba01410e";
+import { barraTope, haceDias, diasDesde, cuando } from "./comunes.js?v=b5ba01410e";
 
 const DIAS_ATRASADO = 30; // desde cuántos días sin pagar se marca
 

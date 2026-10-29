@@ -1,4 +1,4 @@
-import { consignaPersona, activarSerie } from "./comunes.js?v=f8ec046caa";
+import { consignaPersona, activarSerie } from "./comunes.js?v=c78b41fdf7";
 // ============================================
 // Desposte: lo que entra (media res, media res de cerdo o cajón de pollo) se despieza y se pesa corte por corte.
 //   Lista: los despostes abiertos (lo que falta pesar), "Entró mercadería" (el dueño) y el historial con la merma de
@@ -8,12 +8,12 @@ import { consignaPersona, activarSerie } from "./comunes.js?v=f8ec046caa";
 //   El dueño ve además el costo real por kilo de cada corte y el precio sugerido con su margen ("Aplicar", con
 //   Deshacer) y lo baja en PDF. Darío carga los pesos; los costos los ve Ricardo.
 // ============================================
-import { esc, aviso, vacio, fechaCorta } from "../../kit/js/ui.js?v=f8ec046caa";
-import { armarPdf, pdfListo } from "../../kit/js/pdf.js?v=f8ec046caa";
-import { TOPES, TIPOS_INGRESO, PROVEEDORES, pesos, kilos, aGramos, mermaEsperada } from "../datos.js?v=f8ec046caa";
-import { NEGOCIO, MARCA } from "../marca.js?v=f8ec046caa";
-import { htmlMediaRes, activarMediaRes, ZONAS } from "../media-res.js?v=f8ec046caa";
-import { guia, activarGuias, cuando, campoKg, kgEnCampo, porcentaje, unDecimal } from "./comunes.js?v=f8ec046caa";
+import { esc, aviso, vacio, fechaCorta } from "../../kit/js/ui.js?v=c78b41fdf7";
+import { armarPdf, pdfListo } from "../../kit/js/pdf.js?v=c78b41fdf7";
+import { TOPES, TIPOS_INGRESO, PROVEEDORES, pesos, kilos, aGramos, mermaEsperada } from "../datos.js?v=c78b41fdf7";
+import { NEGOCIO, MARCA } from "../marca.js?v=c78b41fdf7";
+import { htmlMediaRes, activarMediaRes, ZONAS } from "../media-res.js?v=c78b41fdf7";
+import { guia, activarGuias, cuando, campoKg, kgEnCampo, porcentaje, unDecimal } from "./comunes.js?v=c78b41fdf7";
 
 /** La merma contra la esperada: pastilla verde (igual o menos), amarilla (hasta 1,5 puntos más) o roja. */
 function pastillaMerma(merma, esperada) {

@@ -1,19 +1,19 @@
-import { LEYENDA_IMPRESION } from "../../kit/js/leyendas.js?v=3b75165565";
-import { AVISO_ORIENTATIVO, conConsigna } from "./comunes.js?v=3b75165565";
+import { LEYENDA_IMPRESION } from "../../kit/js/leyendas.js?v=a9e9b17545";
+import { AVISO_ORIENTATIVO, conConsigna } from "./comunes.js?v=a9e9b17545";
 // ============================================
 // IVA: la posición del mes (débito − crédito − percepciones − saldo a favor anterior = a pagar o a favor, con el
 // vencimiento según el CUIT), el gráfico de los últimos 12 meses, los libros IVA Ventas y Compras, y los archivos
 // para bajar (Excel/CSV para el contador y los .txt del Libro IVA Digital, de prueba). La ven todos; bajar archivos
 // es cosa de Patricia (los demás también pueden mirarlos).
 // ============================================
-import { esc, descargarCSV, fechaCorta } from "../../kit/js/ui.js?v=3b75165565";
-import { htmlEstante, activarEstantes } from "../../kit/js/estante.js?v=3b75165565";
-import { estantesIva } from "../estantes.js?v=3b75165565";
-import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=3b75165565";
-import { ALICUOTAS, ORDEN_ALICUOTAS, pesos, pesosRedondo, nombrePeriodo, mesCorto, formatoCuit, periodoActual } from "../reglas.js?v=3b75165565";
-import { buscarPersona, MARCA } from "../marca.js?v=3b75165565";
-import { libroDigitalVentas, libroDigitalCompras, bajarTexto } from "../libro-digital.js?v=3b75165565";
-import { periodoPedido, htmlSelectorMes, activarSelectorMes, htmlTabla, diaMes, pintarConsigna } from "./comunes.js?v=3b75165565";
+import { esc, descargarCSV, fechaCorta } from "../../kit/js/ui.js?v=a9e9b17545";
+import { htmlEstante, activarEstantes } from "../../kit/js/estante.js?v=a9e9b17545";
+import { estantesIva } from "../estantes.js?v=a9e9b17545";
+import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=a9e9b17545";
+import { ALICUOTAS, ORDEN_ALICUOTAS, pesos, pesosRedondo, nombrePeriodo, mesCorto, formatoCuit, periodoActual } from "../reglas.js?v=a9e9b17545";
+import { buscarPersona, MARCA } from "../marca.js?v=a9e9b17545";
+import { libroDigitalVentas, libroDigitalCompras, bajarTexto } from "../libro-digital.js?v=a9e9b17545";
+import { periodoPedido, htmlSelectorMes, activarSelectorMes, htmlTabla, diaMes, pintarConsigna } from "./comunes.js?v=a9e9b17545";
 
 function pintarIva(cont, { usuario, datos, consulta, irA }) {
     const e = datos.leerEmpresa();

@@ -6,10 +6,10 @@
 // por tenerlo. La cámara pide permiso, se ve en una ventanita y se apaga al leer, al cerrar, al cambiar de pantalla
 // o al esconder la pestaña. Nada sale del celular: la imagen no se guarda ni se manda.
 // ============================================
-import { aviso, esc } from "./ui.js?v=233619f5c3";
-import { alSalirDeLaPantalla } from "./rutas.js?v=233619f5c3";
-import { RUTA_ESCANER } from "./config.js?v=233619f5c3";
-import { LEYENDA_TV } from "./leyendas.js?v=233619f5c3";
+import { aviso, esc } from "./ui.js?v=fd92d86921";
+import { alSalirDeLaPantalla } from "./rutas.js?v=fd92d86921";
+import { RUTA_ESCANER } from "./config.js?v=fd92d86921";
+import { LEYENDA_TV } from "./leyendas.js?v=fd92d86921";
 
 export const FORMATOS_PRODUCTOS = ["ean_13", "ean_8", "upc_a", "upc_e", "code_128"];
 export const TOPE_CODIGO = 40; // letras: un código de producto real tiene 8 a 14

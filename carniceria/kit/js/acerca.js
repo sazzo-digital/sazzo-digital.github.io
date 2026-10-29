@@ -4,10 +4,10 @@
 // - Con alguien adentro: la pantalla entera (vistaAcerca), desde el menú o la cabecera de la demo.
 // Nada de datos personales: firma Sazzo. El contacto ("Quiero esto para mi negocio") llega en el paso 2.
 // ============================================
-import { esc } from "./ui.js?v=f8ec046caa";
-import { logoSazzo, nombreDemo } from "./marca.js?v=f8ec046caa";
-import { LINK_CATALOGO } from "./config.js?v=f8ec046caa";
-import { htmlInterruptorPasos, activarInterruptorPasos } from "./consigna.js?v=f8ec046caa";
+import { esc } from "./ui.js?v=c78b41fdf7";
+import { logoSazzo, nombreDemo } from "./marca.js?v=c78b41fdf7";
+import { LINK_CATALOGO } from "./config.js?v=c78b41fdf7";
+import { htmlInterruptorPasos, activarInterruptorPasos } from "./consigna.js?v=c78b41fdf7";
 
 const AVISO_DEMO =
     "Es una demo: los datos son inventados y quedan guardados solo en este navegador. No te pedimos ningún dato. La versión real se arma a medida de cada negocio.";

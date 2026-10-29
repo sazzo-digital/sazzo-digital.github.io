@@ -4,16 +4,16 @@
 // El mecánico carga lo que encontró y los repuestos, sin ver precios. Y el presupuesto (dueño): para imprimir, con la
 // firma del cliente en pantalla y en PDF para mandarlo por WhatsApp.
 // ============================================
-import { esc, aviso, fechaCorta, fechaHora } from "../../kit/js/ui.js?v=3fa38b78e9";
-import { fechaLocalISO } from "../../kit/js/fechas.js?v=3fa38b78e9";
-import { AVISO_CAMPO, LEYENDA_PIE, LEYENDA_IMPRESION } from "../../kit/js/leyendas.js?v=3fa38b78e9";
-import { pedirFirma, esFirma } from "../../kit/js/firma.js?v=3fa38b78e9";
-import { htmlBotonDictar, activarDictado } from "../../kit/js/dictado.js?v=3fa38b78e9";
-import { armarPdf, pdfListo } from "../../kit/js/pdf.js?v=3fa38b78e9";
-import { ESTADOS, REPUESTOS, MANO_DE_OBRA, TOPES, pesos } from "../datos.js?v=3fa38b78e9";
-import { NEGOCIO } from "../marca.js?v=3fa38b78e9";
-import { guia, activarGuias, chapa, pastillaEstado, textoPromesa, mostrarMensaje, consignaPersona, activarPasos } from "./comunes.js?v=3fa38b78e9";
-import { htmlAntesDespues, activarAntesDespues } from "../../kit/js/antes-despues.js?v=3fa38b78e9";
+import { esc, aviso, fechaCorta, fechaHora } from "../../kit/js/ui.js?v=e7e4a2d57a";
+import { fechaLocalISO } from "../../kit/js/fechas.js?v=e7e4a2d57a";
+import { AVISO_CAMPO, LEYENDA_PIE, LEYENDA_IMPRESION } from "../../kit/js/leyendas.js?v=e7e4a2d57a";
+import { pedirFirma, esFirma } from "../../kit/js/firma.js?v=e7e4a2d57a";
+import { htmlBotonDictar, activarDictado } from "../../kit/js/dictado.js?v=e7e4a2d57a";
+import { armarPdf, pdfListo } from "../../kit/js/pdf.js?v=e7e4a2d57a";
+import { ESTADOS, REPUESTOS, MANO_DE_OBRA, TOPES, pesos } from "../datos.js?v=e7e4a2d57a";
+import { NEGOCIO } from "../marca.js?v=e7e4a2d57a";
+import { guia, activarGuias, chapa, pastillaEstado, textoPromesa, mostrarMensaje, consignaPersona, activarPasos } from "./comunes.js?v=e7e4a2d57a";
+import { htmlAntesDespues, activarAntesDespues } from "../../kit/js/antes-despues.js?v=e7e4a2d57a";
 
 export function vistaOrden(cont, { usuario, datos, irA, params: [id] }) {
     const o = datos.orden(id, usuario);

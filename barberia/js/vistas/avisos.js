@@ -4,9 +4,9 @@
 //   Leo libera el turno de Matías → a Matías le salta "Te cancelaron el turno".
 // Acá solo se dice qué pasó y a quién le importa; el kit decide qué es nuevo para cada uno.
 // ============================================
-import { fechaCorta } from "../../kit/js/ui.js?v=26036b0c55";
-import { aHora } from "../../kit/js/turnos.js?v=26036b0c55";
-import { SERVICIOS, BARBEROS, CLIENTE_DE } from "../datos.js?v=26036b0c55";
+import { fechaCorta } from "../../kit/js/ui.js?v=514ca9a71d";
+import { aHora } from "../../kit/js/turnos.js?v=514ca9a71d";
+import { SERVICIOS, BARBEROS, CLIENTE_DE } from "../datos.js?v=514ca9a71d";
 
 export function avisosDe(datos) {
     const db = datos.guardado.db();

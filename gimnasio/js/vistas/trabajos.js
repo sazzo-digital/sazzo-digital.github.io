@@ -1,6 +1,6 @@
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=6b204d1609";
-import { AVISO_CAMPO } from "../../kit/js/leyendas.js?v=6b204d1609";
-import { DIAS, ORDEN_SEMANA, TOPES } from "../datos.js?v=6b204d1609";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=f8ba432cdc";
+import { AVISO_CAMPO } from "../../kit/js/leyendas.js?v=f8ba432cdc";
+import { DIAS, ORDEN_SEMANA, TOPES } from "../datos.js?v=f8ba432cdc";
 
 const puntos = (t) => `
     <ol class="trabajo__semana" aria-label="Últimos 7 días: ${esc(t.hechos)} de ${esc(t.meta)}">

@@ -2,28 +2,18 @@
 // La cocina (Beto; la moza también la puede mirar): los pedidos que llegan, lo más viejo primero, con cuánto hace que
 // esperan (en rojo si pasan los 15 minutos). "Listo" lo saca y la mesa ve "comida lista".
 // ============================================
-import { esc, aviso } from "../../kit/js/ui.js?v=aa4351ebaa";
-import { mantenerPantallaPrendida, htmlBotonVoz, activarBotonVoz, decir } from "../../kit/js/celular.js?v=aa4351ebaa";
-import { MARCA, NEGOCIO } from "../marca.js?v=aa4351ebaa";
-import { ticket, guia, activarGuias, haceMin, hora, consignaPersona } from "./comunes.js?v=aa4351ebaa";
-import { activarConsigna } from "../../kit/js/consigna.js?v=aa4351ebaa";
-import { htmlBotonTV, abrirModoTV } from "../../kit/js/modo-tv.js?v=aa4351ebaa";
-import { alSalirDeLaPantalla } from "../../kit/js/rutas.js?v=aa4351ebaa";
+import { esc, aviso } from "../../kit/js/ui.js?v=a22e4d6a0a";
+import { mantenerPantallaPrendida } from "../../kit/js/celular.js?v=a22e4d6a0a";
+import { MARCA, NEGOCIO } from "../marca.js?v=a22e4d6a0a";
+import { ticket, guia, activarGuias, haceMin, hora, consignaPersona } from "./comunes.js?v=a22e4d6a0a";
+import { activarConsigna } from "../../kit/js/consigna.js?v=a22e4d6a0a";
+import { htmlBotonTV, abrirModoTV } from "../../kit/js/modo-tv.js?v=a22e4d6a0a";
+import { alSalirDeLaPantalla } from "../../kit/js/rutas.js?v=a22e4d6a0a";
 
 const DEMORA_MIN = 15;
 const relojes = new WeakMap();
-const leidas = new Set(); // los pedidos que ya se leyeron en voz alta (una vez cada uno)
 
-/** "Mesa 4: 2 Muzzarella, 1 Fernet" para leer en voz alta. */
 const nombrePedido = (p) => `${p.mesa}${p.yaCobrada ? " · ya cobrada" : p.cobrando ? " · cobrando" : ""}`;
-const enVoz = (p) => `${nombrePedido(p)}: ${(p.items ?? []).filter((i) => !i.anulacion).map((i) => `${i.cantidad} ${i.nombre}`).join(", ")}`;
-
-function leerNuevos(pendientes) {
-    for (const p of pendientes.filter((x) => x.nueva && !leidas.has(x.id))) {
-        if (!decir(MARCA.prefijo, enVoz(p))) return;
-        leidas.add(p.id);
-    }
-}
 
 export function vistaCocina(cont, { usuario, datos, irA }, recien = null) {
     if (!relojes.has(cont)) {
@@ -44,7 +34,7 @@ export function vistaCocina(cont, { usuario, datos, irA }, recien = null) {
         <div class="titulo-con-accion">
             <h1 class="titulo">Cocina</h1>
             <span class="contador-grande">${c.pendientes.length} <small>${c.pendientes.length === 1 ? "pedido" : "pedidos"}</small></span>
-            <span class="titulo-con-accion__botones">${htmlBotonVoz(MARCA.prefijo, "Leer los pedidos en voz alta")}${htmlBotonTV("Pedidos en la tele")}</span>
+            <span class="titulo-con-accion__botones">${htmlBotonTV("Pedidos en la tele")}</span>
         </div>
         ${recien ? `
         <div class="hecho hecho--chico">
@@ -75,8 +65,6 @@ export function vistaCocina(cont, { usuario, datos, irA }, recien = null) {
             vistaCocina(cont, { usuario, datos, irA });
         }
     });
-    activarBotonVoz(cont, MARCA.prefijo, { alPrender: () => setTimeout(() => leerNuevos(c.pendientes), 1800) });
-    leerNuevos(c.pendientes);
     cont.querySelectorAll("[data-listo]").forEach((b) => b.addEventListener("click", () => {
         try {
             const hecho = datos.marcarLista(usuario, b.dataset.listo);

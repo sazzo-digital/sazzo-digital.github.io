@@ -1,14 +1,14 @@
-import { htmlConsigna, htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=50ee31fa6b";
+import { htmlConsigna, htmlConsignaFinal, activarConsigna } from "../../kit/js/consigna.js?v=b5ba01410e";
 // ============================================
 // Piezas que comparten las pantallas de Sazzo Ferretería: el botón del recorrido (del kit), las pastillas de stock y
 // de estado de un presupuesto, los pasos (pedido → enviado → aceptado → vendido), la tarjeta de un presupuesto, el
 // formulario de cobro (Vender y "Pasar a venta") y "hace cuánto". Todo dato que entra a HTML pasa por esc().
 // ============================================
-import { esc } from "../../kit/js/ui.js?v=50ee31fa6b";
-import { diaLocalDe, fechaLocalISO } from "../../kit/js/fechas.js?v=50ee31fa6b";
-import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=50ee31fa6b";
-import { ESTADOS_PRESUPUESTO, MEDIOS, TOPES, UNIDADES, pesos, cantidadTexto, diaMes } from "../datos.js?v=50ee31fa6b";
-import { MARCA, buscarPersona } from "../marca.js?v=50ee31fa6b";
+import { esc } from "../../kit/js/ui.js?v=b5ba01410e";
+import { diaLocalDe, fechaLocalISO } from "../../kit/js/fechas.js?v=b5ba01410e";
+import { htmlGuia, activarGuias } from "../../kit/js/guia.js?v=b5ba01410e";
+import { ESTADOS_PRESUPUESTO, MEDIOS, TOPES, UNIDADES, pesos, cantidadTexto, diaMes } from "../datos.js?v=b5ba01410e";
+import { MARCA, buscarPersona } from "../marca.js?v=b5ba01410e";
 
 /** Botón del recorrido con la persona de la ferretería: guia("u-empleado", "/presupuestos", "Mirá lo que le llega a Nahuel"). */
 export const guia = (personaId, ruta, texto) => htmlGuia({ persona: buscarPersona(personaId), ruta, texto });

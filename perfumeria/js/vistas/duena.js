@@ -1,14 +1,14 @@
-import { pintarConsigna } from "./comunes.js?v=c1eb54ed24";
+import { pintarConsigna } from "./comunes.js?v=3139c971e2";
 // ============================================
 // Pantallas de la dueña (Carolina): los pedidos (el día arriba; los nuevos resaltados; preparado → avisar →
 // entregado), el stock (frascos y botellas madre en ml, lo que hay que pedir primero) y las clientas (lo que compra
 // cada una y "Cumplen este mes" con el saludo para copiar).
 // ============================================
-import { esc, aviso, vacio, fechaCorta, fechaHora } from "../../kit/js/ui.js?v=c1eb54ed24";
-import { htmlEstante, activarEstantes } from "../../kit/js/estante.js?v=c1eb54ed24";
-import { TOPES, MADRE_POCO_ML, MEDIOS, FAMILIAS, pesos } from "../datos.js?v=c1eb54ed24";
-import { frasco, pastillaPedido, mostrarMensaje } from "./comunes.js?v=c1eb54ed24";
-import { MARCA } from "../marca.js?v=c1eb54ed24";
+import { esc, aviso, vacio, fechaCorta, fechaHora } from "../../kit/js/ui.js?v=3139c971e2";
+import { htmlEstante, activarEstantes } from "../../kit/js/estante.js?v=3139c971e2";
+import { TOPES, MADRE_POCO_ML, MEDIOS, FAMILIAS, pesos } from "../datos.js?v=3139c971e2";
+import { frasco, pastillaPedido, mostrarMensaje } from "./comunes.js?v=3139c971e2";
+import { MARCA } from "../marca.js?v=3139c971e2";
 
 let cobrando = null;
 let medioCobro = "efectivo";

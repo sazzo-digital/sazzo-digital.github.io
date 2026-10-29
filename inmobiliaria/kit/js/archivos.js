@@ -5,9 +5,9 @@
 //   entregarArchivo(blob, "presupuesto-104.pdf");    // en la demo: una hoja, no se baja nada
 // Las librerías (kit\libs\, ver su LEEME) se bajan recién la primera vez que alguien toca el botón.
 // ============================================
-import { esc, aviso, mensajeDe } from "./ui.js?v=db4997b1a3";
-import { alSalirDeLaPantalla } from "./rutas.js?v=db4997b1a3";
-import { RUTA_LIBS } from "./config.js?v=db4997b1a3";
+import { esc, aviso, mensajeDe } from "./ui.js?v=bcbb0fdcfb";
+import { alSalirDeLaPantalla } from "./rutas.js?v=bcbb0fdcfb";
+import { RUTA_LIBS } from "./config.js?v=bcbb0fdcfb";
 
 const VERSIONES = {
     "write-excel-file.min.js": "4.1.1",
@@ -280,4 +280,4 @@ export async function bajarExcel(nombre, filas, opciones = {}) {
 }
 
 // Encontrar columnas y leer precios de lo que vino en el Excel: en tablas.js (sin pantalla, para los datos)
-export { columnasDe, numeroDe, textoParaComparar } from "./tablas.js?v=db4997b1a3";
+export { columnasDe, numeroDe, textoParaComparar } from "./tablas.js?v=bcbb0fdcfb";

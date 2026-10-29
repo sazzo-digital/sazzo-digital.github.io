@@ -1,5 +1,5 @@
-import { CONTACTO, RUTA_CHAT, LINK_CATALOGO } from "./config.js?v=233619f5c3";
-import { botDelChat, mensajeQuieroEsto } from "./enlaces.js?v=233619f5c3";
+import { CONTACTO, RUTA_CHAT, LINK_CATALOGO } from "./config.js?v=fd92d86921";
+import { botDelChat, mensajeQuieroEsto } from "./enlaces.js?v=fd92d86921";
 
 export function cargarChat(marca, { contacto = CONTACTO, ruta = RUTA_CHAT, catalogo = LINK_CATALOGO } = {}) {
     const bot = botDelChat({ contacto });

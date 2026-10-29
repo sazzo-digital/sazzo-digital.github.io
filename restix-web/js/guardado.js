@@ -1,5 +1,5 @@
-import { crearGuardado } from "../kit/js/guardado.js?v=aa4351ebaa";
-import { aviso } from "../kit/js/ui.js?v=aa4351ebaa";
+import { crearGuardado } from "../kit/js/guardado.js?v=a22e4d6a0a";
+import { aviso } from "../kit/js/ui.js?v=a22e4d6a0a";
 
 const LISTAS = ["mesas", "cobros", "cierres", "comandas", "pedidosYa", "movimientos", "anulaciones"];
 const objeto = (v) => !!v && typeof v === "object";

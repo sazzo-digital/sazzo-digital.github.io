@@ -694,6 +694,7 @@ a { color: inherit; }
     .boton, .atajo, .paso__link { min-height: 44px; }
     .pie__lista { gap: 0; }
     .pie__lista a, .pie__legal a { display: inline-flex; align-items: center; gap: .3rem; min-height: 44px; }
+    .pie__logo-enlace { display: flex; align-items: center; min-height: 44px; }
     .cabecera__marca, .interruptor-tema, .cabecera > .boton { position: relative; }
     .cabecera__marca::after, .interruptor-tema::after, .cabecera > .boton::after { content: ""; position: absolute; inset: -6px -3px; }
     .cabecera > .boton { min-height: 0; }
