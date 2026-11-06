@@ -2,10 +2,10 @@
 // Repuestos (administradora y mecánico): "hay / queda poco / no hay". Se descuentan solos cuando el mecánico
 // cierra un arreglo diciendo qué usó.
 // ============================================
-import { esc, aviso } from "../../kit/js/ui.js?v=5451e7cf62";
-import { AVISO_CAMPO } from "../../kit/js/leyendas.js?v=5451e7cf62";
-import { cantidadCon, MOTIVOS_STOCK, TOPES } from "../datos.js?v=5451e7cf62";
-import { haceCuanto, consignaPersona, activarPasos, activarFlechas } from "./comunes.js?v=5451e7cf62";
+import { esc, aviso } from "../../kit/js/ui.js?v=39cbbca856";
+import { AVISO_CAMPO } from "../../kit/js/leyendas.js?v=39cbbca856";
+import { cantidadCon, MOTIVOS_STOCK, TOPES } from "../datos.js?v=39cbbca856";
+import { haceCuanto, consignaPersona, activarPasos, activarFlechas } from "./comunes.js?v=39cbbca856";
 
 const ESTADOS = {
     "no-hay": { texto: "No hay", clase: "problema", icono: "ti-circle-x" },

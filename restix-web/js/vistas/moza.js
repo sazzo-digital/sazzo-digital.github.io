@@ -3,12 +3,12 @@
 // grilla), la comanda de una mesa (al enviar se separa solo lo de la cocina y lo de la barra), el cobro dividiendo la
 // cuenta (todo junto, en partes iguales o por lo que consumió cada uno, cada parte con su medio de pago) y la caja.
 // ============================================
-import { esc, aviso, vacio, fechaCorta } from "../../kit/js/ui.js?v=a22e4d6a0a";
-import { CATEGORIAS, MEDIOS, MEDIOS_PERSONAL, MOTIVOS_PERSONAL, TOPES, carta, dividir, pesos } from "../datos.js?v=a22e4d6a0a";
-import { MARCA, NEGOCIO, PERSONAS } from "../marca.js?v=a22e4d6a0a";
-import { ticket, importe, guia, activarGuias, haceMin, hora, consignaPersona } from "./comunes.js?v=a22e4d6a0a";
-import { activarConsigna } from "../../kit/js/consigna.js?v=a22e4d6a0a";
-import { diaLocalDe } from "../../kit/js/fechas.js?v=a22e4d6a0a";
+import { esc, aviso, vacio, fechaCorta } from "../../kit/js/ui.js?v=c95853e505";
+import { CATEGORIAS, MEDIOS, MEDIOS_PERSONAL, MOTIVOS_PERSONAL, TOPES, carta, dividir, pesos } from "../datos.js?v=c95853e505";
+import { MARCA, NEGOCIO, PERSONAS } from "../marca.js?v=c95853e505";
+import { ticket, importe, guia, activarGuias, haceMin, hora, consignaPersona } from "./comunes.js?v=c95853e505";
+import { activarConsigna } from "../../kit/js/consigna.js?v=c95853e505";
+import { diaLocalDe } from "../../kit/js/fechas.js?v=c95853e505";
 
 const ESTADO_MESA = { libre: "Libre", abierta: "Abierta", cobrando: "Cobrando" };
 

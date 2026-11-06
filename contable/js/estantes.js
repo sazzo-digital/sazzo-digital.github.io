@@ -1,4 +1,4 @@
-import { nombrePeriodo, pesos } from "./reglas.js?v=a9e9b17545";
+import { nombrePeriodo, pesos } from "./reglas.js?v=c4e5fe09ec";
 
 const tituloMes = (periodo) => {
     const nombre = nombrePeriodo(periodo);

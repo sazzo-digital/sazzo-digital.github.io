@@ -3,20 +3,20 @@
 // el mapa, nunca la dirección; Valeria pide la visita, la inmobiliaria ve quiénes buscan algo así y baja el PDF) y
 // "Cargar propiedad" (con fotos sacadas con el celu, que no se suben a ningún lado).
 // ============================================
-import { esc, aviso, vacio, mensajeDe, fechaCorta } from "../../kit/js/ui.js?v=bcbb0fdcfb";
-import { fechaLocalISO, diaLocalDe } from "../../kit/js/fechas.js?v=bcbb0fdcfb";
-import { mostrarMapa } from "../../kit/js/mapa.js?v=bcbb0fdcfb";
-import { armarPdf, pdfListo, fotoParaPdf } from "../../kit/js/pdf.js?v=bcbb0fdcfb";
-import { alSalirDeLaPantalla } from "../../kit/js/rutas.js?v=bcbb0fdcfb";
-import { AVISO_CAMPO, AVISO_DIRECCION } from "../../kit/js/leyendas.js?v=bcbb0fdcfb";
-import { TOPES, TIPOS, ZONAS, OPERACIONES, CARACTERISTICAS, RADIO_ZONA, pesos, dolares, ocultarDireccion } from "../datos.js?v=bcbb0fdcfb";
-import { NEGOCIO } from "../marca.js?v=bcbb0fdcfb";
-import { fotosDe, urlRecorrido, achicarFoto, guardarFotosEnMemoria, revisarArchivoFoto, liberarUrl } from "../fotos.js?v=bcbb0fdcfb";
-import { abrirRecorrido } from "../visor360.js?v=bcbb0fdcfb";
+import { esc, aviso, vacio, mensajeDe, fechaCorta } from "../../kit/js/ui.js?v=5e335f49b1";
+import { fechaLocalISO, diaLocalDe } from "../../kit/js/fechas.js?v=5e335f49b1";
+import { mostrarMapa } from "../../kit/js/mapa.js?v=5e335f49b1";
+import { armarPdf, pdfListo, fotoParaPdf } from "../../kit/js/pdf.js?v=5e335f49b1";
+import { alSalirDeLaPantalla } from "../../kit/js/rutas.js?v=5e335f49b1";
+import { AVISO_CAMPO, AVISO_DIRECCION } from "../../kit/js/leyendas.js?v=5e335f49b1";
+import { TOPES, TIPOS, ZONAS, OPERACIONES, CARACTERISTICAS, RADIO_ZONA, pesos, dolares, ocultarDireccion } from "../datos.js?v=5e335f49b1";
+import { NEGOCIO } from "../marca.js?v=5e335f49b1";
+import { fotosDe, urlRecorrido, achicarFoto, guardarFotosEnMemoria, revisarArchivoFoto, liberarUrl } from "../fotos.js?v=5e335f49b1";
+import { abrirRecorrido } from "../visor360.js?v=5e335f49b1";
 import {
     guia, activarGuias, tarjetaPropiedad, htmlFoto, medidas, hrefPropiedad, pastillaPropiedad, pastillaVisita,
     pastillaConsulta, mostrarMensaje, mayuscula, consignaPersona, activarPasos
-} from "./comunes.js?v=bcbb0fdcfb";
+} from "./comunes.js?v=5e335f49b1";
 
 // Lo elegido en los filtros queda mientras se navega
 const filtro = { operacion: null, zona: null, ambientes: null, hasta: null, mapa: false };

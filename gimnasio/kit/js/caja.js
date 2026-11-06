@@ -1,8 +1,8 @@
-import { esc, aviso, sinMovimiento } from "./ui.js?v=f8ba432cdc";
-import { puedeEscanear, escanearSeguido } from "./escaner.js?v=f8ba432cdc";
-import { pip, vibrar, htmlBotonSonido, activarBotonSonido, htmlCopiable, activarCopiables } from "./celular.js?v=f8ba432cdc";
-import { DIVIDIDO, revisarPagos } from "./pagos.js?v=f8ba432cdc";
-import { LEYENDA_IMPRESION } from "./leyendas.js?v=f8ba432cdc";
+import { esc, aviso, sinMovimiento } from "./ui.js?v=71b72d7c09";
+import { puedeEscanear, escanearSeguido } from "./escaner.js?v=71b72d7c09";
+import { pip, vibrar, htmlBotonSonido, activarBotonSonido, htmlCopiable, activarCopiables } from "./celular.js?v=71b72d7c09";
+import { DIVIDIDO, revisarPagos } from "./pagos.js?v=71b72d7c09";
+import { LEYENDA_IMPRESION } from "./leyendas.js?v=71b72d7c09";
 
 export const TOPE_RENGLONES = 30;
 export const TOPE_CANTIDAD = 99;

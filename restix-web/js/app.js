@@ -3,19 +3,19 @@
 // Lara (moza) ve el salón, la cocina (solo mirar) y la caja; Beto, la cocina; Flor (cliente), la carta del QR.
 // irA() cambia de persona sin pasar por "Probala como…" (botón del recorrido: "Mirá lo que le llega a la cocina →").
 // ============================================
-import { $, conFundido } from "../kit/js/ui.js?v=a22e4d6a0a";
-import { iniciarDemo } from "../kit/js/arranque.js?v=a22e4d6a0a";
-import { vistaIngreso } from "../kit/js/ingreso.js?v=a22e4d6a0a";
-import { pintarMarco } from "../kit/js/marco.js?v=a22e4d6a0a";
-import { mostrarRuta, soltarPantalla } from "../kit/js/rutas.js?v=a22e4d6a0a";
-import { vistaAcerca } from "../kit/js/acerca.js?v=a22e4d6a0a";
-import { MARCA, PERSONAS, DETALLE, buscarPersona } from "./marca.js?v=a22e4d6a0a";
-import { aparte } from "../kit/js/aparte.js?v=a22e4d6a0a";
-import { leerSesionGuardada } from "../kit/js/guardado.js?v=a22e4d6a0a";
-import { esperarPantallas } from "./carga.js?v=a22e4d6a0a";
+import { $, conFundido } from "../kit/js/ui.js?v=c95853e505";
+import { iniciarDemo } from "../kit/js/arranque.js?v=c95853e505";
+import { vistaIngreso } from "../kit/js/ingreso.js?v=c95853e505";
+import { pintarMarco } from "../kit/js/marco.js?v=c95853e505";
+import { mostrarRuta, soltarPantalla } from "../kit/js/rutas.js?v=c95853e505";
+import { vistaAcerca } from "../kit/js/acerca.js?v=c95853e505";
+import { MARCA, PERSONAS, DETALLE, buscarPersona } from "./marca.js?v=c95853e505";
+import { aparte } from "../kit/js/aparte.js?v=c95853e505";
+import { leerSesionGuardada } from "../kit/js/guardado.js?v=c95853e505";
+import { esperarPantallas } from "./carga.js?v=c95853e505";
 
 // Los datos de ejemplo y las pantallas se bajan aparte (al terminar de cargar): "Probala como…" aparece sin esperarlos
-const pantallas = aparte(() => import("./pantallas.js?v=a22e4d6a0a"));
+const pantallas = aparte(() => import("./pantallas.js?v=c95853e505"));
 const { vistaInicio, vistaMesa, vistaCobro, vistaCaja, vistaCocina, avisosDe } = pantallas.funciones;
 
 iniciarDemo(MARCA);

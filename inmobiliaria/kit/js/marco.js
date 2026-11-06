@@ -13,19 +13,19 @@
 // Festejo: cuando aparece una confirmación (.hecho: turno reservado, venta cobrada, orden creada…), el ✓ entra con un
 // rebote, salen chispitas del color de la demo y el celular vibra cortito (Android). Quieto con "reducir movimiento".
 // ============================================
-import { $, $$, esc, iniciales, cajaDeAvisos } from "./ui.js?v=bcbb0fdcfb";
-import { logoSazzo, nombreDemo } from "./marca.js?v=bcbb0fdcfb";
-import { LINK_CATALOGO } from "./config.js?v=bcbb0fdcfb";
-import { interruptorTema, activarInterruptorTema } from "./apariencia.js?v=bcbb0fdcfb";
-import { linkOtrasDemos, linkQuieroEsto, botDelChat } from "./enlaces.js?v=bcbb0fdcfb";
-import { abrirColores, leerNombre } from "./colores.js?v=bcbb0fdcfb";
-import { contar } from "./visita.js?v=bcbb0fdcfb";
-import { pintarAvisos } from "./avisos.js?v=bcbb0fdcfb";
-import { revisarDetalle, htmlBotonDetalle, activarDetalle } from "./detalle.js?v=bcbb0fdcfb";
-import { htmlBotonInstalarCabecera } from "./instalar.js?v=bcbb0fdcfb";
-import { olvidarDemo } from "./guardado.js?v=bcbb0fdcfb";
-import { htmlInterruptorPasos, activarInterruptorPasos } from "./consigna.js?v=bcbb0fdcfb";
-import { LEYENDA_TV, LEYENDA_IMPRESION } from "./leyendas.js?v=bcbb0fdcfb";
+import { $, $$, esc, iniciales, cajaDeAvisos } from "./ui.js?v=5e335f49b1";
+import { logoSazzo, nombreDemo } from "./marca.js?v=5e335f49b1";
+import { LINK_CATALOGO } from "./config.js?v=5e335f49b1";
+import { interruptorTema, activarInterruptorTema } from "./apariencia.js?v=5e335f49b1";
+import { linkOtrasDemos, linkQuieroEsto, botDelChat } from "./enlaces.js?v=5e335f49b1";
+import { abrirColores, leerNombre } from "./colores.js?v=5e335f49b1";
+import { contar } from "./visita.js?v=5e335f49b1";
+import { pintarAvisos } from "./avisos.js?v=5e335f49b1";
+import { revisarDetalle, htmlBotonDetalle, activarDetalle } from "./detalle.js?v=5e335f49b1";
+import { htmlBotonInstalarCabecera } from "./instalar.js?v=5e335f49b1";
+import { olvidarDemo } from "./guardado.js?v=5e335f49b1";
+import { htmlInterruptorPasos, activarInterruptorPasos } from "./consigna.js?v=5e335f49b1";
+import { LEYENDA_TV, LEYENDA_IMPRESION } from "./leyendas.js?v=5e335f49b1";
 
 /** La barrita de Sazzo: colores, otras demos y "Quiero esto" (los textos largos solo si hay lugar). */
 export function htmlBarraSazzo(marca, opciones, conDetalle = false) {

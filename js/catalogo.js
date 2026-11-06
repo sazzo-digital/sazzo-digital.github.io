@@ -2,8 +2,9 @@
 // Catálogo de Sazzo: arma las tarjetas de demos (desde demos.js), las animaciones al bajar, los botones de
 // contacto (desde config.js), guarda de dónde vino la visita (?o=papel / ?o=ig) y avisa a la medición.
 // ============================================
-import { DEMOS, TRABAJOS, SERVICIOS_HECHOS } from "./demos.js?v=c0bec1bf58";
-import { CONTACTO, MEDICION, LINK_DEMOS, RUTA_LIBS, RUTA_CHAT } from "./config.js?v=c0bec1bf58";
+import { DEMOS, TRABAJOS, SERVICIOS_HECHOS } from "./demos.js?v=72d35b7f3f";
+import { CONTACTO, MEDICION, LINK_DEMOS, RUTA_LIBS, RUTA_CHAT } from "./config.js?v=72d35b7f3f";
+import { PRODUCTOS } from "./productos.js?v=72d35b7f3f";
 
 const $ = (selector, raiz = document) => raiz.querySelector(selector);
 const $$ = (selector, raiz = document) => [...raiz.querySelectorAll(selector)];
@@ -38,25 +39,40 @@ function origen() {
 if (parametros.get("yo") === "1") guardado.escribir("sazzo-yo", "1"); // los celulares del equipo van aparte, como prueba
 if (parametros.get("yo") === "0") guardado.borrar("sazzo-yo");
 
-function equipo() {
-    let id = guardado.leer("sazzo-equipo");
-    if (!/^[a-z0-9]{8}$/.test(id ?? "")) {
-        id = Math.random().toString(36).slice(2, 10).padEnd(8, "0");
-        guardado.escribir("sazzo-equipo", id);
-    }
-    return id;
+function alAzar(largo) {
+    const letras = "abcdefghijklmnopqrstuvwxyz0123456789";
+    const numeros = new Uint8Array(largo);
+    if (globalThis.crypto?.getRandomValues) crypto.getRandomValues(numeros);
+    else numeros.forEach((_, i) => (numeros[i] = Math.floor(Math.random() * 256)));
+    return Array.from(numeros, (n) => letras[n % letras.length]).join("");
 }
-const sesion = Math.random().toString(36).slice(2, 10); // cada vez que se abre la página
 
-/** "Android · Chrome", "iPhone · adentro de Instagram"… (igual que el kit; no identifica a nadie). */
-function dispositivo(agente = navigator.userAgent) {
-    const sistema = /Android/.test(agente) ? "Android"
+let equipoDeEstaPagina = "";
+let sePuedeGuardar = false;
+function equipo() {
+    const id = guardado.leer("sazzo-equipo");
+    if (/^[a-z0-9]{8}$/.test(id ?? "")) {
+        sePuedeGuardar = true;
+        return id;
+    }
+    if (!equipoDeEstaPagina) equipoDeEstaPagina = alAzar(8);
+    guardado.escribir("sazzo-equipo", equipoDeEstaPagina);
+    sePuedeGuardar = guardado.leer("sazzo-equipo") === equipoDeEstaPagina;
+    return equipoDeEstaPagina;
+}
+const sesion = alAzar(8);
+
+function sistemaDe(agente = navigator.userAgent) {
+    return /Android/.test(agente) ? "Android"
         : /iPhone|iPod/.test(agente) ? "iPhone"
         : /iPad/.test(agente) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1) ? "iPad"
         : /Windows/.test(agente) ? "PC Windows"
         : /Mac OS/.test(agente) ? "Mac"
         : /Linux/.test(agente) ? "Linux" : "Otro";
-    const navegador = /WhatsApp/.test(agente) ? "adentro de WhatsApp"
+}
+
+function navegadorDe(agente = navigator.userAgent) {
+    return /WhatsApp/.test(agente) ? "adentro de WhatsApp"
         : /Instagram|FBAN|FBAV/.test(agente) ? "adentro de Instagram o Facebook"
         : /EdgA?\//.test(agente) ? "Edge"
         : navigator.brave ? "Brave"
@@ -64,37 +80,75 @@ function dispositivo(agente = navigator.userAgent) {
         : /Firefox|FxiOS/.test(agente) ? "Firefox"
         : /Chrome|CriOS/.test(agente) ? "Chrome"
         : /Safari/.test(agente) ? "Safari" : "otro navegador";
-    return `${sistema} · ${navegador}`;
 }
+
+const escaparRegex = (texto) => texto.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+function productosDe(agente = navigator.userAgent) {
+    const texto = String(agente ?? "").slice(0, 600);
+    const encontrados = [];
+    const ordenados = [...PRODUCTOS.filter(([, auto]) => auto), ...PRODUCTOS.filter(([, auto]) => !auto)];
+    for (const [nombre] of ordenados) {
+        const conVersion = new RegExp(`(?:^|[\\s;(,])${escaparRegex(nombre)}/(\\d{1,5})`).exec(texto);
+        if (conVersion) encontrados.push(`${nombre}/${conVersion[1]}`);
+        else if (new RegExp(`(?:^|[\\s;(,])${escaparRegex(nombre)}(?:[\\s;),]|$)`).test(texto)) encontrados.push(nombre);
+        if (encontrados.length === 6) break;
+    }
+    return encontrados;
+}
+
+const webdriver = () => (navigator.webdriver === true ? "si" : navigator.webdriver === false ? "no" : "desconocido");
+const sitio = () => {
+    const h = location.hostname.toLowerCase();
+    return h === "sazzo.com.ar" || h === "www.sazzo.com.ar" ? "sazzo.com.ar" : h === "sazzo-demos.web.app" ? "sazzo-demos.web.app" : "otro";
+};
+const versionDelCatalogo = () => /\d{1,3}\.\d{1,3}/.exec(document.querySelector(".pie__version")?.textContent ?? "")?.[0] ?? "";
+const huellaDelCatalogo = () => {
+    try {
+        const v = new URL(import.meta.url).searchParams.get("v") ?? "";
+        return /^[0-9a-f]{10}$/.test(v) ? v : "";
+    } catch {
+        return "";
+    }
+};
 
 const EVENTOS = ["abrio-catalogo", "probar", "escribir", "instagram", "detalle"];
 const esLaPC = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname) || location.protocol === "file:";
 
-/** Avisa al registro de visitas qué pasó (uno de EVENTOS; en "probar", qué demo). */
 const desdeDe = (el) => (el?.closest?.("#ventana-detalle") ? "detalle" : el?.closest?.("header") ? "cabecera" : el?.closest?.("footer") ? "pie" : el?.closest?.("section[id]")?.id ?? "");
 
 function contar(que, demo = "", desde = "") {
     if (!EVENTOS.includes(que)) return;
-    const prueba = navigator.webdriver ? "robot" : guardado.leer("sazzo-yo") === "1" ? "yo" : "";
+    const id = equipo();
+    const sistema = sistemaDe();
+    const navegador = navegadorDe();
     const evento = {
+        esquema: 2,
+        id: alAzar(12),
         evento: que,
         demo: String(demo).slice(0, 30),
         persona: "",
         pantalla: String(desde).slice(0, 40),
         origen: origen().slice(0, 30),
-        equipo: equipo(),
+        equipo: id,
         sesion,
-        dispositivo: dispositivo().slice(0, 60),
+        sistema,
+        navegador,
+        dispositivo: `${sistema} · ${navegador}`.slice(0, 60),
+        productos: productosDe(),
+        webdriver: webdriver(),
+        almacenamiento: sePuedeGuardar ? "si" : "no",
+        sitio: sitio(),
+        version: versionDelCatalogo(),
+        huella: huellaDelCatalogo(),
         cuando: Date.now(),
-        ...(prueba ? { prueba } : {})
+        ...(guardado.leer("sazzo-yo") === "1" ? { prueba: "yo" } : {})
     };
     const direccion = String(MEDICION.direccion ?? "");
     if (!direccion.startsWith("https://script.google.com/macros/") || esLaPC) {
         console.debug("[visitas: no se manda]", evento);
         return;
     }
-    // text/plain y no-cors: el navegador lo manda directo, sin preguntar antes (Apps Script no contesta eso).
-    // keepalive: llega aunque justo se vaya a otra página (al tocar "Probala ahora").
     fetch(direccion, { method: "POST", mode: "no-cors", keepalive: true, headers: { "Content-Type": "text/plain" }, body: JSON.stringify(evento) }).catch(() => {});
 }
 

@@ -7,16 +7,16 @@
 // trae `wow`, esa línea va arriba de las personas: le dice a quien llega de Instagram qué va a pasar.
 // y qué hacer al elegir una (alElegir(id): guardar la sesión y arrancar la demo).
 // ============================================
-import { $, $$, esc, iniciales, mensajeDe } from "./ui.js?v=fd92d86921";
-import { logoSazzo, nombreDemo } from "./marca.js?v=fd92d86921";
-import { LINK_CATALOGO } from "./config.js?v=fd92d86921";
-import { pieAcerca } from "./acerca.js?v=fd92d86921";
-import { linkOtrasDemos, linkQuieroEsto, botDelChat } from "./enlaces.js?v=fd92d86921";
-import { activarBotonesSazzo, htmlBarraSazzo, medirPie } from "./marco.js?v=fd92d86921";
-import { revisarDetalle, htmlBotonDetalle } from "./detalle.js?v=fd92d86921";
-import { htmlBotonInstalar } from "./instalar.js?v=fd92d86921";
-import { contar, contarPantalla } from "./visita.js?v=fd92d86921";
-import { soltarPantalla } from "./rutas.js?v=fd92d86921";
+import { $, $$, esc, iniciales, mensajeDe } from "./ui.js?v=b10b9d1d1e";
+import { logoSazzo, nombreDemo } from "./marca.js?v=b10b9d1d1e";
+import { LINK_CATALOGO } from "./config.js?v=b10b9d1d1e";
+import { pieAcerca } from "./acerca.js?v=b10b9d1d1e";
+import { linkOtrasDemos, linkQuieroEsto, botDelChat } from "./enlaces.js?v=b10b9d1d1e";
+import { activarBotonesSazzo, htmlBarraSazzo, medirPie } from "./marco.js?v=b10b9d1d1e";
+import { revisarDetalle, htmlBotonDetalle } from "./detalle.js?v=b10b9d1d1e";
+import { htmlBotonInstalar } from "./instalar.js?v=b10b9d1d1e";
+import { contar, contarPantalla } from "./visita.js?v=b10b9d1d1e";
+import { soltarPantalla } from "./rutas.js?v=b10b9d1d1e";
 
 function htmlCompleta(marca) {
     if (!marca.completa) return "";

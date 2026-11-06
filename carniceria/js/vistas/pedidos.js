@@ -1,18 +1,18 @@
-import { consignaPersona, activarSerie } from "./comunes.js?v=c78b41fdf7";
+import { consignaPersona, activarSerie } from "./comunes.js?v=81ef6453d1";
 // ============================================
 // Pedidos (Ricardo y Darío): los que llegan del celu o se anotan en el mostrador, los del día por hora de retiro.
 // En cada pedido: se escribe lo que pesó cada corte (pidió 1,5, pesó 1,62): el total se ajusta solo y dice la
 // diferencia. "Listo: avisarle" lo separa (se descuenta del stock) y arma el mensaje para WhatsApp; "Cobrar y
 // entregar" lo pasa a la caja; o se anula (lo separado vuelve al stock).
 // ============================================
-import { DIVIDIDO, partesIniciales, htmlDosMedios, activarDosMedios } from "../../kit/js/pagos.js?v=c78b41fdf7";
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=c78b41fdf7";
-import { mostrarMensaje } from "../../kit/js/mensaje.js?v=c78b41fdf7";
-import { AVISO_CAMPO } from "../../kit/js/leyendas.js?v=c78b41fdf7";
-import { htmlCopiable, activarCopiables, ding } from "../../kit/js/celular.js?v=c78b41fdf7";
-import { ESTADOS_PEDIDO, MEDIOS, RETIROS, TOPES, ALIAS, pesos, kilos, aGramos, precioPorPeso } from "../datos.js?v=c78b41fdf7";
-import { MARCA } from "../marca.js?v=c78b41fdf7";
-import { guia, activarGuias, pasos, pastillaEstado, tarjetaPedido, cuando, campoKg, kgEnCampo, loPedido } from "./comunes.js?v=c78b41fdf7";
+import { DIVIDIDO, partesIniciales, htmlDosMedios, activarDosMedios } from "../../kit/js/pagos.js?v=81ef6453d1";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=81ef6453d1";
+import { mostrarMensaje } from "../../kit/js/mensaje.js?v=81ef6453d1";
+import { AVISO_CAMPO } from "../../kit/js/leyendas.js?v=81ef6453d1";
+import { htmlCopiable, activarCopiables, ding } from "../../kit/js/celular.js?v=81ef6453d1";
+import { ESTADOS_PEDIDO, MEDIOS, RETIROS, TOPES, ALIAS, pesos, kilos, aGramos, precioPorPeso } from "../datos.js?v=81ef6453d1";
+import { MARCA } from "../marca.js?v=81ef6453d1";
+import { guia, activarGuias, pasos, pastillaEstado, tarjetaPedido, cuando, campoKg, kgEnCampo, loPedido } from "./comunes.js?v=81ef6453d1";
 
 /** Billetes "redondos" para cobrar un pedido: el próximo múltiplo de $10.000, de $20.000 y $50.000. */
 const billetesPara = (total) => [...new Set([10_000, 20_000, 50_000].map((b) => Math.ceil(Math.max(1, total) / b) * b))].slice(0, 3);

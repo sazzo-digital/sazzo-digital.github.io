@@ -5,9 +5,9 @@
 // La firma es tinta oscura sobre blanco (como un papel), en el modo claro y en el oscuro. Queda solo en la memoria
 // de la pantalla: no se guarda. Librería: signature_pad (kit\libs\, MIT), se baja al abrir la ventanita.
 // ============================================
-import { esc, aviso } from "./ui.js?v=514ca9a71d";
-import { alSalirDeLaPantalla } from "./rutas.js?v=514ca9a71d";
-import { cargarLibreria } from "./archivos.js?v=514ca9a71d";
+import { esc, aviso } from "./ui.js?v=d5ccc5587f";
+import { alSalirDeLaPantalla } from "./rutas.js?v=d5ccc5587f";
+import { cargarLibreria } from "./archivos.js?v=d5ccc5587f";
 
 export const TOPE_FIRMA = 400 * 1024; // letras de la imagen (una firma normal ocupa entre 10 y 60 KB)
 

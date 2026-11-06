@@ -1,13 +1,13 @@
-import { conConsigna } from "./comunes.js?v=a9e9b17545";
+import { conConsigna } from "./comunes.js?v=c4e5fe09ec";
 // ============================================
 // Compras: las facturas de los proveedores del mes, "Traer de ARCA" (simulado: trae de un toque las que ARCA tiene
 // en Mis Comprobantes y faltan cargar) y cargar una a mano, con el IVA calculado solo. Una compra mal cargada se
 // anula (no se borra). Solo administración carga; Hernán y Patricia miran.
 // ============================================
-import { esc, aviso, vacio } from "../../kit/js/ui.js?v=a9e9b17545";
-import { TOPES } from "../datos.js?v=a9e9b17545";
-import { ALICUOTAS, ORDEN_ALICUOTAS, pesos, numeroComprobante, nombrePeriodo, periodoActual, fechaISO, aCentavos } from "../reglas.js?v=a9e9b17545";
-import { diaMes, periodoPedido, htmlSelectorMes, activarSelectorMes, conEspera, nombreDe } from "./comunes.js?v=a9e9b17545";
+import { esc, aviso, vacio } from "../../kit/js/ui.js?v=c4e5fe09ec";
+import { TOPES } from "../datos.js?v=c4e5fe09ec";
+import { ALICUOTAS, ORDEN_ALICUOTAS, pesos, numeroComprobante, nombrePeriodo, periodoActual, fechaISO, aCentavos } from "../reglas.js?v=c4e5fe09ec";
+import { diaMes, periodoPedido, htmlSelectorMes, activarSelectorMes, conEspera, nombreDe } from "./comunes.js?v=c4e5fe09ec";
 
 const puedeCargar = (u) => u.rol === "admin";
 

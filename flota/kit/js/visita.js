@@ -6,17 +6,16 @@
 //   sazzo-equipo  número al azar de este navegador (distingue "volvió" de "otra persona"; no identifica a nadie)
 //   sazzo-yo      ?yo=1 marca los equipos de Sazzo: mandan con prueba "yo" y van aparte (?yo=0 lo desmarca)
 // Nada de esto cambia lo que se ve en pantalla. Nunca se manda nombre, teléfono, mail, ubicación ni lo que se carga
-// en la demo: solo qué pasó (de una lista fija), en qué demo, la persona de ejemplo, la pantalla, el origen, el
-// tipo de equipo y el navegador. Si algo se rompe en el celular de alguien, se manda "error" con la pantalla y el
-// mensaje del error hecho palabras sueltas (sin comillas ni números: nunca lleva lo que cargó la persona).
+// en la demo. Lo que viaja sigue docs\registro\contrato-de-eventos.md (esquema 2).
 // La dirección de la planilla la pone el script de armar el sitio (medicion\direccion.txt). En la PC (localhost)
 // nunca se manda nada.
 // ============================================
-import { MEDICION } from "./config.js?v=5451e7cf62";
+import { MEDICION } from "./config.js?v=39cbbca856";
+import { PRODUCTOS } from "./productos.js?v=39cbbca856";
 
-const ORIGEN_VALIDO = /^[a-z0-9-]{1,30}$/; // igual que el catálogo
+const ORIGEN_VALIDO = /^[a-z0-9-]{1,30}$/;
 export const EVENTOS = ["abrio-demo", "entro", "pantalla", "quiero-esto", "otras-demos", "colores", "error", "velocidad", "detalle"];
-export const DURA_ORIGEN = 12 * 60 * 60 * 1000; // igual que el catálogo
+export const DURA_ORIGEN = 12 * 60 * 60 * 1000;
 
 const leer = (clave) => {
     try {
@@ -29,21 +28,28 @@ const escribir = (clave, valor) => {
     try {
         if (valor === null) localStorage.removeItem(clave);
         else localStorage.setItem(clave, valor);
+        return true;
     } catch {
-        // sin localStorage: no pasa nada
+        return false;
     }
 };
 
-/** Lee ?o=, ?yo=1 y ?yo=0 del link (si vienen) y los guarda. Lo que no cumple la regla se ignora. */
+export function alAzar(largo) {
+    const letras = "abcdefghijklmnopqrstuvwxyz0123456789";
+    const numeros = new Uint8Array(largo);
+    if (globalThis.crypto?.getRandomValues) crypto.getRandomValues(numeros);
+    else numeros.forEach((_, i) => (numeros[i] = Math.floor(Math.random() * 256)));
+    return Array.from(numeros, (n) => letras[n % letras.length]).join("");
+}
+
 export function leerLink(busqueda = location.search, ahora = Date.now()) {
     const p = new URLSearchParams(busqueda);
     const origen = p.get("o");
-    if (origen && ORIGEN_VALIDO.test(origen)) escribir("sazzo-origen", `${origen}|${ahora}`); // "papel|1760000000000"
+    if (origen && ORIGEN_VALIDO.test(origen)) escribir("sazzo-origen", `${origen}|${ahora}`);
     if (p.get("yo") === "1") escribir("sazzo-yo", "1");
     if (p.get("yo") === "0") escribir("sazzo-yo", null);
 }
 
-/** De dónde vino esta visita: lo del último link con ?o=, si fue hace menos de 12 horas. Si no, "directo". */
 export function origen(ahora = Date.now()) {
     const m = /^([a-z0-9-]{1,30})\|(\d{1,15})$/.exec(leer("sazzo-origen") ?? "");
     if (!m) return "directo";
@@ -51,26 +57,33 @@ export function origen(ahora = Date.now()) {
     return edad > -60000 && edad < DURA_ORIGEN ? m[1] : "directo";
 }
 
+let equipoDeEstaPagina = "";
+let sePuedeGuardar = false;
+
 export function equipo() {
-    let id = leer("sazzo-equipo");
-    if (!/^[a-z0-9]{8}$/.test(id ?? "")) {
-        id = Math.random().toString(36).slice(2, 10).padEnd(8, "0");
-        escribir("sazzo-equipo", id);
+    const guardado = leer("sazzo-equipo");
+    if (/^[a-z0-9]{8}$/.test(guardado ?? "")) {
+        sePuedeGuardar = true;
+        return guardado;
     }
-    return id;
+    if (!equipoDeEstaPagina) equipoDeEstaPagina = alAzar(8);
+    sePuedeGuardar = escribir("sazzo-equipo", equipoDeEstaPagina) && leer("sazzo-equipo") === equipoDeEstaPagina;
+    return equipoDeEstaPagina;
 }
 
-const sesion = Math.random().toString(36).slice(2, 10); // cada vez que se abre una página
+const sesion = alAzar(8);
 
-/** "Android · Chrome", "iPhone · adentro de Instagram"… (sale del navegador; no identifica a nadie). */
-export function dispositivo(agente = navigator.userAgent, esBrave = Boolean(navigator.brave)) {
-    const sistema = /Android/.test(agente) ? "Android"
+export function sistemaDe(agente = navigator.userAgent) {
+    return /Android/.test(agente) ? "Android"
         : /iPhone|iPod/.test(agente) ? "iPhone"
-        : /iPad/.test(agente) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1) ? "iPad"
+        : /iPad/.test(agente) || (typeof navigator !== "undefined" && navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1) ? "iPad"
         : /Windows/.test(agente) ? "PC Windows"
         : /Mac OS/.test(agente) ? "Mac"
         : /Linux/.test(agente) ? "Linux" : "Otro";
-    const navegador = /WhatsApp/.test(agente) ? "adentro de WhatsApp"
+}
+
+export function navegadorDe(agente = navigator.userAgent, esBrave = Boolean(navigator.brave)) {
+    return /WhatsApp/.test(agente) ? "adentro de WhatsApp"
         : /Instagram|FBAN|FBAV/.test(agente) ? "adentro de Instagram o Facebook"
         : /EdgA?\//.test(agente) ? "Edge"
         : esBrave ? "Brave"
@@ -78,20 +91,55 @@ export function dispositivo(agente = navigator.userAgent, esBrave = Boolean(navi
         : /Firefox|FxiOS/.test(agente) ? "Firefox"
         : /Chrome|CriOS/.test(agente) ? "Chrome"
         : /Safari/.test(agente) ? "Safari" : "otro navegador";
-    return `${sistema} · ${navegador}`;
 }
 
-/** La pantalla de la demo según la dirección (#/caja/3 → "caja"). */
+export function dispositivo(agente = navigator.userAgent, esBrave = Boolean(navigator.brave)) {
+    return `${sistemaDe(agente)} · ${navegadorDe(agente, esBrave)}`;
+}
+
+const escaparRegex = (texto) => texto.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+export function productosDe(agente = navigator.userAgent, lista = PRODUCTOS) {
+    const texto = String(agente ?? "").slice(0, 600);
+    const encontrados = [];
+    const ordenados = [...lista.filter(([, auto]) => auto), ...lista.filter(([, auto]) => !auto)];
+    for (const [nombre] of ordenados) {
+        const conVersion = new RegExp(`(?:^|[\\s;(,])${escaparRegex(nombre)}/(\\d{1,5})`).exec(texto);
+        if (conVersion) encontrados.push(`${nombre}/${conVersion[1]}`);
+        else if (new RegExp(`(?:^|[\\s;(,])${escaparRegex(nombre)}(?:[\\s;),]|$)`).test(texto)) encontrados.push(nombre);
+        if (encontrados.length === 6) break;
+    }
+    return encontrados;
+}
+
+export function webdriverDe(nav = typeof navigator !== "undefined" ? navigator : {}) {
+    return nav.webdriver === true ? "si" : nav.webdriver === false ? "no" : "desconocido";
+}
+
+export function sitioDe(host = location.hostname) {
+    const h = String(host).toLowerCase();
+    return h === "sazzo.com.ar" || h === "www.sazzo.com.ar" ? "sazzo.com.ar" : h === "sazzo-demos.web.app" ? "sazzo-demos.web.app" : "otro";
+}
+
+export function versionDe(doc = typeof document !== "undefined" ? document : null) {
+    const texto = doc?.querySelector?.('meta[name="version"]')?.content ?? "";
+    return /^\d{1,3}\.\d{1,3}/.exec(texto)?.[0] ?? "";
+}
+
+export function huellaDe(direccion = import.meta.url) {
+    try {
+        const v = new URL(direccion).searchParams.get("v") ?? "";
+        return /^[0-9a-f]{10}$/.test(v) ? v : "";
+    } catch {
+        return "";
+    }
+}
+
 export function pantallaDe(hash = location.hash) {
     const nombre = hash.replace(/^#\/?/, "").split(/[/?]/)[0] || "inicio";
     return /^[a-z0-9-]{1,30}$/i.test(nombre) ? nombre.toLowerCase() : "otra";
 }
 
-/**
- * Si el navegador está preparando la página antes de que la abran (el catálogo pide que prepare la demo cuando el
- * dedo o el mouse se acerca al botón: así abre al instante), espera a que se muestre de verdad. Si nunca la abren, no
- * corre: el registro no cuenta visitas que no pasaron.
- */
 export function cuandoSeMuestre(hacer, doc = typeof document !== "undefined" ? document : null) {
     if (doc?.prerendering) doc.addEventListener("prerenderingchange", () => hacer(), { once: true });
     else hacer();
@@ -99,38 +147,46 @@ export function cuandoSeMuestre(hacer, doc = typeof document !== "undefined" ? d
 
 const esLaPC = () => /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname) || location.protocol === "file:";
 
-/** Manda el evento a la planilla (Apps Script). text/plain y no-cors: el navegador lo manda directo, sin preguntar antes. */
 function mandarAPlanilla(direccion, evento) {
     fetch(direccion, { method: "POST", mode: "no-cors", keepalive: true, headers: { "Content-Type": "text/plain" }, body: JSON.stringify(evento) }).catch(() => {});
 }
 
-let personaActual = ""; // la persona de ejemplo con la que entró (se suma a lo que haga después)
+let personaActual = "";
 let ultimaPantalla = null;
 
-/**
- * Avisa al registro de visitas qué pasó: que (uno de EVENTOS) en la demo (su id, ej: "kiosco").
- * Campos fijos y con tope. Devuelve el evento armado (o null si `que` no es de la lista).
- * Solo manda si hay dirección de planilla y no es la PC. Los equipos marcados con ?yo=1 y los programas automáticos
- * van marcados con "prueba" (la planilla los anota aparte, en "Pruebas").
- */
-export const pruebaDe = () => (typeof navigator !== "undefined" && navigator.webdriver ? "robot" : leer("sazzo-yo") === "1" ? "yo" : "");
+export const pruebaDe = () => (leer("sazzo-yo") === "1" ? "yo" : "");
 
-export function contar(que, demo, { persona, pantalla = "", medicion = MEDICION, mandar = mandarAPlanilla, enLaPC = esLaPC() } = {}) {
+export function contar(que, demo, { persona, pantalla = "", velocidad, error, modulo, csp, medicion = MEDICION, mandar = mandarAPlanilla, enLaPC = esLaPC() } = {}) {
     if (!EVENTOS.includes(que)) return null;
     if (que === "entro") {
         personaActual = String(persona ?? "").slice(0, 40);
         ultimaPantalla = null;
     }
+    const id = equipo();
     const evento = {
+        esquema: 2,
+        id: alAzar(12),
         evento: que,
         demo: String(demo ?? "").slice(0, 30),
         persona: personaActual,
         pantalla: String(pantalla).slice(0, 40),
         origen: origen().slice(0, 30),
-        equipo: equipo(),
+        equipo: id,
         sesion,
+        sistema: sistemaDe(),
+        navegador: navegadorDe(),
         dispositivo: dispositivo().slice(0, 60),
+        productos: productosDe(),
+        webdriver: webdriverDe(),
+        almacenamiento: sePuedeGuardar ? "si" : "no",
+        sitio: sitioDe(),
+        version: versionDe(),
+        huella: huellaDe(),
         cuando: Date.now(),
+        ...(velocidad ? { velocidad } : {}),
+        ...(error ? { error } : {}),
+        ...(modulo ? { modulo } : {}),
+        ...(csp ? { csp } : {}),
         ...(pruebaDe() ? { prueba: pruebaDe() } : {})
     };
     const direccion = String(medicion?.direccion ?? "");
@@ -145,7 +201,6 @@ export function contar(que, demo, { persona, pantalla = "", medicion = MEDICION,
     return evento;
 }
 
-/** Cada pantalla que mira (una vez por cambio; si recargó la página ya adentro, va sin persona). */
 export function contarPantalla(demo, opciones) {
     const pantalla = pantallaDe();
     if (pantalla === ultimaPantalla) return null;
@@ -153,79 +208,88 @@ export function contarPantalla(demo, opciones) {
     return contar("pantalla", demo, { pantalla, ...opciones });
 }
 
-// ---------- Errores en el celular de alguien (para enterarse si algo se rompe en la calle) ----------
+export const ERRORES = ["importacion-fallida", "red", "programacion", "almacenamiento", "csp", "navegador-viejo", "no-arranco", "otro"];
 
-/** "Cannot read properties of undefined (reading 'x')" → "cannot-read-properties-of-undefined-reading". */
+export function errorDe(mensaje) {
+    const m = String(mensaje ?? "");
+    if (/dynamically imported module|Importing a module script failed|error loading dynamically/i.test(m)) return "importacion-fallida";
+    if (/QuotaExceeded|quota|localStorage|IndexedDB|storage/i.test(m)) return "almacenamiento";
+    if (/NetworkError|Failed to fetch|Load failed|network/i.test(m)) return "red";
+    if (/Unexpected token|Unexpected identifier|Invalid regular expression|not supported|Unexpected keyword/i.test(m)) return "navegador-viejo";
+    if (/undefined|null|is not a function|is not defined|Cannot read|Cannot set|is not iterable|Maximum call stack|Invalid array length/i.test(m)) return "programacion";
+    return "otro";
+}
+
+export function moduloDe(mensaje) {
+    const nombre = /([a-z0-9-]{1,30}\.js)(?:\?|$|\s|")/i.exec(String(mensaje ?? ""))?.[1] ?? "";
+    return nombre ? nombre.toLowerCase() : "otro";
+}
+
+export const DIRECTIVAS_CSP = ["script-src", "style-src", "img-src", "connect-src", "font-src", "media-src", "worker-src", "frame-src", "manifest-src"];
+
+export function cspDe({ effectiveDirective = "", violatedDirective = "", blockedURI = "" } = {}) {
+    const regla = String(effectiveDirective || violatedDirective).split(" ")[0].replace(/-(elem|attr)$/, "");
+    const directiva = DIRECTIVAS_CSP.includes(regla) ? regla : "otra";
+    const frenado = String(blockedURI);
+    const que = ["inline", "eval", "data", "blob"].includes(frenado) ? frenado : /^https?:/.test(frenado) ? "externo" : "otro";
+    return `${directiva}.${que}`;
+}
+
 export function resumenDeError(mensaje) {
     return String(mensaje ?? "")
-        .replace(/(["'`]).*?\1|[«“].*?[»”]/g, " ") // lo que va entre comillas puede ser algo que cargó la persona
+        .replace(/(["'`]).*?\1|[«“].*?[»”]/g, " ")
         .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[̀-ͯ]/g, "")
         .toLowerCase()
         .replace(/[^a-z]+/g, "-")
         .replace(/^-+|-+$/g, "") || "sin-mensaje";
 }
 
-const TOPE_ERRORES = 3; // por página abierta (un error que se repite en cada toque no inunda la planilla)
+const TOPE_ERRORES = 3;
 const erroresContados = new Set();
-let demoActual = ""; // la que llamó a vigilarErrores (las pantallas avisan sus errores sin saber de qué demo son)
+let demoActual = "";
 
-/** Manda "error" con "pantalla--mensaje" (40 letras como mucho). Cada mensaje una vez, y hasta 3 por página. */
+function contarUnError(demo, tipo, extra, opciones) {
+    const pantalla = pantallaDe();
+    const clave = `${tipo}|${pantalla}|${extra.modulo ?? ""}|${extra.csp ?? ""}|${extra.firma ?? ""}`;
+    if (erroresContados.size >= TOPE_ERRORES || erroresContados.has(clave)) return null;
+    erroresContados.add(clave);
+    const { firma, ...campos } = extra;
+    return contar("error", demo, { ...opciones, pantalla, error: tipo, ...campos });
+}
+
 export function contarError(demo, mensaje, opciones) {
-    const resumen = resumenDeError(mensaje);
-    if (erroresContados.size >= TOPE_ERRORES || erroresContados.has(resumen)) return null;
-    erroresContados.add(resumen);
-    const pantalla = `${pantallaDe()}--${resumen}`.slice(0, 40).replace(/-+$/, "");
-    return contar("error", demo, { ...opciones, pantalla });
+    const tipo = errorDe(mensaje);
+    const extra = tipo === "importacion-fallida" ? { modulo: moduloDe(mensaje) } : { firma: resumenDeError(mensaje) };
+    return contarUnError(demo, tipo, extra, opciones);
+}
+
+export function contarCSP(demo, violacion, opciones) {
+    return contarUnError(demo, "csp", { csp: cspDe(violacion) }, opciones);
 }
 
 export const PUENTE_DE_OTRA_APP = /error invoking|java object is gone/i;
 
-/**
- * Escucha los errores que nadie atajó (los que rompen algo) y los cuenta. También los que pasaron antes de que la demo
- * arrancara (tema.js los guarda en window.__sazzoErrores). "Script error." no se cuenta: es de otro sitio (por ejemplo
- * lo que mete el navegador de Instagram) y no dice nada.
- */
 export function vigilarErrores(demo) {
     demoActual = demo;
     const contarSiDice = (mensaje) => {
         if (mensaje && mensaje !== "Script error." && !PUENTE_DE_OTRA_APP.test(mensaje)) contarError(demo, mensaje);
     };
     const antes = typeof window !== "undefined" && Array.isArray(window.__sazzoErrores) ? window.__sazzoErrores : [];
-    if (typeof window !== "undefined") window.__sazzoErrores = null; // desde acá avisa esta función
+    if (typeof window !== "undefined") window.__sazzoErrores = null;
     antes.forEach(contarSiDice);
     addEventListener("error", (e) => contarSiDice(e.message));
     addEventListener("unhandledrejection", (e) => contarSiDice(e.reason?.message ?? String(e.reason ?? "")));
-    // Si la Content-Security-Policy frenó algo (comun.ps1 → Get-MetaCSP), es que falta permitirlo: se avisa qué regla
-    // y de qué sitio (solo el nombre del sitio, nunca la dirección entera)
-    if (typeof document !== "undefined") document.addEventListener("securitypolicyviolation", (e) => contarSiDice(textoCSP(e)));
+    if (typeof document !== "undefined") document.addEventListener("securitypolicyviolation", (e) => contarCSP(demo, e));
 }
 
-/** "CSP img-src tile.openstreetmap.org" (o "inline", "eval", "data"…): qué se frenó, sin la dirección entera. */
-export function textoCSP({ effectiveDirective = "", violatedDirective = "", blockedURI = "" } = {}) {
-    let sitio = String(blockedURI);
-    try {
-        sitio = new URL(sitio).hostname || sitio;
-    } catch {
-        // "inline", "eval", "data", "blob": quedan así
-    }
-    return `CSP ${String(effectiveDirective || violatedDirective).slice(0, 30)} ${sitio.slice(0, 60)}`.trim();
-}
-
-// ---------- Velocidad en los celulares de verdad (09/10) ----------
-// Lo que mide Google (Core Web Vitals), con lo que ya trae el navegador (sin la librería web-vitals): cuánto tardó en
-// verse lo principal (LCP), cuánto saltó la pantalla mientras cargaba (CLS) y cuánto tardó en responder el toque más
-// lento (INP, aproximado). Se manda UNA vez por página abierta, al irse o pasar a otra app, como "velocidad".
-
-/** { lcp: 1840, cls: 0.003, inp: 120 } → "lcp-1840-cls-3-inp-120" (el CLS por mil; todo entero y con tope). */
-export function textoVelocidad({ lcp = 0, cls = 0, inp = 0 } = {}) {
+export function velocidadDe({ lcp = 0, cls = 0, inp = 0 } = {}) {
     const entero = (n, tope) => Math.min(Math.max(Math.round(Number(n) || 0), 0), tope);
-    return `lcp-${entero(lcp, 60000)}-cls-${entero(cls * 1000, 9999)}-inp-${entero(inp, 60000)}`;
+    return { lcp: entero(lcp, 60000), cls: entero(cls * 1000, 9999), inp: entero(inp, 60000) };
 }
 
 let midiendo = false;
 
-/** Empieza a medir la página (una sola vez) y la manda al irse. En los navegadores que no saben medir, no hace nada. */
 export function medirVelocidad(demo, opciones) {
     const tipos = typeof PerformanceObserver !== "undefined" ? PerformanceObserver.supportedEntryTypes ?? [] : [];
     if (midiendo || !tipos.includes("largest-contentful-paint")) return false;
@@ -236,10 +300,9 @@ export function medirVelocidad(demo, opciones) {
         try {
             new PerformanceObserver((lista) => lista.getEntries().forEach(alVer)).observe({ type, buffered: true, ...extra });
         } catch {
-            // un navegador que dice que sabe y no sabe: se mide lo demás
+            return;
         }
     };
-    // Si la página se preparó antes (cuandoSeMuestre), el tiempo cuenta desde que se mostró
     const mostradaEn = performance.getEntriesByType?.("navigation")?.[0]?.activationStart || 0;
     mirar("largest-contentful-paint", (e) => (v.lcp = mostradaEn ? Math.max(1, e.startTime - mostradaEn) : e.startTime));
     mirar("layout-shift", (e) => {
@@ -252,7 +315,7 @@ export function medirVelocidad(demo, opciones) {
     const mandar = () => {
         if (mandado || !v.lcp) return;
         mandado = true;
-        contar("velocidad", demo, { ...opciones, pantalla: textoVelocidad(v) });
+        contar("velocidad", demo, { ...opciones, pantalla: pantallaDe(), velocidad: velocidadDe(v) });
     };
     addEventListener("visibilitychange", () => {
         if (document.visibilityState === "hidden") mandar();
@@ -261,11 +324,9 @@ export function medirVelocidad(demo, opciones) {
     return true;
 }
 
-/** ¿Es un error de programación? Los nuestros (exigir, buscar, topes) son Error comunes con el mensaje en castellano. */
 export const esDeProgramacion = (e) =>
     !(e instanceof Error) || e instanceof TypeError || e instanceof ReferenceError || e instanceof RangeError || e instanceof SyntaxError;
 
-/** Un error de programación que se atajó para que la pantalla no se rompa: igual se avisa (si no, nunca nos enteramos). */
 export function contarFalla(e) {
     if (demoActual) contarError(demoActual, e?.message ?? String(e ?? ""));
 }

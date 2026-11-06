@@ -21,8 +21,8 @@
 //   minutos"). Mientras la usa (cada cambio que guarda), no se renuevan. Se avisa con un cartelito.
 // ============================================
 
-import { aviso, esc } from "./ui.js?v=3139c971e2";
-import { olvidarAvisos } from "./avisos.js?v=3139c971e2";
+import { aviso, esc } from "./ui.js?v=7996b38101";
+import { olvidarAvisos } from "./avisos.js?v=7996b38101";
 
 /** Nombres compartidos entre el catálogo y todas las demos (no pueden ser el prefijo de una demo). */
 export const COMPARTIDAS = [
